@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>社労士アプリ — Googleドライブ同期テンプレート</title>
+<!-- Google Identity Services -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<!-- Google API Client -->
+<script src="https://apis.google.com/js/api.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-serif;background:#11161e;color:#e8e0d0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+.app{width:100%;max-width:640px}
+
+/* ===== SYNC BAR ===== */
+.sync-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  background:#1a2434;border:1px solid #283848;border-radius:10px;
+  padding:10px 14px;margin-bottom:16px;gap:10px;flex-wrap:wrap;
+}
+.sync-status{display:flex;align-items:center;gap:8px;font-size:12px;color:#8a9bb0}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#556070;flex-shrink:0;transition:background .3s}
+.sync-dot.connected{background:#3dbe82}
+.sync-dot.syncing{background:#c9a84c;animation:pulse 1s infinite}
+.sync-dot.error{background:#e05050}
+.sync-user{font-size:11px;color:#556070;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sync-btns{display:flex;gap:6px;align-items:center}
+.btn-gsign{
+  display:flex;align-items:center;gap:6px;
+  background:#fff;color:#3c4043;border:none;border-radius:6px;
+  padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;
+  transition:background .15s;white-space:nowrap;
+}
+.btn-gsign:hover{background:#f1f3f4}
+.btn-gsign svg{flex-shrink:0}
+.btn-sync{
+  background:transparent;border:1px solid #283848;color:#8a9bb0;
+  border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;
+  transition:all .15s;white-space:nowrap;
+}
+.btn-sync:hover{border-color:#4a9eca;color:#4a9eca}
+.btn-sync:disabled{opacity:.4;cursor:default}
+.btn-signout{
+  background:transparent;border:1px solid #283848;color:#556070;
+  border-radius:6px;padding:5px 8px;font-size:11px;cursor:pointer;
+  transition:all .15s;
+}
+.btn-signout:hover{border-color:#e05050;color:#e05050}
+
+/* ===== HEADER ===== */
+.header{text-align:center;padding:20px 0 16px}
+.header h1{font-size:12px;letter-spacing:.15em;color:#8a9bb0;text-transform:uppercase;margin-bottom:4px}
+.header .title{font-size:21px;font-weight:700;color:#e8e0d0}
+.header .subtitle{font-size:12px;color:#556070;margin-top:5px}
+.nav-tabs{display:flex;gap:4px;background:#131920;border-radius:10px;padding:4px;margin-bottom:18px}
+.nav-tab{flex:1;padding:8px;border:none;border-radius:8px;background:transparent;color:#556070;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.nav-tab.active{background:#1a2434;color:#e8e0d0}
+.bm-badge{display:inline-block;background:rgba(232,201,122,.2);color:#e8c97a;border-radius:4px;font-size:10px;padding:1px 5px;margin-left:4px;font-weight:700}
+
+/* ===== PROGRESS ===== */
+.progress-wrap{margin-bottom:18px}
+.progress-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.progress-num{font-size:12px;color:#8a9bb0}
+.progress-score{font-size:12px;color:#8a9bb0}
+.progress-bar-bg{width:100%;height:3px;background:#1a2434;border-radius:2px}
+.progress-bar-fill{height:3px;background:linear-gradient(90deg,#c97a4a,#e8a87a);border-radius:2px;transition:width .4s ease}
+
+/* ===== CARD ===== */
+.card{background:#1a2434;border:1px solid #283848;border-radius:12px;padding:22px 20px;margin-bottom:14px;position:relative}
+.q-meta{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.q-tag{font-size:10px;letter-spacing:.1em;color:#c97a4a;background:rgba(201,122,74,.12);border:1px solid rgba(201,122,74,.25);border-radius:4px;padding:2px 8px;font-weight:600}
+.q-num{font-size:11px;color:#556070}
+.q-text{font-size:14px;line-height:1.8;color:#d8d0c0;word-break:break-all;padding-right:40px}
+.btn-bookmark{position:absolute;top:18px;right:14px;background:none;border:none;cursor:pointer;font-size:20px;line-height:1;padding:4px;color:#556070;transition:color .15s,transform .1s}
+.btn-bookmark:hover{color:#e8c97a;transform:scale(1.1)}
+.btn-bookmark.active{color:#e8c97a}
+
+/* ===== OX BUTTONS ===== */
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.btn-answer{border:none;border-radius:10px;padding:18px 12px;font-size:26px;font-weight:700;cursor:pointer;transition:transform .12s,background .15s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.btn-answer:active{transform:scale(.96)}
+.btn-maru{background:#1c3040;border:1.5px solid #2a4a60;color:#5bb8e0}
+.btn-maru:hover{background:#1e3a50;border-color:#5bb8e0}
+.btn-batsu{background:#301c1c;border:1.5px solid #50282a;color:#e07060}
+.btn-batsu:hover{background:#3a2020;border-color:#e07060}
+.btn-label{font-size:10px;letter-spacing:.1em;opacity:.7}
+.btn-answer.correct-chosen{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-answer.wrong-chosen{background:#331616;border-color:#e05050;color:#e05050}
+.btn-answer.reveal-correct{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-answer:disabled{cursor:default}
+
+/* ===== RESULT PANEL ===== */
+.result-panel{border-radius:10px;padding:14px 16px;margin-bottom:14px;display:none;animation:fadeUp .2s ease}
+.result-panel.correct{background:#0d2a1e;border:1px solid #2a6044}
+.result-panel.wrong{background:#2a0d0d;border:1px solid #6a2020}
+.result-header{font-size:14px;font-weight:700;margin-bottom:8px}
+.result-panel.correct .result-header{color:#3dbe82}
+.result-panel.wrong .result-header{color:#e05050}
+.result-exp{font-size:13px;line-height:1.7;color:#a0b0c0}
+.result-source{font-size:11px;color:#556070;margin-top:8px}
+
+/* ===== NAV BUTTONS ===== */
+.nav-btns{display:grid;grid-template-columns:1fr 2fr 1fr;gap:8px;margin-bottom:6px}
+.btn-nav{border-radius:9px;padding:11px 10px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;border:1.5px solid #283848;background:transparent;color:#8a9bb0}
+.btn-nav:hover{background:#1a2434;color:#c8c0b0}
+.btn-nav:disabled{opacity:.3;cursor:default}
+.btn-next{border-radius:9px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;border:none;background:#c97a4a;color:#1a0a00;letter-spacing:.05em;display:none;width:100%;margin-bottom:6px}
+.btn-next:hover{background:#e8a87a}
+
+/* ===== START SCREEN ===== */
+.start-screen{text-align:center;padding:24px 16px}
+.start-count{font-size:44px;font-weight:700;color:#c97a4a;display:block;margin-bottom:4px}
+.start-unit{font-size:13px;color:#8a9bb0;margin-bottom:22px;display:block}
+.start-desc{font-size:13px;color:#8a9bb0;line-height:1.7;margin-bottom:22px}
+.filter-section{margin-bottom:16px}
+.filter-label{font-size:12px;color:#556070;letter-spacing:.08em;margin-bottom:8px;text-align:center}
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:12px}
+.filter-btn{font-size:12px;padding:5px 12px;border-radius:6px;border:1px solid #283848;background:transparent;color:#8a9bb0;cursor:pointer;transition:all .15s}
+.filter-btn.active{border-color:#c97a4a;color:#c97a4a;background:rgba(201,122,74,.1)}
+.controls{display:flex;justify-content:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.btn-ctrl{font-size:12px;padding:5px 14px;border-radius:6px;border:1px solid #283848;background:transparent;color:#8a9bb0;cursor:pointer;letter-spacing:.05em;transition:all .15s}
+.btn-ctrl.active{border-color:#c97a4a;color:#c97a4a;background:rgba(201,122,74,.1)}
+.btn-start{background:#c97a4a;color:#1a0800;border:none;border-radius:10px;padding:13px 36px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.1em;transition:background .15s;display:block;width:100%;max-width:280px;margin:0 auto 10px}
+.btn-start:hover{background:#e8a87a}
+.btn-start.secondary{background:transparent;border:1.5px solid #e8c97a;color:#e8c97a;font-size:14px}
+.btn-start.secondary:hover{background:rgba(232,201,122,.1)}
+
+/* ===== RESULT SCREEN ===== */
+.result-screen{display:none;text-align:center;padding:28px 16px}
+.result-screen.show{display:block}
+.score-circle{width:150px;height:150px;border-radius:50%;border:3px solid #c97a4a;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 22px}
+.score-big{font-size:44px;font-weight:700;color:#e8a87a;line-height:1}
+.score-denom{font-size:13px;color:#8a9bb0;margin-top:4px}
+.score-pct{font-size:17px;font-weight:600;color:#c97a4a;margin-bottom:8px}
+.score-msg{font-size:13px;color:#8a9bb0;margin-bottom:22px;line-height:1.7;white-space:pre-line}
+.breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.breakdown-item{background:#1a2434;border:1px solid #283848;border-radius:10px;padding:12px;text-align:center}
+.breakdown-num{font-size:26px;font-weight:700}
+.breakdown-num.ok{color:#3dbe82}
+.breakdown-num.ng{color:#e05050}
+.breakdown-num.sk{color:#8a9bb0}
+.breakdown-label{font-size:11px;color:#8a9bb0;margin-top:3px}
+.btns-wrap{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.btn-retry{background:transparent;border:1.5px solid #c97a4a;color:#c97a4a;border-radius:10px;padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
+.btn-retry:hover{background:rgba(201,122,74,.12)}
+
+/* ===== BOOKMARK LIST ===== */
+.bookmark-list{display:none}
+.bookmark-list.show{display:block}
+.section-title{font-size:12px;color:#556070;letter-spacing:.1em;margin-bottom:12px;text-align:center;text-transform:uppercase}
+.bm-item{background:#1a2434;border:1px solid #283848;border-radius:10px;padding:12px 14px;margin-bottom:9px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:border-color .15s}
+.bm-item:hover{border-color:#c97a4a}
+.bm-star{font-size:14px;color:#e8c97a;flex-shrink:0}
+.bm-tag{font-size:10px;color:#c97a4a;background:rgba(201,122,74,.12);border:1px solid rgba(201,122,74,.25);border-radius:4px;padding:2px 6px;white-space:nowrap;flex-shrink:0;font-weight:600}
+.bm-text{font-size:13px;line-height:1.55;color:#a0b0c0}
+.empty-bm{text-align:center;padding:36px 20px;color:#556070;font-size:14px;line-height:1.7}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a2434;border:1px solid #283848;border-radius:8px;padding:10px 18px;font-size:13px;color:#e8e0d0;opacity:0;transition:all .3s;pointer-events:none;z-index:100;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:#3dbe82;color:#3dbe82}
+.toast.error{border-color:#e05050;color:#e05050}
+
+/* ===== RESUME MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:200;display:none}
+.modal-overlay.show{display:flex}
+.modal{background:#1a2434;border:1px solid #283848;border-radius:14px;padding:24px 20px;width:90%;max-width:360px;text-align:center}
+.modal h3{font-size:16px;font-weight:700;color:#e8e0d0;margin-bottom:10px}
+.modal p{font-size:13px;color:#8a9bb0;line-height:1.6;margin-bottom:20px}
+.modal-btns{display:flex;gap:10px;justify-content:center}
+.modal-btn{border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;border:none}
+.modal-btn.primary{background:#c97a4a;color:#1a0800}
+.modal-btn.primary:hover{background:#e8a87a}
+.modal-btn.secondary{background:transparent;border:1.5px solid #283848;color:#8a9bb0}
+.modal-btn.secondary:hover{background:#283848}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== SYNC BAR ===== -->
+  <div class="sync-bar">
+    <div>
+      <div class="sync-status">
+        <span class="sync-dot" id="syncDot"></span>
+        <span id="syncStatusText">Googleアカウントで同期</span>
+      </div>
+      <div class="sync-user" id="syncUser" style="display:none"></div>
+    </div>
+    <div class="sync-btns">
+      <button class="btn-gsign" id="btnSignIn" onclick="signIn()">
+        <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#4285F4" d="M47.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h13.2c-.6 3-2.3 5.5-4.9 7.2v6h7.9c4.6-4.3 7.3-10.6 7.3-17.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.9-6c-2.1 1.4-4.8 2.3-8 2.3-6.1 0-11.3-4.1-13.2-9.7H2.7v6.2C6.7 43 14.8 48 24 48z"/><path fill="#FBBC05" d="M10.8 28.8c-.5-1.4-.7-2.8-.7-4.3s.3-2.9.7-4.3v-6.2H2.7C1 17.5 0 20.6 0 24s1 6.5 2.7 9.1l8.1-4.3z"/><path fill="#EA4335" d="M24 9.5c3.4 0 6.5 1.2 8.9 3.5l6.6-6.6C35.9 2.5 30.4 0 24 0 14.8 0 6.7 5 2.7 12.4l8.1 6.2C12.7 13.6 17.9 9.5 24 9.5z"/></svg>
+        Googleでログイン
+      </button>
+      <button class="btn-sync" id="btnManualSync" onclick="manualSync()" style="display:none" disabled>↑↓ 同期</button>
+      <button class="btn-signout" id="btnSignOut" onclick="signOut()" style="display:none">ログアウト</button>
+    </div>
+  </div>
+
+  <div class="header">
+    <h1>社会保険労務士 試験対策</h1>
+    <div class="title" id="appTitle">〇〇法 一問一答</div>
+    <div class="subtitle" id="appSubtitle">問題読み込み中...</div>
+  </div>
+
+  <div class="nav-tabs" id="navTabs">
+    <button class="nav-tab active" onclick="switchTab('start')">問題</button>
+    <button class="nav-tab" onclick="switchTab('bookmark')" id="tabBm">★ 栞 <span class="bm-badge" id="bmBadge" style="display:none"></span></button>
+  </div>
+
+  <!-- Start Screen -->
+  <div id="startScreen">
+    <span class="start-count" id="startCount">0</span>
+    <span class="start-unit" id="startUnit">問</span>
+    <div class="start-desc" id="startDesc">各肢について○か×かを判断してください。</div>
+    <div class="filter-section">
+      <div class="filter-label">出題範囲</div>
+      <div class="filter-row" id="filterRow"></div>
+    </div>
+    <div class="controls">
+      <button class="btn-ctrl" id="btnShuffle" onclick="toggleShuffle()">シャッフル</button>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">スタート →</button>
+    <button class="btn-start secondary" onclick="startBookmarked()" id="btnStartBm" style="display:none">★ 栞の問題のみ</button>
+  </div>
+
+  <!-- Bookmark List -->
+  <div class="bookmark-list" id="bookmarkList">
+    <div class="section-title">栞をつけた問題</div>
+    <div id="bmItems"></div>
+    <div style="margin-top:14px;text-align:center" id="bmActions"></div>
+  </div>
+
+  <!-- Quiz Screen -->
+  <div id="quizScreen" style="display:none">
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span class="progress-num" id="progressNum">1 / 0</span>
+        <span class="progress-score" id="progressScore">正解 0 問</span>
+      </div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+    <div class="card">
+      <div class="q-meta">
+        <span class="q-tag" id="qTag"></span>
+        <span class="q-num" id="qNum"></span>
+      </div>
+      <p class="q-text" id="qText"></p>
+      <button class="btn-bookmark" id="btnBookmark" onclick="toggleBookmark()">☆</button>
+    </div>
+    <div class="btn-row" id="oxRow">
+      <button class="btn-answer btn-maru" id="btnMaru" onclick="answerOx(true)">○<span class="btn-label">CORRECT</span></button>
+      <button class="btn-answer btn-batsu" id="btnBatsu" onclick="answerOx(false)">×<span class="btn-label">WRONG</span></button>
+    </div>
+    <div class="result-panel" id="resultPanel">
+      <div class="result-header" id="resultHeader"></div>
+      <div class="result-exp" id="resultExp"></div>
+      <div class="result-source" id="resultSource"></div>
+    </div>
+    <button class="btn-next" id="btnNext" onclick="nextQuestion()">次の問題 →</button>
+    <div class="nav-btns">
+      <button class="btn-nav" id="btnBack" onclick="goBack()">← 戻る</button>
+      <div></div>
+      <button class="btn-nav" id="btnSkip" onclick="skipQuestion()">スキップ →</button>
+    </div>
+  </div>
+
+  <!-- Result Screen -->
+  <div class="result-screen" id="resultScreen">
+    <div class="score-circle">
+      <span class="score-big" id="finalScore">0</span>
+      <span class="score-denom" id="finalDenom">/ 0</span>
+    </div>
+    <div class="score-pct" id="finalPct"></div>
+    <div class="breakdown">
+      <div class="breakdown-item"><div class="breakdown-num ok" id="okCount">0</div><div class="breakdown-label">正解</div></div>
+      <div class="breakdown-item"><div class="breakdown-num ng" id="ngCount">0</div><div class="breakdown-label">不正解</div></div>
+      <div class="breakdown-item"><div class="breakdown-num sk" id="skCount">0</div><div class="breakdown-label">未回答</div></div>
+    </div>
+    <div class="score-msg" id="scoreMsg"></div>
+    <div class="btns-wrap">
+      <button class="btn-retry" onclick="resetToStart()">最初から</button>
+      <button class="btn-retry" onclick="retryWrong()" id="btnRetryWrong" style="display:none">間違えた問題のみ</button>
+      <button class="btn-retry" onclick="retrySkipped()" id="btnRetrySkipped" style="display:none">未回答のみ</button>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Resume Modal -->
+<div class="modal-overlay" id="resumeModal">
+  <div class="modal">
+    <h3>前回の続きがあります</h3>
+    <p id="resumeMsg"></p>
+    <div class="modal-btns">
+      <button class="modal-btn primary" onclick="resumeSession()">続きから再開</button>
+      <button class="modal-btn secondary" onclick="dismissResume()">最初から</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  ★ CONFIG — このファイルを他の科目に使い回す場合はここだけ変更
+// ============================================================
+const APP_CONFIG = {
+  title:    '〇〇法 一問一答',          // ← 科目名に変更
+  subtitle: 'TAC 択一式問題 全XX問',    // ← 問題数に変更
+  driveFileName: 'sharoushi_progress_XX.json', // ← 科目ごとに変更（ファイル名が被らないよう）
+  clientId: '194094449743-hoj6t28jfidlfhueiiv6iromc2lvssgf.apps.googleusercontent.com',
+};
+
+// ============================================================
+//  ★ QUESTION DATA — ここに問題を追加する
+//    型: {no, opt, q, a, exp, src, cat}
+//    a: true=○, false=×
+// ============================================================
+const ALL_QUESTIONS = [
+  // ---- サンプル問題（実際の科目に差し替えてください） ----
+  {no:'問1',opt:'A',q:'サンプル問題1：労働基準法は使用者にのみ義務を課している。',a:false,exp:'労働基準法2条2項は使用者だけでなく労働者にも遵守義務を課している。',src:'労基法2条2項',cat:'択一式'},
+  {no:'問1',opt:'B',q:'サンプル問題2：法定の基準を下回る労働条件を定める契約の当該部分は無効となる。',a:true,exp:'法13条により、基準に達しない部分は無効となり、法定基準に補充される。',src:'労基法13条',cat:'択一式'},
+  {no:'問1',opt:'C',q:'サンプル問題3：休憩時間の自由利用は、いかなる制限も加えられない絶対的な権利である。',a:false,exp:'休憩の目的を害わない限り、事業場の規律保持上必要な制限を加えることは差し支えない。',src:'労基法34条3項',cat:'択一式'},
+  {no:'問2',opt:'A',q:'サンプル問題4：36協定は締結しただけで効力が生じる。',a:false,exp:'36協定は所轄労働基準監督署長へ届け出ることで効力が発生する。',src:'労基法36条1項',cat:'択一式'},
+  {no:'問2',opt:'B',q:'サンプル問題5：フレックスタイム制で清算期間が1箇月以内の場合、労使協定の届出は不要である。',a:true,exp:'清算期間が1箇月以内の場合は届出不要。1箇月を超える場合は届出が必要。',src:'労基法32条の3',cat:'択一式'},
+];
+
+// ============================================================
+//  GOOGLE DRIVE SYNC
+// ============================================================
+const CLIENT_ID = APP_CONFIG.clientId;
+const SCOPES = 'https://www.googleapis.com/auth/drive.appdata';
+const DRIVE_FILE_NAME = APP_CONFIG.driveFileName;
+let tokenClient = null;
+let gapiInited = false;
+let gisInited = false;
+let accessToken = null;
+let driveFileId = null;
+let isSyncing = false;
+let autoSaveTimer = null;
+
+function gapiLoaded(){
+  gapi.load('client', async ()=>{
+    await gapi.client.init({});
+    gapiInited = true;
+    maybeEnableSync();
+  });
+}
+
+function gisLoaded(){
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: async (resp)=>{
+      if(resp.error){showToast('ログインエラー: '+resp.error,'error');return;}
+      accessToken = resp.access_token;
+      gapi.client.setToken({access_token: accessToken});
+      onSignedIn();
+    }
+  });
+  gisInited = true;
+  maybeEnableSync();
+}
+
+function maybeEnableSync(){
+  if(gapiInited && gisInited){
+    // Check if we have a stored token hint
+    const saved = getSavedAuth();
+    if(saved){
+      // Try silent sign-in
+      tokenClient.requestAccessToken({prompt:''});
+    }
+  }
+}
+
+function signIn(){
+  if(!gapiInited||!gisInited){showToast('初期化中です、少々お待ちください','error');return;}
+  tokenClient.requestAccessToken({prompt:'consent'});
+}
+
+function signOut(){
+  if(accessToken) google.accounts.oauth2.revoke(accessToken);
+  accessToken = null;
+  driveFileId = null;
+  clearSavedAuth();
+  updateSyncUI(false);
+  showToast('ログアウトしました');
+}
+
+function onSignedIn(){
+  const profile = parseJwt(google.accounts.id ? null : null);
+  updateSyncUI(true);
+  saveAuthHint();
+  showToast('ログイン成功、データを読み込んでいます…','success');
+  loadFromDrive();
+}
+
+function updateSyncUI(loggedIn){
+  const dot = document.getElementById('syncDot');
+  const statusText = document.getElementById('syncStatusText');
+  const syncUser = document.getElementById('syncUser');
+  const btnSignIn = document.getElementById('btnSignIn');
+  const btnManualSync = document.getElementById('btnManualSync');
+  const btnSignOut = document.getElementById('btnSignOut');
+  if(loggedIn){
+    dot.className='sync-dot connected';
+    statusText.textContent='Googleドライブに同期中';
+    btnSignIn.style.display='none';
+    btnManualSync.style.display='block';
+    btnManualSync.disabled=false;
+    btnSignOut.style.display='block';
+  }else{
+    dot.className='sync-dot';
+    statusText.textContent='Googleアカウントで同期';
+    syncUser.style.display='none';
+    btnSignIn.style.display='block';
+    btnManualSync.style.display='none';
+    btnSignOut.style.display='none';
+  }
+}
+
+function setSyncing(v){
+  isSyncing=v;
+  const dot=document.getElementById('syncDot');
+  const btn=document.getElementById('btnManualSync');
+  if(v){dot.className='sync-dot syncing';btn.disabled=true;btn.textContent='同期中…';}
+  else{dot.className='sync-dot connected';btn.disabled=false;btn.textContent='↑↓ 同期';}
+}
+
+async function loadFromDrive(){
+  if(!accessToken)return;
+  setSyncing(true);
+  try{
+    // Find file
+    const res = await gapi.client.request({
+      path:'https://www.googleapis.com/drive/v3/files',
+      params:{spaces:'appDataFolder',q:`name='${DRIVE_FILE_NAME}'`,fields:'files(id,name)'}
+    });
+    const files = res.result.files||[];
+    if(files.length>0){
+      driveFileId = files[0].id;
+      const fileRes = await gapi.client.request({
+        path:`https://www.googleapis.com/drive/v3/files/${driveFileId}`,
+        params:{alt:'media'}
+      });
+      const data = typeof fileRes.result==='string'?JSON.parse(fileRes.result):fileRes.result;
+      mergeCloudData(data);
+      showToast('クラウドから読み込みました','success');
+    }else{
+      showToast('クラウドにデータがありません（初回）');
+      await saveToDrive();
+    }
+  }catch(e){
+    console.error(e);
+    showToast('読み込み失敗: '+e.message,'error');
+  }
+  setSyncing(false);
+}
+
+async function saveToDrive(){
+  if(!accessToken)return;
+  setSyncing(true);
+  try{
+    const payload = buildSavePayload();
+    const body = JSON.stringify(payload);
+    const meta = JSON.stringify({name:DRIVE_FILE_NAME,parents:['appDataFolder']});
+    if(driveFileId){
+      // Update
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`,{
+        method:'PATCH',
+        headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'},
+        body
+      });
+    }else{
+      // Create
+      const form = new FormData();
+      form.append('metadata',new Blob([meta],{type:'application/json'}));
+      form.append('file',new Blob([body],{type:'application/json'}));
+      const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&spaces=appDataFolder',{
+        method:'POST',
+        headers:{'Authorization':'Bearer '+accessToken},
+        body:form
+      });
+      const json = await res.json();
+      driveFileId = json.id;
+    }
+    showToast('クラウドに保存しました','success');
+  }catch(e){
+    console.error(e);
+    showToast('保存失敗: '+e.message,'error');
+  }
+  setSyncing(false);
+}
+
+async function manualSync(){
+  if(!accessToken){showToast('先にログインしてください','error');return;}
+  await loadFromDrive();
+}
+
+function scheduleAutoSave(){
+  if(!accessToken)return;
+  if(autoSaveTimer)clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(()=>saveToDrive(), 3000);
+}
+
+// ============================================================
+//  SAVE / LOAD PAYLOAD
+// ============================================================
+function buildSavePayload(){
+  return {
+    version:1,
+    bookmarks:[...bookmarks],
+    stats: Object.fromEntries(
+      Object.entries(questionStats).map(([k,v])=>[k,v])
+    ),
+    session: currentSession ? {
+      questionIndices: questions.map(q=>getOrigIdx(q)),
+      current,
+      answers
+    } : null,
+    savedAt: new Date().toISOString()
+  };
+}
+
+function mergeCloudData(data){
+  if(!data)return;
+  // Bookmarks
+  if(data.bookmarks) bookmarks = new Set(data.bookmarks);
+  // Stats
+  if(data.stats){
+    Object.entries(data.stats).forEach(([k,v])=>{questionStats[k]=v;});
+  }
+  // Session
+  if(data.session && data.session.questionIndices){
+    pendingResume = data.session;
+  }
+  // Persist locally too
+  localSave();
+  updateBmBadge();
+  // Offer resume
+  if(pendingResume) offerResume();
+}
+
+// ============================================================
+//  LOCAL STORAGE (fallback + cache)
+// ============================================================
+const LS_KEY = 'sharoushi_'+DRIVE_FILE_NAME;
+const LS_AUTH = 'sharoushi_auth_hint';
+
+function localSave(){
+  try{localStorage.setItem(LS_KEY, JSON.stringify(buildSavePayload()));}catch(e){}
+}
+
+function localLoad(){
+  try{
+    const s=localStorage.getItem(LS_KEY);
+    if(s){const d=JSON.parse(s);mergeCloudDataLocal(d);}
+  }catch(e){}
+}
+
+function mergeCloudDataLocal(data){
+  if(!data)return;
+  if(data.bookmarks) bookmarks = new Set(data.bookmarks);
+  if(data.stats) Object.entries(data.stats).forEach(([k,v])=>{questionStats[k]=v;});
+  if(data.session && data.session.questionIndices) pendingResume = data.session;
+  updateBmBadge();
+  if(pendingResume) offerResume();
+}
+
+function saveAuthHint(){try{localStorage.setItem(LS_AUTH,'1');}catch(e){}}
+function getSavedAuth(){try{return localStorage.getItem(LS_AUTH);}catch(e){return null;}}
+function clearSavedAuth(){try{localStorage.removeItem(LS_AUTH);}catch(e){}}
+
+// ============================================================
+//  RESUME SESSION
+// ============================================================
+let pendingResume = null;
+let currentSession = false;
+
+function offerResume(){
+  if(!pendingResume)return;
+  const s = pendingResume;
+  const total = s.questionIndices.length;
+  const done = s.answers.filter(a=>a!==null).length;
+  document.getElementById('resumeMsg').textContent =
+    `${total}問中 ${done}問まで回答済みです。続きから再開しますか？`;
+  document.getElementById('resumeModal').classList.add('show');
+}
+
+function resumeSession(){
+  document.getElementById('resumeModal').classList.remove('show');
+  if(!pendingResume)return;
+  const s = pendingResume;
+  const pool = s.questionIndices.map(i=>({...ALL_QUESTIONS[i],_origIdx:i})).filter(Boolean);
+  questions = pool;
+  current = s.current||0;
+  answers = s.answers||new Array(pool.length).fill(null);
+  pendingResume = null;
+  currentSession = true;
+  document.getElementById('startScreen').style.display='none';
+  document.getElementById('resultScreen').classList.remove('show');
+  document.getElementById('quizScreen').style.display='block';
+  document.getElementById('navTabs').style.display='none';
+  renderQuestion();
+}
+
+function dismissResume(){
+  document.getElementById('resumeModal').classList.remove('show');
+  pendingResume = null;
+}
+
+// ============================================================
+//  QUESTION STATS (for low-accuracy mode)
+// ============================================================
+let questionStats = {}; // {idx: {correct:N, total:N}}
+
+function recordStat(origIdx, correct){
+  if(!questionStats[origIdx]) questionStats[origIdx]={correct:0,total:0};
+  if(correct) questionStats[origIdx].correct++;
+  questionStats[origIdx].total++;
+}
+
+function getAccuracy(origIdx){
+  const s=questionStats[origIdx];
+  if(!s||s.total===0)return null;
+  return s.correct/s.total;
+}
+
+// ============================================================
+//  CORE STATE
+// ============================================================
+let questions=[];
+let current=0;
+let answers=[];
+let bookmarks=new Set();
+let selectedCats=new Set();
+let shuffleMode=false;
+let currentQIndex=-1;
+
+const CATS=[...new Set(ALL_QUESTIONS.map(q=>q.cat))];
+
+function shuffleArray(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function initFilters(){
+  const row=document.getElementById('filterRow');
+  const all=document.createElement('button');
+  all.className='filter-btn active';all.textContent='すべて';all.dataset.val='all';
+  all.onclick=()=>{
+    selectedCats.clear();
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.val==='all'));
+    updateStartCount();
+  };
+  row.appendChild(all);
+  CATS.forEach(c=>{
+    const btn=document.createElement('button');
+    btn.className='filter-btn';btn.textContent=c;btn.dataset.val=c;
+    btn.onclick=()=>{
+      document.querySelector('.filter-btn[data-val="all"]').classList.remove('active');
+      btn.classList.toggle('active');
+      if(selectedCats.has(c))selectedCats.delete(c);else selectedCats.add(c);
+      if(selectedCats.size===0)document.querySelector('.filter-btn[data-val="all"]').classList.add('active');
+      updateStartCount();
+    };
+    row.appendChild(btn);
+  });
+}
+
+function updateStartCount(){
+  let pool=ALL_QUESTIONS;
+  if(selectedCats.size>0)pool=ALL_QUESTIONS.filter(q=>selectedCats.has(q.cat));
+  document.getElementById('startCount').textContent=pool.length;
+}
+
+function updateBmBadge(){
+  const cnt=bookmarks.size;
+  const badge=document.getElementById('bmBadge');
+  badge.style.display=cnt>0?'inline-block':'none';
+  badge.textContent=cnt;
+  const btn=document.getElementById('btnStartBm');
+  if(btn)btn.style.display=cnt>0?'block':'none';
+}
+
+function toggleShuffle(){shuffleMode=!shuffleMode;document.getElementById('btnShuffle').classList.toggle('active',shuffleMode);}
+
+function switchTab(tab){
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>{
+    t.classList.toggle('active',(i===0&&tab==='start')||(i===1&&tab==='bookmark'));
+  });
+  document.getElementById('startScreen').style.display=tab==='start'?'':'none';
+  const bl=document.getElementById('bookmarkList');
+  if(tab==='bookmark'){bl.classList.add('show');renderBmList();}else bl.classList.remove('show');
+}
+
+function renderBmList(){
+  const container=document.getElementById('bmItems');
+  const actions=document.getElementById('bmActions');
+  if(bookmarks.size===0){
+    container.innerHTML='<div class="empty-bm">栞がついている問題はありません。</div>';
+    actions.innerHTML='';return;
+  }
+  container.innerHTML='';
+  [...bookmarks].forEach(idx=>{
+    const q=ALL_QUESTIONS[idx];if(!q)return;
+    const div=document.createElement('div');div.className='bm-item';
+    div.innerHTML=`<span class="bm-star">★</span><span class="bm-tag">${q.no}</span><span class="bm-text">${q.q}</span>`;
+    container.appendChild(div);
+  });
+  actions.innerHTML=`<button class="btn-retry" onclick="startBookmarked()">★ 栞の問題を解く</button>
+    <button class="btn-retry" style="border-color:#e05050;color:#e05050" onclick="clearBookmarks()">すべて削除</button>`;
+}
+
+function clearBookmarks(){
+  if(!confirm('すべての栞を削除しますか？'))return;
+  bookmarks.clear();localSave();scheduleAutoSave();updateBmBadge();renderBmList();
+}
+
+function startQuiz(pool){
+  if(!pool){
+    let p=ALL_QUESTIONS.map((q,i)=>({...q,_origIdx:i}));
+    if(selectedCats.size>0)p=p.filter(q=>selectedCats.has(q.cat));
+    if(shuffleMode)p=shuffleArray(p);
+    pool=p;
+  }
+  questions=pool;current=0;answers=new Array(questions.length).fill(null);currentSession=true;
+  document.getElementById('startScreen').style.display='none';
+  document.getElementById('bookmarkList').classList.remove('show');
+  document.getElementById('resultScreen').classList.remove('show');
+  document.getElementById('quizScreen').style.display='block';
+  document.getElementById('navTabs').style.display='none';
+  renderQuestion();
+}
+
+function startBookmarked(){
+  const pool=[...bookmarks].map(i=>({...ALL_QUESTIONS[i],_origIdx:i})).filter(Boolean);
+  if(pool.length===0)return;
+  startQuiz(pool);
+}
+
+function getOrigIdx(q){return q._origIdx!==undefined?q._origIdx:ALL_QUESTIONS.indexOf(q);}
+
+function renderQuestion(){
+  if(current>=questions.length){showResult();return;}
+  const q=questions[current];
+  currentQIndex=getOrigIdx(q);
+  document.getElementById('progressNum').textContent=`${current+1} / ${questions.length}`;
+  const corrCount=answers.filter(a=>a&&a.correct).length;
+  document.getElementById('progressScore').textContent=`正解 ${corrCount} 問`;
+  document.getElementById('progressFill').style.width=`${(current/questions.length)*100}%`;
+  document.getElementById('qTag').textContent=q.no;
+  document.getElementById('qNum').textContent=q.opt||'';
+  document.getElementById('qText').textContent=q.q;
+  const bBtn=document.getElementById('btnBookmark');
+  bBtn.textContent=bookmarks.has(currentQIndex)?'★':'☆';
+  bBtn.classList.toggle('active',bookmarks.has(currentQIndex));
+  const ans=answers[current];
+  const panel=document.getElementById('resultPanel');
+  const nextBtn=document.getElementById('btnNext');
+  if(ans){
+    renderOxButtons(q,ans.userChoice,true);
+    showResultPanel(q,ans.correct);
+    nextBtn.style.display='block';
+  }else{
+    renderOxButtons(q,null,false);
+    panel.style.display='none';panel.className='result-panel';
+    nextBtn.style.display='none';
+  }
+  document.getElementById('btnBack').disabled=current===0;
+  document.getElementById('btnSkip').style.display=ans?'none':'block';
+}
+
+function renderOxButtons(q,userChoice,isAnswered){
+  const bm=document.getElementById('btnMaru');
+  const bb=document.getElementById('btnBatsu');
+  bm.className='btn-answer btn-maru';bb.className='btn-answer btn-batsu';
+  bm.disabled=false;bb.disabled=false;
+  if(isAnswered){
+    bm.disabled=true;bb.disabled=true;
+    if(userChoice===true){
+      bm.className=q.a===true?'btn-answer correct-chosen':'btn-answer wrong-chosen';
+      if(q.a!==true)bb.className='btn-answer reveal-correct';
+    }else{
+      bb.className=q.a===false?'btn-answer correct-chosen':'btn-answer wrong-chosen';
+      if(q.a!==false)bm.className='btn-answer reveal-correct';
+    }
+  }
+}
+
+function showResultPanel(q,isCorrect){
+  const panel=document.getElementById('resultPanel');
+  panel.style.display='block';
+  panel.className=isCorrect?'result-panel correct':'result-panel wrong';
+  document.getElementById('resultHeader').textContent=isCorrect?'✓ 正解！':'✗ 不正解';
+  document.getElementById('resultExp').textContent=q.exp;
+  document.getElementById('resultSource').textContent='根拠：'+q.src;
+}
+
+function answerOx(userAnswer){
+  if(answers[current])return;
+  const q=questions[current];
+  const isCorrect=userAnswer===q.a;
+  answers[current]={correct:isCorrect,userChoice:userAnswer};
+  recordStat(currentQIndex,isCorrect);
+  renderOxButtons(q,userAnswer,true);
+  showResultPanel(q,isCorrect);
+  document.getElementById('btnNext').style.display='block';
+  document.getElementById('btnSkip').style.display='none';
+  const corrCount=answers.filter(a=>a&&a.correct).length;
+  document.getElementById('progressScore').textContent=`正解 ${corrCount} 問`;
+  localSave();
+  scheduleAutoSave();
+}
+
+function nextQuestion(){current++;renderQuestion();}
+function goBack(){if(current===0)return;current--;renderQuestion();}
+function skipQuestion(){if(answers[current])return;current++;renderQuestion();}
+
+function toggleBookmark(){
+  if(currentQIndex<0)return;
+  if(bookmarks.has(currentQIndex))bookmarks.delete(currentQIndex);
+  else bookmarks.add(currentQIndex);
+  localSave();scheduleAutoSave();updateBmBadge();
+  const bBtn=document.getElementById('btnBookmark');
+  bBtn.textContent=bookmarks.has(currentQIndex)?'★':'☆';
+  bBtn.classList.toggle('active',bookmarks.has(currentQIndex));
+}
+
+function showResult(){
+  currentSession=false;
+  document.getElementById('quizScreen').style.display='none';
+  document.getElementById('navTabs').style.display='flex';
+  const rs=document.getElementById('resultScreen');rs.classList.add('show');
+  const total=questions.length;
+  const ok=answers.filter(a=>a&&a.correct).length;
+  const ng=answers.filter(a=>a&&!a.correct).length;
+  const sk=answers.filter(a=>a===null).length;
+  document.getElementById('finalScore').textContent=ok;
+  document.getElementById('finalDenom').textContent=`/ ${total}`;
+  document.getElementById('finalPct').textContent=`正解率 ${Math.round(ok/total*100)}%`;
+  document.getElementById('okCount').textContent=ok;
+  document.getElementById('ngCount').textContent=ng;
+  document.getElementById('skCount').textContent=sk;
+  const pct=Math.round(ok/total*100);
+  let msg=pct>=80?'素晴らしい！本試験レベルの高得点です。\n引き続き精度を高めましょう。':pct>=60?'合格ラインに近い水準です。\n間違えた問題を重点的に復習しましょう。':'基礎からの確認が必要です。\n繰り返し解いて定着させましょう。';
+  document.getElementById('scoreMsg').textContent=msg;
+  const wrongIdx=answers.map((a,i)=>a&&!a.correct?i:-1).filter(i=>i>=0);
+  const skipIdx=answers.map((a,i)=>a===null?i:-1).filter(i=>i>=0);
+  document.getElementById('btnRetryWrong').style.display=wrongIdx.length>0?'inline-block':'none';
+  document.getElementById('btnRetrySkipped').style.display=skipIdx.length>0?'inline-block':'none';
+  document.getElementById('btnRetryWrong').onclick=()=>startQuiz(wrongIdx.map(i=>({...questions[i]})));
+  document.getElementById('btnRetrySkipped').onclick=()=>startQuiz(skipIdx.map(i=>({...questions[i]})));
+  localSave();
+  if(accessToken) saveToDrive();
+}
+
+function resetToStart(){
+  document.getElementById('resultScreen').classList.remove('show');
+  document.getElementById('startScreen').style.display='';
+  switchTab('start');
+}
+function retryWrong(){}
+function retrySkipped(){}
+
+// Toast
+let toastTimer=null;
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast'+(type?' '+type:'');
+  t.classList.add('show');
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function parseJwt(token){
+  try{return JSON.parse(atob(token.split('.')[1]));}catch(e){return null;}
+}
+
+// ============================================================
+//  BOOT
+// ============================================================
+document.getElementById('appTitle').textContent = APP_CONFIG.title;
+document.getElementById('appSubtitle').textContent = APP_CONFIG.subtitle;
+
+localLoad();
+initFilters();
+updateBmBadge();
+updateStartCount();
+
+// Load GAPI & GIS after page ready
+window.addEventListener('load', ()=>{
+  gapi.load('client', async ()=>{
+    await gapi.client.init({});
+    gapiInited=true;
+    maybeEnableSync();
+  });
+  const s=document.createElement('script');
+  s.src='https://accounts.google.com/gsi/client';
+  s.onload=()=>{
+    tokenClient=google.accounts.oauth2.initTokenClient({
+      client_id:CLIENT_ID,scope:SCOPES,
+      callback:async(resp)=>{
+        if(resp.error){showToast('ログインエラー','error');return;}
+        accessToken=resp.access_token;
+        gapi.client.setToken({access_token:accessToken});
+        onSignedIn();
+      }
+    });
+    gisInited=true;
+    maybeEnableSync();
+  };
+  document.head.appendChild(s);
+});
+</script>
+</body>
+</html>
