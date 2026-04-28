@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>健康保険法 一問一答</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic', sans-serif;
+    background: #0f1923;
+    color: #e8e0d0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+  }
+  .app { width: 100%; max-width: 640px; }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 24px 0 20px;
+  }
+  .header h1 {
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    color: #8a9bb0;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .header .title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #e8e0d0;
+    letter-spacing: 0.04em;
+  }
+  .header .subtitle {
+    font-size: 12px;
+    color: #556070;
+    margin-top: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Progress */
+  .progress-wrap {
+    margin-bottom: 20px;
+  }
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .progress-num {
+    font-size: 12px;
+    color: #8a9bb0;
+    letter-spacing: 0.05em;
+  }
+  .progress-score {
+    font-size: 12px;
+    color: #8a9bb0;
+  }
+  .progress-bar-bg {
+    width: 100%;
+    height: 3px;
+    background: #1e2d3d;
+    border-radius: 2px;
+  }
+  .progress-bar-fill {
+    height: 3px;
+    background: linear-gradient(90deg, #c9a84c, #e8c97a);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  /* Question card */
+  .card {
+    background: #1a2634;
+    border: 1px solid #2a3a4a;
+    border-radius: 12px;
+    padding: 24px 20px;
+    margin-bottom: 16px;
+  }
+  .q-meta {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .q-tag {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: #c9a84c;
+    background: rgba(201,168,76,0.12);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-weight: 600;
+  }
+  .q-num {
+    font-size: 11px;
+    color: #556070;
+    letter-spacing: 0.05em;
+  }
+  .q-text {
+    font-size: 15px;
+    line-height: 1.75;
+    color: #d8d0c0;
+    word-break: break-all;
+  }
+
+  /* Answer buttons */
+  .btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .btn-answer {
+    border: none;
+    border-radius: 10px;
+    padding: 18px 12px;
+    font-size: 28px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.12s, background 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .btn-answer:active { transform: scale(0.96); }
+  .btn-maru {
+    background: #1c3040;
+    border: 1.5px solid #2a4a60;
+    color: #5bb8e0;
+  }
+  .btn-maru:hover { background: #1e3a50; border-color: #5bb8e0; }
+  .btn-batsu {
+    background: #301c1c;
+    border: 1.5px solid #50282a;
+    color: #e07060;
+  }
+  .btn-batsu:hover { background: #3a2020; border-color: #e07060; }
+  .btn-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+  }
+  .btn-answer.correct-chosen {
+    background: #163328;
+    border-color: #3dbe82;
+    color: #3dbe82;
+  }
+  .btn-answer.wrong-chosen {
+    background: #331616;
+    border-color: #e05050;
+    color: #e05050;
+  }
+  .btn-answer.reveal-correct {
+    background: #163328;
+    border-color: #3dbe82;
+    color: #3dbe82;
+  }
+  .btn-answer:disabled { cursor: default; }
+
+  /* Result panel */
+  .result-panel {
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: none;
+    animation: fadeUp 0.2s ease;
+  }
+  .result-panel.correct {
+    background: #0d2a1e;
+    border: 1px solid #2a6044;
+  }
+  .result-panel.wrong {
+    background: #2a0d0d;
+    border: 1px solid #6a2020;
+  }
+  .result-header {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+  }
+  .result-panel.correct .result-header { color: #3dbe82; }
+  .result-panel.wrong .result-header { color: #e05050; }
+  .result-exp {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #a0b0c0;
+  }
+  .result-source {
+    font-size: 11px;
+    color: #556070;
+    margin-top: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Next button */
+  .btn-next {
+    width: 100%;
+    background: #c9a84c;
+    color: #1a1200;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    transition: background 0.15s, transform 0.1s;
+    display: none;
+  }
+  .btn-next:hover { background: #e8c97a; }
+  .btn-next:active { transform: scale(0.98); }
+
+  /* Result screen */
+  .result-screen {
+    display: none;
+    text-align: center;
+    padding: 32px 16px;
+  }
+  .result-screen.show { display: block; }
+  .score-circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 3px solid #c9a84c;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+  }
+  .score-big {
+    font-size: 48px;
+    font-weight: 700;
+    color: #e8c97a;
+    line-height: 1;
+  }
+  .score-denom {
+    font-size: 14px;
+    color: #8a9bb0;
+    margin-top: 4px;
+  }
+  .score-pct {
+    font-size: 18px;
+    font-weight: 600;
+    color: #c9a84c;
+    margin-bottom: 8px;
+  }
+  .score-msg {
+    font-size: 14px;
+    color: #8a9bb0;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+  .btn-retry {
+    background: transparent;
+    border: 1.5px solid #c9a84c;
+    color: #c9a84c;
+    border-radius: 10px;
+    padding: 12px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 0 6px;
+    transition: background 0.15s;
+    letter-spacing: 0.05em;
+  }
+  .btn-retry:hover { background: rgba(201,168,76,0.12); }
+  .breakdown {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .breakdown-item {
+    background: #1a2634;
+    border: 1px solid #2a3a4a;
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .breakdown-num {
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .breakdown-num.ok { color: #3dbe82; }
+  .breakdown-num.ng { color: #e05050; }
+  .breakdown-label { font-size: 12px; color: #8a9bb0; margin-top: 4px; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Shuffle toggle */
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .btn-ctrl {
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 6px;
+    border: 1px solid #2a3a4a;
+    background: transparent;
+    color: #8a9bb0;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.15s;
+  }
+  .btn-ctrl.active {
+    border-color: #c9a84c;
+    color: #c9a84c;
+    background: rgba(201,168,76,0.1);
+  }
+  .btn-ctrl:hover { border-color: #8a9bb0; }
+
+  .start-screen {
+    text-align: center;
+    padding: 32px 16px;
+  }
+  .start-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #e8e0d0;
+    margin-bottom: 8px;
+  }
+  .start-desc {
+    font-size: 14px;
+    color: #8a9bb0;
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+  .start-count {
+    font-size: 48px;
+    font-weight: 700;
+    color: #c9a84c;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .start-unit {
+    font-size: 14px;
+    color: #8a9bb0;
+    margin-bottom: 28px;
+    display: block;
+  }
+  .btn-start {
+    background: #c9a84c;
+    color: #1a1200;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 40px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: background 0.15s;
+    display: block;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto 12px;
+  }
+  .btn-start:hover { background: #e8c97a; }
+
+  .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .filter-btn {
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid #2a3a4a;
+    background: transparent;
+    color: #8a9bb0;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn.active {
+    border-color: #c9a84c;
+    color: #c9a84c;
+    background: rgba(201,168,76,0.1);
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>社会保険労務士 試験対策</h1>
+    <div class="title">健康保険法 一問一答</div>
+    <div class="subtitle">TAC 択一式問題 全60問</div>
+  </div>
+
+  <!-- Start Screen -->
+  <div class="start-screen" id="startScreen">
+    <span class="start-count">60</span>
+    <span class="start-unit">問（問1〜問12 各5肢）</span>
+    <div class="start-desc">
+      各肢について○か×かを判断してください。<br>
+      出題範囲を絞ることも可能です。
+    </div>
+    <div style="margin-bottom:16px;">
+      <div style="font-size:12px;color:#8a9bb0;margin-bottom:8px;letter-spacing:0.05em;">出題範囲</div>
+      <div class="filter-row" id="filterRow"></div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:10px;margin-bottom:20px;">
+      <button class="btn-ctrl" id="btnShuffle" onclick="toggleShuffle()">シャッフル</button>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">スタート →</button>
+  </div>
+
+  <!-- Quiz Screen -->
+  <div id="quizScreen" style="display:none;">
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span class="progress-num" id="progressNum">1 / 60</span>
+        <span class="progress-score" id="progressScore">正解 0 問</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="q-meta">
+        <span class="q-tag" id="qTag">問1</span>
+        <span class="q-num" id="qNum">A</span>
+      </div>
+      <p class="q-text" id="qText"></p>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-answer btn-maru" id="btnMaru" onclick="answer(true)">
+        ○
+        <span class="btn-label">CORRECT</span>
+      </button>
+      <button class="btn-answer btn-batsu" id="btnBatsu" onclick="answer(false)">
+        ×
+        <span class="btn-label">WRONG</span>
+      </button>
+    </div>
+
+    <div class="result-panel" id="resultPanel">
+      <div class="result-header" id="resultHeader"></div>
+      <div class="result-exp" id="resultExp"></div>
+      <div class="result-source" id="resultSource"></div>
+    </div>
+
+    <button class="btn-next" id="btnNext" onclick="nextQuestion()">次の問題 →</button>
+  </div>
+
+  <!-- Result Screen -->
+  <div class="result-screen" id="resultScreen">
+    <div class="score-circle">
+      <span class="score-big" id="finalScore">0</span>
+      <span class="score-denom" id="finalDenom">/ 60</span>
+    </div>
+    <div class="score-pct" id="finalPct"></div>
+    <div class="breakdown">
+      <div class="breakdown-item">
+        <div class="breakdown-num ok" id="okCount">0</div>
+        <div class="breakdown-label">正解</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-num ng" id="ngCount">0</div>
+        <div class="breakdown-label">不正解</div>
+      </div>
+    </div>
+    <div class="score-msg" id="scoreMsg"></div>
+    <button class="btn-retry" onclick="resetToStart()">最初から</button>
+    <button class="btn-retry" onclick="retryWrong()" id="btnRetryWrong">間違えた問題のみ</button>
+  </div>
+</div>
+
+<script>
+const ALL_QUESTIONS = [
+  {no:"問1",opt:"A",q:"常時６人の従業員を使用して旅館の事業を行う個人経営の事業所は、強制適用事業所に該当する。",a:false,exp:"旅館はサービス業に該当し、健康保険の非適用業種のため、使用する労働者の数にかかわらず強制適用事業所には該当しない。",src:"法3条3項1号"},
+  {no:"問1",opt:"B",q:"常時３人の従業員を使用して建設業を行う法人の事業所は、強制適用事業所に該当する。",a:true,exp:"常時従業員を使用する法人の事業所は、従業員数・業種にかかわらず強制適用事業所に該当する。",src:"法3条3項1号ロ、2号"},
+  {no:"問1",opt:"C",q:"健康保険の適用事業所ではない事業所の事業主は、その使用する従業員の２分の１以上から希望があったときは、厚生労働大臣に対して、任意適用事業所の認可に係る申請を行わなければならない。",a:false,exp:"健康保険では、労災・雇用保険と異なり、従業員の２分の１以上の希望があっても事業主に任意適用の申請義務はない。",src:"法31条"},
+  {no:"問1",opt:"D",q:"常時６人の従業員を使用して物の製造の事業を行う個人経営の事業所が、従業員２人の退職により強制適用要件を満たさなくなった場合、引き続き健康保険の適用を受けるには改めて任意適用事業所の認可を受けなければならない。",a:false,exp:"この場合、改めて認可申請をしなくとも、任意適用事業所の認可があったものとみなされる（任意適用の擬制）。",src:"法3条3項1号イ、法31条、法32条"},
+  {no:"問1",opt:"E",q:"任意適用事業所の取消しの認可申請は、当該事業所に使用される者（被保険者である者に限る。）の２分の１以上の同意を得たことを証する書類を添付して行う。",a:false,exp:"取消し申請には「４分の３以上」の同意が必要。２分の１では足りない。",src:"法33条、則22条"},
+
+  {no:"問2",opt:"A",q:"一般の被保険者が同時に２以上の事業所に使用されるに至ったとき、「健康保険被保険者二以上事業所勤務届」と「健康保険被保険者所属選択届」の両方を同時に提出する必要がある。",a:false,exp:"保険者選択に係る「所属選択届」を提出する場合、「二以上事業所勤務届」は提出不要とされている。両方の同時提出は不要。",src:"法7条、則2条1項、則37条1項"},
+  {no:"問2",opt:"B",q:"厚生労働大臣は、保険医療機関等の指定を取り消す場合は地方社会保険医療協議会に諮問しなければならないが、指定を行う場合は諮問不要とされている。",a:false,exp:"指定を行おうとする場合も、地方社会保険医療協議会に諮問しなければならない。",src:"法82条2項"},
+  {no:"問2",opt:"C",q:"保険医又は保険薬剤師は、３月以上の予告期間を設けて、その登録の抹消を求めることができる。",a:false,exp:"正しくは「１月以上」の予告期間である。３月ではなく１月。",src:"法79条2項"},
+  {no:"問2",opt:"D",q:"診療所が医師又は歯科医師の開設したものであり、当該開設者のみが診療に従事している場合において、当該医師等について保険医の登録があったときは、原則として当該診療所について保険医療機関の指定があったものとみなす。",a:true,exp:"個人開業の診療所につき、開設者が保険医登録を受けたときは、原則として保険医療機関の指定があったとみなす規定が設けられている。",src:"法69条"},
+  {no:"問2",opt:"E",q:"厚生労働大臣は、申請者が地方公共団体・医療法人・社会福祉法人等でないとき、地方社会保険医療協議会に諮問してその指定をしないことができる。",a:false,exp:"申請者が所定の法人等でない場合、地方社会保険医療協議会への諮問は不要であり、厚生労働大臣は指定を「してはならない」とされている。",src:"法89条4項1号"},
+
+  {no:"問3",opt:"ア",q:"厚生労働大臣が定める方法により計算した入院期間が180日を超えた日以後の入院及びその看護（大臣が定める状態等にある者を除く。）は、選定療養に該当する。",a:true,exp:"180日超の入院は選定療養に該当する。ただし、厚生労働大臣が定める状態にある者（難病等）は除かれる。",src:"法63条2項5号"},
+  {no:"問3",opt:"イ",q:"療養の給付の範囲には、食事療養・生活療養・評価療養・患者申出療養・選定療養は含まれない。",a:true,exp:"療養の給付の範囲には、これら５種類は含まれない（別途給付として位置付けられる）。",src:"法63条2項"},
+  {no:"問3",opt:"ウ",q:"療養の給付を受けようとする者は、保険者が指定する保険医療機関等から電子資格確認を受け、当該給付を受ける。",a:false,exp:"「保険者が指定するもの」ではなく「自己の選定するもの」から受ける。患者が保険医療機関を自由に選択できる。",src:"法63条3項"},
+  {no:"問3",opt:"エ",q:"柔道整復師による骨折・脱臼・打撲・捻挫についての施術費用は、いずれの場合も応急手当の場合を除き医師の同意がなければ療養費の支給対象とならない。",a:false,exp:"医師の同意が必要なのは「骨折・脱臼」の場合（応急手当を除く）のみ。打撲・捻挫には医師の同意は不要。",src:"法87条1項"},
+  {no:"問3",opt:"オ",q:"輸血の場合の血液料金は療養費の支給対象となるが、保存血を用いた場合には療養の給付として現物給付される。",a:true,exp:"生血（親族等からの供血）は療養費、保存血（血液バンク等）は療養の給付（現物給付）として扱われる。",src:"法87条1項"},
+
+  {no:"問4",opt:"A",q:"一般の被保険者で傷病手当金の支給を受けるべきものが、老齢基礎年金及び老齢厚生年金の支給を受けることができるときは、原則として傷病手当金は支給されない。",a:false,exp:"老齢年金と傷病手当金の併給調整が行われるのは、傷病手当金が「資格喪失後の継続給付」の場合のみ。現に被保険者である者への傷病手当金は調整対象外。",src:"法108条5項、令38条1号・2号"},
+  {no:"問4",opt:"B",q:"保険者が全国健康保険協会である場合においては、法定の保険給付に加え、保険給付としてその他の給付（付加給付）を行うことができる。",a:false,exp:"付加給付は健康保険組合のみが規約に定めることで行えるもの。全国健康保険協会は付加給付を行うことができない。",src:"法53条"},
+  {no:"問4",opt:"C",q:"租税その他の公課は保険給付として支給を受けた金品を標準として課することはできないが、資格喪失後の傷病手当金・出産手当金の継続給付については課税できる。",a:false,exp:"資格喪失後の継続給付（傷病手当金・出産手当金）についても、租税その他の公課を課すことはできない。",src:"法62条"},
+  {no:"問4",opt:"D",q:"被保険者が休職中で報酬から保険料を控除できない場合、事業主及び被保険者はその月に限り保険料を負担する義務を免れる。",a:false,exp:"使用関係が存続する限り、保険料免除規定（育休・産休等）の適用がない限り、休職中でも保険料負担義務は免れない。",src:"法161条1項"},
+  {no:"問4",opt:"E",q:"全国健康保険協会は、①年齢階級別分布の差異による費用負担の不均衡と②総報酬額平均の差異による財政力の不均衡を是正するため、支部被保険者を単位とする健康保険財政の調整を行う。",a:true,exp:"法160条4項に規定される支部間財政調整。２種類の不均衡（費用負担不均衡と財政力不均衡）を是正する仕組みである。",src:"法160条4項"},
+
+  {no:"問5",opt:"A",q:"各月の一般の被保険者（介護保険第２号被保険者を除く。）に係る保険料額は、標準報酬月額・標準賞与額に、一般保険料率と子ども・子育て支援金率を合算した率を乗じて得た額とされている。",a:true,exp:"介護保険第２号被保険者以外の一般被保険者については、一般保険料等額（一般保険料率＋子ども・子育て支援金率）のみが適用される。",src:"法156条1項"},
+  {no:"問5",opt:"B",q:"介護保険第２号被保険者である被保険者が第２号被保険者に該当しなくなったときは、その前月分及びその月分の介護保険料は徴収されない。",a:false,exp:"該当しなくなった「その月分」の介護保険料は徴収されないが、「前月分」は引き続き徴収される。前月分まで不徴収とはならない。",src:"法156条2項"},
+  {no:"問5",opt:"C",q:"人工腎臓を実施している慢性腎不全の療養を受けている場合の高額療養費算定基準額は、年齢・標準報酬月額にかかわらず一律10,000円とされている。",a:false,exp:"70歳未満で標準報酬月額が53万円以上の場合は20,000円となる。一律10,000円ではない。",src:"法115条、令41条9項・42条9項"},
+  {no:"問5",opt:"D",q:"高額療養費多数回該当とは、同一世帯で療養月以前12月以内に既に高額療養費が支給された月数が２月以上ある場合をいい、３月目以降に多数回該当の算定基準額が適用される。",a:false,exp:"正しくは「３月以上」の場合であり、「４月目以降」に多数回該当の基準額が適用される。２月・３月目は誤り。",src:"法115条、令42条1項"},
+  {no:"問5",opt:"E",q:"出産育児一時金の加算は、産科医療補償制度に加入する医療機関等での出産かつ妊娠４月以上の出産（死産含む）の場合に行われる。",a:false,exp:"加算要件は「在胎週数22週に達した日以後の出産」であり、「妊娠４月以上」ではない。現在の加算額は12,000円（合計50万円）。",src:"法101条、令36条"},
+
+  {no:"問6",opt:"A",q:"保険者等は、繰上徴収事由該当により告知を受けた保険料納付義務者が指定期限までに保険料を納付しないときは、国税滞納処分の例によりこれを処分し、又は市町村に処分を請求することができる。",a:true,exp:"繰上徴収の場合も、督促後未納の場合と同様に、国税滞納処分の例による処分や市町村への処分請求が可能。",src:"法180条4項2号"},
+  {no:"問6",opt:"B",q:"一般の被保険者が適用事業所の代表取締役等である場合、育児休業等期間中の保険料免除は適用されるが、産前産後休業期間中の保険料免除は適用されない。",a:false,exp:"逆。代表取締役等は労基法9条の「労働者」でないため育休免除は「適用なし」。産前産後休業免除は労働者に限定されないため「適用あり」。",src:"法159条1項、法159条の3"},
+  {no:"問6",opt:"C",q:"入院時食事療養費は、療養病床に入院する被保険者に対しては支給されない。",a:false,exp:"療養病床への入院でも65歳未満の者には入院時食事療養費が支給される。65歳以上の「特定長期入院被保険者」のみが支給対象外。",src:"法85条1項カッコ書"},
+  {no:"問6",opt:"D",q:"健康保険組合は、健康保険組合直営医療機関から療養の給付を受ける者に一部負担金を支払わせることはできない。",a:false,exp:"健康保険組合は規約で定めることにより、法定の一部負担金の額の範囲内で、直営医療機関利用者に一部負担金を支払わせることができる。",src:"法84条3項"},
+  {no:"問6",opt:"E",q:"埋葬料の額は、療養の給付に係る一部負担金の規定が準用されており、埋葬費用から一部負担金を控除した額とされている。",a:false,exp:"埋葬料に一部負担金の規定は準用されていない。埋葬料は一律5万円である。",src:"法100条1項、令35条"},
+
+  {no:"問7",opt:"A",q:"被保険者が保険医療機関から食事療養を受けたとき、保険者は被保険者に代わり当該機関に入院時食事療養費相当額を支払うことができ、この支払があったときは被保険者への支給があったものとみなされる。",a:true,exp:"入院時食事療養費の現物給付化の規定。保険者が被保険者に代わって保険医療機関へ支払いをした場合、被保険者への支給があったとみなされる。",src:"法85条5項・6項、則57条"},
+  {no:"問7",opt:"B",q:"指定訪問看護事業者は、あらかじめ利用者等の同意を得た場合には、基本利用料のほか指定訪問看護の提供に係る交通費等についても支払を受けることができる。",a:true,exp:"事前に利用者・家族等の同意があれば、基本利用料以外に交通費等その他の利用料の支払いを受けることができる。",src:"法88条4項"},
+  {no:"問7",opt:"C",q:"子ども・子育て支援金率は、全保険者が納付すべき納付金総額を全保険者管掌被保険者の総報酬額見込額で除した率を基礎として政令で定める範囲内で、保険者が定める。",a:true,exp:"子ども・子育て支援金率は政令で定める率の範囲内において、各保険者がそれぞれ定める仕組みとなっている。",src:"法160条の2、1項"},
+  {no:"問7",opt:"D",q:"健康保険組合が徴収する調整保険料の額は、各被保険者の標準報酬月額・標準賞与額に、調整保険料率と子ども・子育て支援金率を合算した率を乗じて得た額とされている。",a:false,exp:"調整保険料には子ども・子育て支援金率は合算しない。調整保険料率のみを乗じる。",src:"法附則2条4項"},
+  {no:"問7",opt:"E",q:"月間の高額療養費は暦月単位で算定するため、11月15日〜12月20日の入院は、11月分と12月分に分けて支給額が算定される。",a:true,exp:"高額療養費は暦月1か月ごとに算定する。月をまたぐ場合は各月に分けて計算される。",src:"法115条、令41条"},
+
+  {no:"問8",opt:"ア",q:"傷病手当金の額の算定において、支給開始月以前の直近12月間に保険者等の異動があったときは、異動前の保険者等により定められた標準報酬月額は算定に用いない。",a:true,exp:"算定対象となる標準報酬月額は「現に属する保険者等が定めたもの」に限られる。異動前の保険者が定めた標準報酬月額は算定に使用しない。",src:"法99条2項"},
+  {no:"問8",opt:"イ",q:"被保険者が12月２日・３日に休業し、４日に出勤後、５日に再び休業した場合、12月２日・３日・５日の休業をもって傷病手当金の待期が完成する。",a:false,exp:"待期は労務不能の日が「３日継続」して初めて完成する。間に出勤日（4日）があるため待期は完成しない。",src:"法99条1項"},
+  {no:"問8",opt:"ウ",q:"家族出産育児一時金の額は、被保険者本人の出産育児一時金の額の４分の３に相当する金額とされている。",a:false,exp:"家族出産育児一時金は被保険者本人の出産育児一時金と同額（488,000円または50万円）である。４分の３ではない。",src:"法114条、令36条"},
+  {no:"問8",opt:"エ",q:"被保険者の被扶養者が死亡したときは、家族埋葬料として埋葬料の範囲内でその埋葬に要した費用に相当する金額が支給される。",a:false,exp:"家族埋葬料は埋葬に要した費用相当額ではなく、本人の埋葬料と同額の一律5万円である。",src:"法113条、令35条"},
+  {no:"問8",opt:"オ",q:"埋葬料の支給対象となる「被保険者により生計を維持していた者」は、必ずしも親族である必要はなく、同一世帯であったか否かも問われない。",a:true,exp:"生計維持関係があれば親族・同居要件は不問。実際に被保険者が生計を維持していた者であれば対象となる。",src:"法100条1項"},
+
+  {no:"問9",opt:"A",q:"保険者は、不正受給者に対し６月以内の期間を定めて傷病手当金・出産手当金の全部または一部を支給しない旨の決定をすることができる（不正行為から１年経過後を除く）。",a:true,exp:"給付制限の規定。不正行為から1年以内に限り、最大6か月間の給付制限が可能。",src:"法120条"},
+  {no:"問9",opt:"B",q:"道路交通法規違反によって処罰されるべき行為中に起こした事故により死亡した場合は、「故意の犯罪行為により給付事由を生じさせた」に該当し、埋葬料・埋葬費は支給されない。",a:false,exp:"この場合は「自己の故意の犯罪行為」には該当しないとされ、自殺に準じて埋葬料・埋葬費を支給して差し支えないとされている。",src:"法116条"},
+  {no:"問9",opt:"C",q:"被保険者が刑事施設に拘禁されたときは、保険給付は行わないが、被扶養者に係る家族療養費等は制限されない。",a:true,exp:"拘禁中は被保険者本人への給付（傷病手当金・出産手当金を除く）は制限されるが、被扶養者に係る給付（家族療養費等）は制限されない。",src:"法118条"},
+  {no:"問9",opt:"D",q:"日雇特例被保険者を使用する事業主は、使用する日ごとに日雇特例被保険者手帳に健康保険印紙を貼り、消印して保険料を納付しなければならない。",a:true,exp:"日雇特例被保険者の保険料は、「賃金を支払う都度」ではなく、「使用する日ごと」に印紙保険料として納付する。",src:"法169条2項・3項・5項"},
+  {no:"問9",opt:"E",q:"厚生労働大臣は毎年度、日雇関係組合から拠出金を徴収し、日雇関係組合は毎年度、９月30日及び３月31日までに拠出金を納付する義務を負う。",a:true,exp:"日雇拠出金の徴収規定。年2回（9月30日・3月31日）納付義務を負う。",src:"法173条、令55条1項"},
+
+  {no:"問10",opt:"A",q:"４月１日に一般の被保険者の資格を喪失した者が、同月15日に任意継続被保険者となる旨の申出をした場合、任意継続被保険者の資格取得時期は15日となる。",a:false,exp:"任意継続被保険者の資格取得時期は一般の被保険者の「資格を喪失した日」（４月１日）である。申出日の15日ではない。",src:"法37条1項"},
+  {no:"問10",opt:"B",q:"特定適用事業所が該当しなくなった場合、短時間労働者を引き続き一般の被保険者とするには、任意特定適用事業所の申出が必要である。",a:false,exp:"特定適用事業所に該当しなくなっても、特定４分の３未満短時間労働者は特段の手続きなしに引き続き一般の被保険者となる。",src:"法附則46条2項"},
+  {no:"問10",opt:"C",q:"特定４分の３未満短時間労働者は、国又は地方公共団体に使用される場合は一般の被保険者となる。",a:true,exp:"国・地方公共団体は常に「特定適用事業所」に該当するため、短時間労働者も一般の被保険者となる。",src:"法附則46条1項カッコ書"},
+  {no:"問10",opt:"D",q:"季節的業務に４月の契約で使用される者が４月を超えて使用されるに至ったときは、当該超えた時点で一般の被保険者の資格を取得する。",a:false,exp:"季節的業務に当初から４月以内の期間で使用される者は、実際に４月を超えても一般被保険者の資格を取得しない。",src:"法3条1項4号"},
+  {no:"問10",opt:"E",q:"20歳の配偶者（障害者でない）に係る被扶養者認定において、年間収入が150万円未満かつ被保険者の年間収入の２分の１未満であれば生計維持要件を満たす。",a:false,exp:"19歳以上23歳未満の者に適用される「150万円未満」基準は、被保険者の配偶者には適用されない。配偶者は通常の「130万円未満」基準が適用される。",src:"法3条7項1号"},
+
+  {no:"問11",opt:"A",q:"傷病手当金支給要件を満たす者が、報酬受給のため資格喪失時に傷病手当金の支給を受けていなかった場合でも、資格喪失日前日まで継続１年以上被保険者であれば、資格喪失後の継続給付の支給要件を満たす。",a:true,exp:"報酬を受けていたため一時支給停止されていた場合も「支給を受けていた」に含まれる。継続1年以上被保険者の要件を満たせば継続給付の対象。",src:"法104条"},
+  {no:"問11",opt:"B",q:"資格喪失後の出産育児一時金支給要件を満たす者が被保険者の被扶養者となっている場合は、請求者の選択により、資格喪失後の出産育児一時金か家族出産育児一時金のどちらか一方が支給される。",a:true,exp:"二重支給を防ぐため、請求者の選択によりどちらか一方のみが支給される。",src:"法106条"},
+  {no:"問11",opt:"C",q:"保険者は、正当な理由なく療養に関する指示に従わない被保険者・元被保険者に対し、保険給付の一部を行わないことができる。",a:true,exp:"法119条に規定される給付制限。正当な理由のない療養指示違反には給付の一部制限が可能。",src:"法119条"},
+  {no:"問11",opt:"D",q:"日雇特例被保険者の健康保険の保険者は、全国健康保険協会及び日雇関係組合である。",a:false,exp:"日雇特例被保険者の保険者は「全国健康保険協会のみ」である。日雇関係組合は拠出金を拠出する義務を負うが保険者ではない。",src:"法123条1項"},
+  {no:"問11",opt:"E",q:"日雇特例被保険者への出産手当金の額は、１日につき、出産日の属する月の前４月間の保険料納付日に係る標準賃金日額の各月合算額のうち最大のものの45分の１に相当する金額である。",a:true,exp:"日雇特例被保険者の出産手当金は前4か月の保険料納付実績を基礎に算定される（45分の１）。",src:"法138条2項"},
+
+  {no:"問12",opt:"A",q:"被保険者が同時に２以上の事業所に使用される場合の保険料は、主たる報酬を受ける一の事業主のみが納付義務を負う。",a:false,exp:"２以上の事業所に同時使用される場合、各事業所の事業主がそれぞれ保険料の納付義務を負う。",src:"法161条4項、令47条"},
+  {no:"問12",opt:"B",q:"保険料の徴収は、全国健康保険協会管掌の場合は厚生労働大臣（任意継続被保険者を除く）が行い、健康保険組合管掌の場合は当該健康保険組合が行う。",a:true,exp:"協会けんぽの保険料は厚生労働大臣（実務上は日本年金機構）が徴収し、任意継続被保険者分は全国健康保険協会が徴収する。",src:"法5条2項、法155条1項"},
+  {no:"問12",opt:"C",q:"国庫は、特定健康診査等の実施費用について、1000分の130〜1000分の200の範囲内で政令が定める割合を乗じた額を補助する。",a:false,exp:"特定健康診査等への国庫補助は定率補助ではなく「予算の範囲内」でその費用の一部を補助する形式である。",src:"法154条の2"},
+  {no:"問12",opt:"D",q:"埋葬料の支給を受ける権利は、埋葬を行った日の翌日から起算して２年で時効消滅する。",a:false,exp:"起算日は「埋葬を行った日」ではなく「給付事由発生日（死亡した日）」の翌日から２年。",src:"法193条1項"},
+  {no:"問12",opt:"E",q:"事業主が、正当な理由なく被保険者の資格取得・喪失や報酬月額等の届出を行わず、または虚偽の届出をしたときは、１年以下の拘禁刑又は50万円以下の罰金に処せられる。",a:false,exp:"正しくは「６月以下の拘禁刑」又は50万円以下の罰金である。１年以下ではない。",src:"法208条1号"},
+];
+
+let questions = [];
+let current = 0;
+let correct = 0;
+let answered = false;
+let wrongIndices = [];
+let shuffle = false;
+let selectedGroups = new Set();
+
+const groups = [...new Set(ALL_QUESTIONS.map(q=>q.no))];
+
+function initFilters() {
+  const row = document.getElementById('filterRow');
+  const allBtn = document.createElement('button');
+  allBtn.className = 'filter-btn active';
+  allBtn.textContent = 'すべて';
+  allBtn.dataset.val = 'all';
+  allBtn.onclick = () => {
+    selectedGroups.clear();
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.val === 'all');
+    });
+  };
+  row.appendChild(allBtn);
+  groups.forEach(g => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.textContent = g;
+    btn.dataset.val = g;
+    btn.onclick = () => {
+      document.querySelector('.filter-btn[data-val="all"]').classList.remove('active');
+      btn.classList.toggle('active');
+      if (selectedGroups.has(g)) selectedGroups.delete(g);
+      else selectedGroups.add(g);
+      if (selectedGroups.size === 0) {
+        document.querySelector('.filter-btn[data-val="all"]').classList.add('active');
+      }
+    };
+    row.appendChild(btn);
+  });
+}
+
+function toggleShuffle() {
+  shuffle = !shuffle;
+  document.getElementById('btnShuffle').classList.toggle('active', shuffle);
+}
+
+function startQuiz(fromWrong) {
+  if (fromWrong) {
+    questions = wrongIndices.map(i => ALL_QUESTIONS[i]);
+  } else {
+    let pool = ALL_QUESTIONS;
+    if (selectedGroups.size > 0) {
+      pool = ALL_QUESTIONS.filter(q => selectedGroups.has(q.no));
+    }
+    questions = [...pool];
+    if (shuffle) {
+      for (let i = questions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [questions[i], questions[j]] = [questions[j], questions[i]];
+      }
+    }
+  }
+  current = 0;
+  correct = 0;
+  wrongIndices = [];
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('resultScreen').classList.remove('show');
+  document.getElementById('quizScreen').style.display = 'block';
+  loadQuestion();
+}
+
+function loadQuestion() {
+  if (current >= questions.length) { showResult(); return; }
+  answered = false;
+  const q = questions[current];
+  document.getElementById('qTag').textContent = q.no;
+  document.getElementById('qNum').textContent = q.opt + '肢';
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('progressNum').textContent = `${current+1} / ${questions.length}`;
+  document.getElementById('progressScore').textContent = `正解 ${correct} 問`;
+  document.getElementById('progressFill').style.width = `${(current/questions.length)*100}%`;
+  const panel = document.getElementById('resultPanel');
+  panel.style.display = 'none';
+  panel.className = 'result-panel';
+  document.getElementById('btnNext').style.display = 'none';
+  const bm = document.getElementById('btnMaru');
+  const bb = document.getElementById('btnBatsu');
+  bm.disabled = false; bb.disabled = false;
+  bm.className = 'btn-answer btn-maru';
+  bb.className = 'btn-answer btn-batsu';
+}
+
+function answer(userAnswer) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const isCorrect = userAnswer === q.a;
+  if (isCorrect) correct++;
+  else wrongIndices.push(ALL_QUESTIONS.indexOf(q) >= 0 ? ALL_QUESTIONS.indexOf(q) : current);
+
+  const bm = document.getElementById('btnMaru');
+  const bb = document.getElementById('btnBatsu');
+  bm.disabled = true; bb.disabled = true;
+
+  if (userAnswer === true) {
+    bm.className = isCorrect ? 'btn-answer correct-chosen' : 'btn-answer wrong-chosen';
+    if (!isCorrect) bb.className = 'btn-answer reveal-correct';
+  } else {
+    bb.className = isCorrect ? 'btn-answer correct-chosen' : 'btn-answer wrong-chosen';
+    if (!isCorrect) bm.className = 'btn-answer reveal-correct';
+  }
+
+  const panel = document.getElementById('resultPanel');
+  panel.style.display = 'block';
+  panel.className = isCorrect ? 'result-panel correct' : 'result-panel wrong';
+  document.getElementById('resultHeader').textContent = isCorrect ? '✓ 正解！' : '✗ 不正解';
+  document.getElementById('resultExp').textContent = q.exp;
+  document.getElementById('resultSource').textContent = '根拠：' + q.src;
+
+  document.getElementById('btnNext').style.display = 'block';
+  document.getElementById('progressScore').textContent = `正解 ${correct} 問`;
+}
+
+function nextQuestion() {
+  current++;
+  loadQuestion();
+}
+
+function showResult() {
+  document.getElementById('quizScreen').style.display = 'none';
+  const rs = document.getElementById('resultScreen');
+  rs.classList.add('show');
+  const total = questions.length;
+  const pct = Math.round((correct/total)*100);
+  document.getElementById('finalScore').textContent = correct;
+  document.getElementById('finalDenom').textContent = `/ ${total}`;
+  document.getElementById('finalPct').textContent = `正解率 ${pct}%`;
+  document.getElementById('okCount').textContent = correct;
+  document.getElementById('ngCount').textContent = total - correct;
+  document.getElementById('progressFill').style.width = '100%';
+
+  let msg = '';
+  if (pct >= 80) msg = '素晴らしい！本試験レベルの高得点です。\n引き続き精度を高めましょう。';
+  else if (pct >= 60) msg = '合格ラインに近い水準です。\n間違えた問題を重点的に復習しましょう。';
+  else msg = '基礎からの確認が必要です。\n間違えた問題を繰り返し解いて定着させましょう。';
+  document.getElementById('scoreMsg').textContent = msg;
+  document.getElementById('btnRetryWrong').style.display = wrongIndices.length > 0 ? 'inline-block' : 'none';
+}
+
+function resetToStart() {
+  document.getElementById('resultScreen').classList.remove('show');
+  document.getElementById('startScreen').style.display = 'block';
+}
+
+function retryWrong() {
+  startQuiz(true);
+}
+
+initFilters();
+</script>
+</body>
+</html>
