@@ -458,7 +458,7 @@ async function loadFromDrive(){
     }
   }catch(e){
     console.error(e);
-    showToast('読み込み失敗: '+e.message,'error');
+    const msg=e?.message||e?.result?.error?.message||'初回データなし'; if(msg.includes('初回')||!driveFileId){showToast('クラウドにデータがありません（初回）');}else{showToast('読み込み失敗: '+msg,'error');}
   }
   setSyncing(false);
 }
@@ -493,7 +493,7 @@ async function saveToDrive(){
     showToast('クラウドに保存しました','success');
   }catch(e){
     console.error(e);
-    showToast('保存失敗: '+e.message,'error');
+    showToast('保存失敗: '+(e?.message||e?.result?.error?.message||'通信エラー'),'error');
   }
   setSyncing(false);
 }
