@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>労災保険法 一問一答 — 社労士試験対策</title>
+<script src="https://apis.google.com/js/api.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-serif;background:#11161e;color:#e8e0d0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+.app{width:100%;max-width:640px}
+
+/* ===== SYNC BAR ===== */
+.sync-bar{display:flex;align-items:center;justify-content:space-between;background:#1a2434;border:1px solid #283848;border-radius:10px;padding:10px 14px;margin-bottom:16px;gap:10px;flex-wrap:wrap}
+.sync-status{display:flex;align-items:center;gap:8px;font-size:12px;color:#8a9bb0}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#556070;flex-shrink:0;transition:background .3s}
+.sync-dot.connected{background:#3dbe82}
+.sync-dot.syncing{background:#c9a84c;animation:pulse 1s infinite}
+.sync-dot.error{background:#e05050}
+.sync-user{font-size:11px;color:#556070;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sync-btns{display:flex;gap:6px;align-items:center}
+.btn-gsign{display:flex;align-items:center;gap:6px;background:#fff;color:#3c4043;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap}
+.btn-gsign:hover{background:#f1f3f4}
+.btn-gsign svg{flex-shrink:0}
+.btn-sync{background:transparent;border:1px solid #283848;color:#8a9bb0;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-sync:hover{border-color:#4a9eca;color:#4a9eca}
+.btn-sync:disabled{opacity:.4;cursor:default}
+.btn-signout{background:transparent;border:1px solid #283848;color:#556070;border-radius:6px;padding:5px 8px;font-size:11px;cursor:pointer;transition:all .15s}
+.btn-signout:hover{border-color:#e05050;color:#e05050}
+
+/* ===== HEADER ===== */
+.header{text-align:center;padding:20px 0 16px}
+.header h1{font-size:12px;letter-spacing:.15em;color:#8a9bb0;text-transform:uppercase;margin-bottom:4px}
+.header .title{font-size:21px;font-weight:700;color:#e8e0d0}
+.header .subtitle{font-size:12px;color:#556070;margin-top:5px}
+.nav-tabs{display:flex;gap:4px;background:#131920;border-radius:10px;padding:4px;margin-bottom:18px}
+.nav-tab{flex:1;padding:8px;border:none;border-radius:8px;background:transparent;color:#556070;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.nav-tab.active{background:#1a2434;color:#e8e0d0}
+.bm-badge{display:inline-block;background:rgba(232,201,122,.2);color:#e8c97a;border-radius:4px;font-size:10px;padding:1px 5px;margin-left:4px;font-weight:700}
+
+/* ===== PROGRESS ===== */
+.progress-wrap{margin-bottom:18px}
+.progress-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.progress-num{font-size:12px;color:#8a9bb0}
+.progress-score{font-size:12px;color:#8a9bb0}
+.progress-bar-bg{width:100%;height:3px;background:#1a2434;border-radius:2px}
+.progress-bar-fill{height:3px;background:linear-gradient(90deg,#c97a4a,#e8a87a);border-radius:2px;transition:width .4s ease}
+
+/* ===== QUESTION CARD ===== */
+.card{background:#1a2434;border:1px solid #283848;border-radius:12px;padding:22px 20px;margin-bottom:14px;position:relative}
+.q-meta{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.q-tag{font-size:10px;letter-spacing:.1em;color:#c97a4a;background:rgba(201,122,74,.12);border:1px solid rgba(201,122,74,.25);border-radius:4px;padding:2px 8px;font-weight:600}
+.q-num{font-size:11px;color:#556070}
+/* Accuracy badge on card */
+.q-acc{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;display:none}
+.q-acc.low{background:rgba(224,80,80,.12);border:1px solid rgba(224,80,80,.3);color:#e05050}
+.q-acc.mid{background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);color:#c9a84c}
+.q-acc.high{background:rgba(61,190,130,.12);border:1px solid rgba(61,190,130,.3);color:#3dbe82}
+.q-text{font-size:14px;line-height:1.8;color:#d8d0c0;word-break:break-word;white-space:pre-wrap;padding-right:40px}
+.btn-bookmark{position:absolute;top:18px;right:14px;background:none;border:none;cursor:pointer;font-size:20px;line-height:1;padding:4px;color:#556070;transition:color .15s,transform .1s}
+.btn-bookmark:hover{color:#e8c97a;transform:scale(1.1)}
+.btn-bookmark.active{color:#e8c97a}
+
+/* ===== OX BUTTONS ===== */
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.btn-answer{border:none;border-radius:10px;padding:18px 12px;font-size:26px;font-weight:700;cursor:pointer;transition:transform .12s,background .15s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.btn-answer:active{transform:scale(.96)}
+.btn-maru{background:#1c3040;border:1.5px solid #2a4a60;color:#5bb8e0}
+.btn-maru:hover{background:#1e3a50;border-color:#5bb8e0}
+.btn-batsu{background:#301c1c;border:1.5px solid #50282a;color:#e07060}
+.btn-batsu:hover{background:#3a2020;border-color:#e07060}
+.btn-label{font-size:10px;letter-spacing:.1em;opacity:.7}
+.btn-answer.correct-chosen{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-answer.wrong-chosen{background:#331616;border-color:#e05050;color:#e05050}
+.btn-answer.reveal-correct{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-answer:disabled{cursor:default}
+
+/* ===== SELECT CHOICES (選択式用) ===== */
+.choices-grid{display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.btn-choice{background:#182030;border:1.5px solid #283848;border-radius:8px;padding:12px 10px;font-size:13px;color:#c8c0b0;cursor:pointer;transition:all .15s;text-align:center;line-height:1.5}
+.btn-choice:hover{border-color:#c97a4a;background:#1e2a3a}
+.btn-choice.correct-chosen{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-choice.wrong-chosen{background:#331616;border-color:#e05050;color:#e05050}
+.btn-choice.reveal-correct{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-choice:disabled{cursor:default}
+.q-type-badge{font-size:10px;border-radius:4px;padding:2px 7px;font-weight:600;letter-spacing:.05em}
+.q-type-badge.ox{background:rgba(91,184,224,.12);border:1px solid rgba(91,184,224,.25);color:#5bb8e0}
+.q-type-badge.sel{background:rgba(130,201,122,.12);border:1px solid rgba(130,201,122,.25);color:#82c97a}
+.q-blank{background:rgba(201,122,74,.15);border-bottom:2px solid #c97a4a;color:#e8a87a;padding:0 4px;font-weight:700;border-radius:2px}
+
+/* ===== RESULT PANEL ===== */
+.result-panel{border-radius:10px;padding:14px 16px;margin-bottom:14px;display:none;animation:fadeUp .2s ease}
+.result-panel.correct{background:#0d2a1e;border:1px solid #2a6044}
+.result-panel.wrong{background:#2a0d0d;border:1px solid #6a2020}
+.result-header{font-size:14px;font-weight:700;margin-bottom:8px}
+.result-panel.correct .result-header{color:#3dbe82}
+.result-panel.wrong .result-header{color:#e05050}
+.result-exp{font-size:13px;line-height:1.7;color:#a0b0c0}
+.result-source{font-size:11px;color:#556070;margin-top:8px}
+
+/* ===== NAV BUTTONS ===== */
+.nav-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px}
+.btn-nav{border-radius:9px;padding:11px 10px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid #283848;background:transparent;color:#8a9bb0;white-space:nowrap}
+.btn-nav:hover{background:#1a2434;color:#c8c0b0}
+.btn-nav:disabled{opacity:.3;cursor:default}
+/* ⏸ 中断ボタン */
+.btn-suspend{border-color:#4a3a10 !important;color:#e8c97a !important}
+.btn-suspend:hover{background:rgba(232,201,122,.1) !important;border-color:#e8c97a !important}
+.btn-next{border-radius:9px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;border:none;background:#c97a4a;color:#1a0800;letter-spacing:.05em;display:none;width:100%;margin-bottom:6px}
+.btn-next:hover{background:#e8a87a}
+
+/* ===== START SCREEN ===== */
+.start-screen{text-align:center;padding:24px 16px}
+.start-count{font-size:44px;font-weight:700;color:#c97a4a;display:block;margin-bottom:4px}
+.start-unit{font-size:13px;color:#8a9bb0;margin-bottom:22px;display:block}
+.start-desc{font-size:13px;color:#8a9bb0;line-height:1.7;margin-bottom:22px}
+.filter-section{margin-bottom:16px}
+.filter-label{font-size:12px;color:#556070;letter-spacing:.08em;margin-bottom:8px;text-align:center}
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:12px}
+.filter-btn{font-size:12px;padding:5px 12px;border-radius:6px;border:1px solid #283848;background:transparent;color:#8a9bb0;cursor:pointer;transition:all .15s}
+.filter-btn.active{border-color:#c97a4a;color:#c97a4a;background:rgba(201,122,74,.1)}
+
+/* ===== ランダム出題数セレクター ===== */
+.rand-section{margin-bottom:16px}
+.rand-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.rand-input{width:90px;text-align:center;font-size:18px;font-weight:700;color:#c97a4a;background:rgba(201,122,74,.1);border:1px solid rgba(201,122,74,.3);border-radius:8px;padding:8px 10px;outline:none;transition:border-color .15s;font-family:inherit}
+.rand-input:focus{border-color:#c97a4a;background:rgba(201,122,74,.15)}
+.rand-input::-webkit-outer-spin-button,.rand-input::-webkit-inner-spin-button{opacity:1;height:24px}
+.rand-unit{font-size:13px;color:#8a9bb0}
+
+.controls{display:flex;justify-content:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.btn-ctrl{font-size:12px;padding:5px 14px;border-radius:6px;border:1px solid #283848;background:transparent;color:#8a9bb0;cursor:pointer;letter-spacing:.05em;transition:all .15s}
+.btn-ctrl.active{border-color:#c97a4a;color:#c97a4a;background:rgba(201,122,74,.1)}
+.btn-start{background:#c97a4a;color:#1a0800;border:none;border-radius:10px;padding:13px 36px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.1em;transition:background .15s;display:block;width:100%;max-width:300px;margin:0 auto 10px}
+.btn-start:hover{background:#e8a87a}
+.btn-start.secondary{background:transparent;border:1.5px solid #e8c97a;color:#e8c97a;font-size:14px}
+.btn-start.secondary:hover{background:rgba(232,201,122,.1)}
+/* ランダム出題ボタン */
+.btn-start.rand{background:transparent;border:1.5px solid #4a9eca;color:#4a9eca;font-size:14px;margin-bottom:0}
+.btn-start.rand:hover{background:rgba(74,158,202,.1)}
+/* 苦手問題モード */
+.btn-start.weak{background:transparent;border:1.5px solid #e07060;color:#e07060;font-size:14px}
+.btn-start.weak:hover{background:rgba(224,112,96,.1)}
+
+/* ===== RESULT SCREEN ===== */
+.result-screen{display:none;text-align:center;padding:28px 16px}
+.result-screen.show{display:block}
+.score-circle{width:150px;height:150px;border-radius:50%;border:3px solid #c97a4a;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 22px}
+.score-big{font-size:44px;font-weight:700;color:#e8a87a;line-height:1}
+.score-denom{font-size:13px;color:#8a9bb0;margin-top:4px}
+.score-pct{font-size:17px;font-weight:600;color:#c97a4a;margin-bottom:8px}
+.score-msg{font-size:13px;color:#8a9bb0;margin-bottom:22px;line-height:1.7;white-space:pre-line}
+.breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.breakdown-item{background:#1a2434;border:1px solid #283848;border-radius:10px;padding:12px;text-align:center}
+.breakdown-num{font-size:26px;font-weight:700}
+.breakdown-num.ok{color:#3dbe82}
+.breakdown-num.ng{color:#e05050}
+.breakdown-num.sk{color:#8a9bb0}
+.breakdown-label{font-size:11px;color:#8a9bb0;margin-top:3px}
+.btns-wrap{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.btn-retry{background:transparent;border:1.5px solid #c97a4a;color:#c97a4a;border-radius:10px;padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
+.btn-retry:hover{background:rgba(201,122,74,.12)}
+
+/* ===== BOOKMARK LIST ===== */
+.bookmark-list{display:none}
+.bookmark-list.show{display:block}
+.section-title{font-size:12px;color:#556070;letter-spacing:.1em;margin-bottom:12px;text-align:center;text-transform:uppercase}
+.bm-item{background:#1a2434;border:1px solid #283848;border-radius:10px;padding:12px 14px;margin-bottom:9px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:border-color .15s}
+.bm-item:hover{border-color:#c97a4a}
+.bm-star{font-size:14px;color:#e8c97a;flex-shrink:0}
+.bm-tag{font-size:10px;color:#c97a4a;background:rgba(201,122,74,.12);border:1px solid rgba(201,122,74,.25);border-radius:4px;padding:2px 6px;white-space:nowrap;flex-shrink:0;font-weight:600}
+.bm-acc{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;flex-shrink:0;align-self:flex-start;margin-top:1px}
+.bm-acc.low{background:rgba(224,80,80,.12);border:1px solid rgba(224,80,80,.3);color:#e05050}
+.bm-acc.mid{background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);color:#c9a84c}
+.bm-acc.high{background:rgba(61,190,130,.12);border:1px solid rgba(61,190,130,.3);color:#3dbe82}
+.bm-text{font-size:13px;line-height:1.55;color:#a0b0c0;flex:1;min-width:0}
+.empty-bm{text-align:center;padding:36px 20px;color:#556070;font-size:14px;line-height:1.7}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a2434;border:1px solid #283848;border-radius:8px;padding:10px 18px;font-size:13px;color:#e8e0d0;opacity:0;transition:all .3s;pointer-events:none;z-index:100;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:#3dbe82;color:#3dbe82}
+.toast.error{border-color:#e05050;color:#e05050}
+.toast.warn{border-color:#c9a84c;color:#c9a84c}
+
+/* ===== RESUME MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:200}
+.modal-overlay.show{display:flex}
+.modal{background:#1a2434;border:1px solid #283848;border-radius:14px;padding:24px 20px;width:90%;max-width:360px;text-align:center}
+.modal h3{font-size:16px;font-weight:700;color:#e8e0d0;margin-bottom:10px}
+.modal p{font-size:13px;color:#8a9bb0;line-height:1.6;margin-bottom:20px}
+.modal-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.modal-btn{border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;border:none}
+.modal-btn.primary{background:#c97a4a;color:#1a0800}
+.modal-btn.primary:hover{background:#e8a87a}
+.modal-btn.secondary{background:transparent;border:1.5px solid #283848;color:#8a9bb0}
+.modal-btn.secondary:hover{background:#283848}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== SYNC BAR ===== -->
+  <div class="sync-bar">
+    <div>
+      <div class="sync-status">
+        <span class="sync-dot" id="syncDot"></span>
+        <span id="syncStatusText">Googleアカウントで同期</span>
+      </div>
+      <div class="sync-user" id="syncUser" style="display:none"></div>
+    </div>
+    <div class="sync-btns">
+      <button class="btn-gsign" id="btnSignIn" onclick="signIn()">
+        <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#4285F4" d="M47.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h13.2c-.6 3-2.3 5.5-4.9 7.2v6h7.9c4.6-4.3 7.3-10.6 7.3-17.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.9-6c-2.1 1.4-4.8 2.3-8 2.3-6.1 0-11.3-4.1-13.2-9.7H2.7v6.2C6.7 43 14.8 48 24 48z"/><path fill="#FBBC05" d="M10.8 28.8c-.5-1.4-.7-2.8-.7-4.3s.3-2.9.7-4.3v-6.2H2.7C1 17.5 0 20.6 0 24s1 6.5 2.7 9.1l8.1-4.3z"/><path fill="#EA4335" d="M24 9.5c3.4 0 6.5 1.2 8.9 3.5l6.6-6.6C35.9 2.5 30.4 0 24 0 14.8 0 6.7 5 2.7 12.4l8.1 6.2C12.7 13.6 17.9 9.5 24 9.5z"/></svg>
+        Googleでログイン
+      </button>
+      <button class="btn-sync" id="btnManualSync" onclick="manualSync()" style="display:none" disabled>↑↓ 同期</button>
+      <button class="btn-signout" id="btnSignOut" onclick="signOut()" style="display:none">ログアウト</button>
+    </div>
+  </div>
+
+  <!-- ===== HEADER ===== -->
+  <div class="header">
+    <h1>社会保険労務士 試験対策</h1>
+    <div class="title" id="appTitle">〇〇法 一問一答</div>
+    <div class="subtitle" id="appSubtitle">問題読み込み中...</div>
+  </div>
+
+  <div class="nav-tabs" id="navTabs">
+    <button class="nav-tab active" onclick="switchTab('start')">問題</button>
+    <button class="nav-tab" onclick="switchTab('bookmark')" id="tabBm">★ 栞 <span class="bm-badge" id="bmBadge" style="display:none"></span></button>
+  </div>
+
+  <!-- ===== START SCREEN ===== -->
+  <div id="startScreen" class="start-screen">
+    <span class="start-count" id="startCount">0</span>
+    <span class="start-unit">問</span>
+    <div class="start-desc">各肢について○か×かを判断してください。</div>
+
+    <!-- 出題範囲フィルター -->
+    <div class="filter-section">
+      <div class="filter-label">出題範囲</div>
+      <div class="filter-row" id="filterRow"></div>
+    </div>
+
+    <!-- ★ NEW: ランダム出題数セレクター（数値入力欄＋出題ボタン） -->
+    <div class="rand-section">
+      <div class="filter-label">ランダム出題</div>
+      <div class="rand-row">
+        <input type="number" id="randInput" class="rand-input" min="1" value="10" oninput="onRandInputChange()">
+        <span class="rand-unit">問</span>
+      </div>
+      <button class="btn-start rand" onclick="startRandom()" id="btnStartRand">10問ランダムで出題</button>
+    </div>
+
+    <div class="controls">
+      <button class="btn-ctrl" id="btnShuffle" onclick="toggleShuffle()">シャッフル</button>
+    </div>
+
+    <button class="btn-start" onclick="startQuiz()">スタート →</button>
+    <button class="btn-start secondary" onclick="startBookmarked()" id="btnStartBm" style="display:none">★ 栞の問題のみ</button>
+    <!-- ★ NEW: 正答率50%以下モードボタン (問題を解くと表示) -->
+    <button class="btn-start weak" onclick="startWeak()" id="btnStartWeak" style="display:none">📉 正答率50%以下の問題を出題</button>
+  </div>
+
+  <!-- ===== BOOKMARK LIST ===== -->
+  <div class="bookmark-list" id="bookmarkList">
+    <div class="section-title">栞をつけた問題</div>
+    <div id="bmItems"></div>
+    <div style="margin-top:14px;text-align:center" id="bmActions"></div>
+  </div>
+
+  <!-- ===== QUIZ SCREEN ===== -->
+  <div id="quizScreen" style="display:none">
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span class="progress-num" id="progressNum">1 / 0</span>
+        <span class="progress-score" id="progressScore">正解 0 問</span>
+      </div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="q-meta">
+        <span class="q-tag" id="qTag"></span>
+        <span class="q-type-badge" id="qTypeBadge" style="display:none"></span>
+        <span class="q-num" id="qNum"></span>
+        <!-- ★ NEW: 過去正答率バッジ -->
+        <span class="q-acc" id="qAcc"></span>
+      </div>
+      <p class="q-text" id="qText"></p>
+      <button class="btn-bookmark" id="btnBookmark" onclick="toggleBookmark()">☆</button>
+    </div>
+
+    <!-- ○× ボタン -->
+    <div class="btn-row" id="oxRow">
+      <button class="btn-answer btn-maru" id="btnMaru" onclick="answerOx(true)">○<span class="btn-label">CORRECT</span></button>
+      <button class="btn-answer btn-batsu" id="btnBatsu" onclick="answerOx(false)">×<span class="btn-label">WRONG</span></button>
+    </div>
+    <!-- 選択式ボタン (選択式問題を含む科目はここに choicesGrid を追加) -->
+    <div class="choices-grid" id="choicesGrid"></div>
+
+    <div class="result-panel" id="resultPanel">
+      <div class="result-header" id="resultHeader"></div>
+      <div class="result-exp" id="resultExp"></div>
+      <div class="result-source" id="resultSource"></div>
+    </div>
+
+    <button class="btn-next" id="btnNext" onclick="nextQuestion()">次の問題 →</button>
+
+    <!-- ★ NEW: 中断ボタンを中央に配置 -->
+    <div class="nav-btns">
+      <button class="btn-nav" id="btnBack" onclick="goBack()">← 戻る</button>
+      <button class="btn-nav btn-suspend" onclick="suspendSession()">⏸ 中断保存</button>
+      <button class="btn-nav" id="btnSkip" onclick="skipQuestion()">スキップ →</button>
+    </div>
+  </div>
+
+  <!-- ===== RESULT SCREEN ===== -->
+  <div class="result-screen" id="resultScreen">
+    <div class="score-circle">
+      <span class="score-big" id="finalScore">0</span>
+      <span class="score-denom" id="finalDenom">/ 0</span>
+    </div>
+    <div class="score-pct" id="finalPct"></div>
+    <div class="breakdown">
+      <div class="breakdown-item"><div class="breakdown-num ok" id="okCount">0</div><div class="breakdown-label">正解</div></div>
+      <div class="breakdown-item"><div class="breakdown-num ng" id="ngCount">0</div><div class="breakdown-label">不正解</div></div>
+      <div class="breakdown-item"><div class="breakdown-num sk" id="skCount">0</div><div class="breakdown-label">未回答</div></div>
+    </div>
+    <div class="score-msg" id="scoreMsg"></div>
+    <div class="btns-wrap">
+      <button class="btn-retry" onclick="resetToStart()">最初から</button>
+      <button class="btn-retry" onclick="retryWrong()" id="btnRetryWrong" style="display:none">間違えた問題のみ</button>
+      <button class="btn-retry" onclick="retrySkipped()" id="btnRetrySkipped" style="display:none">未回答のみ</button>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<div class="toast" id="toast"></div>
+
+<!-- 中断再開モーダル -->
+<div class="modal-overlay" id="resumeModal">
+  <div class="modal">
+    <h3>前回の中断データがあります</h3>
+    <p id="resumeMsg"></p>
+    <div class="modal-btns">
+      <button class="modal-btn primary" onclick="resumeSession()">続きから再開</button>
+      <button class="modal-btn secondary" onclick="dismissResume()">最初から</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  ★ CONFIG — 科目ごとにここだけ変更
+// ============================================================
+const APP_CONFIG = {
+  title:    '労災保険法 一問一答',
+  subtitle: 'TAC 択一式102問 ＋ 選択式10問　計112問',
+  driveFileName: 'sharoushi_progress_rosai.json',
+  clientId: '194094449743-hoj6t28jfidlfhueiiv6iromc2lvssgf.apps.googleusercontent.com',
+};
+
+// ============================================================
+//  ★ QUESTION DATA — 問題データをここに追加
+//   ○× 型: {no, opt, q, a:bool, exp, src, cat}
+//   選択式 型: {type:'select', no, opt, context, choices:[], answer, exp, src, cat:'選択式'}
+// ============================================================
+const ALL_QUESTIONS = [
+  // ===== 第1予想 択一式 =====
+  {no:'①問1',opt:'A',q:'次の業務による明らかな過重負荷を受けたことにより発症した脳血管疾患及び虚血性心疾患等は、業務に起因する疾病として取り扱う。①発症前の長期間にわたって、著しい疲労の蓄積をもたらす特に過重な業務（長期間の過重業務）に就労したこと。②発症に近接した時期において、特に過重な業務（短期間の過重業務）に就労したこと。③発症直前から前日までの間において、発生状態を時間的及び場所的に明確にし得る異常な出来事に遭遇したこと。',a:true,exp:'設問の通り正しい。認定基準の対象となる疾病は、脳内出血、くも膜下出血、脳梗塞、高血圧性脳症、心筋梗塞、狭心症、心停止（心臓性突然死を含む）、重篤な心不全、大動脈解離である。',src:'令和3.9.14 基発0914第1号',cat:'択一式'},
+  {no:'①問1',opt:'B',q:'長期間の過重業務に係る「発症前の長期間」とは、発症前おおむね6か月間をいい、発症前おおむね6か月より前の業務については、疲労の蓄積に係る業務の過重性を評価するに当たり考慮しない。',a:false,exp:'「考慮しない」とする記述が誤り。発症前おおむね6か月より前の業務については、疲労の蓄積に係る業務の過重性を評価するに当たり、付加的要因として考慮する。',src:'令和3.9.14 基発0914第1号',cat:'択一式'},
+  {no:'①問1',opt:'C',q:'長期間の過重業務に係る業務の過重性の具体的な評価に当たっては、発症日を起点とした1か月単位の連続した期間をみて、発症前1か月間におおむね100時間又は発症前2か月間ないし6か月間にわたって、1か月当たりおおむね80時間を超える時間外労働が認められる場合は、業務と発症との関連性が強いと評価できることを踏まえて判断する。',a:true,exp:'設問の通り正しい。1か月当たりおおむね45時間を超える時間外労働がない場合は関連性が弱いとされ、超えるほど関連性が徐々に強まる。',src:'令和3.9.14 基発0914第1号',cat:'択一式'},
+  {no:'①問1',opt:'D',q:'発症に近接した時期とは、発症前おおむね1週間をいい、発症前1か月間より短い期間のみに過重な業務が集中し、それより前の業務の過重性が低いために、長期間の過重業務とは認められないような場合には、発症前1週間を含めた当該期間に就労した業務の過重性を評価し、それが特に過重な業務と認められるときは、短期間の過重業務に就労したものと判断する。',a:true,exp:'設問の通り正しい。短期間の過重業務と発症との関連性は、発症に近ければ近いほど影響が強いと考えられる。',src:'令和3.9.14 基発0914第1号',cat:'択一式'},
+  {no:'①問1',opt:'E',q:'複数業務要因災害による脳・心臓疾患の「長期間の過重業務」及び「短期間の過重業務」の判断について、業務の過重性の検討に当たっては、異なる事業における労働時間を通算して評価する。また、労働時間以外の負荷要因については、異なる事業における負荷を合わせて評価する。',a:true,exp:'設問の通り正しい。「異常な出来事」については一般的には異なる事業における負荷を合わせて評価することはないとされる。',src:'令和3.9.14 基発0914第1号',cat:'択一式'},
+  {no:'①問2',opt:'A',q:'休業給付基礎日額の算定の基礎として用いる給付基礎日額については、原則として、四半期ごとの平均給与額が、その休業を開始した日の属する四半期の平均給与額の100分の110を超え、又は100分の90を下るに至った場合には、その上昇し、又は低下した比率を基準として厚生労働大臣が定める率を給付基礎日額に乗じて得た額とする。',a:false,exp:'「その休業を開始した日」を「算定事由発生日」と読み替えると正しい。改定された休業給付基礎日額は、上昇又は低下するに至った四半期の翌々四半期の最初の日以後の休業補償給付から適用される。',src:'労災保険法8条の2第1項2号',cat:'択一式'},
+  {no:'①問2',opt:'B',q:'算定事由発生日の属する年度の翌年度の7月以前の分として支給する年金たる保険給付については、給付基礎日額として算定した額を年金給付基礎日額とし、当該年度の翌年度の8月以後はスライド率による改定が行われる。',a:false,exp:'算定事由発生日の属する年度の「翌々年度」の7月以前である。翌々年度の8月以後にスライド率による改定が行われる。',src:'労災保険法8条の3第1項2号',cat:'択一式'},
+  {no:'①問2',opt:'C',q:'複数事業労働者の給付基礎日額は、複数事業労働者を使用する事業ごとに算定した給付基礎日額に相当する額を合算した額とされているが、その算定に当たり、当該事業ごとに算定した給付基礎日額に相当する額が自動変更対象額に満たないときは、これを自動変更対象額として算定することとなる。',a:false,exp:'事業ごとに算定した給付基礎日額に相当する額には自動変更対象額の規定は適用されず、合算した額（給付基礎日額）について自動変更対象額の規定が適用される。',src:'労災保険法8条3項',cat:'択一式'},
+  {no:'①問2',opt:'D',q:'休業給付基礎日額又は年金給付基礎日額について、年齢階層別の最低・最高限度額の規定が適用され、かつ、スライド率による改定が行われるべき場合には、スライド率による改定後の給付基礎日額について年齢階層別の最低・最高限度額の規定が適用される。',a:true,exp:'設問の通り正しい。スライド改定後に年齢階層別の最低・最高限度額が適用される。',src:'労災保険法8条の2第2項、8条の3第2項',cat:'択一式'},
+  {no:'①問2',opt:'E',q:'障害補償一時金等の一時金の額の算定の基礎として用いる給付基礎日額については、年齢階層別の最低・最高限度額の規定の適用はなく、スライド率による改定も行われない。',a:false,exp:'一時金の給付基礎日額には年齢階層別の最低・最高限度額の適用はないが、年金給付基礎日額と同様の仕組みでスライド率による改定は行われる。',src:'労災保険法8条の4',cat:'択一式'},
+  {no:'①問3',opt:'A',q:'療養の給付の範囲は、①診察、②薬剤又は治療材料の支給、③処置、手術その他の治療、④居宅における療養上の管理及びその療養に伴う世話その他の看護、⑤病院又は診療所への入院及びその療養に伴う世話その他の看護及び⑥移送のうち、医師が必要と認めるものに限られる。',a:false,exp:'「医師」が誤り。「政府」が必要と認めるものに限られる。',src:'労災保険法13条2項',cat:'択一式'},
+  {no:'①問3',opt:'B',q:'療養の給付に代えて療養の費用を支給することができるのは、療養の給付をすることが困難な場合のほか、療養の給付を受けないことについて労働者に相当の理由がある場合に限られる。',a:true,exp:'設問の通り正しい。',src:'労災保険法13条3項、則11条の2',cat:'択一式'},
+  {no:'①問3',opt:'C',q:'療養の給付は、社会復帰促進等事業として設置された病院若しくは診療所又は都道府県労働局長の指定する病院若しくは診療所、薬局若しくは訪問看護事業者において行われる。',a:true,exp:'設問の通り正しい。これらを「指定病院等」という。',src:'労災保険法施行規則11条1項',cat:'択一式'},
+  {no:'①問3',opt:'D',q:'療養補償給付たる療養の費用の請求に当たっては、請求書の記載事項のうち、「傷病名及び療養の内容」及び「療養に要した費用の額」について、診療担当者の証明を受けなければならない。',a:true,exp:'設問の通り正しい。診療担当者とは、医師、薬剤の支給、手当又は訪問看護を担当した者をいう。',src:'労災保険法施行規則12条の2第2項',cat:'択一式'},
+  {no:'①問3',opt:'E',q:'療養補償給付たる療養の費用の支給を受けようとする者は、所定の事項を記載した請求書を、所轄労働基準監督署長に提出しなければならないが、都道府県労働局長が定める指名施術所において治療を受ける場合にあっては、当該請求書を、当該指名施術所を経由して所轄労働基準監督署長に提出することができる。',a:true,exp:'設問の通り正しい。指名施術所を経由することは任意であり、義務ではない。',src:'労災保険法施行規則12条の2第1項',cat:'択一式'},
+  {no:'①問4',opt:'A',q:'傷病補償年金の傷病等級に係る障害の程度は、傷病等級の第1級、第2級及び第3級とされており、3か月以上の期間にわたって存する障害の状態により認定する。',a:false,exp:'「3か月以上」ではなく「1年6か月以上」の期間にわたって存する障害の状態により認定する。',src:'労災保険法12条の8第3項2号、則18条',cat:'択一式'},
+  {no:'①問4',opt:'B',q:'傷病補償年金を受ける労働者の当該障害の程度に変更があったため、新たに他の傷病等級に該当するに至った場合において、当該受給権者の請求があったときは、所轄労働基準監督署長は、当該変更に関する決定をしなければならない。',a:false,exp:'傷病補償年金は所轄労働基準監督署長の職権で行われるので、受給権者の請求は必要ない。',src:'労災保険法18条の2、則18条の3',cat:'択一式'},
+  {no:'①問4',opt:'C',q:'傷病補償年金を受けている者が傷病等級に該当しなくなった場合には、傷病補償年金の受給権は消滅するが、なおも療養のために労働することができず賃金の支払を受けることができないときは、その者の請求により、当該受給権が消滅した月の翌月から休業補償給付が行われる。',a:true,exp:'設問の通り正しい。傷病補償年金は受給権を取得した月の翌月から消滅した月まで支給される。',src:'労災保険法9条1項、12条の8第3項',cat:'択一式'},
+  {no:'①問4',opt:'D',q:'介護補償給付は、障害補償年金又は傷病補償年金を受ける権利を有する労働者が、その受ける権利を有する障害補償年金又は傷病補償年金の支給事由となる障害であって厚生労働省令で定める程度のものにより、常時又は随時介護を要する状態にある場合には、常時又は随時介護を受けていないときであっても、支給される場合がある。',a:false,exp:'介護補償給付は、常時又は随時介護を受けていないときは支給されない。介護を受けていることが要件である。',src:'労災保険法32条の4第1項',cat:'択一式'},
+  {no:'①問4',opt:'E',q:'介護補償給付を支給すべき事由が生じた月において介護に要する費用を支出した日がなく、親族又はこれに準ずる者による介護を受けた日があるときは、当該月について、介護補償給付として厚生労働省令で定める最低保障額が支給される。',a:false,exp:'介護に要する費用を支出した日がないときは、親族等による介護を受けた日があっても介護補償給付は支給されない。',src:'労災保険法19条の2、則18条の3の4第1項2号',cat:'択一式'},
+  {no:'①問5',opt:'A',q:'同一の業務災害により障害等級表に該当する障害が2以上あって厚生労働省令で定める要件を満たす場合には、その障害等級は、繰り上げた障害等級による。例：第8級・第10級・第12級の3障害がある場合は第7級、第5級・第6級・第8級・第14級の4障害がある場合は第3級、第4級・第5級の2障害がある場合は第1級。',a:true,exp:'設問の通り正しい。第13級以上が2以上で1級繰上げ、第8級以上が2以上で2級繰上げ、第5級以上が2以上で3級繰上げ。',src:'労災保険法15条1項、則14条3項',cat:'択一式'},
+  {no:'①問5',opt:'B',q:'既に障害等級第8級の障害のあった者が、業務上の負傷又は疾病により同一の部位について障害の程度を障害等級第5級に加重した場合における当該事由に係る障害補償給付は、障害等級第5級に応ずる障害補償年金とされる。その額は、障害等級第5級に応ずる障害補償年金の額から、既にあった障害等級第8級に応ずる障害補償一時金の額を25で除して得た額を差し引いた額となる。',a:true,exp:'設問の通り正しい。加重前一時金・加重後年金の場合、加重後年金額－加重前一時金額÷25となる。',src:'労災保険法15条1項、則14条5項',cat:'択一式'},
+  {no:'①問5',opt:'C',q:'障害等級第12級に応ずる障害補償一時金を受けた労働者の当該障害の程度が自然的経過により変更したため、新たに障害等級第10級に該当するに至った場合であっても、新たに該当するに至った障害等級第10級に応ずる障害補償一時金は支給されず、また、障害等級第10級と障害等級第12級との差額が支給されることもない。',a:true,exp:'設問の通り正しい。障害補償一時金の支給を受けた後の自然的経過による増悪・軽減については、新たな障害等級による障害補償給付は行われない。',src:'労災保険法15条の2',cat:'択一式'},
+  {no:'①問5',opt:'D',q:'障害補償年金前払一時金の請求は、同一の事由に関し、1回に限り行うことができる。',a:true,exp:'設問の通り正しい。障害補償年金の支給決定の通知のあった日の翌日から1年を経過する日までの間は、年金請求後でも前払一時金を請求できる。',src:'労災保険法施行規則附則27項',cat:'択一式'},
+  {no:'①問5',opt:'E',q:'障害補償年金差額一時金を受けることができる遺族として、障害補償年金の受給権者である労働者の死亡の当時、生計を同じくしていなかった妻と生計を同じくしていた妹がある場合、妻が障害補償年金差額一時金の受給権者となる。',a:false,exp:'「妹」が受給権者となる。差額一時金は①死亡の当時生計を同じくしていた配偶者・子・父母・孫・祖父母・兄弟姉妹、②①に該当しない配偶者等の順で、①が優先される。',src:'労災保険法附則58条2項',cat:'択一式'},
+  {no:'①問6',opt:'A',q:'休業特別支給金の額は、1日につき算定基礎日額の100分の20に相当する額である。',a:false,exp:'「算定基礎日額」ではなく「休業給付基礎日額」の100分の20である。',src:'労災保険法29条2項、支給金則3条1項',cat:'択一式'},
+  {no:'①問6',opt:'B',q:'算定基礎年額は、原則として、負傷又は発病の日以前6か月間（雇入後6か月に満たない者については、雇入後の期間）に当該労働者に対して支払われた特別給与の総額である。',a:false,exp:'「6か月間」ではなく「1年間」（雇入後1年に満たない者については雇入後の期間）に支払われた特別給与の総額である。',src:'労災保険法29条2項、支給金則6条1項',cat:'択一式'},
+  {no:'①問6',opt:'C',q:'特別加入者には、特別支給金は支給されない。',a:false,exp:'特別加入者には、特別給与を算定基礎とする特別支給金は支給されないが、定額・定率の特別支給金は支給される。',src:'労災保険法29条2項、支給金則16条等',cat:'択一式'},
+  {no:'①問6',opt:'D',q:'遺族特別年金前払一時金が支給される場合には、遺族特別年金は、各月に支給されるべき額の合計額が厚生労働省令で定める算定方法に従い当該遺族特別年金前払一時金の額に達するまでの間、その支給が停止される。',a:false,exp:'遺族特別年金前払一時金という特別支給金は存在しない。特別支給金には前払制度がない。',src:'労災保険法29条2項',cat:'択一式'},
+  {no:'①問6',opt:'E',q:'特別支給金の原因である事故が第三者の行為によって生じた場合、特別支給金を受けるべき者が当該第三者から同一の事故について損害賠償を受けたときであっても、特別支給金はその全額が支給される。',a:true,exp:'設問の通り正しい。特別支給金については、第三者行為災害における損害賠償との調整（求償・控除）は行われない。',src:'労災保険法29条2項、特支則20条等',cat:'択一式'},
+  {no:'①問7',opt:'A',q:'労災保険法に基づく保険給付を受ける権利を有する者が死亡した場合において、その死亡した者に支給すべき保険給付でまだその者に支給しなかったものがあるときは、その者の配偶者（事実婚を含む）、子、父母、孫、祖父母又は兄弟姉妹であって、その者の死亡の当時その者と生計を同じくしていたもの（年金については当該年金を受けることができる他の遺族）は、自己の名で、その未支給の保険給付の支給を請求することができる。',a:true,exp:'設問の通り正しい。未支給の遺族年金等は、当該年金を受けることができる他の遺族が請求権者となる。',src:'労災保険法11条1項',cat:'択一式'},
+  {no:'①問7',opt:'B',q:'傷病補償年金を受ける権利を有する者が死亡したためその支給を受ける権利が消滅したにもかかわらず、その死亡の日の属する月の翌月以後の分として当該傷病補償年金の過誤払が行われた場合において、当該過誤払による返還金に係る債権に係る債務の弁済をすべき者に支払うべき障害補償年金があるときは、当該障害補償年金の支払金の金額を当該過誤払による返還金債権の金額に充当することができる。',a:false,exp:'充当処理の対象となるのは年金たる保険給付の受給権者の死亡に伴い支給される保険給付であり、障害補償年金はその対象とならない。',src:'労災保険法12条の2、則10条の2',cat:'択一式'},
+  {no:'①問7',opt:'C',q:'保険給付を受ける権利は、労働者の退職によって変更されることはない。',a:true,exp:'設問の通り正しい。',src:'労災保険法12条の5第1項',cat:'択一式'},
+  {no:'①問7',opt:'D',q:'保険給付を受ける権利は、譲り渡し、担保に供し、又は差し押さえることができない。',a:true,exp:'設問の通り正しい。租税その他の公課は、保険給付として支給を受けた金品を標準として課することはできない。',src:'労災保険法12条の5第2項',cat:'択一式'},
+  {no:'①問7',opt:'E',q:'労災保険に係る保険関係が成立し、若しくは成立していた事業の事業主又は労働保険事務組合若しくは労働保険事務組合であった団体は、労災保険に関する書類（労働保険徴収法又は同法施行規則による書類を除く。）を、その完結の日から3年間保存しなければならない。',a:true,exp:'設問の通り正しい。',src:'労災保険法施行規則51条',cat:'択一式'},
+  {no:'①問8',opt:'A',q:'常時3人の労働者を使用する個人経営の林業の事業は、労災保険暫定任意適用事業であり、当該事業の事業主が任意加入の申請をし、厚生労働大臣の認可があったときは、その日に労災保険に係る保険関係が成立する。',a:false,exp:'常時3人の労働者を使用する個人経営の林業の事業は、労災保険暫定任意適用事業ではなく、強制適用事業である。',src:'整備法5条1項、整備政令17条',cat:'択一式'},
+  {no:'①問8',opt:'B',q:'労災保険法第3条第1項の適用事業に該当する事業が労災保険暫定任意適用事業に該当するに至ったときは、その日に、その事業につき厚生労働大臣の認可があったものとみなす。',a:false,exp:'「その日」ではなく「その翌日」に認可があったものとみなす。',src:'整備法5条3項',cat:'択一式'},
+  {no:'①問8',opt:'C',q:'常時3人の労働者を雇用する個人経営の林業の事業であって、雇用保険に係る保険関係が成立している暫定任意適用事業の事業主は、当該労働者のうち2人の同意を得れば、当該保険関係の消滅の申請を行うことができる。',a:false,exp:'雇用保険暫定任意適用事業の保険関係消滅申請には、労働者の4分の3以上の同意が必要。3人中2人（3分の2）では足りない。',src:'雇用保険法附則2条、同法施行令附則2条',cat:'択一式'},
+  {no:'①問8',opt:'D',q:'雇用保険に係る保険関係が成立していない雇用保険暫定任意適用事業の事業主は、その事業に使用される労働者の2分の1以上が希望する場合には、任意加入の申請をしなければならないが、これに違反して申請をしなかったときであっても、罰則の適用はない。',a:false,exp:'違反した場合は罰則（6月以下の拘禁刑又は30万円以下の罰金）が適用される。なお、労災保険暫定任意適用事業の場合は罰則の適用はない。',src:'徴収法附則2条3項、7条1項',cat:'択一式'},
+  {no:'①問8',opt:'E',q:'労災保険に係る保険関係が成立している労災保険暫定任意適用事業の事業主は、当該保険関係の消滅の申請をしようとする場合には、当該事業に使用される労働者の過半数の同意を得たことを証明することができる書類を添えて、所定の申請書を所轄都道府県労働局長に提出しなければならない。',a:true,exp:'設問の通り正しい。申請書の提出は所轄労働基準監督署長を経由して行う。',src:'整備法8条1項、2項',cat:'択一式'},
+  {no:'①問9',opt:'A',q:'労働保険徴収法において「賃金」とは、賃金、給料、手当、賞与その他名称のいかんを問わず、労働の対償として事業主が労働者に支払うもの（3か月を超える期間ごとに受けるものを除く。）をいう。',a:false,exp:'徴収法上の賃金には「3か月を超える期間ごとに受けるもの」を除く規定はない。労働基準法上の平均賃金算定における賃金との混同に注意。',src:'徴収法2条2項',cat:'択一式'},
+  {no:'①問9',opt:'B',q:'労働基準法の規定による休業手当、年次有給休暇中の賃金及び解雇予告手当は、同法上使用者にその支払が義務付けられているものであり、労働保険徴収法上の賃金に該当する。',a:false,exp:'休業手当及び年次有給休暇中の賃金は賃金に該当するが、解雇予告手当は賃金に該当しない。',src:'徴収法2条2項',cat:'択一式'},
+  {no:'①問9',opt:'C',q:'労働者が業務外の疾病又は負傷のため勤務に服することができないため事業主から支払われる手当金や、個人的、臨時的な吉凶禍福に対して支払われる結婚祝金、死亡弔慰金、災害見舞金は、労働協約、就業規則等で労働者の権利として保障されているときは、労働保険徴収法上の賃金に該当する。',a:false,exp:'結婚祝金、死亡弔慰金、災害見舞金は、労働協約等で権利として保障されていても賃金に該当しない。なお、業務外傷病手当金は労働協約等で保障されているときは賃金に該当する。',src:'徴収法2条2項',cat:'択一式'},
+  {no:'①問9',opt:'D',q:'労働者が在職中に、退職金相当額の全部又は一部を給与や賞与に上乗せするなど前払いされる場合は、労働の対償としての性格が明確であり、労働者の通常の生計にあてられる経常的な収入としての意義を有することから、原則として、一般保険料の算定基礎となる賃金総額に算入することとされている。',a:true,exp:'設問の通り正しい。退職を事由として支払われる退職金（退職時又は事業主の都合で退職前に一時金として支払われるもの）は賃金総額に算入しない。',src:'徴収法2条2項、11条1項、2項',cat:'択一式'},
+  {no:'①問9',opt:'E',q:'6月になってベースアップが1月に遡って行われることが決まり、各労働者の賃金の1月から6月までの差額及び支給が確定して6月に現実に支払われるような場合、4月から6月までの差額分は当保険年度の賃金総額に算入し、1月から3月までの差額分は前保険年度の賃金総額に算入することとなる。',a:false,exp:'1月から6月までの差額分は、賃金差額の支給が確定した日の属する年度（6月確定なので当保険年度）の賃金総額に算入する。',src:'徴収法2条2項、11条',cat:'択一式'},
+  {no:'①問10',opt:'ア',q:'次の記述は、延滞金を徴収しない事由として正しいか。「延滞金の額が1,000円未満であるとき。」',a:false,exp:'「100円未満」であるときに徴収されない。1,000円未満は誤り。',src:'徴収法28条5項3号',cat:'択一式'},
+  {no:'①問10',opt:'イ',q:'次の記述は、延滞金を徴収しない事由として正しいか。「納期を繰り上げて徴収するとき。」',a:false,exp:'納期を繰り上げて徴収することは延滞金を徴収しない事由として規定されていない。',src:'徴収法28条5項',cat:'択一式'},
+  {no:'①問10',opt:'ウ',q:'次の記述は、延滞金を徴収しない事由として正しいか。「督促状に指定した期限までに労働保険料その他労働保険徴収法の規定による徴収金を完納したとき。」',a:true,exp:'設問の通り正しい。延滞金を徴収しない事由として規定されている。',src:'徴収法28条5項1号',cat:'択一式'},
+  {no:'①問10',opt:'エ',q:'次の記述は、延滞金を徴収しない事由として正しいか。「納付義務者の住所又は居所がわからないため、公示送達の方法によって督促したとき。」',a:true,exp:'設問の通り正しい。延滞金を徴収しない事由として規定されている。',src:'徴収法28条5項2号',cat:'択一式'},
+  {no:'①問10',opt:'オ',q:'次の記述は、延滞金を徴収しない事由として正しいか。「労働保険料について滞納処分の執行を停止し、又は猶予したとき（その執行を停止し、又は猶予した期間に対応する部分の金額に限る。）。」',a:true,exp:'設問の通り正しい。延滞金を徴収しない事由として規定されている。',src:'徴収法28条5項4号',cat:'択一式'},
+  // ===== 第2予想 択一式 =====
+  {no:'②問1',opt:'A',q:'次の(1)、(2)及び(3)のいずれの要件も満たす対象疾病は、業務上の疾病として取り扱う。(1)対象疾病を発病していること。(2)対象疾病の発病前おおむね6か月の間に、業務による強い心理的負荷が認められること。(3)業務以外の心理的負荷及び個体側要因により対象疾病を発病したとは認められないこと。',a:true,exp:'設問の通り正しい。対象疾病はICD-10第V章「精神及び行動の障害」に分類されるもの（器質性・有害物質起因のものを除く）。',src:'令和5.9.1 基発0901第2号',cat:'択一式'},
+  {no:'②問1',opt:'B',q:'発病の時期を判断する際、強い心理的負荷と認められる出来事の前と後の両方に発病の兆候と理解し得る言動があるものの、診断基準を満たした時期の特定が困難な場合には、出来事の後に発病したものと取り扱う。',a:true,exp:'設問の通り正しい。生死にかかわるケガ等の特に強い心理的負荷の出来事直後に解離等の心理的反応が生じる場合は当該反応が生じた時期を発病時期と判断する。',src:'令和5.9.1 基発0901第2号',cat:'択一式'},
+  {no:'②問1',opt:'C',q:'心理的負荷の評価に当たっては、精神障害を発病した労働者がその出来事及び出来事後の状況を主観的にどう受け止めたかではなく、同種の労働者が一般的にその出来事及び出来事後の状況をどう受け止めるかという観点から評価する。',a:true,exp:'設問の通り正しい。「同種の労働者」とは、職種・職場の立場・職責・年齢・経験等が類似する者をいう。',src:'令和5.9.1 基発0901第2号',cat:'択一式'},
+  {no:'②問1',opt:'D',q:'ハラスメントやいじめのように出来事が繰り返されるものについては、繰り返される出来事を一体のものとして評価することとなるので、発病の6か月よりも前にそれが開始されている場合でも、発病前おおむね6か月の期間にも継続しているときは、発病前おおむね6か月の間の行為を評価の対象とする。',a:false,exp:'「発病前おおむね6か月の間の行為」が誤り。「開始時からのすべての行為」を評価の対象とする。',src:'令和5.9.1 基発0901第2号',cat:'択一式'},
+  {no:'②問1',opt:'E',q:'セクシュアルハラスメントを受けた者は、勤務継続や被害軽減の心理から、やむを得ず行為者に迎合するようなメール等を送ることや、行為者の誘いを受け入れることがあるが、これらの事実はセクシュアルハラスメントを受けたことを単純に否定する理由にはならない。',a:true,exp:'設問の通り正しい。被害者の事後対応や受診時期の遅れ等は心理的負荷が弱いと単純に判断する理由にならない。',src:'令和5.9.1 基発0901第2号',cat:'択一式'},
+  {no:'②問2',opt:'A',q:'一次健康診断において、血圧検査・血液検査その他業務上の事由による脳・心臓疾患の発生にかかわる身体の状態に関する検査が行われた場合において、当該検査を受けた労働者がそのいずれの項目にも異常の所見があると診断されたときは、既に脳血管疾患又は心臓疾患の症状を有するか否かにかかわらず、その者の請求に基づいて二次健康診断等給付が行われる。',a:false,exp:'既に脳血管疾患又は心臓疾患の症状を有すると認められるものには二次健康診断等給付は行われない。',src:'労災保険法26条1項',cat:'択一式'},
+  {no:'②問2',opt:'B',q:'二次健康診断等給付のうち二次健康診断は、脳血管及び心臓の状態を把握するために必要な検査であって厚生労働省令で定めるものを行う医師による健康診断であり、一次健康診断ごとに1回に限られる。',a:false,exp:'「一次健康診断ごとに1回」ではなく「1年度につき1回」に限られる。',src:'労災保険法26条2項1号',cat:'択一式'},
+  {no:'②問2',opt:'C',q:'二次健康診断等給付の請求は、一次健康診断の結果を知った日から3か月以内に行わなければならないが、天災その他請求をしなかったことについてやむを得ない理由があるときは、この限りでない。',a:false,exp:'「一次健康診断の結果を知った日」ではなく「一次健康診断を受けた日」から3か月以内である。',src:'労災保険法28条、則18条の19第4項',cat:'択一式'},
+  {no:'②問2',opt:'D',q:'二次健康診断を受けた労働者から3か月以内に当該二次健康診断の結果を証明する書面の提出を受けた事業者は、二次健康診断の結果（当該二次健康診断の項目に異常の所見があると診断された労働者に係るものに限る。）に基づき、当該労働者の健康を保持するために必要な措置について、医師の意見を聴かなければならない。',a:true,exp:'設問の通り正しい。医師の意見聴取は二次健康診断結果の書面が事業者に提出された日から2月以内に行う。',src:'労災保険法27条、安衛法66条の4',cat:'択一式'},
+  {no:'②問2',opt:'E',q:'二次健康診断の受診に要した時間の賃金の支払いについては、二次健康診断は労働者の請求により当然実施されなければならない性格のものであり、その受診に要した時間は労働時間と解されるので、当該二次健康診断が法定労働時間外に行われた場合には、当然割増賃金を支払わなければならない。',a:false,exp:'二次健康診断の受診時間は労働時間に該当せず、賃金支払については労使協議して定めるべきものとされている。割増賃金の支払義務はない。',src:'平成13.3.30 基発233号',cat:'択一式'},
+  {no:'②問3',opt:'A',q:'療養のため労働することができないため療養開始から1年6か月を経過しても引き続き休業補償給付の支給を受けている労働者が、ある日について所定労働時間8時間のうち3時間労働して5,000円の賃金の支払を受け、残りの時間について無給の休業をした。当該労働者の平均賃金（給付基礎日額も同額）が18,000円、年齢階層別の最高限度額が15,625円である場合、当該日の休業補償給付の額は、(15,625円－5,000円)×100分の60で計算される。',a:false,exp:'正しくは(18,000円－5,000円)×100分の60で計算される。控除して得た額（13,000円）が最高限度額（15,625円）を超えていないため、最高限度額の置き換えは行われない。',src:'労災保険法14条1項',cat:'択一式'},
+  {no:'②問3',opt:'B',q:'療養のため労働することができないため引き続き休業補償給付の支給を受けている労働者が、ある日について所定労働時間8時間の全部について労働不能であるものの、そのうち6時間について時間単位年休の取得により7,000円の賃金の支払を受け、残りの時間について無給の休業をした。当該労働者の平均賃金（給付基礎日額も同額）が10,000円である場合、当該日について休業補償給付は支給されない。',a:true,exp:'設問の通り正しい。全部労働不能で平均賃金の100分の60以上の賃金（7,000円≥6,000円）の支払を受けているため「賃金を受けない日」に該当せず、休業補償給付は支給されない。',src:'労災保険法14条1項',cat:'択一式'},
+  {no:'②問3',opt:'C',q:'労働者が刑事施設、労役場その他これらに準ずる施設に拘禁されている場合（厚生労働省令で定める場合に限る。）には、休業補償給付は行わないこととされており、この場合には、休業特別支給金も支給されない。',a:true,exp:'設問の通り正しい。少年院その他これに準ずる施設に収容されている場合も同様に休業補償給付・休業特別支給金ともに支給されない。',src:'労災保険法14条の2、29条2項',cat:'択一式'},
+  {no:'②問3',opt:'D',q:'休業補償給付の支給を受けている労働者について、老齢厚生年金の支給を受けることができることとなった場合には、休業補償給付の額は減額されないが、同一の事由について障害厚生年金の支給を受けることができることとなった場合には、休業補償給付の額は減額される。',a:true,exp:'設問の通り正しい。社会保険の年金給付との調整は同一の事由による場合のみ行われ、老齢厚生年金との調整は行われない。',src:'労災保険法14条2項',cat:'択一式'},
+  {no:'②問3',opt:'E',q:'同一の業務上の事由による負傷又は疾病に関し、休業補償給付を受けている労働者が障害補償給付を受ける権利を有することとなり、かつ、休業補償給付を行わないこととなった場合において、その後も休業補償給付が支払われたときは、その支払われた休業補償給付は、当該障害補償給付の内払とみなされる。',a:true,exp:'設問の通り正しい。',src:'労災保険法12条3項',cat:'択一式'},
+  {no:'②問4',opt:'A',q:'遺族補償年金を受けることができる遺族が死亡した労働者の妻（32歳）、母（58歳）及び弟（29歳）であり、妻と母の2人が生計を同じくし、弟が生計を同じくしていない場合、妻に対して給付基礎日額の153日分の遺族補償年金が支給される（労働者の死亡当時厚生労働省令で定める障害状態にある遺族はいないものとする）。',a:true,exp:'設問の通り正しい。最先順位の妻が受給権者となり、若年停止者の母（58歳）と妻が生計を同じくしているが、若年停止者は遺族補償年金の額の基礎となる遺族の人数に含まれない。よって妻1人の153日分。',src:'労災保険法16条の2第3項、16条の3第1項',cat:'択一式'},
+  {no:'②問4',opt:'B',q:'遺族補償年金の受給権者である死亡した労働者の子（15歳）が、厚生労働省令で定める障害の状態になかったが、17歳のときに当該障害の状態に該当するに至ったときは、18歳に達した日以後の最初の3月31日が終了しても受給権は消滅しない。',a:false,exp:'17歳で障害状態に該当した場合、18歳に達した日以後の最初の3月31日が終了したときは受給権は消滅する。労働者の死亡時から引き続き障害状態にあるときに限り受給権が継続する。',src:'労災保険法16条の4第1項',cat:'択一式'},
+  {no:'②問4',opt:'C',q:'遺族補償年金を受ける権利を有する者の所在が1年以上明らかでない場合には、当該遺族補償年金は、同順位者があるときは同順位者の、同順位者がないときは次順位者の申請によって、その申請があった月の翌月から、その支給が停止される。',a:false,exp:'「申請があった月の翌月から」ではなく「所在が明らかでない間」、その支給が停止される。',src:'労災保険法16条の5第1項',cat:'択一式'},
+  {no:'②問4',opt:'D',q:'遺族補償年金の受給権者である死亡した労働者の55歳以上60歳未満の夫は、60歳に達する月までの間は、遺族補償年金の支給が停止されるが、その支給停止の間においても遺族補償年金前払一時金の支給を受けることはできる。この場合、遺族補償年金前払一時金の支給を受けたときは、その支給を受けたことによる支給停止は行われず、60歳に達した月の翌月から、遺族補償年金が支給されることとなる。',a:false,exp:'前払一時金支給後の60歳到達月の翌月以後は、若年停止に加え、前払一時金の支給を受けたことによる支給停止が行われる。',src:'労災保険法附則60条3項',cat:'択一式'},
+  {no:'②問4',opt:'E',q:'遺族補償一時金を受けることができる遺族として、労働者の死亡の当時、その収入により生計を維持していなかった父と生計を維持していた弟がある場合、弟が遺族補償一時金の受給権者となる。',a:false,exp:'「父」が受給権者となる。遺族補償一時金の順位は①配偶者、②生計維持の子・父母・孫・祖父母、③上記②に該当しない子・父母・孫・祖父母、④兄弟姉妹であり、父（③）が弟（④）に優先する。',src:'労災保険法16条の7',cat:'択一式'},
+  {no:'②問5',opt:'A',q:'サービス業を主たる事業とする事業主であって常時100人以下の労働者を使用する事業主は、労働保険事務組合に労働保険事務の処理を委託していれば、中小事業主等の特別加入の対象となる。',a:true,exp:'設問の通り正しい。サービス業・卸売業は100人以下、金融業・保険業・不動産業・小売業は50人以下、それ以外は300人以下の事業主が対象。',src:'労災保険法33条1号、則46条の16',cat:'択一式'},
+  {no:'②問5',opt:'B',q:'中小事業主等の特別加入者であって、自動車を使用して行う旅客若しくは貨物の運送の事業又は原動機付自転車若しくは自転車を使用して行う貨物の運送の事業に従事する者については、通勤災害に関する保険給付は行われない。',a:false,exp:'中小事業主等の特別加入者には通勤災害の保険給付は行われる。通勤災害が行われないのは、一人親方等の特別加入者の一部（運送業、漁船による水産動植物採捕、特定農作業・指定農業機械作業、家内労働者等）である。',src:'労災保険法35条1項、則46条の22の2',cat:'択一式'},
+  {no:'②問5',opt:'C',q:'一人親方等の特別加入者の事故が、第2種特別加入保険料が滞納されている期間中に生じたものであるときは、政府は、当該事故に係る保険給付の全部又は一部を行わないことができる。',a:true,exp:'設問の通り正しい。特別加入保険料が滞納されている期間中の事故については支給制限が行われる。',src:'労災保険法35条1項7号',cat:'択一式'},
+  {no:'②問5',opt:'D',q:'特別加入者には、二次健康診断等給付は行われない。',a:true,exp:'設問の通り正しい。',src:'労災保険法34条1項、35条1項、36条1項',cat:'択一式'},
+  {no:'②問5',opt:'E',q:'特別加入者に係る業務災害、複数業務要因災害及び通勤災害の認定は、厚生労働省労働基準局長が定める基準によって行うこととされている。',a:true,exp:'設問の通り正しい。',src:'労災保険法37条、則46条の26',cat:'択一式'},
+  {no:'②問6',opt:'A',q:'通勤は、「就業に関し」行われるものであるが、1日について1回のみしか認められないものではなく、昼休み等就業の時間の間に相当の間隔があって帰宅するような場合には、午前中の業務終了による帰り、午後の業務に就くための出勤と考えられるので、その往復行為は就業との関連性が認められる。',a:true,exp:'設問の通り正しい。「就業に関し」とは移動行為が業務と密接な関連（就業関連性）をもって行われることを要する。',src:'労災保険法7条2項',cat:'択一式'},
+  {no:'②問6',opt:'B',q:'友人宅で麻雀をし、翌朝そこから直接出勤する場合等は、その友人宅は就業の拠点となっているものではないので、通勤に係る「住居」とは認められない。',a:true,exp:'設問の通り正しい。「住居」とは労働者が居住して日常生活の用に供している家屋等の場所で本人の就業のための拠点となるところを指す。',src:'労災保険法7条2項',cat:'択一式'},
+  {no:'②問6',opt:'C',q:'鉄道、バス等の公共交通機関を利用し、自動車、自転車等を本来の用法に従って使用する場合は、通勤に係る「合理的な方法」と認められ、したがって事業主の提供する専用交通機関を利用してする移動は、通勤に当たる。',a:false,exp:'事業主の提供する専用交通機関を利用してする移動は「業務の性質を有するもの」に当たり、労災保険法7条2項の通勤には当たらない。',src:'労災保険法7条2項',cat:'択一式'},
+  {no:'②問6',opt:'D',q:'物品を得意先に届けてその届け先から直接帰宅する場合の物品の届け先、全員参加で出勤扱いとなる会社主催の運動会の会場等は、通勤に係る「就業の場所」に当たる。',a:true,exp:'設問の通り正しい。「就業の場所」とは業務を開始し、又は終了する場所をいう。',src:'労災保険法7条2項',cat:'択一式'},
+  {no:'②問6',opt:'E',q:'経路の近くにある公衆便所を使用する場合、帰途に経路の近くにある公園で短時間休息する場合や、経路上の店でタバコ、雑誌等を購入する場合は、通勤に係る「逸脱又は中断」に該当しない。',a:true,exp:'設問の通り正しい。通常経路の途中で行うささいな行為は逸脱・中断に該当しない。',src:'労災保険法7条2項、3項',cat:'択一式'},
+  {no:'②問7',opt:'ア',q:'次の記述は、遺族補償給付の受給資格の欠格事由として正しいか。「労働者の死亡前に、当該労働者の死亡によって遺族補償年金を受けることができる先順位の遺族となるべき者を故意に死亡させた者は、遺族補償年金を受けることができる遺族としない。」',a:true,exp:'設問の通り正しい。労働者の死亡前に先順位又は同順位の遺族を故意に死亡させた者は欠格となる。',src:'労災保険法16条の9第2項',cat:'択一式'},
+  {no:'②問7',opt:'イ',q:'次の記述は、遺族補償給付の受給資格の欠格事由として正しいか。「遺族補償年金を受ける権利を有する遺族が、遺族補償年金を受けることができる同順位の他の遺族を故意に死亡させたときは、その権利は、消滅する。」',a:true,exp:'設問の通り正しい。',src:'労災保険法16条の9第4項',cat:'択一式'},
+  {no:'②問7',opt:'ウ',q:'次の記述は、遺族補償給付の受給資格の欠格事由として正しいか。「遺族補償年金を受けることができる遺族が、遺族補償年金を受けることができる後順位の他の遺族を故意に死亡させたときは、その者は、遺族補償年金を受けることができる遺族でなくなる。」',a:false,exp:'「後順位」が誤り。「先順位又は同順位」の他の遺族を故意に死亡させたときに遺族でなくなる。',src:'労災保険法16条の9第4項',cat:'択一式'},
+  {no:'②問7',opt:'エ',q:'次の記述は、遺族補償給付の受給資格の欠格事由として正しいか。「労働者の死亡前に、当該労働者の死亡によって遺族補償年金を受けることができる遺族となるべき者を故意に死亡させた者は、遺族補償一時金を受けることができる遺族としない。」',a:true,exp:'設問の通り正しい。',src:'労災保険法16条の9第3項',cat:'択一式'},
+  {no:'②問7',opt:'オ',q:'次の記述は、遺族補償給付の受給資格の欠格事由として正しいか。「遺族補償年金を受けることができる遺族を故意に死亡させた者は、遺族補償一時金を受けることができる遺族としない。」',a:true,exp:'設問の通り正しい。',src:'労災保険法16条の9第3項',cat:'択一式'},
+  {no:'②問8',opt:'A',q:'労災保険に係る保険関係が成立している事業のうち請負による建設の事業であって、賃金総額を正確に算定することが困難なものについては、その事業の種類に従い、請負金額（消費税等相当額を除く）に労務費率を乗じて得た額を賃金総額とするが、機械装置の組立て又はすえ付けの事業についての請負代金の額にその事業に使用する機械装置の価額が含まれていない場合には、その機械装置の価額に相当する額をその請負代金の額に加算した額を請負金額とする。',a:false,exp:'機械装置の価額が含まれていない場合は、その価額を「加算しない」額が請負金額となる。逆に、含まれている場合は機械装置の価額を「控除」した額を請負金額とする。',src:'徴収法11条3項、則12条1号、13条',cat:'択一式'},
+  {no:'②問8',opt:'B',q:'労災保険に係る保険関係が成立している事業のうち造林の事業、木炭又は薪を生産する事業その他の林業の事業については、所轄都道府県労働局長が定める素材1立方メートルを生産するために必要な労務費の額に、生産するすべての素材の材積を乗じて得た額を賃金総額とする。',a:false,exp:'素材1立方メートルあたり労務費の特例は「立木の伐採の事業」に適用される。造林事業・木炭等生産事業には適用されない。',src:'徴収法11条3項、則12条2号・3号',cat:'択一式'},
+  {no:'②問8',opt:'C',q:'政府は、労働保険の事業に要する費用にあてるため保険料を徴収するものとされており、徴収する保険料（労働保険料）は、労災保険料、雇用保険料、第1種特別加入保険料、第2種特別加入保険料、第3種特別加入保険料、印紙保険料及び特例納付保険料とされている。',a:false,exp:'徴収法上の労働保険料は、一般保険料、第1種特別加入保険料、第2種特別加入保険料、第3種特別加入保険料、印紙保険料及び特例納付保険料である。労災保険料・雇用保険料という独立した概念はなく、これらは一般保険料の内訳である。',src:'徴収法10条',cat:'択一式'},
+  {no:'②問8',opt:'D',q:'労災保険率は、労災保険法の適用を受ける全ての事業の過去3年間の業務災害、複数業務要因災害及び通勤災害に係る災害率並びに社会復帰促進等事業として行う事業の種類及び内容その他の事情を考慮して厚生労働大臣が定めるものとされており、二次健康診断等給付に要した費用の額は考慮されない。',a:false,exp:'「二次健康診断等給付に要した費用の額」も考慮要素として規定されている。',src:'徴収法12条2項',cat:'択一式'},
+  {no:'②問8',opt:'E',q:'雇用保険率は、失業等給付費等充当徴収保険率、育児休業給付費充当徴収保険率及び二事業費充当徴収保険率を合計して得た率である。',a:true,exp:'設問の通り正しい。',src:'徴収法12条4項',cat:'択一式'},
+  {no:'②問9',opt:'A',q:'既に有期事業として単独で保険関係が成立している事業については、労働保険徴収法第7条に規定する有期事業の一括の要件に該当する場合であっても、一括の対象とならない。',a:true,exp:'設問の通り正しい。当初独立の有期事業として保険関係が成立した事業は、その後事業の規模変更等があっても一括扱いの対象にならない。',src:'徴収法7条',cat:'択一式'},
+  {no:'②問9',opt:'B',q:'有期事業の一括に係る個々の事業については、それぞれの事業が労災保険率表に定める労災保険率を同じくしていれば、必ずしも事業の種類を同じくしていなくとも、他の要件を満たす限り一括の対象となる。',a:false,exp:'有期事業の一括の対象となるには、それぞれの事業が労災保険率表に掲げる「事業の種類」を同じくすることが必要。',src:'徴収法7条5号、則6条2項2号',cat:'択一式'},
+  {no:'②問9',opt:'C',q:'9月1日に保険関係が成立した一括有期事業について、当該事業に係る労働保険事務の処理が労働保険事務組合に委託されておらず、納付すべき概算保険料の額が30万円である場合、当該事業の事業主は、当該概算保険料を延納することができる。',a:true,exp:'設問の通り正しい。',src:'徴収法18条、則27条1項',cat:'択一式'},
+  {no:'②問9',opt:'D',q:'労働保険徴収法第9条の規定により継続事業の一括に係る厚生労働大臣の認可を受けた場合であっても、一括された個々の事業（被一括事業）における雇用保険の被保険者に関する事務は、それぞれの被一括事業の所轄公共職業安定所長が行うこととなる。',a:true,exp:'設問の通り正しい。',src:'徴収法9条',cat:'択一式'},
+  {no:'②問9',opt:'E',q:'継続事業の一括に係る厚生労働大臣が指定する事業（指定事業）の事業の名称又は事業の行われる場所に変更があった場合には、その変更を生じた日の翌日から起算して10日以内に、所定の事項を記載した届書を所轄労働基準監督署長又は所轄公共職業安定所長に提出しなければならない。',a:true,exp:'設問の通り正しい。',src:'徴収法4条の2第2項、則5条1項・2項',cat:'択一式'},
+  {no:'②問10',opt:'A',q:'事業主が概算保険料申告書を提出せず、政府が決定した概算保険料を納付しなければならない場合には、政府は、原則としてその納付すべき額（その額に1,000円未満の端数があるときは、その端数は、切り捨てる。）に100分の10を乗じて得た額の追徴金を徴収する。',a:false,exp:'政府が決定した概算保険料（認定決定による概算保険料）については追徴金は徴収されない。追徴金が徴収されるのは認定決定による「確定保険料」の場合である。',src:'徴収法21条1項',cat:'択一式'},
+  {no:'②問10',opt:'B',q:'追徴金を納付しない者があるときは、政府は、期限を指定して督促しなければならない。',a:true,exp:'設問の通り正しい。',src:'徴収法27条1項',cat:'択一式'},
+  {no:'②問10',opt:'C',q:'政府は、一般保険料率の引上げを行ったときは、労働保険料を追加徴収するが、この場合には、事業主に対して、期限を指定して、その納付すべき労働保険料の額を納付書により通知しなければならない。',a:true,exp:'設問の通り正しい。',src:'徴収法17条、則38条4項・5項',cat:'択一式'},
+  {no:'②問10',opt:'D',q:'事業主は、被保険者に賃金を支払う都度、当該賃金に応ずる被保険者の負担すべき一般保険料の額に相当する額を当該賃金から控除することができるが、日雇労働被保険者については、当該賃金に応ずる日雇労働被保険者の負担すべき一般保険料の額に相当する額のほか、印紙保険料の額の2分の1の額に相当する額を当該賃金から控除することができる。',a:true,exp:'設問の通り正しい。',src:'徴収法32条1項、則60条1項',cat:'択一式'},
+  {no:'②問10',opt:'E',q:'労働保険料その他労働保険徴収法の規定による徴収金の先取特権の順位は、国税及び地方税に次ぐものとする。',a:true,exp:'設問の通り正しい。',src:'徴収法29条',cat:'択一式'},
+  // ===== 「いくつあるか」設問本体 =====
+  {type:'select',no:'①問10',opt:'本体',q:'【次の記述のうち、延滞金を徴収しない事由として正しいものはいくつあるか。】\nア 延滞金の額が1,000円未満であるとき。\nイ 納期を繰り上げて徴収するとき。\nウ 督促状に指定した期限までに労働保険料その他労働保険徴収法の規定による徴収金を完納したとき。\nエ 納付義務者の住所又は居所がわからないため、公示送達の方法によって督促したとき。\nオ 労働保険料について滞納処分の執行を停止し、又は猶予したとき（その執行を停止し、又は猶予した期間に対応する部分の金額に限る。）。',choices:['一つ','二つ','三つ','四つ','五つ'],answer:'三つ',exp:'正しいのはウ・エ・オの三つ。アは「100円未満」が正しく1,000円は誤り。イは延滞金不徴収事由として規定がない。',src:'徴収法28条5項',cat:'択一式'},
+  {type:'select',no:'②問7',opt:'本体',q:'【次の記述のうち、遺族補償給付の受給資格の欠格事由として正しいものはいくつあるか。】\nア 労働者の死亡前に、先順位の遺族となるべき者を故意に死亡させた者は、遺族補償年金を受けることができる遺族としない。\nイ 遺族補償年金の受給権者が、同順位の他の遺族を故意に死亡させたときは、その権利は消滅する。\nウ 遺族補償年金を受けることができる遺族が、後順位の他の遺族を故意に死亡させたときは、遺族補償年金を受けることができる遺族でなくなる。\nエ 労働者の死亡前に、遺族補償年金を受けることができる遺族となるべき者を故意に死亡させた者は、遺族補償一時金を受けることができる遺族としない。\nオ 遺族補償年金を受けることができる遺族を故意に死亡させた者は、遺族補償一時金を受けることができる遺族としない。',choices:['一つ','二つ','三つ','四つ','五つ'],answer:'四つ',exp:'正しいのはア・イ・エ・オの四つ。ウは「後順位」が誤り、「先順位又は同順位」の他の遺族を故意に死亡させたときに遺族でなくなる。',src:'労災保険法16条の9',cat:'択一式'},
+  // ===== 選択式 =====
+  {type:'select',no:'①選択',opt:'空欄A',q:'労働者災害補償保険法第10条前段では、「船舶が沈没し、転覆し、滅失し、若しくは行方不明となった際現にその船舶に乗っていた労働者若しくは船舶に乗っていてその船舶の航行中に行方不明となった労働者の生死が【A】間わからない場合又はこれらの労働者の死亡が【A】以内に明らかとなり、かつ、その死亡の時期がわからない場合には、（給付）の支給に関する規定の適用については、その船舶が沈没し、転覆し、滅失し、若しくは行方不明となった日又は労働者が行方不明となった日に、当該労働者は、死亡したものと推定する。」と規定している。\n\n【A】に入る適切な語句を選びなさい。',choices:['3か月','6か月','1年','2年'],answer:'3か月',exp:'法10条の死亡の推定における期間は「3か月」。航空機の墜落等の場合も同様に3か月と規定されている。',src:'労災保険法10条',cat:'選択式'},
+  {type:'select',no:'①選択',opt:'空欄B',q:'労働者災害補償保険法第10条前段では、「船舶が沈没し（中略）労働者の生死が3か月間わからない場合又はこれらの労働者の死亡が3か月以内に明らかとなり、かつ、その死亡の時期がわからない場合には、【B】の支給に関する規定の適用については、その船舶が沈没し（中略）労働者が行方不明となった日に、当該労働者は、死亡したものと推定する。」と規定している。\n\n【B】に入る適切な語句を選びなさい。',choices:['遺族補償給付、葬祭料、遺族給付及び葬祭給付','遺族補償年金、葬祭料、遺族年金及び葬祭給付','遺族補償年金、葬祭料、複数事業労働者遺族年金、複数事業労働者葬祭給付、遺族年金及び葬祭給付','遺族補償給付、複数事業労働者遺族給付及び遺族給付'],answer:'遺族補償給付、葬祭料、遺族給付及び葬祭給付',exp:'死亡の推定の規定は、遺族補償給付、葬祭料、遺族給付及び葬祭給付（並びに障害補償年金差額一時金・障害年金差額一時金）について適用される。複数業務要因災害（複数事業労働者遺族給付、複数事業労働者葬祭給付）には適用されない。',src:'労災保険法10条',cat:'選択式'},
+  {type:'select',no:'①選択',opt:'空欄C',q:'業務災害に関する保険給付（【C】を除く。）は、労働基準法に規定する災害補償の事由又は船員法に規定する災害補償の事由が生じた場合に、補償を受けるべき労働者若しくは遺族又は葬祭を行う者に対し、その請求に基づいて行う。\n\n【C】に入る適切な語句を選びなさい。',choices:['傷病補償年金及び介護補償給付','二次健康診断等給付','葬祭料','遺族補償一時金及び障害補償一時金'],answer:'傷病補償年金及び介護補償給付',exp:'業務災害に関する保険給付のうち、傷病補償年金は昭和51年改正、介護補償給付は平成7年改正により設けられたものであり、労働基準法の災害補償中に直接対応するものはない。',src:'労災保険法12条の8第2項',cat:'選択式'},
+  {type:'select',no:'①選択',opt:'空欄D',q:'業務災害に関する保険給付（傷病補償年金及び介護補償給付を除く。）は、労働基準法に規定する災害補償の事由又は【D】に規定する災害補償の事由が生じた場合に、補償を受けるべき労働者若しくは遺族又は葬祭を行う者に対し、その請求に基づいて行う。\n\n【D】に入る適切な語句を選びなさい。',choices:['船員法','船員保険法','国家公務員災害補償法若しくは地方公務員災害補償法','国家公務員法若しくは地方公務員法'],answer:'船員法',exp:'船員法の災害補償の事由が生じた場合には、従来船員保険法において給付が行われていたが、平成22年に船員保険法の労災相当部分が労災保険法に統合され、現在は労災保険法により給付される。',src:'労災保険法12条の8第2項',cat:'選択式'},
+  {type:'select',no:'①選択',opt:'空欄E',q:'業務災害に関する保険給付（傷病補償年金及び介護補償給付を除く。）は、労働基準法に規定する災害補償の事由又は船員法に規定する災害補償の事由が生じた場合に、補償を受けるべき労働者若しくは遺族又は【E】に対し、その請求に基づいて行う。\n\n【E】に入る適切な語句を選びなさい。',choices:['葬祭を行う者','介護を行う者','診療を担当する者','その他同居の親族'],answer:'葬祭を行う者',exp:'葬祭料は労働者の遺族ではなく「葬祭を行う者」に対して支給される。',src:'労災保険法12条の8第2項',cat:'選択式'},
+  {type:'select',no:'②選択',opt:'空欄A',q:'労働者災害補償保険等関係事務のうち、保険給付（【A】を除く。）並びに社会復帰促進等事業のうち労災就学等援護費及び特別支給金の支給並びに厚生労働省労働基準局長が定める給付に関する事務は、都道府県労働局長の指揮監督を受けて、所轄労働基準監督署長が行う。\n\n【A】に入る適切な語句を選びなさい。',choices:['二次健康診断等給付','通勤災害に関する保険給付','特別加入者に関する保険給付','未支給の保険給付'],answer:'二次健康診断等給付',exp:'二次健康診断等給付の請求先は所轄都道府県労働局長であり、それ以外の保険給付の請求先は所轄労働基準監督署長である。',src:'労災保険法施行規則1条3項',cat:'選択式'},
+  {type:'select',no:'②選択',opt:'空欄B',q:'労働者災害補償保険等関係事務（保険給付に係るもの）のうち、当該事務が【B】に関するものである場合は、生計維持事業の主たる事務所の所在地を管轄する労働基準監督署長を所轄労働基準監督署長とする。\n\n【B】に入る適切な語句を選びなさい。',choices:['複数業務要因災害','複数事業労働者','通勤災害','特別加入者'],answer:'複数業務要因災害',exp:'複数業務要因災害に関する保険給付に関する事務は、生計維持事業（複数事業労働者の2以上の事業のうち収入が当該複数事業労働者の生計を維持する程度が最も高いもの）の主たる事務所の所在地を管轄する労働基準監督署長が行う。',src:'労災保険法施行規則1条3項',cat:'選択式'},
+  {type:'select',no:'②選択',opt:'空欄C',q:'所轄労働基準監督署長は、業務上の事由により負傷し、又は疾病にかかった労働者の当該負傷又は疾病が療養の開始後【C】を経過した日において治っていないときは、同日以後1か月以内に、当該労働者から所定の事項を記載した届書（傷病の状態等に関する届）を提出させるものとする。\n\n【C】に入る適切な語句を選びなさい。',choices:['1年6か月','6か月','1年','3年'],answer:'1年6か月',exp:'傷病補償年金の支給事由は、業務上の事由による療養の開始後1年6か月を経過した日又は同日後において、当該負傷・疾病が治っていないこと及び傷病等級に該当することである。',src:'労災保険法施行規則18条の2第2項',cat:'選択式'},
+  {type:'select',no:'②選択',opt:'空欄D',q:'所轄労働基準監督署長は、業務上の事由により負傷し、又は疾病にかかった労働者の当該負傷又は疾病が療養の開始後1年6か月を経過した日において治っていないときは、同日以後【D】以内に、当該労働者から所定の事項を記載した届書（傷病の状態等に関する届）を提出させるものとする。\n\n【D】に入る適切な語句を選びなさい。',choices:['1か月','10日','2か月','3か月'],answer:'1か月',exp:'療養開始後1年6か月を経過しても治っていない労働者については、その後1か月以内に傷病の状態等に関する届を提出させる。',src:'労災保険法施行規則18条の2第2項',cat:'選択式'},
+  {type:'select',no:'②選択',opt:'空欄E',q:'毎年【E】から同月末日までの間に業務上の事由による負傷又は疾病に係る療養のため労働することができないために賃金を受けなかった日がある労働者が、その日について休業補償給付の支給を請求しようとする場合に、同月1日において当該負傷又は疾病に係る療養の開始後1年6か月を経過しているときは、当該労働者は、当該賃金を受けなかった日に係る休業補償給付の請求書に添えて所定の事項を記載した報告書（傷病の状態等に関する報告書）を所轄労働基準監督署長に提出しなければならない。\n\n【E】に入る適切な語句を選びなさい。',choices:['1月1日','4月1日','8月1日','12月1日'],answer:'1月1日',exp:'1年6か月を経過しても治っておらず、しかも傷病補償年金の支給決定を受けるに至っていない労働者は、毎年1月分の休業補償給付を請求する際に、傷病の状態に関する報告書を併せて提出しなければならない。',src:'労災保険法施行規則19条の2第1項',cat:'選択式'},
+];
+
+// ============================================================
+//  GOOGLE DRIVE SYNC
+// ============================================================
+const CLIENT_ID    = APP_CONFIG.clientId;
+const SCOPES       = 'https://www.googleapis.com/auth/drive.appdata';
+const DRIVE_FILE_NAME = APP_CONFIG.driveFileName;
+let tokenClient = null, gapiInited = false, gisInited = false;
+let accessToken = null, driveFileId = null, isSyncing = false;
+let autoSaveTimer = null;
+
+window.addEventListener('load', () => {
+  gapi.load('client', async () => {
+    await gapi.client.init({});
+    gapiInited = true;
+    maybeEnableSync();
+  });
+  const s = document.createElement('script');
+  s.src = 'https://accounts.google.com/gsi/client';
+  s.onload = () => {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID, scope: SCOPES,
+      callback: async (resp) => {
+        if (resp.error) { showToast('ログインエラー: ' + resp.error, 'error'); return; }
+        accessToken = resp.access_token;
+        gapi.client.setToken({ access_token: accessToken });
+        onSignedIn();
+      }
+    });
+    gisInited = true;
+    maybeEnableSync();
+  };
+  document.head.appendChild(s);
+});
+
+function maybeEnableSync() {
+  if (gapiInited && gisInited && getSavedAuth()) {
+    tokenClient.requestAccessToken({ prompt: '' });
+  }
+}
+function signIn() {
+  if (!gapiInited || !gisInited) { showToast('初期化中です、少々お待ちください', 'error'); return; }
+  tokenClient.requestAccessToken({ prompt: 'consent' });
+}
+function signOut() {
+  if (accessToken) google.accounts.oauth2.revoke(accessToken);
+  accessToken = null; driveFileId = null;
+  clearSavedAuth(); updateSyncUI(false);
+  showToast('ログアウトしました');
+}
+function onSignedIn() {
+  updateSyncUI(true); saveAuthHint();
+  showToast('ログイン成功、データを読み込んでいます…', 'success');
+  loadFromDrive();
+}
+function updateSyncUI(loggedIn) {
+  document.getElementById('syncDot').className = 'sync-dot' + (loggedIn ? ' connected' : '');
+  document.getElementById('syncStatusText').textContent = loggedIn ? 'Googleドライブに同期中' : 'Googleアカウントで同期';
+  document.getElementById('syncUser').style.display = 'none';
+  document.getElementById('btnSignIn').style.display    = loggedIn ? 'none'  : 'flex';
+  document.getElementById('btnManualSync').style.display = loggedIn ? 'block' : 'none';
+  document.getElementById('btnManualSync').disabled = !loggedIn;
+  document.getElementById('btnSignOut').style.display   = loggedIn ? 'block' : 'none';
+}
+function setSyncing(v) {
+  isSyncing = v;
+  const dot = document.getElementById('syncDot');
+  const btn = document.getElementById('btnManualSync');
+  if (v) { dot.className = 'sync-dot syncing'; if (btn) { btn.disabled = true; btn.textContent = '同期中…'; } }
+  else   { dot.className = 'sync-dot connected'; if (btn) { btn.disabled = false; btn.textContent = '↑↓ 同期'; } }
+}
+async function loadFromDrive() {
+  if (!accessToken) return;
+  setSyncing(true);
+  try {
+    const res = await gapi.client.request({
+      path: 'https://www.googleapis.com/drive/v3/files',
+      params: { spaces: 'appDataFolder', q: `name='${DRIVE_FILE_NAME}'`, fields: 'files(id,name)' }
+    });
+    const files = res.result.files || [];
+    if (files.length > 0) {
+      driveFileId = files[0].id;
+      const fileRes = await gapi.client.request({
+        path: `https://www.googleapis.com/drive/v3/files/${driveFileId}`,
+        params: { alt: 'media' }
+      });
+      const data = typeof fileRes.result === 'string' ? JSON.parse(fileRes.result) : fileRes.result;
+      mergeCloudData(data);
+      showToast('クラウドから読み込みました', 'success');
+    } else {
+      showToast('クラウドにデータがありません（初回）');
+      await saveToDrive();
+    }
+  } catch (e) {
+    console.error(e);
+    showToast('読み込み失敗: ' + (e?.message || '通信エラー'), 'error');
+  }
+  setSyncing(false);
+}
+async function saveToDrive() {
+  if (!accessToken) return;
+  setSyncing(true);
+  try {
+    const body = JSON.stringify(buildSavePayload());
+    if (driveFileId) {
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+        body
+      });
+    } else {
+      const meta = JSON.stringify({ name: DRIVE_FILE_NAME, parents: ['appDataFolder'] });
+      const form = new FormData();
+      form.append('metadata', new Blob([meta], { type: 'application/json' }));
+      form.append('file', new Blob([body], { type: 'application/json' }));
+      const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&spaces=appDataFolder', {
+        method: 'POST', headers: { 'Authorization': 'Bearer ' + accessToken }, body: form
+      });
+      driveFileId = (await res.json()).id;
+    }
+    showToast('クラウドに保存しました', 'success');
+  } catch (e) {
+    console.error(e);
+    showToast('保存失敗: ' + (e?.message || '通信エラー'), 'error');
+  }
+  setSyncing(false);
+}
+async function manualSync() {
+  if (!accessToken) { showToast('先にログインしてください', 'error'); return; }
+  await loadFromDrive();
+}
+function scheduleAutoSave() {
+  if (!accessToken) return;
+  if (autoSaveTimer) clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => saveToDrive(), 3000);
+}
+
+// ============================================================
+//  SAVE / LOAD PAYLOAD
+//  ★ v2: stats（正答率）と session（中断データ）を両方保存
+// ============================================================
+function buildSavePayload() {
+  // 現在進行中のセッション or 中断済みの pendingResume を保存
+  let sessionData = null;
+  if (currentSession && questions.length > 0) {
+    sessionData = {
+      questionIndices: questions.map(q => getOrigIdx(q)),
+      current,
+      answers: [...answers]
+    };
+  } else if (pendingResume) {
+    sessionData = pendingResume;
+  }
+  return {
+    version: 2,
+    bookmarks: [...bookmarks],          // ★ 栞 → Drive同期で他デバイスにも反映
+    stats: JSON.parse(JSON.stringify(questionStats)), // ★ 正答率データ
+    session: sessionData,               // ★ 中断セーブ
+    savedAt: new Date().toISOString()
+  };
+}
+function mergeCloudData(data) {
+  if (!data) return;
+  // 栞
+  if (data.bookmarks) bookmarks = new Set(data.bookmarks);
+  // ★ 正答率データを復元
+  if (data.stats) {
+    Object.entries(data.stats).forEach(([k, v]) => { questionStats[k] = v; });
+  }
+  // ★ 中断セッションを復元（1問以上回答済みの場合のみ）
+  if (data.session && data.session.questionIndices && data.session.answers) {
+    const answered = data.session.answers.filter(a => a !== null).length;
+    if (answered > 0) pendingResume = data.session;
+  }
+  localSave();
+  updateBmBadge();
+  updateWeakBtn();
+  if (pendingResume) offerResume();
+}
+
+// ============================================================
+//  LOCAL STORAGE
+// ============================================================
+const LS_KEY  = 'sharoushi_' + DRIVE_FILE_NAME;
+const LS_AUTH = 'sharoushi_auth_hint';
+
+function localSave()     { try { localStorage.setItem(LS_KEY, JSON.stringify(buildSavePayload())); } catch(e){} }
+function localLoad()     { try { const s = localStorage.getItem(LS_KEY); if(s) mergeCloudData(JSON.parse(s)); } catch(e){} }
+function saveAuthHint()  { try { localStorage.setItem(LS_AUTH, '1'); } catch(e){} }
+function getSavedAuth()  { try { return localStorage.getItem(LS_AUTH); } catch(e){ return null; } }
+function clearSavedAuth(){ try { localStorage.removeItem(LS_AUTH); } catch(e){} }
+
+// ============================================================
+//  RESUME (中断再開)
+// ============================================================
+let pendingResume = null;
+let currentSession = false;
+
+function offerResume() {
+  if (!pendingResume) return;
+  const s = pendingResume;
+  const total = s.questionIndices.length;
+  const done  = s.answers.filter(a => a !== null).length;
+  document.getElementById('resumeMsg').textContent =
+    `${total}問中 ${done}問まで回答済みです。続きから再開しますか？`;
+  document.getElementById('resumeModal').classList.add('show');
+}
+function resumeSession() {
+  document.getElementById('resumeModal').classList.remove('show');
+  if (!pendingResume) return;
+  const s = pendingResume;
+  const pool = s.questionIndices.map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
+  questions = pool;
+  current   = s.current || 0;
+  answers   = [...(s.answers || new Array(pool.length).fill(null))];
+  pendingResume = null;
+  currentSession = true;
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('resultScreen').classList.remove('show');
+  document.getElementById('quizScreen').style.display = 'block';
+  document.getElementById('navTabs').style.display    = 'none';
+  renderQuestion();
+}
+function dismissResume() {
+  document.getElementById('resumeModal').classList.remove('show');
+  pendingResume = null;
+}
+
+// ============================================================
+//  ★ NEW: 中断して保存
+// ============================================================
+function suspendSession() {
+  if (!currentSession || questions.length === 0) return;
+  // 現在の進行状態を pendingResume に保存
+  pendingResume = {
+    questionIndices: questions.map(q => getOrigIdx(q)),
+    current,
+    answers: [...answers]
+  };
+  currentSession = false;
+  localSave();
+  scheduleAutoSave();
+  // スタート画面に戻る
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('navTabs').style.display    = 'flex';
+  document.getElementById('startScreen').style.display = '';
+  document.getElementById('bookmarkList').classList.remove('show');
+  document.querySelectorAll('.nav-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+  showToast('中断して保存しました。次回「続きから再開」できます。', 'success');
+}
+
+// ============================================================
+//  QUESTION STATS（正答率トラッキング）
+// ============================================================
+let questionStats = {}; // { origIdx: { correct: N, total: N } }
+
+function recordStat(origIdx, correct) {
+  if (!questionStats[origIdx]) questionStats[origIdx] = { correct: 0, total: 0 };
+  if (correct) questionStats[origIdx].correct++;
+  questionStats[origIdx].total++;
+}
+function getAccuracyInfo(origIdx) {
+  const s = questionStats[origIdx];
+  if (!s || s.total === 0) return null;
+  const pct = Math.round((s.correct / s.total) * 100);
+  return { pct, total: s.total, cls: pct < 50 ? 'low' : pct < 70 ? 'mid' : 'high' };
+}
+
+// ============================================================
+//  ★ NEW: 苦手問題モード (正答率50%以下)
+// ============================================================
+const WEAK_THRESHOLD = 0.5;
+
+function updateWeakBtn() {
+  const btn = document.getElementById('btnStartWeak');
+  if (!btn) return;
+  let pool = ALL_QUESTIONS;
+  if (selectedCats.size > 0) pool = pool.filter(q => selectedCats.has(q.cat));
+  const weakPool = pool.filter((q, _) => {
+    const idx = ALL_QUESTIONS.indexOf(q);
+    const s   = questionStats[idx];
+    return s && s.total > 0 && (s.correct / s.total) <= WEAK_THRESHOLD;
+  });
+  if (weakPool.length > 0) {
+    btn.style.display = 'block';
+    btn.textContent   = `📉 正答率50%以下の問題を出題（${weakPool.length}問）`;
+  } else {
+    btn.style.display = 'none';
+  }
+}
+function startWeak() {
+  // データがない場合はトースト表示
+  const totalAnswered = Object.values(questionStats).filter(s => s && s.total > 0).length;
+  if (totalAnswered === 0) {
+    showToast('まだ回答データがありません', 'warn');
+    return;
+  }
+  let pool = ALL_QUESTIONS.map((q, i) => ({ ...q, _origIdx: i }));
+  if (selectedCats.size > 0) pool = pool.filter(q => selectedCats.has(q.cat));
+  pool = pool.filter(q => {
+    const s = questionStats[q._origIdx];
+    return s && s.total > 0 && (s.correct / s.total) <= WEAK_THRESHOLD;
+  });
+  if (pool.length === 0) { showToast('正答率50%以下の問題はありません', 'warn'); return; }
+  startQuiz(shuffleArray(pool));
+}
+
+// ============================================================
+//  CORE STATE
+// ============================================================
+let questions = [], current = 0, answers = [];
+let bookmarks = new Set(), selectedCats = new Set();
+let shuffleMode = false, currentQIndex = -1;
+
+// ★ NEW: ランダム出題数 (デフォルト10)
+let randCount = 10;
+
+const CATS = [...new Set(ALL_QUESTIONS.map(q => q.cat))];
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ============================================================
+//  ★ ランダム出題（指定数・フィルター適用後の問題プールから抽出）
+// ============================================================
+function getFilteredPool() {
+  let p = ALL_QUESTIONS;
+  if (selectedCats.size > 0) p = p.filter(q => selectedCats.has(q.cat));
+  return p;
+}
+function onRandInputChange() {
+  const inp = document.getElementById('randInput');
+  if (!inp) return;
+  let v = parseInt(inp.value, 10);
+  if (isNaN(v) || v < 1) v = 1;
+  const max = getFilteredPool().length;
+  if (v > max) v = max;
+  randCount = v;
+  inp.value = v;
+  updateRandBtnLabel();
+}
+function updateRandBtnLabel() {
+  const btn = document.getElementById('btnStartRand');
+  if (!btn) return;
+  btn.textContent = `${randCount}問ランダムで出題`;
+}
+function clampRandCount() {
+  // フィルター変更時等、上限を超えていたらクランプ
+  const max = getFilteredPool().length;
+  if (max === 0) { randCount = 1; }
+  else if (randCount > max) randCount = max;
+  if (randCount < 1) randCount = 1;
+  const inp = document.getElementById('randInput');
+  if (inp) {
+    inp.max = max;
+    inp.value = randCount;
+  }
+  updateRandBtnLabel();
+}
+function startRandom() {
+  // randCountをinput値で再同期
+  onRandInputChange();
+  let pool = getFilteredPool().map(q => ({ ...q, _origIdx: ALL_QUESTIONS.indexOf(q) }));
+  if (pool.length === 0) { showToast('該当する問題がありません', 'warn'); return; }
+  pool = shuffleArray(pool);
+  // X問がプール数を超える場合はプール全問を出題
+  const n = Math.min(randCount, pool.length);
+  pool = pool.slice(0, n);
+  startQuiz(pool);
+}
+
+// ============================================================
+//  FILTERS
+// ============================================================
+function initFilters() {
+  const row = document.getElementById('filterRow');
+  const all = document.createElement('button');
+  all.className = 'filter-btn active'; all.textContent = 'すべて'; all.dataset.val = 'all';
+  all.onclick = () => {
+    selectedCats.clear();
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.val === 'all'));
+    clampRandCount(); updateStartCount(); updateWeakBtn();
+  };
+  row.appendChild(all);
+  CATS.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn'; btn.textContent = c; btn.dataset.val = c;
+    btn.onclick = () => {
+      document.querySelector('.filter-btn[data-val="all"]').classList.remove('active');
+      btn.classList.toggle('active');
+      if (selectedCats.has(c)) selectedCats.delete(c); else selectedCats.add(c);
+      if (selectedCats.size === 0) document.querySelector('.filter-btn[data-val="all"]').classList.add('active');
+      clampRandCount(); updateStartCount(); updateWeakBtn();
+    };
+    row.appendChild(btn);
+  });
+}
+function updateStartCount() {
+  const pool  = getFilteredPool();
+  document.getElementById('startCount').textContent = pool.length;
+}
+function updateBmBadge() {
+  const cnt   = bookmarks.size;
+  const badge = document.getElementById('bmBadge');
+  badge.style.display = cnt > 0 ? 'inline-block' : 'none';
+  badge.textContent   = cnt;
+  const btn = document.getElementById('btnStartBm');
+  if (btn) btn.style.display = cnt > 0 ? 'block' : 'none';
+}
+function toggleShuffle() {
+  shuffleMode = !shuffleMode;
+  document.getElementById('btnShuffle').classList.toggle('active', shuffleMode);
+}
+function switchTab(tab) {
+  document.querySelectorAll('.nav-tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && tab === 'start') || (i === 1 && tab === 'bookmark'));
+  });
+  document.getElementById('startScreen').style.display = tab === 'start' ? '' : 'none';
+  const bl = document.getElementById('bookmarkList');
+  if (tab === 'bookmark') { bl.classList.add('show'); renderBmList(); }
+  else bl.classList.remove('show');
+}
+
+// ============================================================
+//  BOOKMARK LIST
+// ============================================================
+function renderBmList() {
+  const container = document.getElementById('bmItems');
+  const actions   = document.getElementById('bmActions');
+  if (bookmarks.size === 0) {
+    container.innerHTML = '<div class="empty-bm">栞がついている問題はありません。</div>';
+    actions.innerHTML = ''; return;
+  }
+  container.innerHTML = '';
+  [...bookmarks].forEach(idx => {
+    const q = ALL_QUESTIONS[idx]; if (!q) return;
+    const acc = getAccuracyInfo(idx);
+    const accHtml = acc
+      ? `<span class="bm-acc ${acc.cls}">${acc.pct}%</span>`
+      : '';
+    const div = document.createElement('div');
+    div.className = 'bm-item';
+    div.innerHTML = `<span class="bm-star">★</span><span class="bm-tag">${q.no} ${q.opt || ''}</span><span class="bm-text">${q.q}</span>${accHtml}`;
+    container.appendChild(div);
+  });
+  actions.innerHTML = `
+    <button class="btn-retry" onclick="startBookmarked()">★ 栞の問題を解く</button>
+    <button class="btn-retry" style="border-color:#e05050;color:#e05050;margin-left:8px" onclick="clearBookmarks()">すべて削除</button>`;
+}
+function clearBookmarks() {
+  if (!confirm('すべての栞を削除しますか？')) return;
+  bookmarks.clear(); localSave(); scheduleAutoSave(); updateBmBadge(); renderBmList();
+}
+
+// ============================================================
+//  QUIZ FLOW
+// ============================================================
+function startQuiz(pool) {
+  if (!pool) {
+    let p = ALL_QUESTIONS.map((q, i) => ({ ...q, _origIdx: i }));
+    if (selectedCats.size > 0) p = p.filter(q => selectedCats.has(q.cat));
+    if (shuffleMode) p = shuffleArray(p);
+    pool = p;
+  }
+  questions = pool; current = 0;
+  answers   = new Array(questions.length).fill(null);
+  currentSession = true; pendingResume = null;
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('bookmarkList').classList.remove('show');
+  document.getElementById('resultScreen').classList.remove('show');
+  document.getElementById('quizScreen').style.display = 'block';
+  document.getElementById('navTabs').style.display    = 'none';
+  renderQuestion();
+}
+function startBookmarked() {
+  const pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
+  if (pool.length === 0) return;
+  startQuiz(pool);
+}
+function getOrigIdx(q) { return q._origIdx !== undefined ? q._origIdx : ALL_QUESTIONS.indexOf(q); }
+
+// ============================================================
+//  RENDER
+// ============================================================
+function renderQuestion() {
+  if (current >= questions.length) { showResult(); return; }
+  const q = questions[current];
+  currentQIndex = getOrigIdx(q);
+
+  document.getElementById('progressNum').textContent = `${current + 1} / ${questions.length}`;
+  const corrCount = answers.filter(a => a && a.correct).length;
+  document.getElementById('progressScore').textContent = `正解 ${corrCount} 問`;
+  document.getElementById('progressFill').style.width  = `${(current / questions.length) * 100}%`;
+
+  document.getElementById('qTag').textContent = q.no;
+  document.getElementById('qNum').textContent = q.opt || '';
+  document.getElementById('qText').textContent = q.q;
+
+  // 問題タイプバッジ
+  const typeBadge = document.getElementById('qTypeBadge');
+  if (typeBadge) {
+    if (q.type === 'select') {
+      typeBadge.textContent = '選択式';
+      typeBadge.className = 'q-type-badge sel';
+      typeBadge.style.display = 'inline-block';
+    } else {
+      typeBadge.textContent = '○×';
+      typeBadge.className = 'q-type-badge ox';
+      typeBadge.style.display = 'inline-block';
+    }
+  }
+
+  // ★ 正答率バッジ
+  const accEl  = document.getElementById('qAcc');
+  const accInfo = getAccuracyInfo(currentQIndex);
+  if (accInfo) {
+    accEl.textContent = `過去${accInfo.total}回: ${accInfo.pct}%正解`;
+    accEl.className   = `q-acc ${accInfo.cls}`;
+    accEl.style.display = 'inline-block';
+  } else {
+    accEl.style.display = 'none';
+  }
+
+  // 栞ボタン
+  const bBtn = document.getElementById('btnBookmark');
+  bBtn.textContent = bookmarks.has(currentQIndex) ? '★' : '☆';
+  bBtn.classList.toggle('active', bookmarks.has(currentQIndex));
+
+  const ans    = answers[current];
+  const panel  = document.getElementById('resultPanel');
+  const nextBtn = document.getElementById('btnNext');
+  const isSelect = (q.type === 'select');
+  // ボタン群の表示切替
+  document.getElementById('oxRow').style.display       = isSelect ? 'none' : 'grid';
+  document.getElementById('choicesGrid').style.display = isSelect ? 'grid' : 'none';
+  if (ans) {
+    if (isSelect) renderChoices(q, ans.userChoice, true);
+    else          renderOxButtons(q, ans.userChoice, true);
+    showResultPanel(q, ans.correct);
+    nextBtn.style.display = 'block';
+  } else {
+    if (isSelect) renderChoices(q, null, false);
+    else          renderOxButtons(q, null, false);
+    panel.style.display = 'none'; panel.className = 'result-panel';
+    nextBtn.style.display = 'none';
+  }
+  document.getElementById('btnBack').disabled = (current === 0);
+  document.getElementById('btnSkip').style.display = ans ? 'none' : 'block';
+}
+
+function renderOxButtons(q, userChoice, isAnswered) {
+  const bm = document.getElementById('btnMaru');
+  const bb = document.getElementById('btnBatsu');
+  bm.className = 'btn-answer btn-maru'; bb.className = 'btn-answer btn-batsu';
+  bm.disabled = false; bb.disabled = false;
+  if (isAnswered) {
+    bm.disabled = true; bb.disabled = true;
+    if (userChoice === true) {
+      bm.className = q.a === true  ? 'btn-answer correct-chosen' : 'btn-answer wrong-chosen';
+      if (q.a !== true)  bb.className = 'btn-answer reveal-correct';
+    } else {
+      bb.className = q.a === false ? 'btn-answer correct-chosen' : 'btn-answer wrong-chosen';
+      if (q.a !== false) bm.className = 'btn-answer reveal-correct';
+    }
+  }
+}
+
+// 選択式問題の描画（選択式を含む科目でオーバーライドして使用）
+function renderChoices(q, userChoice, isAnswered) {
+  const grid = document.getElementById('choicesGrid');
+  grid.innerHTML = '';
+  q.choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-choice'; btn.textContent = c;
+    if (isAnswered) {
+      btn.disabled = true;
+      if (c === q.answer)   btn.className = c === userChoice ? 'btn-choice correct-chosen' : 'btn-choice reveal-correct';
+      if (c === userChoice && c !== q.answer) btn.className = 'btn-choice wrong-chosen';
+    } else {
+      btn.onclick = () => answerSelect(c);
+    }
+    grid.appendChild(btn);
+  });
+}
+
+function showResultPanel(q, isCorrect) {
+  const panel = document.getElementById('resultPanel');
+  panel.style.display = 'block';
+  panel.className     = isCorrect ? 'result-panel correct' : 'result-panel wrong';
+  document.getElementById('resultHeader').textContent = isCorrect ? '✓ 正解！' : '✗ 不正解';
+  document.getElementById('resultExp').textContent    = q.exp;
+  document.getElementById('resultSource').textContent = '根拠：' + q.src;
+}
+
+// ============================================================
+//  ANSWER
+// ============================================================
+function answerOx(userAnswer) {
+  if (answers[current]) return;
+  const q         = questions[current];
+  const isCorrect = userAnswer === q.a;
+  answers[current] = { correct: isCorrect, userChoice: userAnswer };
+  recordStat(currentQIndex, isCorrect);
+  renderOxButtons(q, userAnswer, true);
+  showResultPanel(q, isCorrect);
+  document.getElementById('btnNext').style.display = 'block';
+  document.getElementById('btnSkip').style.display = 'none';
+  document.getElementById('progressScore').textContent =
+    `正解 ${answers.filter(a => a && a.correct).length} 問`;
+  // 回答後に正答率バッジを更新
+  const accInfo = getAccuracyInfo(currentQIndex);
+  const accEl   = document.getElementById('qAcc');
+  if (accInfo) {
+    accEl.textContent   = `過去${accInfo.total}回: ${accInfo.pct}%正解`;
+    accEl.className     = `q-acc ${accInfo.cls}`;
+    accEl.style.display = 'inline-block';
+  }
+  localSave(); scheduleAutoSave();
+}
+function answerSelect(choice) {
+  if (answers[current]) return;
+  const q         = questions[current];
+  const isCorrect = choice === q.answer;
+  answers[current] = { correct: isCorrect, userChoice: choice };
+  recordStat(currentQIndex, isCorrect);
+  renderChoices(q, choice, true);
+  showResultPanel(q, isCorrect);
+  document.getElementById('btnNext').style.display = 'block';
+  document.getElementById('btnSkip').style.display = 'none';
+  document.getElementById('progressScore').textContent =
+    `正解 ${answers.filter(a => a && a.correct).length} 問`;
+  localSave(); scheduleAutoSave();
+}
+
+function nextQuestion()  { current++; renderQuestion(); }
+function goBack()        { if (current === 0) return; current--; renderQuestion(); }
+function skipQuestion()  { if (answers[current]) return; current++; renderQuestion(); }
+
+function toggleBookmark() {
+  if (currentQIndex < 0) return;
+  if (bookmarks.has(currentQIndex)) bookmarks.delete(currentQIndex);
+  else bookmarks.add(currentQIndex);
+  localSave(); scheduleAutoSave(); updateBmBadge();
+  const bBtn = document.getElementById('btnBookmark');
+  bBtn.textContent = bookmarks.has(currentQIndex) ? '★' : '☆';
+  bBtn.classList.toggle('active', bookmarks.has(currentQIndex));
+}
+
+// ============================================================
+//  RESULT
+// ============================================================
+function showResult() {
+  currentSession = false; pendingResume = null;
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('navTabs').style.display    = 'flex';
+  document.getElementById('resultScreen').classList.add('show');
+  const total = questions.length;
+  const ok    = answers.filter(a => a && a.correct).length;
+  const ng    = answers.filter(a => a && !a.correct).length;
+  const sk    = answers.filter(a => a === null).length;
+  document.getElementById('finalScore').textContent = ok;
+  document.getElementById('finalDenom').textContent = `/ ${total}`;
+  document.getElementById('finalPct').textContent   = `正解率 ${Math.round(ok / total * 100)}%`;
+  document.getElementById('okCount').textContent    = ok;
+  document.getElementById('ngCount').textContent    = ng;
+  document.getElementById('skCount').textContent    = sk;
+  const pct = Math.round(ok / total * 100);
+  document.getElementById('scoreMsg').textContent =
+    pct >= 80 ? '素晴らしい！本試験レベルの高得点です。\n引き続き精度を高めましょう。'
+    : pct >= 60 ? '合格ラインに近い水準です。\n間違えた問題を重点的に復習しましょう。'
+    : '基礎からの確認が必要です。\n繰り返し解いて定着させましょう。';
+  const wrongIdx  = answers.map((a, i) => a && !a.correct ? i : -1).filter(i => i >= 0);
+  const skipIdx   = answers.map((a, i) => a === null ? i : -1).filter(i => i >= 0);
+  const btnW = document.getElementById('btnRetryWrong');
+  const btnS = document.getElementById('btnRetrySkipped');
+  btnW.style.display = wrongIdx.length > 0 ? 'inline-block' : 'none';
+  btnS.style.display = skipIdx.length  > 0 ? 'inline-block' : 'none';
+  btnW.onclick = () => startQuiz(wrongIdx.map(i => ({ ...questions[i] })));
+  btnS.onclick = () => startQuiz(skipIdx.map(i  => ({ ...questions[i] })));
+  updateWeakBtn();
+  localSave();
+  if (accessToken) saveToDrive();
+}
+function resetToStart() {
+  document.getElementById('resultScreen').classList.remove('show');
+  document.getElementById('startScreen').style.display = '';
+  switchTab('start');
+}
+function retryWrong()   {} // showResult() 内の onclick で処理
+function retrySkipped() {}
+
+// ============================================================
+//  TOAST
+// ============================================================
+let toastTimer = null;
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast' + (type ? ' ' + type : '');
+  t.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ============================================================
+//  BOOT
+// ============================================================
+document.getElementById('appTitle').textContent    = APP_CONFIG.title;
+document.getElementById('appSubtitle').textContent = APP_CONFIG.subtitle;
+
+localLoad();        // ローカルストレージから復元
+initFilters();      // フィルターボタン生成
+updateBmBadge();    // 栞バッジ
+updateWeakBtn();    // 苦手モードボタン
+updateStartCount(); // 出題数表示
+clampRandCount();   // ランダム入力欄の初期化（max設定など）
+</script>
+</body>
+</html>
