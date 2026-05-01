@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>労働基準法・安全衛生法 一問一答 — 社労士試験対策</title>
+<script src="https://apis.google.com/js/api.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-serif;background:#11161e;color:#e8e0d0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+.app{width:100%;max-width:640px}
+
+/* ===== SYNC BAR ===== */
+.sync-bar{display:flex;align-items:center;justify-content:space-between;background:#1a2434;border:1px solid #283848;border-radius:10px;padding:10px 14px;margin-bottom:16px;gap:10px;flex-wrap:wrap}
+.sync-status{display:flex;align-items:center;gap:8px;font-size:12px;color:#8a9bb0}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#556070;flex-shrink:0;transition:background .3s}
+.sync-dot.connected{background:#3dbe82}
+.sync-dot.syncing{background:#c9a84c;animation:pulse 1s infinite}
+.sync-dot.error{background:#e05050}
+.sync-user{font-size:11px;color:#556070;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sync-btns{display:flex;gap:6px;align-items:center}
+.btn-gsign{display:flex;align-items:center;gap:6px;background:#fff;color:#3c4043;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap}
+.btn-gsign:hover{background:#f1f3f4}
+.btn-gsign svg{flex-shrink:0}
+.btn-sync{background:transparent;border:1px solid #283848;color:#8a9bb0;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-sync:hover{border-color:#4a9eca;color:#4a9eca}
+.btn-sync:disabled{opacity:.4;cursor:default}
+.btn-signout{background:transparent;border:1px solid #283848;color:#556070;border-radius:6px;padding:5px 8px;font-size:11px;cursor:pointer;transition:all .15s}
+.btn-signout:hover{border-color:#e05050;color:#e05050}
+
+/* ===== HEADER ===== */
+.header{text-align:center;padding:20px 0 16px}
+.header h1{font-size:12px;letter-spacing:.15em;color:#8a9bb0;text-transform:uppercase;margin-bottom:4px}
+.header .title{font-size:21px;font-weight:700;color:#e8e0d0}
+.header .subtitle{font-size:12px;color:#556070;margin-top:5px}
+.nav-tabs{display:flex;gap:4px;background:#131920;border-radius:10px;padding:4px;margin-bottom:18px}
+.nav-tab{flex:1;padding:8px;border:none;border-radius:8px;background:transparent;color:#556070;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.nav-tab.active{background:#1a2434;color:#e8e0d0}
+.bm-badge{display:inline-block;background:rgba(232,201,122,.2);color:#e8c97a;border-radius:4px;font-size:10px;padding:1px 5px;margin-left:4px;font-weight:700}
+
+/* ===== PROGRESS ===== */
+.progress-wrap{margin-bottom:18px}
+.progress-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.progress-num{font-size:12px;color:#8a9bb0}
+.progress-score{font-size:12px;color:#8a9bb0}
+.progress-bar-bg{width:100%;height:3px;background:#1a2434;border-radius:2px}
+.progress-bar-fill{height:3px;background:linear-gradient(90deg,#c97a4a,#e8a87a);border-radius:2px;transition:width .4s ease}
+
+/* ===== QUESTION CARD ===== */
+.card{background:#1a2434;border:1px solid #283848;border-radius:12px;padding:22px 20px;margin-bottom:14px;position:relative}
+.q-meta{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.q-tag{font-size:10px;letter-spacing:.1em;color:#c97a4a;background:rgba(201,122,74,.12);border:1px solid rgba(201,122,74,.25);border-radius:4px;padding:2px 8px;font-weight:600}
+.q-num{font-size:11px;color:#556070}
+/* Accuracy badge on card */
+.q-acc{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;display:none}
+.q-acc.low{background:rgba(224,80,80,.12);border:1px solid rgba(224,80,80,.3);color:#e05050}
+.q-acc.mid{background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);color:#c9a84c}
+.q-acc.high{background:rgba(61,190,130,.12);border:1px solid rgba(61,190,130,.3);color:#3dbe82}
+.q-text{font-size:14px;line-height:1.8;color:#d8d0c0;word-break:break-word;white-space:pre-wrap;padding-right:40px}
+.btn-bookmark{position:absolute;top:18px;right:14px;background:none;border:none;cursor:pointer;font-size:20px;line-height:1;padding:4px;color:#556070;transition:color .15s,transform .1s}
+.btn-bookmark:hover{color:#e8c97a;transform:scale(1.1)}
+.btn-bookmark.active{color:#e8c97a}
+
+/* ===== OX BUTTONS ===== */
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.btn-answer{border:none;border-radius:10px;padding:18px 12px;font-size:26px;font-weight:700;cursor:pointer;transition:transform .12s,background .15s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.btn-answer:active{transform:scale(.96)}
+.btn-maru{background:#1c3040;border:1.5px solid #2a4a60;color:#5bb8e0}
+.btn-maru:hover{background:#1e3a50;border-color:#5bb8e0}
+.btn-batsu{background:#301c1c;border:1.5px solid #50282a;color:#e07060}
+.btn-batsu:hover{background:#3a2020;border-color:#e07060}
+.btn-label{font-size:10px;letter-spacing:.1em;opacity:.7}
+.btn-answer.correct-chosen{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-answer.wrong-chosen{background:#331616;border-color:#e05050;color:#e05050}
+.btn-answer.reveal-correct{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-answer:disabled{cursor:default}
+
+/* ===== SELECT CHOICES (選択式用) ===== */
+.choices-grid{display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.btn-choice{background:#182030;border:1.5px solid #283848;border-radius:8px;padding:12px 10px;font-size:13px;color:#c8c0b0;cursor:pointer;transition:all .15s;text-align:center;line-height:1.5}
+.btn-choice:hover{border-color:#c97a4a;background:#1e2a3a}
+.btn-choice.correct-chosen{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-choice.wrong-chosen{background:#331616;border-color:#e05050;color:#e05050}
+.btn-choice.reveal-correct{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-choice:disabled{cursor:default}
+.q-type-badge{font-size:10px;border-radius:4px;padding:2px 7px;font-weight:600;letter-spacing:.05em}
+.q-type-badge.ox{background:rgba(91,184,224,.12);border:1px solid rgba(91,184,224,.25);color:#5bb8e0}
+.q-type-badge.sel{background:rgba(130,201,122,.12);border:1px solid rgba(130,201,122,.25);color:#82c97a}
+.q-blank{background:rgba(201,122,74,.15);border-bottom:2px solid #c97a4a;color:#e8a87a;padding:0 4px;font-weight:700;border-radius:2px}
+
+/* ===== RESULT PANEL ===== */
+.result-panel{border-radius:10px;padding:14px 16px;margin-bottom:14px;display:none;animation:fadeUp .2s ease}
+.result-panel.correct{background:#0d2a1e;border:1px solid #2a6044}
+.result-panel.wrong{background:#2a0d0d;border:1px solid #6a2020}
+.result-header{font-size:14px;font-weight:700;margin-bottom:8px}
+.result-panel.correct .result-header{color:#3dbe82}
+.result-panel.wrong .result-header{color:#e05050}
+.result-exp{font-size:13px;line-height:1.7;color:#a0b0c0}
+.result-source{font-size:11px;color:#556070;margin-top:8px}
+
+/* ===== NAV BUTTONS ===== */
+.nav-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px}
+.btn-nav{border-radius:9px;padding:11px 10px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid #283848;background:transparent;color:#8a9bb0;white-space:nowrap}
+.btn-nav:hover{background:#1a2434;color:#c8c0b0}
+.btn-nav:disabled{opacity:.3;cursor:default}
+/* ⏸ 中断ボタン */
+.btn-suspend{border-color:#4a3a10 !important;color:#e8c97a !important}
+.btn-suspend:hover{background:rgba(232,201,122,.1) !important;border-color:#e8c97a !important}
+.btn-next{border-radius:9px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;border:none;background:#c97a4a;color:#1a0800;letter-spacing:.05em;display:none;width:100%;margin-bottom:6px}
+.btn-next:hover{background:#e8a87a}
+
+/* ===== START SCREEN ===== */
+.start-screen{text-align:center;padding:24px 16px}
+.start-count{font-size:44px;font-weight:700;color:#c97a4a;display:block;margin-bottom:4px}
+.start-unit{font-size:13px;color:#8a9bb0;margin-bottom:22px;display:block}
+.start-desc{font-size:13px;color:#8a9bb0;line-height:1.7;margin-bottom:22px}
+.filters{margin-bottom:22px}
+.filter-label{font-size:12px;color:#8a9bb0;margin-bottom:8px}
+.filter-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.btn-filter{border:1.5px solid #283848;background:transparent;color:#8a9bb0;border-radius:18px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-filter.active{border-color:#c97a4a;background:rgba(201,122,74,.12);color:#c97a4a}
+.btn-filter:hover{border-color:#4a9eca;color:#4a9eca}
+.random-mode{margin-bottom:18px}
+.random-input-wrap{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:10px}
+.random-input{background:#1a2434;border:1.5px solid #283848;border-radius:6px;color:#e8e0d0;padding:8px 10px;font-size:14px;width:60px;text-align:center}
+.random-input:focus{outline:none;border-color:#c97a4a}
+.random-label{font-size:13px;color:#8a9bb0}
+.start-btns{display:flex;flex-direction:column;gap:10px;align-items:center}
+.btn-start{border:1.5px solid #c97a4a;background:transparent;color:#c97a4a;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-start:hover{background:rgba(201,122,74,.12)}
+.btn-start.primary{background:#c97a4a;color:#1a0800}
+.btn-start.primary:hover{background:#e8a87a}
+.btn-shuffle{border:1.5px solid #8a9bb0;background:transparent;color:#8a9bb0;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-shuffle:hover{background:rgba(138,155,176,.1)}
+
+/* ===== RESULT SCREEN ===== */
+.result-screen{text-align:center;padding:36px 16px}
+.result-title{font-size:24px;font-weight:700;color:#e8e0d0;margin-bottom:16px}
+.result-score{font-size:36px;font-weight:700;color:#c97a4a;margin-bottom:8px}
+.score-msg{font-size:13px;color:#8a9bb0;margin-bottom:22px;line-height:1.7;white-space:pre-line}
+.breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.breakdown-item{background:#1a2434;border:1px solid #283848;border-radius:10px;padding:12px;text-align:center}
+.breakdown-num{font-size:26px;font-weight:700}
+.breakdown-num.ok{color:#3dbe82}
+.breakdown-num.ng{color:#e05050}
+.breakdown-num.sk{color:#8a9bb0}
+.breakdown-label{font-size:11px;color:#8a9bb0;margin-top:3px}
+.btns-wrap{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.btn-retry{background:transparent;border:1.5px solid #c97a4a;color:#c97a4a;border-radius:10px;padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
+.btn-retry:hover{background:rgba(201,122,74,.12)}
+
+/* ===== BOOKMARK LIST ===== */
+.bookmark-list{display:none}
+.bookmark-list.show{display:block}
+.section-title{font-size:12px;color:#556070;letter-spacing:.1em;margin-bottom:12px;text-align:center;text-transform:uppercase}
+.bm-item{background:#1a2434;border:1px solid #283848;border-radius:10px;padding:12px 14px;margin-bottom:9px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:border-color .15s}
+.bm-item:hover{border-color:#c97a4a}
+.bm-star{font-size:14px;color:#e8c97a;flex-shrink:0}
+.bm-tag{font-size:10px;color:#c97a4a;background:rgba(201,122,74,.12);border:1px solid rgba(201,122,74,.25);border-radius:4px;padding:2px 6px;white-space:nowrap;flex-shrink:0;font-weight:600}
+.bm-acc{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;flex-shrink:0;align-self:flex-start;margin-top:1px}
+.bm-acc.low{background:rgba(224,80,80,.12);border:1px solid rgba(224,80,80,.3);color:#e05050}
+.bm-acc.mid{background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);color:#c9a84c}
+.bm-acc.high{background:rgba(61,190,130,.12);border:1px solid rgba(61,190,130,.3);color:#3dbe82}
+.bm-text{font-size:13px;line-height:1.55;color:#a0b0c0;flex:1;min-width:0}
+.empty-bm{text-align:center;padding:36px 20px;color:#556070;font-size:14px;line-height:1.7}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a2434;border:1px solid #283848;border-radius:8px;padding:10px 18px;font-size:13px;color:#e8e0d0;opacity:0;transition:all .3s;pointer-events:none;z-index:100;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:#3dbe82;color:#3dbe82}
+.toast.error{border-color:#e05050;color:#e05050}
+.toast.warn{border-color:#c9a84c;color:#c9a84c}
+
+/* ===== RESUME MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:999}
+.modal{background:#1a2434;border:1px solid #283848;border-radius:12px;padding:24px;max-width:400px;width:90vw}
+.modal-title{font-size:16px;font-weight:700;color:#e8e0d0;margin-bottom:12px}
+.modal-desc{font-size:14px;color:#a0b0c0;line-height:1.6;margin-bottom:20px}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end}
+.btn-modal{border:1.5px solid #283848;background:transparent;color:#8a9bb0;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-modal.primary{border-color:#c97a4a;color:#c97a4a}
+.btn-modal:hover{background:rgba(138,155,176,.1)}
+.btn-modal.primary:hover{background:rgba(201,122,74,.12)}
+
+/* ===== ANIMATIONS ===== */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.screen{display:none}
+.screen.show{display:block;animation:fadeUp .3s ease}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ===== GOOGLE DRIVE SYNC BAR ===== -->
+<div class="sync-bar">
+  <div class="sync-status">
+    <div id="syncDot" class="sync-dot"></div>
+    <span id="syncStatusText">Googleアカウントで同期</span>
+    <div id="syncUser" class="sync-user"></div>
+  </div>
+  <div class="sync-btns">
+    <button id="btnSignIn" class="btn-gsign" onclick="signIn()">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Googleでログイン
+    </button>
+    <button id="btnManualSync" class="btn-sync" onclick="manualSync()">↑↓ 同期</button>
+    <button id="btnSignOut" class="btn-signout" onclick="signOut()">ログアウト</button>
+  </div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <h1>社労士試験対策</h1>
+  <div id="appTitle" class="title">雇用保険法 一問一答</div>
+  <div id="appSubtitle" class="subtitle">TAC 択一式100問 ＋ 選択式10問　計110問</div>
+</div>
+
+<!-- ===== NAV TABS ===== -->
+<div class="nav-tabs">
+  <button id="tabMain"  class="nav-tab active" onclick="showMain()">学習</button>
+  <button id="tabBookmarks" class="nav-tab" onclick="showBookmarks()">栞<span id="bmBadge" class="bm-badge" style="display:none">0</span></button>
+</div>
+
+<!-- ===== MAIN SCREEN ===== -->
+<div id="screenMain" class="screen show">
+
+<!-- ===== PROGRESS BAR ===== -->
+<div id="progressWrap" class="progress-wrap" style="display:none">
+  <div class="progress-info">
+    <div id="progressNum" class="progress-num">0 / 0</div>
+    <div id="progressScore" class="progress-score">正解: 0問</div>
+  </div>
+  <div class="progress-bar-bg">
+    <div id="progressFill" class="progress-bar-fill" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- ===== START SCREEN ===== -->
+<div id="startScreen" class="start-screen">
+  <span id="startCount" class="start-count">110</span>
+  <span class="start-unit">問</span>
+  <div class="start-desc">労働基準法・安全衛生法の知識を一問一答で確認しよう。<br>第1予想55問・第2予想55問（択一式100問・選択式10問）を収録。</div>
+  
+  <!-- フィルター -->
+  <div class="filters">
+    <div class="filter-label">出題範囲</div>
+    <div id="filterBtns" class="filter-btns">
+      <button class="btn-filter active" data-cat="all">すべて</button>
+    </div>
+  </div>
+
+  <!-- ランダム出題モード -->
+  <div class="random-mode">
+    <div class="random-input-wrap">
+      <input id="randomInput" class="random-input" type="number" value="10" min="1" max="110" oninput="updateRandomBtn()">
+      <span class="random-label">問をランダムで出題</span>
+    </div>
+    <button id="btnRandomStart" class="btn-start" onclick="startRandom()">10問ランダムで出題</button>
+  </div>
+
+  <!-- ボタン群 -->
+  <div class="start-btns">
+    <button class="btn-shuffle" onclick="shuffle()">🔀 シャッフル</button>
+    <button id="btnWeakStart" class="btn-start" onclick="startWeak()" style="display:none">正答率50%以下の問題を出題</button>
+    <button class="btn-start primary" onclick="start()">学習スタート</button>
+    <button id="btnBookmarkStart" class="btn-start" onclick="startBookmarks()" style="display:none">栞の問題のみ</button>
+  </div>
+</div>
+
+<!-- ===== QUESTION SCREEN ===== -->
+<div id="questionScreen" class="screen">
+  <div class="card">
+    <div class="q-meta">
+      <span id="qTag" class="q-tag">択一式（雇用保険法）</span>
+      <span id="qTypeBadge" class="q-type-badge"></span>
+      <span id="qNum" class="q-num"></span>
+      <span id="qAcc" class="q-acc"></span>
+    </div>
+    <div id="qText" class="q-text"></div>
+    <button id="btnBookmark" class="btn-bookmark" onclick="toggleBookmark()">☆</button>
+  </div>
+
+  <!-- ○× ボタン -->
+  <div id="oxRow" class="btn-row">
+    <button id="btnMaru" class="btn-answer btn-maru" onclick="answerOx(true)">
+      <div>○</div><div class="btn-label">正しい</div>
+    </button>
+    <button id="btnBatsu" class="btn-answer btn-batsu" onclick="answerOx(false)">
+      <div>×</div><div class="btn-label">誤り</div>
+    </button>
+  </div>
+
+  <!-- 選択肢 -->
+  <div id="choicesGrid" class="choices-grid"></div>
+
+  <!-- 結果パネル -->
+  <div id="resultPanel" class="result-panel">
+    <div id="resultHeader" class="result-header"></div>
+    <div id="resultExp" class="result-exp"></div>
+    <div id="resultSource" class="result-source"></div>
+  </div>
+
+  <button id="btnNext" class="btn-next" onclick="nextQuestion()">次の問題</button>
+
+  <div class="nav-btns">
+    <button id="btnBack" class="btn-nav" onclick="prevQuestion()">← 戻る</button>
+    <button class="btn-nav btn-suspend" onclick="suspend()">⏸ 中断</button>
+    <button id="btnSkip" class="btn-nav" onclick="skip()">スキップ</button>
+  </div>
+</div>
+
+<!-- ===== RESULT SCREEN ===== -->
+<div id="resultScreen" class="screen">
+  <div class="result-screen">
+    <div class="result-title">結果</div>
+    <div id="resultScoreText" class="result-score">0 / 0</div>
+    <div id="resultMessage" class="score-msg"></div>
+    
+    <div class="breakdown">
+      <div class="breakdown-item">
+        <div id="correctCount" class="breakdown-num ok">0</div>
+        <div class="breakdown-label">正解</div>
+      </div>
+      <div class="breakdown-item">
+        <div id="wrongCount" class="breakdown-num ng">0</div>
+        <div class="breakdown-label">不正解</div>
+      </div>
+      <div class="breakdown-item">
+        <div id="skippedCount" class="breakdown-num sk">0</div>
+        <div class="breakdown-label">未回答</div>
+      </div>
+    </div>
+
+    <div class="btns-wrap">
+      <button id="btnRetryWrong" class="btn-retry" onclick="retryWrong()">間違えた問題を再挑戦</button>
+      <button id="btnRetrySkipped" class="btn-retry" onclick="retrySkipped()">未回答問題を再挑戦</button>
+      <button class="btn-retry" onclick="restart()">最初から</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ===== BOOKMARK SCREEN ===== -->
+<div id="screenBookmarks" class="screen">
+<div class="bookmark-list">
+  <h3 class="section-title">栞をつけた問題</h3>
+  <div id="bookmarkItems"></div>
+  <div id="emptyBookmarks" class="empty-bm" style="display:none">
+    まだ栞をつけた問題がありません。<br>学習中に ★ ボタンを押すと、<br>後で見返したい問題を保存できます。
+  </div>
+</div>
+</div>
+
+<!-- ===== RESUME MODAL ===== -->
+<div id="resumeModal" class="modal-overlay">
+<div class="modal">
+  <div class="modal-title">前回の続き</div>
+  <div class="modal-desc">前回の学習が途中で終了しています。続きから始めますか？</div>
+  <div class="modal-btns">
+    <button class="btn-modal" onclick="clearResume()">最初から</button>
+    <button class="btn-modal primary" onclick="resumeSession()">続きから</button>
+  </div>
+</div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div id="toast" class="toast"></div>
+
+<script>
+// ============================================================
+//  ★ CONFIG — 科目ごとにここだけ変更
+// ============================================================
+const APP_CONFIG = {
+  title:    '労働基準法・安全衛生法 一問一答',
+  subtitle: 'TAC 択一式100問 ＋ 選択式10問　計110問',
+  driveFileName: 'sharoushi_progress_roki.json',
+  clientId: '194094449743-hoj6t28jfidlfhueiiv6iromc2lvssgf.apps.googleusercontent.com',
+};
+
+// ============================================================
+//  ★ QUESTION DATA — 問題データをここに追加
+//   ○× 型: {no, opt, q, a:bool, exp, src, cat}
+//   選択式 型: {type:'select', no, opt, context, choices:[], answer, exp, src, cat:'選択式'}
+// ============================================================
+const ALL_QUESTIONS = [
+{no:"問1",opt:"A",q:"法3条では「国籍、信条又は社会的身分」は差別の理由を例示したものに過ぎないので、障害を有することを理由とする差別的取扱も同条により禁止されている。",a:false,exp:"「国籍、信条又は社会的身分」は制限列挙であり、障害者への差別は法3条では禁止されていない。障害者雇用促進法による。",src:"法3条",cat:"択一式（労働基準法）"},
+{no:"問1",opt:"B",q:"法6条の「業として利益を得る」とは同種の行為を反復継続することをいうので、1回の行為であれば同条違反となることはない。",a:false,exp:"1回の行為でも反復継続して利益を得る意思があれば「業として利益を得る」に該当する。使用者・労働者・第三者から利益を得る場合も含む。",src:"法6条、昭和23.3.2基発381号",cat:"択一式（労働基準法）"},
+{no:"問1",opt:"C",q:"法7条では事業の正常な運営を妨げる場合であっても、原則として労働者が請求した時刻を変更することはできない。",a:true,exp:"設問のとおり正しい。ただし「権利の行使又は公の職務の執行に妨げない限り」請求時刻を変更することができる。",src:"法7条",cat:"択一式（労働基準法）"},
+{no:"問1",opt:"D",q:"個人家庭における家事を事業として請け負うものに雇われてその指揮命令の下に当該家事を行う者は家事使用人に該当するので、労働基準法は適用されない。",a:false,exp:"家事を事業として請け負うものに雇われた者は家事使用人に該当せず、労働基準法が適用される。法人に雇われその役職員家庭で家事に従事する者は家事使用人に該当する。",src:"法116条2項、平成11.3.31基発168号",cat:"択一式（労働基準法）"},
+{no:"問1",opt:"E",q:"事務代理の委任を受けた社会保険労務士がその懈怠により申請等を行わなかった場合、法10条の「使用者」に該当しないので罰則に基づき責任を問うことはできない。",a:false,exp:"社会保険労務士も「使用者」（事業主のために行為をするすべての者）に該当し、罰則に基づき責任を問い得る。",src:"法10条、昭和62.3.26基発169号",cat:"択一式（労働基準法）"},
+{no:"問2",opt:"A",q:"派遣元の使用者は、自己が労働基準法に基づく義務を負わない労働時間・休憩・休日等を含めて法15条による労働条件の明示をする必要がある。",a:true,exp:"設問のとおり正しい。",src:"法15条1項、昭和61.6.6基発333号",cat:"択一式（労働基準法）"},
+{no:"問2",opt:"B",q:"有期労働契約の更新回数に上限の定めがある場合にはその上限を明示しなければならないが、上限の定めがない場合にはその旨を明示する必要はない。",a:true,exp:"設問のとおり正しい。上限の定めがある場合のみ明示が必要。",src:"法15条1項、3項、則5条1項1号の2",cat:"択一式（労働基準法）"},
+{no:"問2",opt:"C",q:"法15条1項の労働条件が事実と相違する場合、労働者は即時に解除できる。使用者が負担すべき帰郷旅費は労働者本人の旅費に限られ、就業のため移転した家族の旅費は含まない。",a:false,exp:"帰郷旅費は労働者本人のみならず、就業のため移転した家族（生計を維持している同居の親族等）の旅費も含まれる。",src:"法15条2項、昭和22.9.13発基17号",cat:"択一式（労働基準法）"},
+{no:"問2",opt:"D",q:"期間の上限が3年とされている労働者との間で10年の期間を定めた労働契約を締結した場合、その労働契約の期間は3年となる。",a:true,exp:"設問のとおり正しい。法13条により上限を超える部分のみが無効となり、3年の契約として有効に成立する。",src:"法13条、14条1項",cat:"択一式（労働基準法）"},
+{no:"問2",opt:"E",q:"高度の専門的知識等を有しない50歳の労働者との間で2年の期間を定めた労働契約を締結した場合、当該労働者は期間の初日から1年を経過した日以後はいつでも退職できる。",a:true,exp:"設問のとおり正しい。法附則137条の適用がある。",src:"法附則137条",cat:"択一式（労働基準法）"},
+{no:"問3",opt:"ア",q:"【条件：所定労働時間8時間、月〜金所定、土日所定休日、平均賃金10,000円】「使用者の責に帰すべき事由」により金曜〜月曜（4日間）休業した。使用者は休業手当として少なくとも24,000円を支払う必要がある。",a:false,exp:"所定休日（土・日）の2日は休業手当の支払義務がない。少なくとも12,000円（10,000円×0.6×2日）支払えば足りる。",src:"法26条、昭和24.3.22基収4077号",cat:"択一式（労働基準法）"},
+{no:"問3",opt:"イ",q:"【条件：所定労働時間8時間、月〜金所定、土日所定休日、平均賃金10,000円】「使用者の責に帰すべき事由」により木曜午後休業した。使用者が木曜午前の労働の対価として6,000円支払うこととなるときは、別途休業手当を支払う必要はない。",a:true,exp:"設問のとおり正しい。平均賃金の60%（6,000円）が支払われているため別途休業手当不要。",src:"法26条、昭和27.8.7基収3445号",cat:"択一式（労働基準法）"},
+{no:"問3",opt:"ウ",q:"【条件：所定労働時間8時間、月〜金所定、土日所定休日、平均賃金10,000円】業務上負傷により木曜〜土曜（3日間）休業した。使用者は休業補償として少なくとも18,000円を支払う必要がある（労災保険法適用者）。",a:true,exp:"設問のとおり正しい。休業補償は所定休日も含め3日分必要（10,000円×0.6×3日＝18,000円）。",src:"法76条1項",cat:"択一式（労働基準法）"},
+{no:"問3",opt:"エ",q:"【条件：所定労働時間8時間、月〜金所定、土日所定休日、平均賃金10,000円】業務上負傷により水曜午後休業した。使用者が水曜午前の対価として6,000円支払うこととなるときは、別途休業補償として2,400円を支払う必要がある（労災保険法適用者）。",a:true,exp:"設問のとおり正しい。平均賃金60%（6,000円）と労働の対価（6,000円）の差額（4,000円）の60%（2,400円）を休業補償として支払う。",src:"法76条1項、則38条",cat:"択一式（労働基準法）"},
+{no:"問3",opt:"オ",q:"【条件：所定労働時間8時間、月〜金所定、土日所定休日、平均賃金10,000円】育児休業申出後の育児休業期間中（水〜金の3日間）に年次有給休暇を請求した。使用者は3日間について年次有給休暇中の賃金として30,000円を支払う必要がある。",a:false,exp:"育児休業申出後は育児休業期間中の日について年次有給休暇を請求することはできない。30,000円支払う必要はない。",src:"法39条、昭和63.3.12基発712号",cat:"択一式（労働基準法）"},
+{no:"問4",opt:"A",q:"坑内労働については、労働者が坑口に入った時刻から坑口を出た時刻までの時間を、休憩時間を除き労働時間とみなすこととされている。",a:false,exp:"「休憩時間を除き」が誤り。坑内労働は休憩時間を含め労働時間とみなす。",src:"法38条2項",cat:"択一式（労働基準法）"},
+{no:"問4",opt:"B",q:"休憩時間は一斉に与えなければならず、派遣先の使用者は自己の労働者と派遣中の労働者とを含めて全体に一斉に休憩を与える義務を負う。",a:true,exp:"設問のとおり正しい。なお一斉付与の原則が適用除外となる業種（接客娯楽業等）では一斉に与えることを要しない。",src:"法34条2項、派遣法44条2項、平成11.3.31基発168号",cat:"択一式（労働基準法）"},
+{no:"問4",opt:"C",q:"4週間を通じ4日以上の休日を与える使用者は毎週1回の休日を与えることを要しないが、この場合にはどの4週間を区切っても4日以上の休日が与えられていなければならない。",a:false,exp:"4週間の起算日を就業規則等で明らかにした上で、起算日からの4週間ごとに4日以上与えればよい。「どの4週間を区切っても」は誤り。",src:"法35条、昭和23.9.20基発1384号",cat:"択一式（労働基準法）"},
+{no:"問4",opt:"D",q:"派遣中の労働者を派遣先の事業場において1年単位の変形労働時間制で労働させる場合、派遣先の使用者が労使協定を締結する必要がある。",a:false,exp:"1年単位の変形労働時間制は派遣元事業の使用者が労使協定を締結する必要がある。",src:"法32条の4、1項、派遣法44条2項、平成9.3.25基発195号",cat:"択一式（労働基準法）"},
+{no:"問4",opt:"E",q:"フレックスタイム制において三六協定を締結する場合であっても、1日・1か月・1年のすべての期間について定める必要がある。",a:false,exp:"フレックスタイム制では1日についての延長時間を協定する必要はなく、1か月及び1年について協定すれば足りる。",src:"法32条の3、36条1項、平成30.12.28基発1228第15号",cat:"択一式（労働基準法）"},
+{no:"問5",opt:"ア",q:"法12条3項で平均賃金算定基礎から控除される期間は、業務上療養休業・産前産後休業（法65条）・使用者の責帰休業・育介法休業・試みの使用期間の5種類である。",a:true,exp:"設問のとおり正しい。",src:"法12条3項",cat:"択一式（労働基準法）"},
+{no:"問5",opt:"イ",q:"法21条で解雇予告を適用しないこととされている者に「1か月以内の期間を定めて使用される者」がある。",a:false,exp:"「1か月以内」ではなく「2か月以内の期間を定めて使用される者」が正しい。",src:"法21条",cat:"択一式（労働基準法）"},
+{no:"問5",opt:"ウ",q:"法37条5項・則21条で割増賃金の基礎から除外されるのは、家族手当・通勤手当・別居手当・子女教育手当・住宅手当・臨時に支払われた賃金・1か月超の期間ごとに支払われる賃金の7種類である。",a:true,exp:"設問のとおり正しい。",src:"法37条5項、則21条",cat:"択一式（労働基準法）"},
+{no:"問5",opt:"エ",q:"法39条10項で出勤したものとみなす期間に「使用者の責に帰すべき事由によって休業した期間」が含まれている。",a:false,exp:"「使用者の責に帰すべき事由によって休業した期間」は含まれていない。含まれるのは業務上療養休業・産前産後休業・育介法休業の3つ。",src:"法39条10項",cat:"択一式（労働基準法）"},
+{no:"問5",opt:"オ",q:"法114条の付加金の対象に「法24条（賃金の支払）」に違反した使用者が含まれている。",a:false,exp:"法24条違反は付加金の対象ではない。対象は法20条・法26条・法37条違反及び法39条9項による賃金不払い。",src:"法114条",cat:"択一式（労働基準法）"},
+{no:"問6",opt:"A",q:"接客娯楽業については休憩の一斉付与は不要とされているが、当該事業に使用される満18歳未満の者には休憩を一斉に与えなければならない。",a:true,exp:"設問のとおり正しい。満18歳未満の者には変形労働時間制・三六協定・高プロ等の規定が適用されない（法60条1項）。",src:"法40条、60条1項、則31条",cat:"択一式（労働基準法）"},
+{no:"問6",opt:"B",q:"交替制事業で行政官庁の許可を受けた場合、満18歳未満の者を午後10時30分まで労働させることができるが、深夜（午後10時〜10時30分）の労働についても割増賃金を支払う必要がある。",a:true,exp:"設問のとおり正しい。年齢規制の特例があっても深夜割増賃金の支払義務は変わらない。",src:"法37条4項、61条1項",cat:"択一式（労働基準法）"},
+{no:"問6",opt:"C",q:"満18歳未満の者が解雇の日から14日以内に帰郷する場合、使用者は旅費を負担しなければならないが、その者の責に帰すべき事由による解雇で所轄労働基準監督署長の認定を受けたときはこの限りでない。",a:true,exp:"設問のとおり正しい。",src:"法64条、年少者10条1項",cat:"択一式（労働基準法）"},
+{no:"問6",opt:"D",q:"使用者は、妊産婦が請求した場合には他の軽易な業務に転換させなければならない。",a:false,exp:"「妊産婦」ではなく「妊娠中の女性」が請求した場合に軽易業務転換義務がある。産婦には転換請求権はない。",src:"法65条3項",cat:"択一式（労働基準法）"},
+{no:"問6",opt:"E",q:"生後満1年に達しない生児を育てる女性は1日2回各30分以上の育児時間を請求できるが、1日の労働時間が4時間以内の場合は1日1回で足りる。",a:true,exp:"設問のとおり正しい。",src:"法71条1項、昭和36.1.9基収8996号",cat:"択一式（労働基準法）"},
+{no:"問7",opt:"A",q:"一部の労働者に適用される別個の就業規則を作成する場合、当該一部の労働者の代表者の意見を聴けばよく、事業場全体の過半数組合の意見を聴くことを要しない。",a:false,exp:"一部労働者への就業規則も事業場の就業規則の一部であるため、全労働者の過半数組合（ない場合は過半数代表者）の意見を聴かなければならない。",src:"法90条1項、昭和63.3.14基発150号",cat:"択一式（労働基準法）"},
+{no:"問7",opt:"B",q:"監視又は断続的労働に従事する者で行政官庁の許可を受けたものについては、就業規則に始業・終業の時刻を定めなくともよい。",a:false,exp:"労働時間規制の適用除外であっても、就業規則の絶対的必要記載事項である始業・終業の時刻の記載は必要。",src:"法41条3号、89条1項、昭和23.12.25基収4281号",cat:"択一式（労働基準法）"},
+{no:"問7",opt:"C",q:"就業規則に定める降給の制裁は、従来と同一の業務に従事しながら賃金額だけを下げるものであれば法91条の減給の制裁には当たらない。",a:false,exp:"従来と同一職務に従事しつつ賃金額のみを減ずるものは法91条の減給の制裁に該当する。",src:"法91条、昭和37.9.6基発917号",cat:"択一式（労働基準法）"},
+{no:"問7",opt:"D",q:"就業規則に減給の制裁として賞与から減額することを定める場合、その減給は1回の額が平均賃金の1日分の半額を超えてはならない。",a:true,exp:"設問のとおり正しい。また総額については一賃金支払期における賃金の10分の1を超えてはならない。",src:"法91条、昭和63.3.14基発150号",cat:"択一式（労働基準法）"},
+{no:"問7",opt:"E",q:"行政官庁は、法令又は労働協約に抵触する就業規則を変更することができる。",a:false,exp:"「変更することができる」ではなく「変更を命ずることができる」が正しい（法92条2項）。",src:"法92条",cat:"択一式（労働基準法）"},
+{no:"問8",opt:"A",q:"製造業で常時300人の労働者を使用する事業場では総括・安全・2人以上の衛生管理者を選任しなければならない。また労働基準監督署長は必要があれば総括安全衛生管理者・安全管理者・衛生管理者の増員または解任を命ずることができる。",a:false,exp:"労働基準監督署長は総括安全衛生管理者の増員または解任を命ずることはできない（安全管理者・衛生管理者は可能）。",src:"法10条1項、11条、12条、令2条2号、3条、4条、則7条1項4号",cat:"択一式（安全衛生法）"},
+{no:"問8",opt:"B",q:"2人以上の衛生管理者を選任する場合に衛生管理者の中に労働衛生コンサルタントがいるときは、労働衛生コンサルタント以外の衛生管理者については専属の者であることを要しない。",a:false,exp:"「コンサルタント以外の衛生管理者」が誤り。「労働衛生コンサルタントのうち1人」が専属不要。",src:"法12条1項、則7条1項2号",cat:"択一式（安全衛生法）"},
+{no:"問8",opt:"C",q:"医師であって必要な要件を備えた者であれば、当該事業場においてその事業の実施を統括管理する者を産業医として選任することができる。",a:false,exp:"「事業場においてその事業の実施を統括管理する者」を産業医として選任することはできない。",src:"法13条1項、2項、則13条1項2号",cat:"択一式（安全衛生法）"},
+{no:"問8",opt:"D",q:"安全委員会の委員の半数については、過半数組合（ない場合は過半数代表者）の推薦に基づき指名しなければならない。",a:false,exp:"「委員の半数」ではなく「①の委員以外の委員の半数」についてのみ推薦に基づき指名が必要。",src:"法17条4項",cat:"択一式（安全衛生法）"},
+{no:"問8",opt:"E",q:"事業者は政令で定める危険有害業務について都道府県労働局長の免許・登録を受けた者が行う技能講習修了者のうちから作業主任者を選任しなければならない。また選任後は氏名及び行わせる事項を見やすい箇所に掲示等で周知させなければならない。",a:true,exp:"設問のとおり正しい。",src:"法14条、則18条",cat:"択一式（安全衛生法）"},
+{no:"問9",opt:"A",q:"つり上げ荷重3トンのクレーンを製造した者は登録設計審査等機関の検査を受けなければならない。",a:false,exp:"クレーン（固定式）は登録設計審査等機関の製造時等検査の対象ではない。対象はボイラー・第1種圧力容器・移動式クレーン・ゴンドラ。",src:"法38条1項、法別表1、令12条1項3号",cat:"択一式（安全衛生法）"},
+{no:"問9",opt:"B",q:"使用を休止したつり上げ荷重3トンのクレーンを再使用しようとするときは、登録性能検査機関が行う性能検査を受けなければならない。",a:false,exp:"使用休止後の再使用には、登録性能検査機関ではなく「労働基準監督署長」が行う使用再開検査を受ける必要がある。",src:"法38条3項、法別表1、令12条1項3号",cat:"択一式（安全衛生法）"},
+{no:"問9",opt:"C",q:"つり上げ荷重3トンのクレーンの変更に係る検査に合格したとき、労働基準監督署長は検査証を再交付する。",a:false,exp:"「検査証を再交付する」ではなく「検査証に裏書を行う」が正しい。",src:"法38条3項、39条3項、法別表1、令12条1項3号",cat:"択一式（安全衛生法）"},
+{no:"問9",opt:"D",q:"事業者は、つり上げ荷重3トンのクレーンについて特定自主検査を実施させなければならない。",a:false,exp:"つり上げ荷重3トンのクレーンは特定自主検査の対象ではなく定期自主検査の対象。",src:"法45条2項、法別表1、令12条1項3号、15条2項",cat:"択一式（安全衛生法）"},
+{no:"問9",opt:"E",q:"事業者は、つり上げ荷重3トンのクレーンの運転の業務に労働者を就かせるときは、安全衛生のための特別の教育を行わなければならない。",a:true,exp:"設問のとおり正しい。つり上げ荷重5トン未満のクレーン運転業務は特別教育が必要。",src:"法59条3項、則36条15号イ",cat:"択一式（安全衛生法）"},
+{no:"問10",opt:"A",q:"事業に附属する食堂・炊事場の給食業務従事者に対し、雇入れ・配置替えの際及び当該業務についた後6月以内ごとに1回、定期に検便による健康診断を行わなければならない。",a:false,exp:"給食従業員の検便は雇入れ時または配置替えの際に行えば足りる。6か月ごとの定期健康診断は不要。",src:"法66条1項、則47条",cat:"択一式（安全衛生法）"},
+{no:"問10",opt:"B",q:"労働者を本邦外の地域に6月以上派遣しようとするときは、あらかじめ医師による健康診断を行わなければならない。",a:true,exp:"設問のとおり正しい（海外派遣前健康診断）。",src:"法66条1項、則45条の2、1項",cat:"択一式（安全衛生法）"},
+{no:"問10",opt:"C",q:"本邦外に6月以上派遣した労働者を国内の業務に就かせるとき（一時的な場合を除く）は、医師による健康診断を行わなければならない。",a:true,exp:"設問のとおり正しい（海外派遣後健康診断）。海外派遣後は項目省略不可。",src:"法66条1項、則45条の2、2項",cat:"択一式（安全衛生法）"},
+{no:"問10",opt:"D",q:"歯科的に有害な業務に常時従事する労働者に対し、雇入れ・配置替えの際及び当該業務についた後6月以内ごとに1回、定期に歯科医師による健康診断を行わなければならない。",a:true,exp:"設問のとおり正しい。歯科健診は給食従業員の検便と異なり定期実施も必要。",src:"法66条3項、令22条3項、則48条",cat:"択一式（安全衛生法）"},
+{no:"問10",opt:"E",q:"深夜業に従事する労働者で自ら受けた健康診断の日前6月間を平均して月4回以上深夜業に従事したものは、当該健康診断の結果を証明する書面を事業者に提出することができる。",a:true,exp:"設問のとおり正しい（自発的健康診断）。健診日から3月を経過したときは提出できない。",src:"法66条の2、則50条の2",cat:"択一式（安全衛生法）"},
+{no:"第2-問1",opt:"A",q:"法1条2項では労働条件の基準を理由として労働条件を低下させた場合、その低下させた労働条件が同法の基準を下回るものでないとしても当該行為は無効とされる。",a:false,exp:"法1条2項違反については罰則の定めはなく、低下させた条件が同法の基準を下回らなければ無効とはならない。",src:"法1条2項",cat:"択一式（労働基準法）"},
+{no:"第2-問1",opt:"B",q:"就業規則に女性であることを理由に賃金差別をする規定を設けた場合、現実に差別の事実がなくても法4条違反の罰則が適用される。",a:false,exp:"就業規則に差別規定があっても現実に差別の事実がなければ罰則は適用されない（規定は無効となる）。",src:"法4条、平成9.9.25基発648号",cat:"択一式（労働基準法）"},
+{no:"第2-問1",opt:"C",q:"法5条では強制労働が禁止されているが、暴行があっても労働強制の目的がなく単に「怠けたから」殴ったというだけでは、刑法の暴行罪に該当するとしても法5条違反とはならない。",a:true,exp:"設問のとおり正しい。法5条違反は「暴行等の手段」が「労働強制」の目的と結びついている場合のみ。",src:"法5条",cat:"択一式（労働基準法）"},
+{no:"第2-問1",opt:"D",q:"損害賠償額を一定金額として労働契約に定めた場合、現実に徴収していないときは法16条違反の罰則は適用されない。",a:false,exp:"損害賠償額を予定する契約を締結した時点で法16条違反となり、現実に徴収しなくても罰則が適用される。",src:"法16条",cat:"択一式（労働基準法）"},
+{no:"第2-問1",opt:"E",q:"前借金制度を設け労働者に金銭を貸し付けた場合には法17条違反の罰則が適用される。",a:false,exp:"法17条は賃金と前借金の相殺を禁止するものであり、前借金制度の設立・貸付自体は禁止していない。",src:"法17条",cat:"択一式（労働基準法）"},
+{no:"第2-問2",opt:"A",q:"使用者は労使協定を締結し行政官庁に届け出れば、労働契約に附随して強制貯蓄の契約をさせることができる。",a:false,exp:"強制貯蓄は労使協定の有無にかかわらず全面的に禁止されている（法18条1項）。任意貯蓄は労使協定＋届出で可能。",src:"法18条1項",cat:"択一式（労働基準法）"},
+{no:"第2-問2",opt:"B",q:"賃金として6か月定期乗車券を支給している場合、これは各月分の賃金の前払と認められるので平均賃金の算定基礎に加えなければならない。",a:true,exp:"設問のとおり正しい。",src:"法12条4項、昭和33.2.13基発90号",cat:"択一式（労働基準法）"},
+{no:"第2-問2",opt:"C",q:"労働者の収入によって生計を維持する者がやむを得ない事由により1週間以上帰郷する場合、労働者が請求したときは使用者は支払期日前であっても既往の労働に対する賃金を支払わなければならない。",a:true,exp:"設問のとおり正しい（非常時払い）。",src:"法25条、則9条3号",cat:"択一式（労働基準法）"},
+{no:"第2-問2",opt:"D",q:"出来高払制で使用者の責に帰さない事由による休業の場合、休業手当も出来高払制の保障給も支払う必要はない。",a:true,exp:"設問のとおり正しい。",src:"法26条、27条、昭和23.11.11基発1639号",cat:"択一式（労働基準法）"},
+{no:"第2-問2",opt:"E",q:"扶養家族数にかかわらず全員に支払われる労働者本人分の家族手当は割増賃金の基礎となる賃金に算入する必要がある。",a:true,exp:"設問のとおり正しい。扶養家族数を基礎として算出した手当のみが除外できる「家族手当」に該当する。",src:"法37条5項、昭和22.11.5基発231号",cat:"択一式（労働基準法）"},
+{no:"第2-問3",opt:"ア",q:"使用者は業務上療養のために休業する期間及びその後30日間は解雇できないが、労働者の責に帰すべき事由による場合はこの限りでなく、その事由について行政官庁の認定を受けなければならない。",a:false,exp:"解雇制限の解除事由は①打切補償の支払い②天災事変等による事業継続不可能（行政官庁の認定必要）に限られる。「労働者の責に帰すべき事由」では解雇制限は解除されない。",src:"法19条1項",cat:"択一式（労働基準法）"},
+{no:"第2-問3",opt:"イ",q:"9月30日終了をもって解雇しようとする場合に14日分の平均賃金を支払ったときは、9月14日までに解雇の予告をする必要がある（9月は所定休日4日、9月21〜25日に育児休業取得）。",a:true,exp:"設問のとおり正しい。予告期間は暦日計算で休日・育休期間も含まれる。30日から14日分手当相当（14日）を差し引いた16日前（9月14日）。",src:"法20条1項、2項",cat:"択一式（労働基準法）"},
+{no:"第2-問3",opt:"ウ",q:"解雇予告後に業務上負傷し療養のため休業を要するときは解雇制限が適用され、当該制限期間経過後に解雇しようとする場合には改めて解雇の予告をする必要がある。",a:false,exp:"前の解雇予告の効力は「中止」されるだけであり、制限期間終了後に改めて解雇の予告をする必要はない（長期にわたり効力を失う場合を除く）。",src:"法20条1項、昭和26.6.25基収2609号",cat:"択一式（労働基準法）"},
+{no:"第2-問3",opt:"エ",q:"30日前に解雇の予告をしたが期限到来後に解雇日を延期してそのまま使用した場合、その後解雇しようとするときは改めて解雇の予告をする必要がある。",a:true,exp:"設問のとおり正しい。予告期間満了後も引き続き使用した場合は改めて解雇の予告が必要。",src:"法20条1項、昭和24.6.18基発1926号",cat:"択一式（労働基準法）"},
+{no:"第2-問3",opt:"オ",q:"解雇予告手当の算定事由発生日とは労働者を解雇しようとする日（解雇日）であり、労働者の同意を得て解雇日を変更した場合でも当初の解雇日が算定事由発生日となる。",a:false,exp:"算定事由発生日は「解雇を通告した日」であり解雇日ではない。解雇日を変更した場合でも当初の解雇通告日が算定事由発生日となる。",src:"法12条1項、20条1項、昭和39.6.12基発2316号",cat:"択一式（労働基準法）"},
+{no:"第2-問4",opt:"A",q:"1か月単位の変形労働時間制を就業規則で採用する場合、業務上の必要から月ごとに勤務割を作成するときは、就業規則で各直勤務の始業終業時刻等を定めた上で変形期間開始前までに勤務割を特定することで足りる。",a:true,exp:"設問のとおり正しい。なお1か月単位の変形労働時間制を定める就業規則には始業・終業の時刻も定める必要がある。",src:"法32条の2、1項、昭和63.3.14基発150号",cat:"択一式（労働基準法）"},
+{no:"第2-問4",opt:"B",q:"最高裁判例では、1か月単位の変形労働時間制の単位期間内の実際の労働時間が平均して法定労働時間内に納まっていれば法定時間外労働にならないというものではない、としている。",a:true,exp:"設問のとおり正しい（大星ビル管理事件）。所定労働時間を超えた労働はやはり時間外労働となる。",src:"法32条の2、1項、平成14.2.28大星ビル管理事件",cat:"択一式（労働基準法）"},
+{no:"第2-問4",opt:"C",q:"1年単位の変形労働時間制において、対象期間が3か月を超える場合に限り1日の労働時間は10時間・1週の労働時間は52時間が限度とされている。",a:false,exp:"「対象期間が3か月を超える場合に限り」が誤り。対象期間の長さにかかわらず1日10時間・1週52時間が限度。",src:"法32条の4、1項、3項、則12条の4、4項",cat:"択一式（労働基準法）"},
+{no:"第2-問4",opt:"D",q:"フレックスタイム制の清算期間が1か月を超える場合には、1か月ごとに区分した各期間を平均し1週間当たりの労働時間が50時間を超えないものとする必要がある。",a:true,exp:"設問のとおり正しい。なお清算期間が1か月を超える場合は労使協定の届出が必要。",src:"法32条の3、1項、2項",cat:"択一式（労働基準法）"},
+{no:"第2-問4",opt:"E",q:"使用者は1か月・1年・1週間単位の変形労働時間制により労働させる場合、育児・介護・職業訓練等を行う者が必要な時間を確保できるような配慮をしなければならない。",a:true,exp:"設問のとおり正しい。なおフレックスタイム制は本規定（則12条の6）の対象ではない。",src:"則12条の6",cat:"択一式（労働基準法）"},
+{no:"第2-問5",opt:"ア",q:"最高裁判例では、退職金債権の放棄は労働者の自由な意思に基づくことが明確であるとしても全額払の原則により無効とされる、としている。",a:false,exp:"最高裁（シンガー・ソーイング・メシーン事件）では、自由な意思に基づくことが明確であれば有効としている。「無効である」とするのが誤り。",src:"法24条1項、最二小昭和48.1.19シンガー・ソーイング・メシーン事件",cat:"択一式（労働基準法）"},
+{no:"第2-問5",opt:"イ",q:"所定労働時間3時間のS事業場と4時間のT事業場で複数就労する労働者がS事業場で5時間・T事業場で5時間労働した場合、法定時間を超える2時間分の割増賃金は原則としてSとTがそれぞれ1時間分支払う必要がある。",a:true,exp:"設問のとおり正しい。複数事業場の場合は契約締結の先後順に所定労働時間を通算し、次に所定外労働時間を通算する。",src:"法37条、38条1項、令和2.9.1基発0901第3号",cat:"択一式（労働基準法）"},
+{no:"第2-問5",opt:"ウ",q:"最高裁判例では、労働者が賃金債権を他に譲渡し適法な譲渡通知をした場合、使用者はその譲渡額を限度として賃金債権の譲受人に直接支払義務を負う、としている。",a:false,exp:"最高裁（小倉電話局事件）では、使用者は直接労働者に賃金を支払わなければならず、譲受人に直接支払義務はないとしている。",src:"法24条1項、最三小昭和43.3.12小倉電話局事件",cat:"択一式（労働基準法）"},
+{no:"第2-問5",opt:"エ",q:"賃金計算の過誤等を精算するための相殺は、労使協定がない場合であっても行使の時期・方法・金額等からみて労働者の経済生活の安定との関係上不当と認められないものであれば全額払の原則に違反しない、とするのが最高裁判例である。",a:true,exp:"設問のとおり正しい（福島県教組事件）。",src:"法24条1項、最一小昭和44.12.18福島県教組事件",cat:"択一式（労働基準法）"},
+{no:"第2-問5",opt:"オ",q:"事業場の労働者の3分の2で組織するP労働組合と三六協定を締結した場合、Q労働組合（3分の1）の組合員には三六協定の効力は及ばない。",a:false,exp:"三六協定は過半数組合と締結すれば他の労働組合の組合員を含む全員に効力が及ぶ。",src:"法36条1項、昭和23.4.5基発535号",cat:"択一式（労働基準法）"},
+{no:"第2-問6",opt:"A",q:"4月1日に週5日・週40時間で採用された労働者が試用期間後の7月1日に週3日・週20時間に変更し、6か月継続・8割以上出勤したときは10月1日の年次有給休暇は比例付与となる。",a:true,exp:"設問のとおり正しい。10月1日時点の所定労働条件（週3日）に基づき比例付与される。",src:"法39条1項、3項",cat:"択一式（労働基準法）"},
+{no:"第2-問6",opt:"B",q:"使用者は10労働日以上の年次有給休暇を付与すべき労働者に対し5日については基準日から1年以内に時季を定めて与えなければならず、実際に5日取得していないときは法違反となる。",a:true,exp:"設問のとおり正しい。使用者が時季を定めた場合でも労働者が実際に5日取得していなければ法違反となる。",src:"法39条7項、改正労基法Q&A（平成31年4月）",cat:"択一式（労働基準法）"},
+{no:"第2-問6",opt:"C",q:"10労働日以上の年次有給休暇を有する労働者が自ら5労働日以上取得した場合、使用者は時季指定を要しないが、取得した年次有給休暇が時間単位年休のみの場合には使用者は時季指定しなければならない。",a:true,exp:"設問のとおり正しい。時間単位年休は5日取得のカウントに含まれない。",src:"法39条7項、8項、平成30.12.28基発1228第15号",cat:"択一式（労働基準法）"},
+{no:"第2-問6",opt:"D",q:"前年度に7労働日付与されたが未取得で今年度に8労働日付与されたため繰越含め15労働日となる労働者については、使用者は時季指定をする必要はない。",a:true,exp:"設問のとおり正しい。今年度の付与日数が10日未満（8日）のため時季指定義務はない。",src:"法39条7項、平成30.12.28基発1228第15号",cat:"択一式（労働基準法）"},
+{no:"第2-問6",opt:"E",q:"時間単位年休協定が締結されている事業場では、使用者は法39条7項に基づく年次有給休暇の時季指定を時間単位で行うことができる。",a:false,exp:"法39条7項による使用者の時季指定は時間単位で行うことができない。時間単位年休は労働者の自主的な申請によるもの。",src:"法39条7項、平成30.12.28基発1228第15号",cat:"択一式（労働基準法）"},
+{no:"第2-問7",opt:"A",q:"使用者は、労働者の死亡・退職の場合、権利者の請求があれば遅滞なく賃金を支払い労働者の権利に属する金品を返還しなければならない。",a:false,exp:"「遅滞なく」ではなく「7日以内」に支払う必要がある（権利者の請求があった場合）。",src:"法23条1項",cat:"択一式（労働基準法）"},
+{no:"第2-問7",opt:"B",q:"使用者は各事業場ごとに各労働者についての労働者名簿を調製しなければならないが、日々雇い入れられる労働者については調製することを要しない。",a:true,exp:"設問のとおり正しい。なお賃金台帳については日々雇い入れられる労働者についても調製が必要。",src:"法107条1項",cat:"択一式（労働基準法）"},
+{no:"第2-問7",opt:"C",q:"使用者は、寄宿舎規則の起床・就寝・外出・外泊に関する規定の作成について、寄宿舎に寄宿する労働者の過半数を代表する者の意見を聴かなければならない。",a:false,exp:"「意見を聴かなければならない」ではなく「同意を得なければならない」が正しい。",src:"法95条2項",cat:"択一式（労働基準法）"},
+{no:"第2-問7",opt:"D",q:"使用者は、労働者名簿・賃金台帳及び労働関係に関する重要な書類を2年間保存しなければならない。",a:false,exp:"「2年間」ではなく「5年間（当分の間、3年間）」が正しい。",src:"法109条、法附則143条1項",cat:"択一式（労働基準法）"},
+{no:"第2-問7",opt:"E",q:"労働基準法の規定による賃金（退職手当を含む。）の請求権はこれを行使できる時から5年間（当分の間、3年間）行わない場合、時効によって消滅する。",a:false,exp:"退職手当の請求権については「当分の間、3年間」の特例は適用されない（退職手当の時効は5年間のみ）。",src:"法115条、法附則143条3項",cat:"択一式（労働基準法）"},
+{no:"第2-問8",opt:"A",q:"特定元方事業者は、関係請負人の作業従事者の作業が同一場所で行われることで生ずる労働災害を防止するため協議組織の設置・運営を行うこと等の必要な措置を講じなければならない。",a:true,exp:"設問のとおり正しい。",src:"法30条1項",cat:"択一式（安全衛生法）"},
+{no:"第2-問8",opt:"B",q:"建築物貸与者は原則として労働災害防止のため必要な措置を講じなければならないが、当該建築物の全部を1の事業者若しくは個人事業者に貸与するとき、又は2以上の事業者のみに貸与するときは、この限りでない。",a:false,exp:"「2以上の事業者のみに貸与するとき」ではなく「2以上の個人事業者のみに貸与するとき」が除外事由として正しい。",src:"法34条",cat:"択一式（安全衛生法）"},
+{no:"第2-問8",opt:"C",q:"通知対象物譲渡者等は、秘密として管理されている製品情報の場合、その旨を相手方に明示した上で代替化学名等を通知することで成分の通知に代えることができる。",a:true,exp:"設問のとおり正しい。",src:"法57条の2、1項、3項",cat:"択一式（安全衛生法）"},
+{no:"第2-問8",opt:"D",q:"厚生労働大臣は新規化学物質の届出があった場合に学識経験者の意見を聴き、必要があると認めるときは届出事業者に施設設備の設置等の措置を勧告することができる。",a:true,exp:"設問のとおり正しい。",src:"法57条の4、4項",cat:"択一式（安全衛生法）"},
+{no:"第2-問8",opt:"E",q:"「暑熱な場所」とはWBGTが28度以上又は気温が31度以上の場所をいい、事業場内外の特定の作業場のみならず作業場所から作業場所への移動時等も含まれる。",a:true,exp:"設問のとおり正しい。",src:"則612条の2、1項、令和7.5.20基発0520第6号",cat:"択一式（安全衛生法）"},
+{no:"第2-問9",opt:"A",q:"期間の定めのない労働契約により使用される短時間労働者で、1週間の労働時間数が通常の労働者の4分の3以上である場合には、則44条の定期健康診断の対象となる。",a:true,exp:"設問のとおり正しい。",src:"法66条1項、則44条1項、平成26.7.24基発0724第2号",cat:"択一式（安全衛生法）"},
+{no:"第2-問9",opt:"B",q:"面接指導実施のための労働時間の状況把握の対象には、法41条の管理監督者等は含まれない。",a:false,exp:"面接指導のための労働時間把握の対象には管理監督者等も含まれる（高プロ制度の適用者を除く）。",src:"法66条の8の3、平成31.3.29基発0329第2号",cat:"択一式（安全衛生法）"},
+{no:"第2-問9",opt:"C",q:"派遣労働者に対する作業内容変更時の安全衛生教育の実施義務は派遣元の事業者のみに課せられており、特別教育の実施義務は派遣先の事業者のみに課せられている。",a:false,exp:"作業内容変更時の安全衛生教育は派遣元及び派遣先の双方に課せられている（雇入れ時・特別教育の帰属は正しい）。",src:"法59条、派遣法45条1項、3項",cat:"択一式（安全衛生法）"},
+{no:"第2-問9",opt:"D",q:"派遣労働者に対する歯科医師による健康診断の実施義務は派遣元の事業者のみに課せられており、特殊健康診断の実施義務は派遣先の事業者のみに課せられている。",a:false,exp:"歯科医師による健康診断の実施義務は派遣先の事業者のみに課せられている（派遣元ではない）。",src:"法66条1項、2項、3項、派遣法45条3項",cat:"択一式（安全衛生法）"},
+{no:"第2-問9",opt:"E",q:"派遣労働者が就業中に負傷した場合、労働者死傷病報告を行う義務は派遣先の事業者のみに課せられている。",a:false,exp:"労働者死傷病報告義務は派遣先及び派遣元の双方に課せられている。",src:"法100条1項、派遣法45条15項、則97条",cat:"択一式（安全衛生法）"},
+{no:"第2-問10",opt:"A",q:"事業者は高年齢者の労働災害防止のため、高年齢者の特性に配慮した作業環境の改善・作業の管理その他の必要な措置を講ずるように努めなければならない。",a:true,exp:"設問のとおり正しい。",src:"法62条の2、1項",cat:"択一式（安全衛生法）"},
+{no:"第2-問10",opt:"B",q:"事業者は室内等における労働者の受動喫煙を防止するため、事業者及び事業場の実情に応じ適切な措置を講ずるよう努めるものとする。",a:true,exp:"設問のとおり正しい。受動喫煙とは人が他人の喫煙によりたばこから発生した煙にさらされることをいう。",src:"法68条の2",cat:"択一式（安全衛生法）"},
+{no:"第2-問10",opt:"C",q:"事業者は心臓・腎臓・肺等の疾病で労働のため病勢が著しく増悪するおそれのある者については、その就業を禁止しなければならない。",a:true,exp:"設問のとおり正しい。なお就業を禁止しようとするときはあらかじめ産業医等の意見を聴かなければならない。",src:"法68条、則61条1項2号",cat:"択一式（安全衛生法）"},
+{no:"第2-問10",opt:"D",q:"労働基準監督署長はがん等の重度健康障害を生ずるおそれのある業務に従事していた者で要件に該当する者に対し、離職の際又は後に、健康管理手帳を交付するものとする。",a:false,exp:"「労働基準監督署長」ではなく「都道府県労働局長」が健康管理手帳を交付する。",src:"法67条1項",cat:"択一式（安全衛生法）"},
+{no:"第2-問10",opt:"E",q:"作業従事者は、事業場に労働安全衛生法又はこれに基づく命令の規定に違反する事実があるときは、都道府県労働局長・労働基準監督署長・労働基準監督官に申告して是正を求めることができる。",a:true,exp:"設問のとおり正しい。なお事業者は申告を理由として労働者に不利益な取扱いをしてはならない。",src:"法97条1項",cat:"択一式（安全衛生法）"},
+{type:"select",no:"選択1",opt:"空欄A",context:"労働基準法第１条第２項では、「この法律で定める労働条件の基準は最低のものであるから、【A】は、この基準を理由として労働条件を低下させてはならないことはもとより、その向上を図るように努めなければならない。」と規定している。",choices:["労働関係の当事者", "労働者及び使用者", "使用者", "事業主又は事業の経営担当者"],answer:"労働関係の当事者",exp:"法1条2項の「労働関係の当事者」には使用者・労働者のほか、使用者団体・労働組合も含まれる。「労働者及び使用者」よりも広い概念である。",src:"法1条2項",cat:"選択式"},
+{type:"select",no:"選択1",opt:"空欄B",context:"労働基準法第33条第２項では、「前項ただし書の規定による届出があった場合において、行政官庁がその労働時間の延長又は休日の労働を不適当と認めるときは、その後にその時間に相当する【B】を与えるべきことを、命ずることができる。」と規定している。",choices:["休憩又は休日", "有給の休暇", "割増賃金", "賃金"],answer:"休憩又は休日",exp:"法33条2項の代休付与命令で与えられるのは「休憩又は休日」。この休業日には休業手当（法26条）の支払義務はない。",src:"法33条2項",cat:"選択式"},
+{type:"select",no:"選択1",opt:"空欄C",context:"最高裁判所（片山組事件）は、「労働者が職種や業務内容を特定せずに労働契約を締結した場合においては、現に就業を命じられた特定の業務について労務の提供が十全にはできないとしても、その能力、経験、地位、当該企業の規模、業種、当該企業における労働者の配置・異動の実情及び難易等に照らして当該【C】他の業務について労務の提供をすることができ、かつ、その提供を申し出ているならば、なお債務の本旨に従った履行の提供があると解するのが相当である。」と判示した。",choices:["労働者が配置される現実的可能性があると認められる", "現に就業を命じられた業務と実質的に同等の価値を有する", "労働者の貢献ないし役割に応じた", "労働者の能力、経験及びその適性を活かすことができる"],answer:"労働者が配置される現実的可能性があると認められる",exp:"片山組事件（最一小平成10.4.9）。職種・業務内容を特定しない労働契約では、他の業務への配置が「現実的可能性がある」と認められれば債務の本旨に従った履行の提供がある。",src:"最一小平成10.4.9片山組事件",cat:"選択式"},
+{type:"select",no:"選択1",opt:"空欄D",context:"事業者は、安全管理者・衛生管理者の選任を要する事業場以外の事業場で常時10人以上50人未満の労働者を使用する事業場ごとに、安全衛生推進者（安全管理者の選任を要する業種以外の業種にあっては衛生推進者）を選任し、総括安全衛生管理者が統括管理することとされている業務（衛生推進者にあっては衛生に係る業務に限る。）を【D】させなければならない。なお、安全衛生推進者又は衛生推進者の選任は、【E】を受けた者が行う講習を修了した者その他当該業務を【D】するため必要な能力を有すると認められる者のうちから行わなければならない。",choices:["担当", "管理", "指揮", "調整"],answer:"担当",exp:"安全衛生推進者等は安全衛生業務を「担当」する者として位置づけられる。安全管理者・衛生管理者が業務を「管理」するのと区別される重要なポイント。",src:"安衛法12条の2、則12条の2",cat:"選択式"},
+{type:"select",no:"選択1",opt:"空欄E",context:"事業者は、安全管理者・衛生管理者の選任を要する事業場以外の事業場で常時10人以上50人未満の労働者を使用する事業場ごとに、安全衛生推進者を選任し、総括安全衛生管理者が統括管理することとされている業務を担当させなければならない。なお、安全衛生推進者又は衛生推進者の選任は、【E】を受けた者が行う講習を修了した者その他当該業務を担当するため必要な能力を有すると認められる者のうちから行わなければならない。",choices:["都道府県労働局長の登録", "都道府県労働局長の指定", "厚生労働大臣の登録", "厚生労働大臣の指定"],answer:"都道府県労働局長の登録",exp:"安全衛生推進者・衛生推進者の選任は、都道府県労働局長の「登録」を受けた者が行う講習修了者等から行う（則12条の3、1項）。「指定」ではなく「登録」である点に注意。",src:"則12条の3、1項",cat:"選択式"},
+{type:"select",no:"第2-選択1",opt:"空欄A",context:"労働基準法第38条の３第１項に規定する専門業務型裁量労働制に係る対象業務とは、業務の性質上その遂行の方法を大幅に当該業務に従事する労働者の裁量にゆだねる必要があるため、【A】をいう。",choices:["当該業務の遂行の手段及び時間配分の決定等に関し使用者が具体的な指示をすることが困難なものとして厚生労働省令で定める業務のうち、労働者に就かせることとする業務", "当該業務の遂行の手段及び時間配分の決定等に関し使用者が具体的な指示をしないこととする業務", "その性質上従事した時間と従事して得た成果との関連性が通常高くないと認められるものとして厚生労働省令で定める業務のうち、労働者に就かせることとする業務", "労働時間を算定し難い業務"],answer:"当該業務の遂行の手段及び時間配分の決定等に関し使用者が具体的な指示をすることが困難なものとして厚生労働省令で定める業務のうち、労働者に就かせることとする業務",exp:"専門業務型（法38条の3）は「使用者が具体的な指示をすることが困難なもの」。企画業務型（法38条の4）の「使用者が具体的な指示をしないこととする業務」と区別すること。",src:"法38条の3、1項1号",cat:"選択式"},
+{type:"select",no:"第2-選択1",opt:"空欄B",context:"最高裁判所（三菱重工長崎造船所事件）は、所定の保護具等の装着を義務付けられている場合の装着等の時間について、「労働者が就業を命じられた業務の準備行為等を事業所内において行うことを使用者から義務付けられ、又はこれを余儀なくされたときは、当該行為を所定労働時間外において行うものとされている場合であっても、当該行為は、特段の事情のない限り、【B】と評価することができ、当該行為に要した時間は、それが社会通念上必要と認められるものである限り、労働基準法上の労働時間に該当すると解される。」と判示している。",choices:["使用者の指揮命令下に置かれたもの", "所定労働時間の一部において行われたもの", "労働契約上の労務提供義務が生じたもの", "労務管理上の要請から"],answer:"使用者の指揮命令下に置かれたもの",exp:"最二小昭和56.9.18三菱重工長崎造船所事件。労働時間とは「使用者の指揮命令下に置かれている時間」をいい、この判断は客観的に行われ労働契約等の定めによらない。",src:"最二小昭和56.9.18三菱重工長崎造船所事件",cat:"選択式"},
+{type:"select",no:"第2-選択1",opt:"空欄C",context:"最高裁判所（三菱重工長崎造船所事件）は、ストライキ期間に応じた家族手当削減に関し、「同法37条２項が家族手当を割増賃金算定の基礎から除外すべきものと定めたのは、家族手当が【C】支給される性格の賃金であって、これを割増賃金の基礎となる賃金に算入させることを原則とすることがかえって不適切な結果を生ずるおそれのあることを配慮したものである」と判示した。",choices:["労働者の個人的事情に基づいて", "企業の福利厚生の一環として", "世間相場等を考慮して", "労働の対価としての対価を必要とするもの"],answer:"労働者の個人的事情に基づいて",exp:"最一小平成12.3.9三菱重工長崎造船所事件。家族手当は労働者の個人的事情（扶養家族の有無・人数）に基づいて支給される性格の賃金であるため割増賃金の基礎から除外されている。",src:"最一小平成12.3.9三菱重工長崎造船所事件",cat:"選択式"},
+{type:"select",no:"第2-選択1",opt:"空欄D",context:"労働安全衛生法第40条第１項は、「前条第１項又は第２項の検査証（以下「検査証」という。）を受けていない特定機械等（第38条第３項の規定により部分の変更又は再使用に係る検査を受けなければならない特定機械等で、前条第３項の裏書を受けていないものを含む。）は、【D】してはならない。」と定めている。",choices:["使用", "使用し、又は貸与", "譲渡", "譲渡し、又は貸与"],answer:"使用",exp:"安衛法40条1項。検査証を受けていない特定機械等は「使用」してはならない。なお安衛法40条2項では「譲渡し、又は貸与してはならない」と規定されており、別の行為が禁止されている。",src:"安衛法40条1項",cat:"選択式"},
+{type:"select",no:"第2-選択1",opt:"空欄E",context:"事業者は、化学物質又は化学物質を含有する製剤を製造し、又は取り扱う業務を行う事業場において、【E】の労働者が同種のがんに罹患したことを把握したときは、当該罹患が業務に起因するかどうかについて、遅滞なく、医師の意見を聴かなければならない。",choices:["1年以内に2人以上", "2年以内に2人以上", "2年以内に3人以上", "3年以内に5人以上"],answer:"1年以内に2人以上",exp:"則97条の2、1項。化学物質取扱事業場で「1年以内に2人以上」の労働者が同種のがんに罹患したことを把握したときに医師の意見聴取が義務付けられる。",src:"則97条の2、1項",cat:"選択式"}
+];
+
+// ============================================================
+//  GOOGLE DRIVE SYNC
+// ============================================================
+const CLIENT_ID    = APP_CONFIG.clientId;
+const SCOPES       = 'https://www.googleapis.com/auth/drive.appdata';
+const DRIVE_FILE_NAME = APP_CONFIG.driveFileName;
+let tokenClient = null, gapiInited = false, gisInited = false;
+let accessToken = null, driveFileId = null, isSyncing = false;
+let autoSaveTimer = null;
+
+window.addEventListener('load', () => {
+  gapi.load('client', async () => {
+    await gapi.client.init({});
+    gapiInited = true;
+    maybeEnableSync();
+  });
+  const s = document.createElement('script');
+  s.src = 'https://accounts.google.com/gsi/client';
+  s.onload = () => {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID, scope: SCOPES,
+      callback: async (resp) => {
+        if (resp.error) { showToast('ログインエラー: ' + resp.error, 'error'); return; }
+        accessToken = resp.access_token;
+        gapi.client.setToken({ access_token: accessToken });
+        onSignedIn();
+      }
+    });
+    gisInited = true;
+    maybeEnableSync();
+  };
+  document.head.appendChild(s);
+});
+
+function maybeEnableSync() {
+  if (gapiInited && gisInited && getSavedAuth()) {
+    tokenClient.requestAccessToken({ prompt: '' });
+  }
+}
+function signIn() {
+  if (!gapiInited || !gisInited) { showToast('初期化中です、少々お待ちください', 'error'); return; }
+  tokenClient.requestAccessToken({ prompt: 'consent' });
+}
+function signOut() {
+  if (accessToken) google.accounts.oauth2.revoke(accessToken);
+  accessToken = null; driveFileId = null;
+  clearSavedAuth(); updateSyncUI(false);
+  showToast('ログアウトしました');
+}
+function onSignedIn() {
+  updateSyncUI(true); saveAuthHint();
+  showToast('ログイン成功、データを読み込んでいます…', 'success');
+  loadFromDrive();
+}
+function updateSyncUI(loggedIn) {
+  document.getElementById('syncDot').className = 'sync-dot' + (loggedIn ? ' connected' : '');
+  document.getElementById('syncStatusText').textContent = loggedIn ? 'Googleドライブに同期中' : 'Googleアカウントで同期';
+  document.getElementById('syncUser').style.display = 'none';
+  document.getElementById('btnSignIn').style.display    = loggedIn ? 'none'  : 'flex';
+  document.getElementById('btnManualSync').style.display = loggedIn ? 'block' : 'none';
+  document.getElementById('btnManualSync').disabled = !loggedIn;
+  document.getElementById('btnSignOut').style.display   = loggedIn ? 'block' : 'none';
+}
+function setSyncing(v) {
+  isSyncing = v;
+  const dot = document.getElementById('syncDot');
+  const btn = document.getElementById('btnManualSync');
+  if (v) { dot.className = 'sync-dot syncing'; if (btn) { btn.disabled = true; btn.textContent = '同期中…'; } }
+  else   { dot.className = 'sync-dot connected'; if (btn) { btn.disabled = false; btn.textContent = '↑↓ 同期'; } }
+}
+async function loadFromDrive() {
+  if (!accessToken) return;
+  setSyncing(true);
+  try {
+    const res = await gapi.client.request({
+      path: 'https://www.googleapis.com/drive/v3/files',
+      params: { spaces: 'appDataFolder', q: `name='${DRIVE_FILE_NAME}'`, fields: 'files(id,name)' }
+    });
+    const files = res.result.files || [];
+    if (files.length > 0) {
+      driveFileId = files[0].id;
+      const fileRes = await gapi.client.request({
+        path: `https://www.googleapis.com/drive/v3/files/${driveFileId}`,
+        params: { alt: 'media' }
+      });
+      const data = typeof fileRes.result === 'string' ? JSON.parse(fileRes.result) : fileRes.result;
+      mergeCloudData(data);
+      showToast('クラウドから読み込みました', 'success');
+    } else {
+      showToast('クラウドにデータがありません（初回）');
+      await saveToDrive();
+    }
+  } catch (e) {
+    console.error(e);
+    showToast('読み込み失敗: ' + (e?.message || '通信エラー'), 'error');
+  }
+  setSyncing(false);
+}
+async function saveToDrive() {
+  if (!accessToken) return;
+  setSyncing(true);
+  try {
+    const body = JSON.stringify(buildSavePayload());
+    if (driveFileId) {
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+        body
+      });
+    } else {
+      const meta = JSON.stringify({ name: DRIVE_FILE_NAME, parents: ['appDataFolder'] });
+      const form = new FormData();
+      form.append('metadata', new Blob([meta], { type: 'application/json' }));
+      form.append('file', new Blob([body], { type: 'application/json' }));
+      const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&spaces=appDataFolder', {
+        method: 'POST', headers: { 'Authorization': 'Bearer ' + accessToken }, body: form
+      });
+      driveFileId = (await res.json()).id;
+    }
+    showToast('クラウドに保存しました', 'success');
+  } catch (e) {
+    console.error(e);
+    showToast('保存失敗: ' + (e?.message || '通信エラー'), 'error');
+  }
+  setSyncing(false);
+}
+async function manualSync() {
+  if (!accessToken) { showToast('先にログインしてください', 'error'); return; }
+  await loadFromDrive();
+}
+function scheduleAutoSave() {
+  if (!accessToken) return;
+  if (autoSaveTimer) clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => saveToDrive(), 3000);
+}
+
+// ============================================================
+//  SAVE / LOAD PAYLOAD
+//  ★ v2: stats（正答率）と session（中断データ）を両方保存
+// ============================================================
+function buildSavePayload() {
+  // 現在進行中のセッション or 中断済みの pendingResume を保存
+  let sessionData = null;
+  if (currentSession && questions.length > 0) {
+    sessionData = {
+      questionIndices: questions.map(q => getOrigIdx(q)),
+      current,
+      answers: [...answers]
+    };
+  } else if (pendingResume) {
+    sessionData = pendingResume;
+  }
+  return {
+    version: 2,
+    bookmarks: [...bookmarks],          // ★ 栞 → Drive同期で他デバイスにも反映
+    stats: JSON.parse(JSON.stringify(questionStats)), // ★ 正答率データ
+    session: sessionData,               // ★ 中断セーブ
+    savedAt: new Date().toISOString()
+  };
+}
+function mergeCloudData(data) {
+  if (!data) return;
+  // 栞
+  if (data.bookmarks) bookmarks = new Set(data.bookmarks);
+  // ★ 正答率データを復元
+  if (data.stats) {
+    Object.entries(data.stats).forEach(([k, v]) => { questionStats[k] = v; });
+  }
+  // ★ 中断セッションを復元（1問以上回答済みの場合のみ）
+  if (data.session && data.session.questionIndices && data.session.answers) {
+    const answered = data.session.answers.filter(a => a !== null).length;
+    if (answered > 0) pendingResume = data.session;
+  }
+  localSave();
+  updateBmBadge();
+  updateWeakBtn();
+  if (pendingResume) offerResume();
+}
+
+// ============================================================
+//  LOCAL STORAGE
+// ============================================================
+const LS_KEY  = 'sharoushi_' + DRIVE_FILE_NAME;
+const LS_AUTH = 'sharoushi_auth_hint';
+
+function localSave() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      bookmarks: [...bookmarks], stats: questionStats, session: pendingResume
+    }));
+  } catch {}
+}
+function localLoad() {
+  try {
+    const data = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
+    if (data.bookmarks) bookmarks = new Set(data.bookmarks);
+    if (data.stats) questionStats = data.stats;
+    if (data.session) pendingResume = data.session;
+  } catch {}
+}
+function saveAuthHint()  { try { localStorage.setItem(LS_AUTH, '1'); } catch {} }
+function getSavedAuth()  { try { return localStorage.getItem(LS_AUTH) === '1'; } catch { return false; } }
+function clearSavedAuth() { try { localStorage.removeItem(LS_AUTH); } catch {} }
+
+// ============================================================
+//  BOOKMARK
+// ============================================================
+let bookmarks = new Set();
+function toggleBookmark() {
+  const idx = currentQIndex;
+  if (bookmarks.has(idx)) bookmarks.delete(idx);
+  else bookmarks.add(idx);
+  localSave(); updateQuestion(); updateBmBadge(); scheduleAutoSave();
+}
+function updateBmBadge() {
+  const badge = document.getElementById('bmBadge');
+  if (bookmarks.size > 0) {
+    badge.textContent = bookmarks.size;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+// ============================================================
+//  STATS
+// ============================================================
+let questionStats = {}; // { origIdx: {correct:N, total:N} }
+
+function recordStat(origIdx, isCorrect) {
+  if (!questionStats[origIdx]) questionStats[origIdx] = {correct:0, total:0};
+  questionStats[origIdx].total++;
+  if (isCorrect) questionStats[origIdx].correct++;
+  localSave(); scheduleAutoSave(); updateWeakBtn();
+}
+function getAccuracyInfo(origIdx) {
+  const s = questionStats[origIdx];
+  if (!s || s.total === 0) return null;
+  const pct = Math.round((s.correct / s.total) * 100);
+  return {
+    total: s.total, pct,
+    cls: pct >= 80 ? 'high' : (pct >= 50 ? 'mid' : 'low')
+  };
+}
+
+// ============================================================
+//  WEAK QUESTIONS
+// ============================================================
+function updateWeakBtn() {
+  const pool = ALL_QUESTIONS.filter((q,i) => {
+    const s = questionStats[i];
+    return s && s.total > 0 && (s.correct / s.total) <= 0.5;
+  });
+  const btn = document.getElementById('btnWeakStart');
+  btn.style.display = pool.length > 0 ? 'block' : 'none';
+  if (pool.length === 0) btn.textContent = 'まだ回答データがありません';
+  else btn.textContent = `正答率50%以下の問題を出題（${pool.length}問）`;
+}
+function startWeak() {
+  const s = { useWeak: true };
+  startSession(s);
+}
+
+// ============================================================
+//  RESUME SESSION
+// ============================================================
+let pendingResume = null;
+
+function offerResume() {
+  if (!pendingResume) return;
+  document.getElementById('resumeModal').style.display = 'flex';
+}
+function resumeSession() {
+  if (!pendingResume) return;
+  const pool = pendingResume.questionIndices.map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
+  if (pool.length === 0) { clearResume(); return; }
+  questions = pool; answers = [...pendingResume.answers]; current = pendingResume.current || 0;
+  currentSession = { ...pendingResume }; pendingResume = null;
+  localSave(); showQuestionScreen(); updateQuestion();
+  document.getElementById('resumeModal').style.display = 'none';
+  showToast('前回の続きから再開しました', 'success');
+}
+function clearResume() {
+  pendingResume = null; localSave(); 
+  document.getElementById('resumeModal').style.display = 'none';
+  scheduleAutoSave();
+}
+
+// ============================================================
+//  MAIN LOGIC
+// ============================================================
+let questions = [], answers = [], current = 0, currentSession = null;
+
+const CATS = [...new Set(ALL_QUESTIONS.map(q => q.cat))];
+
+// ============================================================
+//  FILTER
+// ============================================================
+function initFilters() {
+  const btns = document.getElementById('filterBtns');
+  CATS.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-filter'; btn.textContent = cat; btn.dataset.cat = cat;
+    btn.onclick = () => selectFilter(cat, btn);
+    btns.appendChild(btn);
+  });
+}
+function selectFilter(cat, btn) {
+  document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  
+  let p = ALL_QUESTIONS;
+  if (cat !== 'all') p = p.filter(q => q.cat === cat);
+  
+  document.getElementById('startCount').textContent = p.length;
+  
+  // ランダム入力の max を更新
+  const input = document.getElementById('randomInput');
+  input.max = p.length; 
+  if (parseInt(input.value) > p.length) input.value = p.length;
+  updateRandomBtn();
+}
+function getFilteredPool() {
+  const active = document.querySelector('.btn-filter.active');
+  if (!active) return ALL_QUESTIONS;
+  const cat = active.dataset.cat;
+  if (cat === 'all') return ALL_QUESTIONS;
+  return ALL_QUESTIONS.filter(q => q.cat === cat);
+}
+
+// ============================================================
+//  RANDOM MODE
+// ============================================================
+function updateRandomBtn() {
+  const input = document.getElementById('randomInput');
+  const btn = document.getElementById('btnRandomStart');
+  btn.textContent = `${input.value}問ランダムで出題`;
+}
+function startRandom() {
+  const num = parseInt(document.getElementById('randomInput').value) || 10;
+  let pool = getFilteredPool().map(q => ({ ...q, _origIdx: ALL_QUESTIONS.indexOf(q) }));
+  if (num >= pool.length) pool = pool;
+  else {
+    pool = pool.sort(() => Math.random() - 0.5).slice(0, num);
+  }
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => q._origIdx), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`${pool.length}問をランダム出題開始`, 'success');
+}
+
+// ============================================================
+//  SHUFFLE
+// ============================================================
+function shuffle() {
+  const pool = getFilteredPool();
+  const indices = Array.from({length: pool.length}, (_, i) => i);
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  ALL_QUESTIONS.length = 0;
+  indices.forEach(i => ALL_QUESTIONS.push(pool[i]));
+  showToast('問題をシャッフルしました', 'success');
+}
+
+// ============================================================
+//  START MODES
+// ============================================================
+function start() {
+  const s = {};
+  startSession(s);
+}
+function startBookmarks() {
+  if (bookmarks.size === 0) { showToast('栞がありません', 'warn'); return; }
+  const s = { useBookmarks: true };
+  startSession(s);
+}
+function startSession(s) {
+  let pool = [];
+  
+  if (s.useBookmarks) {
+    pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
+  } else if (s.useWeak) {
+    let p = ALL_QUESTIONS.map((q, i) => ({ ...q, _origIdx: i }));
+    pool = p.filter(q => {
+      const stat = questionStats[q._origIdx];
+      return stat && stat.total > 0 && (stat.correct / stat.total) <= 0.5;
+    });
+  } else {
+    pool = getFilteredPool().map(q => ({ ...q, _origIdx: ALL_QUESTIONS.indexOf(q) }));
+  }
+
+  if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
+  
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => q._origIdx), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+}
+
+function getOrigIdx(q) { return q._origIdx !== undefined ? q._origIdx : ALL_QUESTIONS.indexOf(q); }
+const currentQIndex = questions.length > 0 ? getOrigIdx(questions[current]) : 0;
+
+// ============================================================
+//  SCREENS
+// ============================================================
+function showMain() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('show'));
+  document.getElementById('screenMain').classList.add('show');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tabMain').classList.add('active');
+  
+  // メイン画面表示時に進行中セッションがあれば questionScreen に、なければ startScreen に
+  if (questions.length > 0 && current < questions.length) {
+    showQuestionScreen(); updateQuestion();
+  } else {
+    document.getElementById('startScreen').style.display = 'block';
+    document.getElementById('questionScreen').style.display = 'none';
+    document.getElementById('resultScreen').style.display = 'none';
+    document.getElementById('progressWrap').style.display = 'none';
+  }
+}
+function showBookmarks() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('show'));
+  document.getElementById('screenBookmarks').classList.add('show');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tabBookmarks').classList.add('active');
+  renderBookmarks();
+}
+
+function showQuestionScreen() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('questionScreen').style.display = 'block';
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'block';
+}
+function showResultScreen() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('questionScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'block';
+  document.getElementById('progressWrap').style.display = 'none';
+  renderResults();
+}
+
+// ============================================================
+//  UPDATE QUESTION
+// ============================================================
+function updateQuestion() {
+  if (questions.length === 0 || current >= questions.length) return;
+  
+  const q = questions[current];
+  const currentQIndex = getOrigIdx(q);
+  
+  // プログレスバー
+  const progressInfo = `${current + 1} / ${questions.length}`;
+  const correctCount = answers.filter(a => a && a.correct).length;
+  document.getElementById('progressNum').textContent = progressInfo;
+  document.getElementById('progressScore').textContent = `正解: ${correctCount}問`;
+  document.getElementById('progressFill').style.width = `${((current + 1) / questions.length) * 100}%`;
+  
+  // 問題カード
+  document.getElementById('qNum').textContent = q.no + (q.opt ? '-' + q.opt : '');
+  if (q.type === 'select') {
+    document.getElementById('qText').innerHTML = q.context;
+    // 空欄を強調
+    const regex = /【[A-Z]】/g;
+    document.getElementById('qText').innerHTML = document.getElementById('qText').innerHTML.replace(
+      regex, '<span class="q-blank">$&</span>'
+    );
+  } else {
+    document.getElementById('qText').textContent = q.q;
+  }
+  
+  // タイプバッジ
+  const typeBadge = document.getElementById('qTypeBadge');
+  if (q.type === 'select') {
+    typeBadge.textContent = '選択式';
+    typeBadge.className = 'q-type-badge sel';
+    typeBadge.style.display = 'inline-block';
+  } else {
+    typeBadge.textContent = '○×';
+    typeBadge.className = 'q-type-badge ox';
+    typeBadge.style.display = 'inline-block';
+  }
+
+  // ★ 正答率バッジ
+  const accEl  = document.getElementById('qAcc');
+  const accInfo = getAccuracyInfo(currentQIndex);
+  if (accInfo) {
+    accEl.textContent = `過去${accInfo.total}回: ${accInfo.pct}%正解`;
+    accEl.className   = `q-acc ${accInfo.cls}`;
+    accEl.style.display = 'inline-block';
+  } else {
+    accEl.style.display = 'none';
+  }
+
+  // 栞ボタン
+  const bBtn = document.getElementById('btnBookmark');
+  bBtn.textContent = bookmarks.has(currentQIndex) ? '★' : '☆';
+  bBtn.classList.toggle('active', bookmarks.has(currentQIndex));
+
+  const ans    = answers[current];
+  const panel  = document.getElementById('resultPanel');
+  const nextBtn = document.getElementById('btnNext');
+  const isSelect = (q.type === 'select');
+  // ボタン群の表示切替
+  document.getElementById('oxRow').style.display       = isSelect ? 'none' : 'grid';
+  document.getElementById('choicesGrid').style.display = isSelect ? 'grid' : 'none';
+  if (ans) {
+    if (isSelect) renderChoices(q, ans.userChoice, true);
+    else          renderOxButtons(q, ans.userChoice, true);
+    showResultPanel(q, ans.correct);
+    nextBtn.style.display = 'block';
+  } else {
+    if (isSelect) renderChoices(q, null, false);
+    else          renderOxButtons(q, null, false);
+    panel.style.display = 'none'; panel.className = 'result-panel';
+    nextBtn.style.display = 'none';
+  }
+  document.getElementById('btnBack').disabled = (current === 0);
+  document.getElementById('btnSkip').style.display = ans ? 'none' : 'block';
+}
+
+function renderOxButtons(q, userChoice, isAnswered) {
+  const bm = document.getElementById('btnMaru');
+  const bb = document.getElementById('btnBatsu');
+  bm.className = 'btn-answer btn-maru'; bb.className = 'btn-answer btn-batsu';
+  bm.disabled = false; bb.disabled = false;
+  if (isAnswered) {
+    bm.disabled = true; bb.disabled = true;
+    if (userChoice === true) {
+      bm.className = q.a === true  ? 'btn-answer correct-chosen' : 'btn-answer wrong-chosen';
+      if (q.a !== true)  bb.className = 'btn-answer reveal-correct';
+    } else {
+      bb.className = q.a === false ? 'btn-answer correct-chosen' : 'btn-answer wrong-chosen';
+      if (q.a !== false) bm.className = 'btn-answer reveal-correct';
+    }
+  }
+}
+
+// 選択式問題の描画（選択式を含む科目でオーバーライドして使用）
+function renderChoices(q, userChoice, isAnswered) {
+  const grid = document.getElementById('choicesGrid');
+  grid.innerHTML = '';
+  q.choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-choice'; btn.textContent = c;
+    if (isAnswered) {
+      btn.disabled = true;
+      if (c === q.answer)   btn.className = c === userChoice ? 'btn-choice correct-chosen' : 'btn-choice reveal-correct';
+      if (c === userChoice && c !== q.answer) btn.className = 'btn-choice wrong-chosen';
+    } else {
+      btn.onclick = () => answerSelect(c);
+    }
+    grid.appendChild(btn);
+  });
+}
+
+function showResultPanel(q, isCorrect) {
+  const panel = document.getElementById('resultPanel');
+  panel.style.display = 'block';
+  panel.className     = isCorrect ? 'result-panel correct' : 'result-panel wrong';
+  document.getElementById('resultHeader').textContent = isCorrect ? '✓ 正解！' : '✗ 不正解';
+  document.getElementById('resultExp').textContent    = q.exp;
+  document.getElementById('resultSource').textContent = '根拠：' + q.src;
+}
+
+// ============================================================
+//  ANSWER
+// ============================================================
+function answerOx(userAnswer) {
+  if (answers[current]) return;
+  const q         = questions[current];
+  const isCorrect = userAnswer === q.a;
+  answers[current] = { correct: isCorrect, userChoice: userAnswer };
+  recordStat(currentQIndex, isCorrect);
+  localSave(); updateQuestion(); scheduleAutoSave();
+}
+function answerSelect(userChoice) {
+  if (answers[current]) return;
+  const q         = questions[current];
+  const isCorrect = userChoice === q.answer;
+  answers[current] = { correct: isCorrect, userChoice };
+  recordStat(getOrigIdx(q), isCorrect);
+  localSave(); updateQuestion(); scheduleAutoSave();
+}
+
+// ============================================================
+//  NAVIGATION
+// ============================================================
+function nextQuestion() {
+  if (current < questions.length - 1) { current++; updateQuestion(); }
+  else { finishSession(); }
+  currentSession.current = current; localSave();
+}
+function prevQuestion() {
+  if (current > 0) { current--; updateQuestion(); }
+  currentSession.current = current; localSave();
+}
+function skip() {
+  if (current < questions.length - 1) { current++; updateQuestion(); }
+  else { finishSession(); }
+  currentSession.current = current; localSave();
+}
+function suspend() {
+  // 中断時にセッションデータをpendingResumeに移す
+  if (currentSession) {
+    pendingResume = {
+      questionIndices: questions.map(q => getOrigIdx(q)),
+      current,
+      answers: [...answers]
+    };
+    currentSession = null;
+    localSave(); scheduleAutoSave();
+  }
+  
+  questions = []; answers = []; current = 0;
+  document.getElementById('startScreen').style.display = 'block';
+  document.getElementById('questionScreen').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  showToast('セッションを中断しました', 'warn');
+}
+
+// ============================================================
+//  FINISH & RESULTS
+// ============================================================
+function finishSession() {
+  // 完了時にセッションデータをクリア
+  currentSession = null; pendingResume = null;
+  localSave(); scheduleAutoSave();
+  showResultScreen();
+}
+function renderResults() {
+  const correct = answers.filter(a => a && a.correct).length;
+  const wrong   = answers.filter(a => a && !a.correct).length;
+  const skipped = answers.filter(a => !a).length;
+  const total   = questions.length;
+  const rate    = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+  document.getElementById('resultScoreText').textContent = `${correct} / ${total}`;
+  document.getElementById('correctCount').textContent   = correct;
+  document.getElementById('wrongCount').textContent     = wrong;
+  document.getElementById('skippedCount').textContent   = skipped;
+  
+  let msg = `正解率: ${rate}%\n`;
+  if (rate >= 80) msg += '素晴らしい結果です！';
+  else if (rate >= 60) msg += '良い成績です！';
+  else if (rate >= 40) msg += 'もう少し頑張りましょう。';
+  else msg += '復習をお勧めします。';
+  
+  document.getElementById('resultMessage').textContent = msg;
+  
+  // 再挑戦ボタンの表示制御
+  document.getElementById('btnRetryWrong').style.display = wrong > 0 ? 'inline-block' : 'none';
+  document.getElementById('btnRetrySkipped').style.display = skipped > 0 ? 'inline-block' : 'none';
+}
+
+// ============================================================
+//  RETRY
+// ============================================================
+function retryWrong() {
+  const wrongIndices = [];
+  answers.forEach((a, i) => { if (a && !a.correct) wrongIndices.push(i); });
+  if (wrongIndices.length === 0) return;
+  
+  const pool = wrongIndices.map(i => questions[i]);
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => getOrigIdx(q)), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`${pool.length}問の復習を開始`, 'success');
+}
+function retrySkipped() {
+  const skippedIndices = [];
+  answers.forEach((a, i) => { if (!a) skippedIndices.push(i); });
+  if (skippedIndices.length === 0) return;
+  
+  const pool = skippedIndices.map(i => questions[i]);
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => getOrigIdx(q)), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`${pool.length}問の復習を開始`, 'success');
+}
+function restart() {
+  questions = []; answers = []; current = 0;
+  currentSession = null; pendingResume = null;
+  localSave();
+  document.getElementById('startScreen').style.display = 'block';
+  document.getElementById('questionScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+}
+
+// ============================================================
+//  BOOKMARKS
+// ============================================================
+function renderBookmarks() {
+  const container = document.getElementById('bookmarkItems');
+  const empty = document.getElementById('emptyBookmarks');
+  
+  if (bookmarks.size === 0) {
+    container.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  
+  empty.style.display = 'none';
+  container.innerHTML = '';
+  
+  [...bookmarks].sort((a, b) => a - b).forEach(idx => {
+    const q = ALL_QUESTIONS[idx];
+    if (!q) return;
+    
+    const item = document.createElement('div');
+    item.className = 'bm-item';
+    item.onclick = () => startFromBookmark(idx);
+    
+    const star = document.createElement('div');
+    star.className = 'bm-star'; star.textContent = '★';
+    
+    const tag = document.createElement('div');
+    tag.className = 'bm-tag'; tag.textContent = q.cat;
+    
+    const acc = document.createElement('div');
+    const accInfo = getAccuracyInfo(idx);
+    if (accInfo) {
+      acc.className = `bm-acc ${accInfo.cls}`;
+      acc.textContent = `${accInfo.pct}%`;
+    }
+    
+    const text = document.createElement('div');
+    text.className = 'bm-text';
+    if (q.type === 'select') {
+      text.textContent = `【${q.opt}】${q.context.slice(0, 80)}...`;
+    } else {
+      text.textContent = `${q.no}-${q.opt}: ${q.q.slice(0, 80)}...`;
+    }
+    
+    item.appendChild(star);
+    item.appendChild(tag);
+    if (accInfo) item.appendChild(acc);
+    item.appendChild(text);
+    container.appendChild(item);
+  });
+}
+
+function startFromBookmark(startIdx) {
+  const pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i }))
+    .filter(Boolean).sort((a, b) => a._origIdx - b._origIdx);
+  const startPos = pool.findIndex(q => q._origIdx === startIdx);
+  
+  questions = pool; answers = Array(pool.length).fill(null); 
+  current = Math.max(0, startPos);
+  currentSession = { questionIndices: pool.map(q => q._origIdx), current, answers: [...answers] };
+  showMain(); showQuestionScreen(); updateQuestion();
+}
+
+// ============================================================
+//  TOAST
+// ============================================================
+function showToast(message, type = 'info') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = `toast${type ? ' ' + type : ''}`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  localLoad();
+  initFilters();
+  updateBmBadge();
+  updateWeakBtn();
+  if (pendingResume) offerResume();
+});
+
+// アプリ情報の表示
+document.getElementById('appTitle').textContent    = APP_CONFIG.title;
+document.getElementById('appSubtitle').textContent = APP_CONFIG.subtitle;
+
+// 栞ボタンの表示制御
+function checkBookmarkButton() {
+  const btn = document.getElementById('btnBookmarkStart');
+  btn.style.display = bookmarks.size > 0 ? 'block' : 'none';
+}
+
+// 初期化時に栞ボタンをチェック
+document.addEventListener('DOMContentLoaded', () => {
+  checkBookmarkButton();
+});
+
+// 栞の更新時に栞ボタンもチェック
+function updateBmBadge() {
+  const badge = document.getElementById('bmBadge');
+  if (bookmarks.size > 0) {
+    badge.textContent = bookmarks.size;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+  checkBookmarkButton(); // 栞ボタンの表示も更新
+}
+</script>
+</body>
+</html>
