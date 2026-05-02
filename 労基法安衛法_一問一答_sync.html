@@ -706,7 +706,7 @@ function clearSavedAuth() { try { localStorage.removeItem(LS_AUTH); } catch {} }
 // ============================================================
 let bookmarks = new Set();
 function toggleBookmark() {
-  const idx = currentQIndex;
+  const idx = getOrigIdx(questions[current]);
   if (bookmarks.has(idx)) bookmarks.delete(idx);
   else bookmarks.add(idx);
   localSave(); updateQuestion(); updateBmBadge(); scheduleAutoSave();
@@ -898,7 +898,6 @@ function startSession(s) {
 }
 
 function getOrigIdx(q) { return q._origIdx !== undefined ? q._origIdx : ALL_QUESTIONS.indexOf(q); }
-const currentQIndex = questions.length > 0 ? getOrigIdx(questions[current]) : 0;
 
 // ============================================================
 //  SCREENS
@@ -1072,7 +1071,7 @@ function answerOx(userAnswer) {
   const q         = questions[current];
   const isCorrect = userAnswer === q.a;
   answers[current] = { correct: isCorrect, userChoice: userAnswer };
-  recordStat(currentQIndex, isCorrect);
+  recordStat(getOrigIdx(q), isCorrect);
   localSave(); updateQuestion(); scheduleAutoSave();
 }
 function answerSelect(userChoice) {
