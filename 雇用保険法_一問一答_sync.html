@@ -513,8 +513,16 @@ const DRIVE_FILE_NAME = APP_CONFIG.driveFileName;
 let tokenClient = null, gapiInited = false, gisInited = false;
 let accessToken = null, driveFileId = null, isSyncing = false;
 let autoSaveTimer = null;
+let tokenRefreshTimer = null; // トークン自動更新タイマー
 
 window.addEventListener('load', () => {
+  // ログイン済みの場合は「再接続中」表示
+  if (getSavedAuth()) {
+    const dot = document.getElementById('syncDot');
+    const txt = document.getElementById('syncStatusText');
+    if (dot) dot.className = 'sync-dot syncing';
+    if (txt) txt.textContent = '再接続中…';
+  }
   gapi.load('client', async () => {
     await gapi.client.init({});
     gapiInited = true;
@@ -526,10 +534,21 @@ window.addEventListener('load', () => {
     tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: CLIENT_ID, scope: SCOPES,
       callback: async (resp) => {
-        if (resp.error) { showToast('ログインエラー: ' + resp.error, 'error'); return; }
+        if (resp.error) {
+          if (getSavedAuth()) {
+            updateSyncUI(false);
+            showToast('再接続できませんでした。再度ログインしてください', 'warn');
+          }
+          return;
+        }
         accessToken = resp.access_token;
         gapi.client.setToken({ access_token: accessToken });
         onSignedIn();
+        // 55分後にトークンを自動更新（アクセストークンは1時間で失効）
+        if (tokenRefreshTimer) clearTimeout(tokenRefreshTimer);
+        tokenRefreshTimer = setTimeout(() => {
+          if (getSavedAuth()) tokenClient.requestAccessToken({ prompt: '' });
+        }, 55 * 60 * 1000);
       }
     });
     gisInited = true;
@@ -550,6 +569,7 @@ function signIn() {
 function signOut() {
   if (accessToken) google.accounts.oauth2.revoke(accessToken);
   accessToken = null; driveFileId = null;
+  if (tokenRefreshTimer) { clearTimeout(tokenRefreshTimer); tokenRefreshTimer = null; }
   clearSavedAuth(); updateSyncUI(false);
   showToast('ログアウトしました');
 }
