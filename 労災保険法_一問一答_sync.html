@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>労災保険法 一問一答 — 社労士試験対策</title>
+<title>労災保険法・徴収法 一問一答 — 社労士試験対策</title>
 <script src="https://apis.google.com/js/api.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-serif;background:#11161e;color:#e8e0d0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#11161e;color:#e8e0d0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
 .app{width:100%;max-width:640px}
 
 /* ===== SYNC BAR ===== */
@@ -74,6 +74,10 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
 .btn-answer.wrong-chosen{background:#331616;border-color:#e05050;color:#e05050}
 .btn-answer.reveal-correct{background:#163328;border-color:#3dbe82;color:#3dbe82}
 .btn-answer:disabled{cursor:default}
+/* あなたの選択ラベル */
+.your-choice-label{font-size:9px;letter-spacing:.08em;opacity:.85;margin-top:2px;font-weight:700}
+/* 挑戦回数バッジ */
+.q-tries{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;background:rgba(138,155,176,.12);border:1px solid #283848;color:#8a9bb0;display:none}
 
 /* ===== SELECT CHOICES (選択式用) ===== */
 .choices-grid{display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
@@ -114,41 +118,29 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
 .start-count{font-size:44px;font-weight:700;color:#c97a4a;display:block;margin-bottom:4px}
 .start-unit{font-size:13px;color:#8a9bb0;margin-bottom:22px;display:block}
 .start-desc{font-size:13px;color:#8a9bb0;line-height:1.7;margin-bottom:22px}
-.filter-section{margin-bottom:16px}
-.filter-label{font-size:12px;color:#556070;letter-spacing:.08em;margin-bottom:8px;text-align:center}
-.filter-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:12px}
-.filter-btn{font-size:12px;padding:5px 12px;border-radius:6px;border:1px solid #283848;background:transparent;color:#8a9bb0;cursor:pointer;transition:all .15s}
-.filter-btn.active{border-color:#c97a4a;color:#c97a4a;background:rgba(201,122,74,.1)}
-
-/* ===== ランダム出題数セレクター ===== */
-.rand-section{margin-bottom:16px}
-.rand-row{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-.rand-input{width:90px;text-align:center;font-size:18px;font-weight:700;color:#c97a4a;background:rgba(201,122,74,.1);border:1px solid rgba(201,122,74,.3);border-radius:8px;padding:8px 10px;outline:none;transition:border-color .15s;font-family:inherit}
-.rand-input:focus{border-color:#c97a4a;background:rgba(201,122,74,.15)}
-.rand-input::-webkit-outer-spin-button,.rand-input::-webkit-inner-spin-button{opacity:1;height:24px}
-.rand-unit{font-size:13px;color:#8a9bb0}
-
-.controls{display:flex;justify-content:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-.btn-ctrl{font-size:12px;padding:5px 14px;border-radius:6px;border:1px solid #283848;background:transparent;color:#8a9bb0;cursor:pointer;letter-spacing:.05em;transition:all .15s}
-.btn-ctrl.active{border-color:#c97a4a;color:#c97a4a;background:rgba(201,122,74,.1)}
-.btn-start{background:#c97a4a;color:#1a0800;border:none;border-radius:10px;padding:13px 36px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.1em;transition:background .15s;display:block;width:100%;max-width:300px;margin:0 auto 10px}
-.btn-start:hover{background:#e8a87a}
-.btn-start.secondary{background:transparent;border:1.5px solid #e8c97a;color:#e8c97a;font-size:14px}
-.btn-start.secondary:hover{background:rgba(232,201,122,.1)}
-/* ランダム出題ボタン */
-.btn-start.rand{background:transparent;border:1.5px solid #4a9eca;color:#4a9eca;font-size:14px;margin-bottom:0}
-.btn-start.rand:hover{background:rgba(74,158,202,.1)}
-/* 苦手問題モード */
-.btn-start.weak{background:transparent;border:1.5px solid #e07060;color:#e07060;font-size:14px}
-.btn-start.weak:hover{background:rgba(224,112,96,.1)}
+.filters{margin-bottom:22px}
+.filter-label{font-size:12px;color:#8a9bb0;margin-bottom:8px}
+.filter-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.btn-filter{border:1.5px solid #283848;background:transparent;color:#8a9bb0;border-radius:18px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-filter.active{border-color:#c97a4a;background:rgba(201,122,74,.12);color:#c97a4a}
+.btn-filter:hover{border-color:#4a9eca;color:#4a9eca}
+.random-mode{margin-bottom:18px}
+.random-input-wrap{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:10px}
+.random-input{background:#1a2434;border:1.5px solid #283848;border-radius:6px;color:#e8e0d0;padding:8px 10px;font-size:14px;width:60px;text-align:center}
+.random-input:focus{outline:none;border-color:#c97a4a}
+.random-label{font-size:13px;color:#8a9bb0}
+.start-btns{display:flex;flex-direction:column;gap:10px;align-items:center}
+.btn-start{border:1.5px solid #c97a4a;background:transparent;color:#c97a4a;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-start:hover{background:rgba(201,122,74,.12)}
+.btn-start.primary{background:#c97a4a;color:#1a0800}
+.btn-start.primary:hover{background:#e8a87a}
+.btn-shuffle{border:1.5px solid #8a9bb0;background:transparent;color:#8a9bb0;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-shuffle:hover{background:rgba(138,155,176,.1)}
 
 /* ===== RESULT SCREEN ===== */
-.result-screen{display:none;text-align:center;padding:28px 16px}
-.result-screen.show{display:block}
-.score-circle{width:150px;height:150px;border-radius:50%;border:3px solid #c97a4a;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 22px}
-.score-big{font-size:44px;font-weight:700;color:#e8a87a;line-height:1}
-.score-denom{font-size:13px;color:#8a9bb0;margin-top:4px}
-.score-pct{font-size:17px;font-weight:600;color:#c97a4a;margin-bottom:8px}
+.result-screen{text-align:center;padding:36px 16px}
+.result-title{font-size:24px;font-weight:700;color:#e8e0d0;margin-bottom:16px}
+.result-score{font-size:36px;font-weight:700;color:#c97a4a;margin-bottom:8px}
 .score-msg{font-size:13px;color:#8a9bb0;margin-bottom:22px;line-height:1.7;white-space:pre-line}
 .breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
 .breakdown-item{background:#1a2434;border:1px solid #283848;border-radius:10px;padding:12px;text-align:center}
@@ -184,184 +176,202 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
 .toast.warn{border-color:#c9a84c;color:#c9a84c}
 
 /* ===== RESUME MODAL ===== */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:200}
-.modal-overlay.show{display:flex}
-.modal{background:#1a2434;border:1px solid #283848;border-radius:14px;padding:24px 20px;width:90%;max-width:360px;text-align:center}
-.modal h3{font-size:16px;font-weight:700;color:#e8e0d0;margin-bottom:10px}
-.modal p{font-size:13px;color:#8a9bb0;line-height:1.6;margin-bottom:20px}
-.modal-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.modal-btn{border-radius:8px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;border:none}
-.modal-btn.primary{background:#c97a4a;color:#1a0800}
-.modal-btn.primary:hover{background:#e8a87a}
-.modal-btn.secondary{background:transparent;border:1.5px solid #283848;color:#8a9bb0}
-.modal-btn.secondary:hover{background:#283848}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:999}
+.modal{background:#1a2434;border:1px solid #283848;border-radius:12px;padding:24px;max-width:400px;width:90vw}
+.modal-title{font-size:16px;font-weight:700;color:#e8e0d0;margin-bottom:12px}
+.modal-desc{font-size:14px;color:#a0b0c0;line-height:1.6;margin-bottom:20px}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end}
+.btn-modal{border:1.5px solid #283848;background:transparent;color:#8a9bb0;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-modal.primary{border-color:#c97a4a;color:#c97a4a}
+.btn-modal:hover{background:rgba(138,155,176,.1)}
+.btn-modal.primary:hover{background:rgba(201,122,74,.12)}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* ===== ANIMATIONS ===== */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.screen{display:none}
+.screen.show{display:block;animation:fadeUp .3s ease}
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- ===== SYNC BAR ===== -->
-  <div class="sync-bar">
-    <div>
-      <div class="sync-status">
-        <span class="sync-dot" id="syncDot"></span>
-        <span id="syncStatusText">Googleアカウントで同期</span>
-      </div>
-      <div class="sync-user" id="syncUser" style="display:none"></div>
-    </div>
-    <div class="sync-btns">
-      <button class="btn-gsign" id="btnSignIn" onclick="signIn()">
-        <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#4285F4" d="M47.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h13.2c-.6 3-2.3 5.5-4.9 7.2v6h7.9c4.6-4.3 7.3-10.6 7.3-17.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.9-6c-2.1 1.4-4.8 2.3-8 2.3-6.1 0-11.3-4.1-13.2-9.7H2.7v6.2C6.7 43 14.8 48 24 48z"/><path fill="#FBBC05" d="M10.8 28.8c-.5-1.4-.7-2.8-.7-4.3s.3-2.9.7-4.3v-6.2H2.7C1 17.5 0 20.6 0 24s1 6.5 2.7 9.1l8.1-4.3z"/><path fill="#EA4335" d="M24 9.5c3.4 0 6.5 1.2 8.9 3.5l6.6-6.6C35.9 2.5 30.4 0 24 0 14.8 0 6.7 5 2.7 12.4l8.1 6.2C12.7 13.6 17.9 9.5 24 9.5z"/></svg>
-        Googleでログイン
-      </button>
-      <button class="btn-sync" id="btnManualSync" onclick="manualSync()" style="display:none" disabled>↑↓ 同期</button>
-      <button class="btn-signout" id="btnSignOut" onclick="signOut()" style="display:none">ログアウト</button>
+<!-- ===== GOOGLE DRIVE SYNC BAR ===== -->
+<div class="sync-bar">
+  <div class="sync-status">
+    <div id="syncDot" class="sync-dot"></div>
+    <span id="syncStatusText">Googleアカウントで同期</span>
+    <div id="syncUser" class="sync-user"></div>
+  </div>
+  <div class="sync-btns">
+    <button id="btnSignIn" class="btn-gsign" onclick="signIn()">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Googleでログイン
+    </button>
+    <button id="btnManualSync" class="btn-sync" onclick="manualSync()">↑↓ 同期</button>
+    <button id="btnSignOut" class="btn-signout" onclick="signOut()">ログアウト</button>
+  </div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <h1>社労士試験対策</h1>
+  <div id="appTitle" class="title">雇用保険法 一問一答</div>
+  <div id="appSubtitle" class="subtitle">TAC 択一式100問 ＋ 選択式10問　計110問</div>
+</div>
+
+<!-- ===== NAV TABS ===== -->
+<div class="nav-tabs">
+  <button id="tabMain"  class="nav-tab active" onclick="showMain()">学習</button>
+  <button id="tabBookmarks" class="nav-tab" onclick="showBookmarks()">栞<span id="bmBadge" class="bm-badge" style="display:none">0</span></button>
+</div>
+
+<!-- ===== MAIN SCREEN ===== -->
+<div id="screenMain" class="screen show">
+
+<!-- ===== PROGRESS BAR ===== -->
+<div id="progressWrap" class="progress-wrap" style="display:none">
+  <div class="progress-info">
+    <div id="progressNum" class="progress-num">0 / 0</div>
+    <div id="progressScore" class="progress-score">正解: 0問</div>
+  </div>
+  <div class="progress-bar-bg">
+    <div id="progressFill" class="progress-bar-fill" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- ===== START SCREEN ===== -->
+<div id="startScreen" class="start-screen">
+  <span id="startCount" class="start-count">110</span>
+  <span class="start-unit">問</span>
+  <div class="start-desc">労災保険法・徴収法の知識を一問一答で確認しよう。<br>第1予想55問・第2予想55問（択一式100問・選択式10問）を収録。</div>
+  
+  <!-- フィルター -->
+  <div class="filters">
+    <div class="filter-label">出題範囲</div>
+    <div id="filterBtns" class="filter-btns">
+      <button class="btn-filter active" data-cat="all">すべて</button>
     </div>
   </div>
 
-  <!-- ===== HEADER ===== -->
-  <div class="header">
-    <h1>社会保険労務士 試験対策</h1>
-    <div class="title" id="appTitle">〇〇法 一問一答</div>
-    <div class="subtitle" id="appSubtitle">問題読み込み中...</div>
+  <!-- ランダム出題モード -->
+  <div class="random-mode">
+    <div class="random-input-wrap">
+      <input id="randomInput" class="random-input" type="number" value="10" min="1" max="110" oninput="updateRandomBtn()">
+      <span class="random-label">問をランダムで出題</span>
+    </div>
+    <button id="btnRandomStart" class="btn-start" onclick="startRandom()">10問ランダムで出題</button>
   </div>
 
-  <div class="nav-tabs" id="navTabs">
-    <button class="nav-tab active" onclick="switchTab('start')">問題</button>
-    <button class="nav-tab" onclick="switchTab('bookmark')" id="tabBm">★ 栞 <span class="bm-badge" id="bmBadge" style="display:none"></span></button>
+  <!-- ボタン群 -->
+  <div class="start-btns">
+    <button class="btn-shuffle" onclick="shuffle()">🔀 シャッフル</button>
+    <button id="btnResumeStart" class="btn-start" onclick="resumeSession()" style="display:none">▶ 続きから開始</button>
+    <button id="btnWeakStart" class="btn-start" onclick="startWeak()" style="display:none">正答率50%以下の問題を出題</button>
+    <button id="btnLeastTried" class="btn-start" onclick="startLeastTried()" style="display:none">挑戦回数が少ない問題を出題</button>
+    <button class="btn-start primary" onclick="start()">学習スタート</button>
+    <button id="btnBookmarkStart" class="btn-start" onclick="startBookmarks()" style="display:none">栞の問題のみ</button>
+  </div>
+</div>
+
+<!-- ===== QUESTION SCREEN ===== -->
+<div id="questionScreen" class="screen">
+  <div class="card">
+    <div class="q-meta">
+      <span id="qTag" class="q-tag">択一式（雇用保険法）</span>
+      <span id="qTypeBadge" class="q-type-badge"></span>
+      <span id="qNum" class="q-num"></span>
+      <span id="qAcc" class="q-acc"></span>
+      <span id="qTries" class="q-tries"></span>
+    </div>
+    <div id="qText" class="q-text"></div>
+    <button id="btnBookmark" class="btn-bookmark" onclick="toggleBookmark()">☆</button>
   </div>
 
-  <!-- ===== START SCREEN ===== -->
-  <div id="startScreen" class="start-screen">
-    <span class="start-count" id="startCount">0</span>
-    <span class="start-unit">問</span>
-    <div class="start-desc">各肢について○か×かを判断してください。</div>
-
-    <!-- 出題範囲フィルター -->
-    <div class="filter-section">
-      <div class="filter-label">出題範囲</div>
-      <div class="filter-row" id="filterRow"></div>
-    </div>
-
-    <!-- ★ NEW: ランダム出題数セレクター（数値入力欄＋出題ボタン） -->
-    <div class="rand-section">
-      <div class="filter-label">ランダム出題</div>
-      <div class="rand-row">
-        <input type="number" id="randInput" class="rand-input" min="1" value="10" oninput="onRandInputChange()">
-        <span class="rand-unit">問</span>
-      </div>
-      <button class="btn-start rand" onclick="startRandom()" id="btnStartRand">10問ランダムで出題</button>
-    </div>
-
-    <div class="controls">
-      <button class="btn-ctrl" id="btnShuffle" onclick="toggleShuffle()">シャッフル</button>
-    </div>
-
-    <button class="btn-start" onclick="startQuiz()">スタート →</button>
-    <button class="btn-start secondary" onclick="startBookmarked()" id="btnStartBm" style="display:none">★ 栞の問題のみ</button>
-    <!-- ★ NEW: 正答率50%以下モードボタン (問題を解くと表示) -->
-    <button class="btn-start weak" onclick="startWeak()" id="btnStartWeak" style="display:none">📉 正答率50%以下の問題を出題</button>
+  <!-- ○× ボタン -->
+  <div id="oxRow" class="btn-row">
+    <button id="btnMaru" class="btn-answer btn-maru" onclick="answerOx(true)">
+      <div>○</div><div class="btn-label">正しい</div>
+    </button>
+    <button id="btnBatsu" class="btn-answer btn-batsu" onclick="answerOx(false)">
+      <div>×</div><div class="btn-label">誤り</div>
+    </button>
   </div>
 
-  <!-- ===== BOOKMARK LIST ===== -->
-  <div class="bookmark-list" id="bookmarkList">
-    <div class="section-title">栞をつけた問題</div>
-    <div id="bmItems"></div>
-    <div style="margin-top:14px;text-align:center" id="bmActions"></div>
+  <!-- 選択肢 -->
+  <div id="choicesGrid" class="choices-grid"></div>
+
+  <!-- 結果パネル -->
+  <div id="resultPanel" class="result-panel">
+    <div id="resultHeader" class="result-header"></div>
+    <div id="resultExp" class="result-exp"></div>
+    <div id="resultSource" class="result-source"></div>
   </div>
 
-  <!-- ===== QUIZ SCREEN ===== -->
-  <div id="quizScreen" style="display:none">
-    <div class="progress-wrap">
-      <div class="progress-info">
-        <span class="progress-num" id="progressNum">1 / 0</span>
-        <span class="progress-score" id="progressScore">正解 0 問</span>
-      </div>
-      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
-    </div>
+  <button id="btnNext" class="btn-next" onclick="nextQuestion()">次の問題</button>
 
-    <div class="card">
-      <div class="q-meta">
-        <span class="q-tag" id="qTag"></span>
-        <span class="q-type-badge" id="qTypeBadge" style="display:none"></span>
-        <span class="q-num" id="qNum"></span>
-        <!-- ★ NEW: 過去正答率バッジ -->
-        <span class="q-acc" id="qAcc"></span>
-      </div>
-      <p class="q-text" id="qText"></p>
-      <button class="btn-bookmark" id="btnBookmark" onclick="toggleBookmark()">☆</button>
-    </div>
-
-    <!-- ○× ボタン -->
-    <div class="btn-row" id="oxRow">
-      <button class="btn-answer btn-maru" id="btnMaru" onclick="answerOx(true)">○<span class="btn-label">CORRECT</span></button>
-      <button class="btn-answer btn-batsu" id="btnBatsu" onclick="answerOx(false)">×<span class="btn-label">WRONG</span></button>
-    </div>
-    <!-- 選択式ボタン (選択式問題を含む科目はここに choicesGrid を追加) -->
-    <div class="choices-grid" id="choicesGrid"></div>
-
-    <div class="result-panel" id="resultPanel">
-      <div class="result-header" id="resultHeader"></div>
-      <div class="result-exp" id="resultExp"></div>
-      <div class="result-source" id="resultSource"></div>
-    </div>
-
-    <button class="btn-next" id="btnNext" onclick="nextQuestion()">次の問題 →</button>
-
-    <!-- ★ NEW: 中断ボタンを中央に配置 -->
-    <div class="nav-btns">
-      <button class="btn-nav" id="btnBack" onclick="goBack()">← 戻る</button>
-      <button class="btn-nav btn-suspend" onclick="suspendSession()">⏸ 中断保存</button>
-      <button class="btn-nav" id="btnSkip" onclick="skipQuestion()">スキップ →</button>
-    </div>
+  <div class="nav-btns">
+    <button id="btnBack" class="btn-nav" onclick="prevQuestion()">← 戻る</button>
+    <button class="btn-nav btn-suspend" onclick="suspend()">⏸ 中断</button>
+    <button id="btnSkip" class="btn-nav" onclick="skip()">スキップ</button>
   </div>
+</div>
 
-  <!-- ===== RESULT SCREEN ===== -->
-  <div class="result-screen" id="resultScreen">
-    <div class="score-circle">
-      <span class="score-big" id="finalScore">0</span>
-      <span class="score-denom" id="finalDenom">/ 0</span>
-    </div>
-    <div class="score-pct" id="finalPct"></div>
+<!-- ===== RESULT SCREEN ===== -->
+<div id="resultScreen" class="screen">
+  <div class="result-screen">
+    <div class="result-title">結果</div>
+    <div id="resultScoreText" class="result-score">0 / 0</div>
+    <div id="resultMessage" class="score-msg"></div>
+    
     <div class="breakdown">
-      <div class="breakdown-item"><div class="breakdown-num ok" id="okCount">0</div><div class="breakdown-label">正解</div></div>
-      <div class="breakdown-item"><div class="breakdown-num ng" id="ngCount">0</div><div class="breakdown-label">不正解</div></div>
-      <div class="breakdown-item"><div class="breakdown-num sk" id="skCount">0</div><div class="breakdown-label">未回答</div></div>
+      <div class="breakdown-item">
+        <div id="correctCount" class="breakdown-num ok">0</div>
+        <div class="breakdown-label">正解</div>
+      </div>
+      <div class="breakdown-item">
+        <div id="wrongCount" class="breakdown-num ng">0</div>
+        <div class="breakdown-label">不正解</div>
+      </div>
+      <div class="breakdown-item">
+        <div id="skippedCount" class="breakdown-num sk">0</div>
+        <div class="breakdown-label">未回答</div>
+      </div>
     </div>
-    <div class="score-msg" id="scoreMsg"></div>
+
     <div class="btns-wrap">
-      <button class="btn-retry" onclick="resetToStart()">最初から</button>
-      <button class="btn-retry" onclick="retryWrong()" id="btnRetryWrong" style="display:none">間違えた問題のみ</button>
-      <button class="btn-retry" onclick="retrySkipped()" id="btnRetrySkipped" style="display:none">未回答のみ</button>
-    </div>
-  </div>
-
-</div><!-- /app -->
-
-<div class="toast" id="toast"></div>
-
-<!-- 中断再開モーダル -->
-<div class="modal-overlay" id="resumeModal">
-  <div class="modal">
-    <h3>前回の中断データがあります</h3>
-    <p id="resumeMsg"></p>
-    <div class="modal-btns">
-      <button class="modal-btn primary" onclick="resumeSession()">続きから再開</button>
-      <button class="modal-btn secondary" onclick="dismissResume()">最初から</button>
+      <button id="btnRetryWrong" class="btn-retry" onclick="retryWrong()">間違えた問題を再挑戦</button>
+      <button id="btnRetrySkipped" class="btn-retry" onclick="retrySkipped()">未回答問題を再挑戦</button>
+      <button class="btn-retry" onclick="restart()">最初から</button>
     </div>
   </div>
 </div>
+
+</div>
+
+<!-- ===== BOOKMARK SCREEN ===== -->
+<div id="screenBookmarks" class="screen">
+<div class="bookmark-list">
+  <h3 class="section-title">栞をつけた問題</h3>
+  <div id="bookmarkItems"></div>
+  <div id="emptyBookmarks" class="empty-bm" style="display:none">
+    まだ栞をつけた問題がありません。<br>学習中に ★ ボタンを押すと、<br>後で見返したい問題を保存できます。
+  </div>
+</div>
+</div>
+
+<!-- モーダル廃止：続きから開始はスタート画面のボタンに統合 -->
+
+<!-- ===== TOAST ===== -->
+<div id="toast" class="toast"></div>
 
 <script>
 // ============================================================
 //  ★ CONFIG — 科目ごとにここだけ変更
 // ============================================================
 const APP_CONFIG = {
-  title:    '労災保険法 一問一答',
-  subtitle: 'TAC 択一式102問 ＋ 選択式10問　計112問',
+  title:    '労災保険法・徴収法 一問一答',
+  subtitle: 'TAC 択一式100問 ＋ 選択式10問　計110問',
   driveFileName: 'sharoushi_progress_rosai.json',
   clientId: '194094449743-hoj6t28jfidlfhueiiv6iromc2lvssgf.apps.googleusercontent.com',
 };
@@ -372,122 +382,116 @@ const APP_CONFIG = {
 //   選択式 型: {type:'select', no, opt, context, choices:[], answer, exp, src, cat:'選択式'}
 // ============================================================
 const ALL_QUESTIONS = [
-  // ===== 第1予想 択一式 =====
-  {no:'①問1',opt:'A',q:'次の業務による明らかな過重負荷を受けたことにより発症した脳血管疾患及び虚血性心疾患等は、業務に起因する疾病として取り扱う。①発症前の長期間にわたって、著しい疲労の蓄積をもたらす特に過重な業務（長期間の過重業務）に就労したこと。②発症に近接した時期において、特に過重な業務（短期間の過重業務）に就労したこと。③発症直前から前日までの間において、発生状態を時間的及び場所的に明確にし得る異常な出来事に遭遇したこと。',a:true,exp:'設問の通り正しい。認定基準の対象となる疾病は、脳内出血、くも膜下出血、脳梗塞、高血圧性脳症、心筋梗塞、狭心症、心停止（心臓性突然死を含む）、重篤な心不全、大動脈解離である。',src:'令和3.9.14 基発0914第1号',cat:'択一式'},
-  {no:'①問1',opt:'B',q:'長期間の過重業務に係る「発症前の長期間」とは、発症前おおむね6か月間をいい、発症前おおむね6か月より前の業務については、疲労の蓄積に係る業務の過重性を評価するに当たり考慮しない。',a:false,exp:'「考慮しない」とする記述が誤り。発症前おおむね6か月より前の業務については、疲労の蓄積に係る業務の過重性を評価するに当たり、付加的要因として考慮する。',src:'令和3.9.14 基発0914第1号',cat:'択一式'},
-  {no:'①問1',opt:'C',q:'長期間の過重業務に係る業務の過重性の具体的な評価に当たっては、発症日を起点とした1か月単位の連続した期間をみて、発症前1か月間におおむね100時間又は発症前2か月間ないし6か月間にわたって、1か月当たりおおむね80時間を超える時間外労働が認められる場合は、業務と発症との関連性が強いと評価できることを踏まえて判断する。',a:true,exp:'設問の通り正しい。1か月当たりおおむね45時間を超える時間外労働がない場合は関連性が弱いとされ、超えるほど関連性が徐々に強まる。',src:'令和3.9.14 基発0914第1号',cat:'択一式'},
-  {no:'①問1',opt:'D',q:'発症に近接した時期とは、発症前おおむね1週間をいい、発症前1か月間より短い期間のみに過重な業務が集中し、それより前の業務の過重性が低いために、長期間の過重業務とは認められないような場合には、発症前1週間を含めた当該期間に就労した業務の過重性を評価し、それが特に過重な業務と認められるときは、短期間の過重業務に就労したものと判断する。',a:true,exp:'設問の通り正しい。短期間の過重業務と発症との関連性は、発症に近ければ近いほど影響が強いと考えられる。',src:'令和3.9.14 基発0914第1号',cat:'択一式'},
-  {no:'①問1',opt:'E',q:'複数業務要因災害による脳・心臓疾患の「長期間の過重業務」及び「短期間の過重業務」の判断について、業務の過重性の検討に当たっては、異なる事業における労働時間を通算して評価する。また、労働時間以外の負荷要因については、異なる事業における負荷を合わせて評価する。',a:true,exp:'設問の通り正しい。「異常な出来事」については一般的には異なる事業における負荷を合わせて評価することはないとされる。',src:'令和3.9.14 基発0914第1号',cat:'択一式'},
-  {no:'①問2',opt:'A',q:'休業給付基礎日額の算定の基礎として用いる給付基礎日額については、原則として、四半期ごとの平均給与額が、その休業を開始した日の属する四半期の平均給与額の100分の110を超え、又は100分の90を下るに至った場合には、その上昇し、又は低下した比率を基準として厚生労働大臣が定める率を給付基礎日額に乗じて得た額とする。',a:false,exp:'「その休業を開始した日」を「算定事由発生日」と読み替えると正しい。改定された休業給付基礎日額は、上昇又は低下するに至った四半期の翌々四半期の最初の日以後の休業補償給付から適用される。',src:'労災保険法8条の2第1項2号',cat:'択一式'},
-  {no:'①問2',opt:'B',q:'算定事由発生日の属する年度の翌年度の7月以前の分として支給する年金たる保険給付については、給付基礎日額として算定した額を年金給付基礎日額とし、当該年度の翌年度の8月以後はスライド率による改定が行われる。',a:false,exp:'算定事由発生日の属する年度の「翌々年度」の7月以前である。翌々年度の8月以後にスライド率による改定が行われる。',src:'労災保険法8条の3第1項2号',cat:'択一式'},
-  {no:'①問2',opt:'C',q:'複数事業労働者の給付基礎日額は、複数事業労働者を使用する事業ごとに算定した給付基礎日額に相当する額を合算した額とされているが、その算定に当たり、当該事業ごとに算定した給付基礎日額に相当する額が自動変更対象額に満たないときは、これを自動変更対象額として算定することとなる。',a:false,exp:'事業ごとに算定した給付基礎日額に相当する額には自動変更対象額の規定は適用されず、合算した額（給付基礎日額）について自動変更対象額の規定が適用される。',src:'労災保険法8条3項',cat:'択一式'},
-  {no:'①問2',opt:'D',q:'休業給付基礎日額又は年金給付基礎日額について、年齢階層別の最低・最高限度額の規定が適用され、かつ、スライド率による改定が行われるべき場合には、スライド率による改定後の給付基礎日額について年齢階層別の最低・最高限度額の規定が適用される。',a:true,exp:'設問の通り正しい。スライド改定後に年齢階層別の最低・最高限度額が適用される。',src:'労災保険法8条の2第2項、8条の3第2項',cat:'択一式'},
-  {no:'①問2',opt:'E',q:'障害補償一時金等の一時金の額の算定の基礎として用いる給付基礎日額については、年齢階層別の最低・最高限度額の規定の適用はなく、スライド率による改定も行われない。',a:false,exp:'一時金の給付基礎日額には年齢階層別の最低・最高限度額の適用はないが、年金給付基礎日額と同様の仕組みでスライド率による改定は行われる。',src:'労災保険法8条の4',cat:'択一式'},
-  {no:'①問3',opt:'A',q:'療養の給付の範囲は、①診察、②薬剤又は治療材料の支給、③処置、手術その他の治療、④居宅における療養上の管理及びその療養に伴う世話その他の看護、⑤病院又は診療所への入院及びその療養に伴う世話その他の看護及び⑥移送のうち、医師が必要と認めるものに限られる。',a:false,exp:'「医師」が誤り。「政府」が必要と認めるものに限られる。',src:'労災保険法13条2項',cat:'択一式'},
-  {no:'①問3',opt:'B',q:'療養の給付に代えて療養の費用を支給することができるのは、療養の給付をすることが困難な場合のほか、療養の給付を受けないことについて労働者に相当の理由がある場合に限られる。',a:true,exp:'設問の通り正しい。',src:'労災保険法13条3項、則11条の2',cat:'択一式'},
-  {no:'①問3',opt:'C',q:'療養の給付は、社会復帰促進等事業として設置された病院若しくは診療所又は都道府県労働局長の指定する病院若しくは診療所、薬局若しくは訪問看護事業者において行われる。',a:true,exp:'設問の通り正しい。これらを「指定病院等」という。',src:'労災保険法施行規則11条1項',cat:'択一式'},
-  {no:'①問3',opt:'D',q:'療養補償給付たる療養の費用の請求に当たっては、請求書の記載事項のうち、「傷病名及び療養の内容」及び「療養に要した費用の額」について、診療担当者の証明を受けなければならない。',a:true,exp:'設問の通り正しい。診療担当者とは、医師、薬剤の支給、手当又は訪問看護を担当した者をいう。',src:'労災保険法施行規則12条の2第2項',cat:'択一式'},
-  {no:'①問3',opt:'E',q:'療養補償給付たる療養の費用の支給を受けようとする者は、所定の事項を記載した請求書を、所轄労働基準監督署長に提出しなければならないが、都道府県労働局長が定める指名施術所において治療を受ける場合にあっては、当該請求書を、当該指名施術所を経由して所轄労働基準監督署長に提出することができる。',a:true,exp:'設問の通り正しい。指名施術所を経由することは任意であり、義務ではない。',src:'労災保険法施行規則12条の2第1項',cat:'択一式'},
-  {no:'①問4',opt:'A',q:'傷病補償年金の傷病等級に係る障害の程度は、傷病等級の第1級、第2級及び第3級とされており、3か月以上の期間にわたって存する障害の状態により認定する。',a:false,exp:'「3か月以上」ではなく「6か月以上」の期間にわたって存する障害の状態により認定する。なお「1年6か月」は傷病補償年金の支給開始要件（療養開始後1年6か月経過）の話であり、傷病等級の認定基準の期間とは異なる。',src:'則18条',cat:'択一式'},
-  {no:'①問4',opt:'B',q:'傷病補償年金を受ける労働者の当該障害の程度に変更があったため、新たに他の傷病等級に該当するに至った場合において、当該受給権者の請求があったときは、所轄労働基準監督署長は、当該変更に関する決定をしなければならない。',a:false,exp:'傷病補償年金は所轄労働基準監督署長の職権で行われるので、受給権者の請求は必要ない。',src:'労災保険法18条の2、則18条の3',cat:'択一式'},
-  {no:'①問4',opt:'C',q:'傷病補償年金を受けている者が傷病等級に該当しなくなった場合には、傷病補償年金の受給権は消滅するが、なおも療養のために労働することができず賃金の支払を受けることができないときは、その者の請求により、当該受給権が消滅した月の翌月から休業補償給付が行われる。',a:true,exp:'設問の通り正しい。傷病補償年金は受給権を取得した月の翌月から消滅した月まで支給される。',src:'労災保険法9条1項、12条の8第3項',cat:'択一式'},
-  {no:'①問4',opt:'D',q:'介護補償給付は、障害補償年金又は傷病補償年金を受ける権利を有する労働者が、その受ける権利を有する障害補償年金又は傷病補償年金の支給事由となる障害であって厚生労働省令で定める程度のものにより、常時又は随時介護を要する状態にある場合には、常時又は随時介護を受けていないときであっても、支給される場合がある。',a:false,exp:'介護補償給付は、常時又は随時介護を受けていないときは支給されない。介護を受けていることが要件である。',src:'労災保険法32条の4第1項',cat:'択一式'},
-  {no:'①問4',opt:'E',q:'介護補償給付を支給すべき事由が生じた月において介護に要する費用を支出した日がなく、親族又はこれに準ずる者による介護を受けた日があるときは、当該月について、介護補償給付として厚生労働省令で定める最低保障額が支給される。',a:false,exp:'介護に要する費用を支出した日がないときは、親族等による介護を受けた日があっても介護補償給付は支給されない。',src:'労災保険法19条の2、則18条の3の4第1項2号',cat:'択一式'},
-  {no:'①問5',opt:'A',q:'同一の業務災害により障害等級表に該当する障害が2以上あって厚生労働省令で定める要件を満たす場合には、その障害等級は、繰り上げた障害等級による。例：第8級・第10級・第12級の3障害がある場合は第7級、第5級・第6級・第8級・第14級の4障害がある場合は第3級、第4級・第5級の2障害がある場合は第1級。',a:true,exp:'設問の通り正しい。第13級以上が2以上で1級繰上げ、第8級以上が2以上で2級繰上げ、第5級以上が2以上で3級繰上げ。',src:'労災保険法15条1項、則14条3項',cat:'択一式'},
-  {no:'①問5',opt:'B',q:'既に障害等級第8級の障害のあった者が、業務上の負傷又は疾病により同一の部位について障害の程度を障害等級第5級に加重した場合における当該事由に係る障害補償給付は、障害等級第5級に応ずる障害補償年金とされる。その額は、障害等級第5級に応ずる障害補償年金の額から、既にあった障害等級第8級に応ずる障害補償一時金の額を25で除して得た額を差し引いた額となる。',a:true,exp:'設問の通り正しい。加重前一時金・加重後年金の場合、加重後年金額－加重前一時金額÷25となる。',src:'労災保険法15条1項、則14条5項',cat:'択一式'},
-  {no:'①問5',opt:'C',q:'障害等級第12級に応ずる障害補償一時金を受けた労働者の当該障害の程度が自然的経過により変更したため、新たに障害等級第10級に該当するに至った場合であっても、新たに該当するに至った障害等級第10級に応ずる障害補償一時金は支給されず、また、障害等級第10級と障害等級第12級との差額が支給されることもない。',a:true,exp:'設問の通り正しい。障害補償一時金の支給を受けた後の自然的経過による増悪・軽減については、新たな障害等級による障害補償給付は行われない。',src:'労災保険法15条の2',cat:'択一式'},
-  {no:'①問5',opt:'D',q:'障害補償年金前払一時金の請求は、同一の事由に関し、1回に限り行うことができる。',a:true,exp:'設問の通り正しい。障害補償年金の支給決定の通知のあった日の翌日から1年を経過する日までの間は、年金請求後でも前払一時金を請求できる。',src:'労災保険法施行規則附則27項',cat:'択一式'},
-  {no:'①問5',opt:'E',q:'障害補償年金差額一時金を受けることができる遺族として、障害補償年金の受給権者である労働者の死亡の当時、生計を同じくしていなかった妻と生計を同じくしていた妹がある場合、妻が障害補償年金差額一時金の受給権者となる。',a:false,exp:'「妹」が受給権者となる。差額一時金は①死亡の当時生計を同じくしていた配偶者・子・父母・孫・祖父母・兄弟姉妹、②①に該当しない配偶者等の順で、①が優先される。',src:'労災保険法附則58条2項',cat:'択一式'},
-  {no:'①問6',opt:'A',q:'休業特別支給金の額は、1日につき算定基礎日額の100分の20に相当する額である。',a:false,exp:'「算定基礎日額」ではなく「休業給付基礎日額」の100分の20である。',src:'労災保険法29条2項、支給金則3条1項',cat:'択一式'},
-  {no:'①問6',opt:'B',q:'算定基礎年額は、原則として、負傷又は発病の日以前6か月間（雇入後6か月に満たない者については、雇入後の期間）に当該労働者に対して支払われた特別給与の総額である。',a:false,exp:'「6か月間」ではなく「1年間」（雇入後1年に満たない者については雇入後の期間）に支払われた特別給与の総額である。',src:'労災保険法29条2項、支給金則6条1項',cat:'択一式'},
-  {no:'①問6',opt:'C',q:'特別加入者には、特別支給金は支給されない。',a:false,exp:'特別加入者には、特別給与を算定基礎とする特別支給金は支給されないが、定額・定率の特別支給金は支給される。',src:'労災保険法29条2項、支給金則16条等',cat:'択一式'},
-  {no:'①問6',opt:'D',q:'遺族特別年金前払一時金が支給される場合には、遺族特別年金は、各月に支給されるべき額の合計額が厚生労働省令で定める算定方法に従い当該遺族特別年金前払一時金の額に達するまでの間、その支給が停止される。',a:false,exp:'遺族特別年金前払一時金という特別支給金は存在しない。特別支給金には前払制度がない。',src:'労災保険法29条2項',cat:'択一式'},
-  {no:'①問6',opt:'E',q:'特別支給金の原因である事故が第三者の行為によって生じた場合、特別支給金を受けるべき者が当該第三者から同一の事故について損害賠償を受けたときであっても、特別支給金はその全額が支給される。',a:true,exp:'設問の通り正しい。特別支給金については、第三者行為災害における損害賠償との調整（求償・控除）は行われない。',src:'労災保険法29条2項、特支則20条等',cat:'択一式'},
-  {no:'①問7',opt:'A',q:'労災保険法に基づく保険給付を受ける権利を有する者が死亡した場合において、その死亡した者に支給すべき保険給付でまだその者に支給しなかったものがあるときは、その者の配偶者（事実婚を含む）、子、父母、孫、祖父母又は兄弟姉妹であって、その者の死亡の当時その者と生計を同じくしていたもの（年金については当該年金を受けることができる他の遺族）は、自己の名で、その未支給の保険給付の支給を請求することができる。',a:true,exp:'設問の通り正しい。未支給の遺族年金等は、当該年金を受けることができる他の遺族が請求権者となる。',src:'労災保険法11条1項',cat:'択一式'},
-  {no:'①問7',opt:'B',q:'傷病補償年金を受ける権利を有する者が死亡したためその支給を受ける権利が消滅したにもかかわらず、その死亡の日の属する月の翌月以後の分として当該傷病補償年金の過誤払が行われた場合において、当該過誤払による返還金に係る債権に係る債務の弁済をすべき者に支払うべき障害補償年金があるときは、当該障害補償年金の支払金の金額を当該過誤払による返還金債権の金額に充当することができる。',a:false,exp:'充当処理の対象となるのは年金たる保険給付の受給権者の死亡に伴い支給される保険給付であり、障害補償年金はその対象とならない。',src:'労災保険法12条の2、則10条の2',cat:'択一式'},
-  {no:'①問7',opt:'C',q:'保険給付を受ける権利は、労働者の退職によって変更されることはない。',a:true,exp:'設問の通り正しい。',src:'労災保険法12条の5第1項',cat:'択一式'},
-  {no:'①問7',opt:'D',q:'保険給付を受ける権利は、譲り渡し、担保に供し、又は差し押さえることができない。',a:true,exp:'設問の通り正しい。租税その他の公課は、保険給付として支給を受けた金品を標準として課することはできない。',src:'労災保険法12条の5第2項',cat:'択一式'},
-  {no:'①問7',opt:'E',q:'労災保険に係る保険関係が成立し、若しくは成立していた事業の事業主又は労働保険事務組合若しくは労働保険事務組合であった団体は、労災保険に関する書類（労働保険徴収法又は同法施行規則による書類を除く。）を、その完結の日から3年間保存しなければならない。',a:true,exp:'設問の通り正しい。',src:'労災保険法施行規則51条',cat:'択一式'},
-  {no:'①問8',opt:'A',q:'常時3人の労働者を使用する個人経営の林業の事業は、労災保険暫定任意適用事業であり、当該事業の事業主が任意加入の申請をし、厚生労働大臣の認可があったときは、その日に労災保険に係る保険関係が成立する。',a:false,exp:'常時3人の労働者を使用する個人経営の林業の事業は、労災保険暫定任意適用事業ではなく、強制適用事業である。',src:'整備法5条1項、整備政令17条',cat:'択一式'},
-  {no:'①問8',opt:'B',q:'労災保険法第3条第1項の適用事業に該当する事業が労災保険暫定任意適用事業に該当するに至ったときは、その日に、その事業につき厚生労働大臣の認可があったものとみなす。',a:false,exp:'「その日」ではなく「その翌日」に認可があったものとみなす。',src:'整備法5条3項',cat:'択一式'},
-  {no:'①問8',opt:'C',q:'常時3人の労働者を雇用する個人経営の林業の事業であって、雇用保険に係る保険関係が成立している暫定任意適用事業の事業主は、当該労働者のうち2人の同意を得れば、当該保険関係の消滅の申請を行うことができる。',a:false,exp:'雇用保険暫定任意適用事業の保険関係消滅申請には、労働者の4分の3以上の同意が必要。3人中2人（3分の2）では足りない。',src:'雇用保険法附則2条、同法施行令附則2条',cat:'択一式'},
-  {no:'①問8',opt:'D',q:'雇用保険に係る保険関係が成立していない雇用保険暫定任意適用事業の事業主は、その事業に使用される労働者の2分の1以上が希望する場合には、任意加入の申請をしなければならないが、これに違反して申請をしなかったときであっても、罰則の適用はない。',a:false,exp:'違反した場合は罰則（6月以下の拘禁刑又は30万円以下の罰金）が適用される。なお、労災保険暫定任意適用事業の場合は罰則の適用はない。',src:'徴収法附則2条3項、7条1項',cat:'択一式'},
-  {no:'①問8',opt:'E',q:'労災保険に係る保険関係が成立している労災保険暫定任意適用事業の事業主は、当該保険関係の消滅の申請をしようとする場合には、当該事業に使用される労働者の過半数の同意を得たことを証明することができる書類を添えて、所定の申請書を所轄都道府県労働局長に提出しなければならない。',a:true,exp:'設問の通り正しい。申請書の提出は所轄労働基準監督署長を経由して行う。',src:'整備法8条1項、2項',cat:'択一式'},
-  {no:'①問9',opt:'A',q:'労働保険徴収法において「賃金」とは、賃金、給料、手当、賞与その他名称のいかんを問わず、労働の対償として事業主が労働者に支払うもの（3か月を超える期間ごとに受けるものを除く。）をいう。',a:false,exp:'徴収法上の賃金には「3か月を超える期間ごとに受けるもの」を除く規定はない。労働基準法上の平均賃金算定における賃金との混同に注意。',src:'徴収法2条2項',cat:'択一式'},
-  {no:'①問9',opt:'B',q:'労働基準法の規定による休業手当、年次有給休暇中の賃金及び解雇予告手当は、同法上使用者にその支払が義務付けられているものであり、労働保険徴収法上の賃金に該当する。',a:false,exp:'休業手当及び年次有給休暇中の賃金は賃金に該当するが、解雇予告手当は賃金に該当しない。',src:'徴収法2条2項',cat:'択一式'},
-  {no:'①問9',opt:'C',q:'労働者が業務外の疾病又は負傷のため勤務に服することができないため事業主から支払われる手当金や、個人的、臨時的な吉凶禍福に対して支払われる結婚祝金、死亡弔慰金、災害見舞金は、労働協約、就業規則等で労働者の権利として保障されているときは、労働保険徴収法上の賃金に該当する。',a:false,exp:'結婚祝金、死亡弔慰金、災害見舞金は、労働協約等で権利として保障されていても賃金に該当しない。なお、業務外傷病手当金は労働協約等で保障されているときは賃金に該当する。',src:'徴収法2条2項',cat:'択一式'},
-  {no:'①問9',opt:'D',q:'労働者が在職中に、退職金相当額の全部又は一部を給与や賞与に上乗せするなど前払いされる場合は、労働の対償としての性格が明確であり、労働者の通常の生計にあてられる経常的な収入としての意義を有することから、原則として、一般保険料の算定基礎となる賃金総額に算入することとされている。',a:true,exp:'設問の通り正しい。退職を事由として支払われる退職金（退職時又は事業主の都合で退職前に一時金として支払われるもの）は賃金総額に算入しない。',src:'徴収法2条2項、11条1項、2項',cat:'択一式'},
-  {no:'①問9',opt:'E',q:'6月になってベースアップが1月に遡って行われることが決まり、各労働者の賃金の1月から6月までの差額及び支給が確定して6月に現実に支払われるような場合、4月から6月までの差額分は当保険年度の賃金総額に算入し、1月から3月までの差額分は前保険年度の賃金総額に算入することとなる。',a:false,exp:'1月から6月までの差額分は、賃金差額の支給が確定した日の属する年度（6月確定なので当保険年度）の賃金総額に算入する。',src:'徴収法2条2項、11条',cat:'択一式'},
-  {no:'①問10',opt:'ア',q:'次の記述は、延滞金を徴収しない事由として正しいか。「延滞金の額が1,000円未満であるとき。」',a:false,exp:'「100円未満」であるときに徴収されない。1,000円未満は誤り。',src:'徴収法28条5項3号',cat:'択一式'},
-  {no:'①問10',opt:'イ',q:'次の記述は、延滞金を徴収しない事由として正しいか。「納期を繰り上げて徴収するとき。」',a:false,exp:'納期を繰り上げて徴収することは延滞金を徴収しない事由として規定されていない。',src:'徴収法28条5項',cat:'択一式'},
-  {no:'①問10',opt:'ウ',q:'次の記述は、延滞金を徴収しない事由として正しいか。「督促状に指定した期限までに労働保険料その他労働保険徴収法の規定による徴収金を完納したとき。」',a:true,exp:'設問の通り正しい。延滞金を徴収しない事由として規定されている。',src:'徴収法28条5項1号',cat:'択一式'},
-  {no:'①問10',opt:'エ',q:'次の記述は、延滞金を徴収しない事由として正しいか。「納付義務者の住所又は居所がわからないため、公示送達の方法によって督促したとき。」',a:true,exp:'設問の通り正しい。延滞金を徴収しない事由として規定されている。',src:'徴収法28条5項2号',cat:'択一式'},
-  {no:'①問10',opt:'オ',q:'次の記述は、延滞金を徴収しない事由として正しいか。「労働保険料について滞納処分の執行を停止し、又は猶予したとき（その執行を停止し、又は猶予した期間に対応する部分の金額に限る。）。」',a:true,exp:'設問の通り正しい。延滞金を徴収しない事由として規定されている。',src:'徴収法28条5項4号',cat:'択一式'},
-  // ===== 第2予想 択一式 =====
-  {no:'②問1',opt:'A',q:'次の(1)、(2)及び(3)のいずれの要件も満たす対象疾病は、業務上の疾病として取り扱う。(1)対象疾病を発病していること。(2)対象疾病の発病前おおむね6か月の間に、業務による強い心理的負荷が認められること。(3)業務以外の心理的負荷及び個体側要因により対象疾病を発病したとは認められないこと。',a:true,exp:'設問の通り正しい。対象疾病はICD-10第V章「精神及び行動の障害」に分類されるもの（器質性・有害物質起因のものを除く）。',src:'令和5.9.1 基発0901第2号',cat:'択一式'},
-  {no:'②問1',opt:'B',q:'発病の時期を判断する際、強い心理的負荷と認められる出来事の前と後の両方に発病の兆候と理解し得る言動があるものの、診断基準を満たした時期の特定が困難な場合には、出来事の後に発病したものと取り扱う。',a:true,exp:'設問の通り正しい。生死にかかわるケガ等の特に強い心理的負荷の出来事直後に解離等の心理的反応が生じる場合は当該反応が生じた時期を発病時期と判断する。',src:'令和5.9.1 基発0901第2号',cat:'択一式'},
-  {no:'②問1',opt:'C',q:'心理的負荷の評価に当たっては、精神障害を発病した労働者がその出来事及び出来事後の状況を主観的にどう受け止めたかではなく、同種の労働者が一般的にその出来事及び出来事後の状況をどう受け止めるかという観点から評価する。',a:true,exp:'設問の通り正しい。「同種の労働者」とは、職種・職場の立場・職責・年齢・経験等が類似する者をいう。',src:'令和5.9.1 基発0901第2号',cat:'択一式'},
-  {no:'②問1',opt:'D',q:'ハラスメントやいじめのように出来事が繰り返されるものについては、繰り返される出来事を一体のものとして評価することとなるので、発病の6か月よりも前にそれが開始されている場合でも、発病前おおむね6か月の期間にも継続しているときは、発病前おおむね6か月の間の行為を評価の対象とする。',a:false,exp:'「発病前おおむね6か月の間の行為」が誤り。「開始時からのすべての行為」を評価の対象とする。',src:'令和5.9.1 基発0901第2号',cat:'択一式'},
-  {no:'②問1',opt:'E',q:'セクシュアルハラスメントを受けた者は、勤務継続や被害軽減の心理から、やむを得ず行為者に迎合するようなメール等を送ることや、行為者の誘いを受け入れることがあるが、これらの事実はセクシュアルハラスメントを受けたことを単純に否定する理由にはならない。',a:true,exp:'設問の通り正しい。被害者の事後対応や受診時期の遅れ等は心理的負荷が弱いと単純に判断する理由にならない。',src:'令和5.9.1 基発0901第2号',cat:'択一式'},
-  {no:'②問2',opt:'A',q:'一次健康診断において、血圧検査・血液検査その他業務上の事由による脳・心臓疾患の発生にかかわる身体の状態に関する検査が行われた場合において、当該検査を受けた労働者がそのいずれの項目にも異常の所見があると診断されたときは、既に脳血管疾患又は心臓疾患の症状を有するか否かにかかわらず、その者の請求に基づいて二次健康診断等給付が行われる。',a:false,exp:'既に脳血管疾患又は心臓疾患の症状を有すると認められるものには二次健康診断等給付は行われない。',src:'労災保険法26条1項',cat:'択一式'},
-  {no:'②問2',opt:'B',q:'二次健康診断等給付のうち二次健康診断は、脳血管及び心臓の状態を把握するために必要な検査であって厚生労働省令で定めるものを行う医師による健康診断であり、一次健康診断ごとに1回に限られる。',a:false,exp:'「一次健康診断ごとに1回」ではなく「1年度につき1回」に限られる。',src:'労災保険法26条2項1号',cat:'択一式'},
-  {no:'②問2',opt:'C',q:'二次健康診断等給付の請求は、一次健康診断の結果を知った日から3か月以内に行わなければならないが、天災その他請求をしなかったことについてやむを得ない理由があるときは、この限りでない。',a:false,exp:'「一次健康診断の結果を知った日」ではなく「一次健康診断を受けた日」から3か月以内である。',src:'労災保険法28条、則18条の19第4項',cat:'択一式'},
-  {no:'②問2',opt:'D',q:'二次健康診断を受けた労働者から3か月以内に当該二次健康診断の結果を証明する書面の提出を受けた事業者は、二次健康診断の結果（当該二次健康診断の項目に異常の所見があると診断された労働者に係るものに限る。）に基づき、当該労働者の健康を保持するために必要な措置について、医師の意見を聴かなければならない。',a:true,exp:'設問の通り正しい。医師の意見聴取は二次健康診断結果の書面が事業者に提出された日から2月以内に行う。',src:'労災保険法27条、安衛法66条の4',cat:'択一式'},
-  {no:'②問2',opt:'E',q:'二次健康診断の受診に要した時間の賃金の支払いについては、二次健康診断は労働者の請求により当然実施されなければならない性格のものであり、その受診に要した時間は労働時間と解されるので、当該二次健康診断が法定労働時間外に行われた場合には、当然割増賃金を支払わなければならない。',a:false,exp:'二次健康診断の受診時間は労働時間に該当せず、賃金支払については労使協議して定めるべきものとされている。割増賃金の支払義務はない。',src:'平成13.3.30 基発233号',cat:'択一式'},
-  {no:'②問3',opt:'A',q:'療養のため労働することができないため療養開始から1年6か月を経過しても引き続き休業補償給付の支給を受けている労働者が、ある日について所定労働時間8時間のうち3時間労働して5,000円の賃金の支払を受け、残りの時間について無給の休業をした。当該労働者の平均賃金（給付基礎日額も同額）が18,000円、年齢階層別の最高限度額が15,625円である場合、当該日の休業補償給付の額は、(15,625円－5,000円)×100分の60で計算される。',a:false,exp:'正しくは(18,000円－5,000円)×100分の60で計算される。控除して得た額（13,000円）が最高限度額（15,625円）を超えていないため、最高限度額の置き換えは行われない。',src:'労災保険法14条1項',cat:'択一式'},
-  {no:'②問3',opt:'B',q:'療養のため労働することができないため引き続き休業補償給付の支給を受けている労働者が、ある日について所定労働時間8時間の全部について労働不能であるものの、そのうち6時間について時間単位年休の取得により7,000円の賃金の支払を受け、残りの時間について無給の休業をした。当該労働者の平均賃金（給付基礎日額も同額）が10,000円である場合、当該日について休業補償給付は支給されない。',a:true,exp:'設問の通り正しい。全部労働不能で平均賃金の100分の60以上の賃金（7,000円≥6,000円）の支払を受けているため「賃金を受けない日」に該当せず、休業補償給付は支給されない。',src:'労災保険法14条1項',cat:'択一式'},
-  {no:'②問3',opt:'C',q:'労働者が刑事施設、労役場その他これらに準ずる施設に拘禁されている場合（厚生労働省令で定める場合に限る。）には、休業補償給付は行わないこととされており、この場合には、休業特別支給金も支給されない。',a:true,exp:'設問の通り正しい。少年院その他これに準ずる施設に収容されている場合も同様に休業補償給付・休業特別支給金ともに支給されない。',src:'労災保険法14条の2、29条2項',cat:'択一式'},
-  {no:'②問3',opt:'D',q:'休業補償給付の支給を受けている労働者について、老齢厚生年金の支給を受けることができることとなった場合には、休業補償給付の額は減額されないが、同一の事由について障害厚生年金の支給を受けることができることとなった場合には、休業補償給付の額は減額される。',a:true,exp:'設問の通り正しい。社会保険の年金給付との調整は同一の事由による場合のみ行われ、老齢厚生年金との調整は行われない。',src:'労災保険法14条2項',cat:'択一式'},
-  {no:'②問3',opt:'E',q:'同一の業務上の事由による負傷又は疾病に関し、休業補償給付を受けている労働者が障害補償給付を受ける権利を有することとなり、かつ、休業補償給付を行わないこととなった場合において、その後も休業補償給付が支払われたときは、その支払われた休業補償給付は、当該障害補償給付の内払とみなされる。',a:true,exp:'設問の通り正しい。',src:'労災保険法12条3項',cat:'択一式'},
-  {no:'②問4',opt:'A',q:'遺族補償年金を受けることができる遺族が死亡した労働者の妻（32歳）、母（58歳）及び弟（29歳）であり、妻と母の2人が生計を同じくし、弟が生計を同じくしていない場合、妻に対して給付基礎日額の153日分の遺族補償年金が支給される（労働者の死亡当時厚生労働省令で定める障害状態にある遺族はいないものとする）。',a:true,exp:'設問の通り正しい。最先順位の妻が受給権者となり、若年停止者の母（58歳）と妻が生計を同じくしているが、若年停止者は遺族補償年金の額の基礎となる遺族の人数に含まれない。よって妻1人の153日分。',src:'労災保険法16条の2第3項、16条の3第1項',cat:'択一式'},
-  {no:'②問4',opt:'B',q:'遺族補償年金の受給権者である死亡した労働者の子（15歳）が、厚生労働省令で定める障害の状態になかったが、17歳のときに当該障害の状態に該当するに至ったときは、18歳に達した日以後の最初の3月31日が終了しても受給権は消滅しない。',a:false,exp:'17歳で障害状態に該当した場合、18歳に達した日以後の最初の3月31日が終了したときは受給権は消滅する。労働者の死亡時から引き続き障害状態にあるときに限り受給権が継続する。',src:'労災保険法16条の4第1項',cat:'択一式'},
-  {no:'②問4',opt:'C',q:'遺族補償年金を受ける権利を有する者の所在が1年以上明らかでない場合には、当該遺族補償年金は、同順位者があるときは同順位者の、同順位者がないときは次順位者の申請によって、その申請があった月の翌月から、その支給が停止される。',a:false,exp:'「申請があった月の翌月から」ではなく「所在が明らかでない間」、その支給が停止される。',src:'労災保険法16条の5第1項',cat:'択一式'},
-  {no:'②問4',opt:'D',q:'遺族補償年金の受給権者である死亡した労働者の55歳以上60歳未満の夫は、60歳に達する月までの間は、遺族補償年金の支給が停止されるが、その支給停止の間においても遺族補償年金前払一時金の支給を受けることはできる。この場合、遺族補償年金前払一時金の支給を受けたときは、その支給を受けたことによる支給停止は行われず、60歳に達した月の翌月から、遺族補償年金が支給されることとなる。',a:false,exp:'前払一時金支給後の60歳到達月の翌月以後は、若年停止に加え、前払一時金の支給を受けたことによる支給停止が行われる。',src:'労災保険法附則60条3項',cat:'択一式'},
-  {no:'②問4',opt:'E',q:'遺族補償一時金を受けることができる遺族として、労働者の死亡の当時、その収入により生計を維持していなかった父と生計を維持していた弟がある場合、弟が遺族補償一時金の受給権者となる。',a:false,exp:'「父」が受給権者となる。遺族補償一時金の順位は①配偶者、②生計維持の子・父母・孫・祖父母、③上記②に該当しない子・父母・孫・祖父母、④兄弟姉妹であり、父（③）が弟（④）に優先する。',src:'労災保険法16条の7',cat:'択一式'},
-  {no:'②問5',opt:'A',q:'サービス業を主たる事業とする事業主であって常時100人以下の労働者を使用する事業主は、労働保険事務組合に労働保険事務の処理を委託していれば、中小事業主等の特別加入の対象となる。',a:true,exp:'設問の通り正しい。サービス業・卸売業は100人以下、金融業・保険業・不動産業・小売業は50人以下、それ以外は300人以下の事業主が対象。',src:'労災保険法33条1号、則46条の16',cat:'択一式'},
-  {no:'②問5',opt:'B',q:'中小事業主等の特別加入者であって、自動車を使用して行う旅客若しくは貨物の運送の事業又は原動機付自転車若しくは自転車を使用して行う貨物の運送の事業に従事する者については、通勤災害に関する保険給付は行われない。',a:false,exp:'中小事業主等の特別加入者には通勤災害の保険給付は行われる。通勤災害が行われないのは、一人親方等の特別加入者の一部（運送業、漁船による水産動植物採捕、特定農作業・指定農業機械作業、家内労働者等）である。',src:'労災保険法35条1項、則46条の22の2',cat:'択一式'},
-  {no:'②問5',opt:'C',q:'一人親方等の特別加入者の事故が、第2種特別加入保険料が滞納されている期間中に生じたものであるときは、政府は、当該事故に係る保険給付の全部又は一部を行わないことができる。',a:true,exp:'設問の通り正しい。特別加入保険料が滞納されている期間中の事故については支給制限が行われる。',src:'労災保険法35条1項7号',cat:'択一式'},
-  {no:'②問5',opt:'D',q:'特別加入者には、二次健康診断等給付は行われない。',a:true,exp:'設問の通り正しい。',src:'労災保険法34条1項、35条1項、36条1項',cat:'択一式'},
-  {no:'②問5',opt:'E',q:'特別加入者に係る業務災害、複数業務要因災害及び通勤災害の認定は、厚生労働省労働基準局長が定める基準によって行うこととされている。',a:true,exp:'設問の通り正しい。',src:'労災保険法37条、則46条の26',cat:'択一式'},
-  {no:'②問6',opt:'A',q:'通勤は、「就業に関し」行われるものであるが、1日について1回のみしか認められないものではなく、昼休み等就業の時間の間に相当の間隔があって帰宅するような場合には、午前中の業務終了による帰り、午後の業務に就くための出勤と考えられるので、その往復行為は就業との関連性が認められる。',a:true,exp:'設問の通り正しい。「就業に関し」とは移動行為が業務と密接な関連（就業関連性）をもって行われることを要する。',src:'労災保険法7条2項',cat:'択一式'},
-  {no:'②問6',opt:'B',q:'友人宅で麻雀をし、翌朝そこから直接出勤する場合等は、その友人宅は就業の拠点となっているものではないので、通勤に係る「住居」とは認められない。',a:true,exp:'設問の通り正しい。「住居」とは労働者が居住して日常生活の用に供している家屋等の場所で本人の就業のための拠点となるところを指す。',src:'労災保険法7条2項',cat:'択一式'},
-  {no:'②問6',opt:'C',q:'鉄道、バス等の公共交通機関を利用し、自動車、自転車等を本来の用法に従って使用する場合は、通勤に係る「合理的な方法」と認められ、したがって事業主の提供する専用交通機関を利用してする移動は、通勤に当たる。',a:false,exp:'事業主の提供する専用交通機関を利用してする移動は「業務の性質を有するもの」に当たり、労災保険法7条2項の通勤には当たらない。',src:'労災保険法7条2項',cat:'択一式'},
-  {no:'②問6',opt:'D',q:'物品を得意先に届けてその届け先から直接帰宅する場合の物品の届け先、全員参加で出勤扱いとなる会社主催の運動会の会場等は、通勤に係る「就業の場所」に当たる。',a:true,exp:'設問の通り正しい。「就業の場所」とは業務を開始し、又は終了する場所をいう。',src:'労災保険法7条2項',cat:'択一式'},
-  {no:'②問6',opt:'E',q:'経路の近くにある公衆便所を使用する場合、帰途に経路の近くにある公園で短時間休息する場合や、経路上の店でタバコ、雑誌等を購入する場合は、通勤に係る「逸脱又は中断」に該当しない。',a:true,exp:'設問の通り正しい。通常経路の途中で行うささいな行為は逸脱・中断に該当しない。',src:'労災保険法7条2項、3項',cat:'択一式'},
-  {no:'②問7',opt:'ア',q:'次の記述は、遺族補償給付の受給資格の欠格事由として正しいか。「労働者の死亡前に、当該労働者の死亡によって遺族補償年金を受けることができる先順位の遺族となるべき者を故意に死亡させた者は、遺族補償年金を受けることができる遺族としない。」',a:true,exp:'設問の通り正しい。労働者の死亡前に先順位又は同順位の遺族を故意に死亡させた者は欠格となる。',src:'労災保険法16条の9第2項',cat:'択一式'},
-  {no:'②問7',opt:'イ',q:'次の記述は、遺族補償給付の受給資格の欠格事由として正しいか。「遺族補償年金を受ける権利を有する遺族が、遺族補償年金を受けることができる同順位の他の遺族を故意に死亡させたときは、その権利は、消滅する。」',a:true,exp:'設問の通り正しい。',src:'労災保険法16条の9第4項',cat:'択一式'},
-  {no:'②問7',opt:'ウ',q:'次の記述は、遺族補償給付の受給資格の欠格事由として正しいか。「遺族補償年金を受けることができる遺族が、遺族補償年金を受けることができる後順位の他の遺族を故意に死亡させたときは、その者は、遺族補償年金を受けることができる遺族でなくなる。」',a:false,exp:'「後順位」が誤り。「先順位又は同順位」の他の遺族を故意に死亡させたときに遺族でなくなる。',src:'労災保険法16条の9第4項',cat:'択一式'},
-  {no:'②問7',opt:'エ',q:'次の記述は、遺族補償給付の受給資格の欠格事由として正しいか。「労働者の死亡前に、当該労働者の死亡によって遺族補償年金を受けることができる遺族となるべき者を故意に死亡させた者は、遺族補償一時金を受けることができる遺族としない。」',a:true,exp:'設問の通り正しい。',src:'労災保険法16条の9第3項',cat:'択一式'},
-  {no:'②問7',opt:'オ',q:'次の記述は、遺族補償給付の受給資格の欠格事由として正しいか。「遺族補償年金を受けることができる遺族を故意に死亡させた者は、遺族補償一時金を受けることができる遺族としない。」',a:true,exp:'設問の通り正しい。',src:'労災保険法16条の9第3項',cat:'択一式'},
-  {no:'②問8',opt:'A',q:'労災保険に係る保険関係が成立している事業のうち請負による建設の事業であって、賃金総額を正確に算定することが困難なものについては、その事業の種類に従い、請負金額（消費税等相当額を除く）に労務費率を乗じて得た額を賃金総額とするが、機械装置の組立て又はすえ付けの事業についての請負代金の額にその事業に使用する機械装置の価額が含まれていない場合には、その機械装置の価額に相当する額をその請負代金の額に加算した額を請負金額とする。',a:false,exp:'機械装置の価額が含まれていない場合は、その価額を「加算しない」額が請負金額となる。逆に、含まれている場合は機械装置の価額を「控除」した額を請負金額とする。',src:'徴収法11条3項、則12条1号、13条',cat:'択一式'},
-  {no:'②問8',opt:'B',q:'労災保険に係る保険関係が成立している事業のうち造林の事業、木炭又は薪を生産する事業その他の林業の事業については、所轄都道府県労働局長が定める素材1立方メートルを生産するために必要な労務費の額に、生産するすべての素材の材積を乗じて得た額を賃金総額とする。',a:false,exp:'素材1立方メートルあたり労務費の特例は「立木の伐採の事業」に適用される。造林事業・木炭等生産事業には適用されない。',src:'徴収法11条3項、則12条2号・3号',cat:'択一式'},
-  {no:'②問8',opt:'C',q:'政府は、労働保険の事業に要する費用にあてるため保険料を徴収するものとされており、徴収する保険料（労働保険料）は、労災保険料、雇用保険料、第1種特別加入保険料、第2種特別加入保険料、第3種特別加入保険料、印紙保険料及び特例納付保険料とされている。',a:false,exp:'徴収法上の労働保険料は、一般保険料、第1種特別加入保険料、第2種特別加入保険料、第3種特別加入保険料、印紙保険料及び特例納付保険料である。労災保険料・雇用保険料という独立した概念はなく、これらは一般保険料の内訳である。',src:'徴収法10条',cat:'択一式'},
-  {no:'②問8',opt:'D',q:'労災保険率は、労災保険法の適用を受ける全ての事業の過去3年間の業務災害、複数業務要因災害及び通勤災害に係る災害率並びに社会復帰促進等事業として行う事業の種類及び内容その他の事情を考慮して厚生労働大臣が定めるものとされており、二次健康診断等給付に要した費用の額は考慮されない。',a:false,exp:'「二次健康診断等給付に要した費用の額」も考慮要素として規定されている。',src:'徴収法12条2項',cat:'択一式'},
-  {no:'②問8',opt:'E',q:'雇用保険率は、失業等給付費等充当徴収保険率、育児休業給付費充当徴収保険率及び二事業費充当徴収保険率を合計して得た率である。',a:true,exp:'設問の通り正しい。',src:'徴収法12条4項',cat:'択一式'},
-  {no:'②問9',opt:'A',q:'既に有期事業として単独で保険関係が成立している事業については、労働保険徴収法第7条に規定する有期事業の一括の要件に該当する場合であっても、一括の対象とならない。',a:true,exp:'設問の通り正しい。当初独立の有期事業として保険関係が成立した事業は、その後事業の規模変更等があっても一括扱いの対象にならない。',src:'徴収法7条',cat:'択一式'},
-  {no:'②問9',opt:'B',q:'有期事業の一括に係る個々の事業については、それぞれの事業が労災保険率表に定める労災保険率を同じくしていれば、必ずしも事業の種類を同じくしていなくとも、他の要件を満たす限り一括の対象となる。',a:false,exp:'有期事業の一括の対象となるには、それぞれの事業が労災保険率表に掲げる「事業の種類」を同じくすることが必要。',src:'徴収法7条5号、則6条2項2号',cat:'択一式'},
-  {no:'②問9',opt:'C',q:'9月1日に保険関係が成立した一括有期事業について、当該事業に係る労働保険事務の処理が労働保険事務組合に委託されておらず、納付すべき概算保険料の額が30万円である場合、当該事業の事業主は、当該概算保険料を延納することができる。',a:true,exp:'設問の通り正しい。一括有期事業は労災保険の保険関係のみが成立している事業に該当するため、延納要件の閾値は40万円ではなく「20万円」となる。30万円≧20万円で第1要件を満たし、かつ9月30日までに保険関係が成立しているため第2要件も満たす。',src:'徴収法18条、則27条1項',cat:'択一式'},
-  {no:'②問9',opt:'D',q:'労働保険徴収法第9条の規定により継続事業の一括に係る厚生労働大臣の認可を受けた場合であっても、一括された個々の事業（被一括事業）における雇用保険の被保険者に関する事務は、それぞれの被一括事業の所轄公共職業安定所長が行うこととなる。',a:true,exp:'設問の通り正しい。',src:'徴収法9条',cat:'択一式'},
-  {no:'②問9',opt:'E',q:'継続事業の一括に係る厚生労働大臣が指定する事業（指定事業）の事業の名称又は事業の行われる場所に変更があった場合には、その変更を生じた日の翌日から起算して10日以内に、所定の事項を記載した届書を所轄労働基準監督署長又は所轄公共職業安定所長に提出しなければならない。',a:true,exp:'設問の通り正しい。',src:'徴収法4条の2第2項、則5条1項・2項',cat:'択一式'},
-  {no:'②問10',opt:'A',q:'事業主が概算保険料申告書を提出せず、政府が決定した概算保険料を納付しなければならない場合には、政府は、原則としてその納付すべき額（その額に1,000円未満の端数があるときは、その端数は、切り捨てる。）に100分の10を乗じて得た額の追徴金を徴収する。',a:false,exp:'政府が決定した概算保険料（認定決定による概算保険料）については追徴金は徴収されない。追徴金が徴収されるのは認定決定による「確定保険料」の場合である。',src:'徴収法21条1項',cat:'択一式'},
-  {no:'②問10',opt:'B',q:'追徴金を納付しない者があるときは、政府は、期限を指定して督促しなければならない。',a:true,exp:'設問の通り正しい。',src:'徴収法27条1項',cat:'択一式'},
-  {no:'②問10',opt:'C',q:'政府は、一般保険料率の引上げを行ったときは、労働保険料を追加徴収するが、この場合には、事業主に対して、期限を指定して、その納付すべき労働保険料の額を納付書により通知しなければならない。',a:true,exp:'設問の通り正しい。',src:'徴収法17条、則38条4項・5項',cat:'択一式'},
-  {no:'②問10',opt:'D',q:'事業主は、被保険者に賃金を支払う都度、当該賃金に応ずる被保険者の負担すべき一般保険料の額に相当する額を当該賃金から控除することができるが、日雇労働被保険者については、当該賃金に応ずる日雇労働被保険者の負担すべき一般保険料の額に相当する額のほか、印紙保険料の額の2分の1の額に相当する額を当該賃金から控除することができる。',a:true,exp:'設問の通り正しい。',src:'徴収法32条1項、則60条1項',cat:'択一式'},
-  {no:'②問10',opt:'E',q:'労働保険料その他労働保険徴収法の規定による徴収金の先取特権の順位は、国税及び地方税に次ぐものとする。',a:true,exp:'設問の通り正しい。',src:'徴収法29条',cat:'択一式'},
-  // ===== 「いくつあるか」設問本体 =====
-  {type:'select',no:'①問10',opt:'本体',q:'【次の記述のうち、延滞金を徴収しない事由として正しいものはいくつあるか。】\nア 延滞金の額が1,000円未満であるとき。\nイ 納期を繰り上げて徴収するとき。\nウ 督促状に指定した期限までに労働保険料その他労働保険徴収法の規定による徴収金を完納したとき。\nエ 納付義務者の住所又は居所がわからないため、公示送達の方法によって督促したとき。\nオ 労働保険料について滞納処分の執行を停止し、又は猶予したとき（その執行を停止し、又は猶予した期間に対応する部分の金額に限る。）。',choices:['一つ','二つ','三つ','四つ','五つ'],answer:'三つ',exp:'正しいのはウ・エ・オの三つ。アは「100円未満」が正しく1,000円は誤り。イは延滞金不徴収事由として規定がない。',src:'徴収法28条5項',cat:'択一式'},
-  {type:'select',no:'②問7',opt:'本体',q:'【次の記述のうち、遺族補償給付の受給資格の欠格事由として正しいものはいくつあるか。】\nア 労働者の死亡前に、先順位の遺族となるべき者を故意に死亡させた者は、遺族補償年金を受けることができる遺族としない。\nイ 遺族補償年金の受給権者が、同順位の他の遺族を故意に死亡させたときは、その権利は消滅する。\nウ 遺族補償年金を受けることができる遺族が、後順位の他の遺族を故意に死亡させたときは、遺族補償年金を受けることができる遺族でなくなる。\nエ 労働者の死亡前に、遺族補償年金を受けることができる遺族となるべき者を故意に死亡させた者は、遺族補償一時金を受けることができる遺族としない。\nオ 遺族補償年金を受けることができる遺族を故意に死亡させた者は、遺族補償一時金を受けることができる遺族としない。',choices:['一つ','二つ','三つ','四つ','五つ'],answer:'四つ',exp:'正しいのはア・イ・エ・オの四つ。ウは「後順位」が誤り、「先順位又は同順位」の他の遺族を故意に死亡させたときに遺族でなくなる。',src:'労災保険法16条の9',cat:'択一式'},
-  // ===== 選択式 =====
-  {type:'select',no:'①選択',opt:'空欄A',q:'労働者災害補償保険法第10条前段では、「船舶が沈没し、転覆し、滅失し、若しくは行方不明となった際現にその船舶に乗っていた労働者若しくは船舶に乗っていてその船舶の航行中に行方不明となった労働者の生死が【A】間わからない場合又はこれらの労働者の死亡が【A】以内に明らかとなり、かつ、その死亡の時期がわからない場合には、（給付）の支給に関する規定の適用については、その船舶が沈没し、転覆し、滅失し、若しくは行方不明となった日又は労働者が行方不明となった日に、当該労働者は、死亡したものと推定する。」と規定している。\n\n【A】に入る適切な語句を選びなさい。',choices:['3か月','6か月','1年','2年'],answer:'3か月',exp:'法10条の死亡の推定における期間は「3か月」。航空機の墜落等の場合も同様に3か月と規定されている。',src:'労災保険法10条',cat:'選択式'},
-  {type:'select',no:'①選択',opt:'空欄B',q:'労働者災害補償保険法第10条前段では、「船舶が沈没し（中略）労働者の生死が3か月間わからない場合又はこれらの労働者の死亡が3か月以内に明らかとなり、かつ、その死亡の時期がわからない場合には、【B】の支給に関する規定の適用については、その船舶が沈没し（中略）労働者が行方不明となった日に、当該労働者は、死亡したものと推定する。」と規定している。\n\n【B】に入る適切な語句を選びなさい。',choices:['遺族補償給付、葬祭料、遺族給付及び葬祭給付','遺族補償年金、葬祭料、遺族年金及び葬祭給付','遺族補償年金、葬祭料、複数事業労働者遺族年金、複数事業労働者葬祭給付、遺族年金及び葬祭給付','遺族補償給付、複数事業労働者遺族給付及び遺族給付'],answer:'遺族補償給付、葬祭料、遺族給付及び葬祭給付',exp:'死亡の推定の規定は、遺族補償給付、葬祭料、遺族給付及び葬祭給付（並びに障害補償年金差額一時金・障害年金差額一時金）について適用される。複数業務要因災害（複数事業労働者遺族給付、複数事業労働者葬祭給付）には適用されない。',src:'労災保険法10条',cat:'選択式'},
-  {type:'select',no:'①選択',opt:'空欄C',q:'業務災害に関する保険給付（【C】を除く。）は、労働基準法に規定する災害補償の事由又は船員法に規定する災害補償の事由が生じた場合に、補償を受けるべき労働者若しくは遺族又は葬祭を行う者に対し、その請求に基づいて行う。\n\n【C】に入る適切な語句を選びなさい。',choices:['傷病補償年金及び介護補償給付','二次健康診断等給付','葬祭料','遺族補償一時金及び障害補償一時金'],answer:'傷病補償年金及び介護補償給付',exp:'業務災害に関する保険給付のうち、傷病補償年金は昭和51年改正、介護補償給付は平成7年改正により設けられたものであり、労働基準法の災害補償中に直接対応するものはない。',src:'労災保険法12条の8第2項',cat:'選択式'},
-  {type:'select',no:'①選択',opt:'空欄D',q:'業務災害に関する保険給付（傷病補償年金及び介護補償給付を除く。）は、労働基準法に規定する災害補償の事由又は【D】に規定する災害補償の事由が生じた場合に、補償を受けるべき労働者若しくは遺族又は葬祭を行う者に対し、その請求に基づいて行う。\n\n【D】に入る適切な語句を選びなさい。',choices:['船員法','船員保険法','国家公務員災害補償法若しくは地方公務員災害補償法','国家公務員法若しくは地方公務員法'],answer:'船員法',exp:'船員法の災害補償の事由が生じた場合には、従来船員保険法において給付が行われていたが、平成22年に船員保険法の労災相当部分が労災保険法に統合され、現在は労災保険法により給付される。',src:'労災保険法12条の8第2項',cat:'選択式'},
-  {type:'select',no:'①選択',opt:'空欄E',q:'業務災害に関する保険給付（傷病補償年金及び介護補償給付を除く。）は、労働基準法に規定する災害補償の事由又は船員法に規定する災害補償の事由が生じた場合に、補償を受けるべき労働者若しくは遺族又は【E】に対し、その請求に基づいて行う。\n\n【E】に入る適切な語句を選びなさい。',choices:['葬祭を行う者','介護を行う者','診療を担当する者','その他同居の親族'],answer:'葬祭を行う者',exp:'葬祭料は労働者の遺族ではなく「葬祭を行う者」に対して支給される。',src:'労災保険法12条の8第2項',cat:'選択式'},
-  {type:'select',no:'②選択',opt:'空欄A',q:'労働者災害補償保険等関係事務のうち、保険給付（【A】を除く。）並びに社会復帰促進等事業のうち労災就学等援護費及び特別支給金の支給並びに厚生労働省労働基準局長が定める給付に関する事務は、都道府県労働局長の指揮監督を受けて、所轄労働基準監督署長が行う。\n\n【A】に入る適切な語句を選びなさい。',choices:['二次健康診断等給付','通勤災害に関する保険給付','特別加入者に関する保険給付','未支給の保険給付'],answer:'二次健康診断等給付',exp:'二次健康診断等給付の請求先は所轄都道府県労働局長であり、それ以外の保険給付の請求先は所轄労働基準監督署長である。',src:'労災保険法施行規則1条3項',cat:'選択式'},
-  {type:'select',no:'②選択',opt:'空欄B',q:'労働者災害補償保険等関係事務（保険給付に係るもの）のうち、当該事務が【B】に関するものである場合は、生計維持事業の主たる事務所の所在地を管轄する労働基準監督署長を所轄労働基準監督署長とする。\n\n【B】に入る適切な語句を選びなさい。',choices:['複数業務要因災害','複数事業労働者','通勤災害','特別加入者'],answer:'複数業務要因災害',exp:'複数業務要因災害に関する保険給付に関する事務は、生計維持事業（複数事業労働者の2以上の事業のうち収入が当該複数事業労働者の生計を維持する程度が最も高いもの）の主たる事務所の所在地を管轄する労働基準監督署長が行う。',src:'労災保険法施行規則1条3項',cat:'選択式'},
-  {type:'select',no:'②選択',opt:'空欄C',q:'所轄労働基準監督署長は、業務上の事由により負傷し、又は疾病にかかった労働者の当該負傷又は疾病が療養の開始後【C】を経過した日において治っていないときは、同日以後1か月以内に、当該労働者から所定の事項を記載した届書（傷病の状態等に関する届）を提出させるものとする。\n\n【C】に入る適切な語句を選びなさい。',choices:['1年6か月','6か月','1年','3年'],answer:'1年6か月',exp:'傷病補償年金の支給事由は、業務上の事由による療養の開始後1年6か月を経過した日又は同日後において、当該負傷・疾病が治っていないこと及び傷病等級に該当することである。',src:'労災保険法施行規則18条の2第2項',cat:'選択式'},
-  {type:'select',no:'②選択',opt:'空欄D',q:'所轄労働基準監督署長は、業務上の事由により負傷し、又は疾病にかかった労働者の当該負傷又は疾病が療養の開始後1年6か月を経過した日において治っていないときは、同日以後【D】以内に、当該労働者から所定の事項を記載した届書（傷病の状態等に関する届）を提出させるものとする。\n\n【D】に入る適切な語句を選びなさい。',choices:['1か月','10日','2か月','3か月'],answer:'1か月',exp:'療養開始後1年6か月を経過しても治っていない労働者については、その後1か月以内に傷病の状態等に関する届を提出させる。',src:'労災保険法施行規則18条の2第2項',cat:'選択式'},
-  {type:'select',no:'②選択',opt:'空欄E',q:'毎年【E】から同月末日までの間に業務上の事由による負傷又は疾病に係る療養のため労働することができないために賃金を受けなかった日がある労働者が、その日について休業補償給付の支給を請求しようとする場合に、同月1日において当該負傷又は疾病に係る療養の開始後1年6か月を経過しているときは、当該労働者は、当該賃金を受けなかった日に係る休業補償給付の請求書に添えて所定の事項を記載した報告書（傷病の状態等に関する報告書）を所轄労働基準監督署長に提出しなければならない。\n\n【E】に入る適切な語句を選びなさい。',choices:['1月1日','4月1日','8月1日','12月1日'],answer:'1月1日',exp:'1年6か月を経過しても治っておらず、しかも傷病補償年金の支給決定を受けるに至っていない労働者は、毎年1月分の休業補償給付を請求する際に、傷病の状態に関する報告書を併せて提出しなければならない。',src:'労災保険法施行規則19条の2第1項',cat:'選択式'},
+{no:"問1",opt:"A",q:"次の(1)、(2)又は(3)の業務による明らかな過重負荷を受けたことにより発症した脳血管疾患及び虚血性心疾患等（負傷に起因するものを除く。以下「脳・心臓疾患」という。）は、業務に起因する疾病として取り扱う。(1)発症前の長期間にわたって、著しい疲労の蓄積をもたらす特に過重な業務（以下「長期間の過重業務」という。）に就労したこと。(2)発症に近接した時期において、特に過重な業務（以下「短期間の過重業務」という。）に就労したこと。(3)発症直前から前日までの間において、発生状態を時間的及び場所的に明確にし得る異常な出来事に遭遇したこと。",a:true,exp:"設問の通り正しい。なお、認定基準の対象となる疾病は、脳血管疾患（脳内出血（脳出血）・くも膜下出血・脳梗塞・高血圧性脳症）と虚血性心疾患（心筋梗塞・狭心症・心停止（心臓性突然死を含む。）・重篤な心不全・大動脈解離）であり、認定要件の判断に当たっては、まず疾患名を特定し、対象疾病に該当することを確認することとされている。",src:"令和3.9.14基発0914第1号／最終改正令和5.10.18基発1018第1号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問1",opt:"B",q:"長期間の過重業務に係る「発症前の長期間」とは、発症前おおむね6か月間をいい、発症前おおむね6か月より前の業務については、疲労の蓄積に係る業務の過重性を評価するに当たり考慮しない。",a:false,exp:"「考慮しない」とする記述が誤りである。長期間の過重業務に係る「発症前の長期間」とは、発症前おおむね6か月間をいい、発症前おおむね6か月より前の業務については、疲労の蓄積に係る業務の過重性を評価するに当たり、付加的要因として考慮する。なお、著しい疲労の蓄積をもたらす特に過重な業務に就労したと認められるか否かについては、業務量、業務内容、作業環境等を考慮し、同種労働者にとっても、特に過重な身体的、精神的負荷と認められる業務であるか否かという観点から、客観的かつ総合的に判断することとされている。",src:"令和3.9.14基発0914第1号／最終改正令和5.10.18基発1018第1号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問1",opt:"C",q:"長期間の過重業務に係る業務の過重性の具体的な評価に当たっては、疲労の蓄積をもたらす最も重要な要因と考えられる労働時間に着目すると、その時間が長いほど、業務の過重性が増すところであり、具体的には、発症日を起点とした1か月単位の連続した期間をみて、発症前1か月間におおむね100時間又は発症前2か月間ないし6か月間にわたって、1か月当たりおおむね80時間を超える時間外労働が認められる場合は、業務と発症との関連性が強いと評価できることを踏まえて判断する。",a:true,exp:"設問の通り正しい。なお、発症日を起点とした1か月単位の連続した期間をみて、発症前1か月間ないし6か月間にわたって、1か月当たりおおむね45時間を超える時間外労働が認められない場合は、業務と発症との関連性が弱いが、おおむね45時間を超えて時間外労働時間が長くなるほど、業務と発症との関連性が徐々に強まると評価できることを踏まえて判断することとされている。",src:"令和3.9.14基発0914第1号／最終改正令和5.10.18基発1018第1号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問1",opt:"D",q:"発症に近接した時期とは、発症前おおむね1週間をいい、発症前おおむね1週間より前の業務については、原則として長期間の負荷として評価するが、発症前1か月間より短い期間のみに過重な業務が集中し、それより前の業務の過重性が低いために、長期間の過重業務とは認められないような場合には、発症前1週間を含めた当該期間に就労した業務の過重性を評価し、それが特に過重な業務と認められるときは、短期間の過重業務に就労したものと判断する。",a:true,exp:"設問の通り正しい。なお、短期間の過重業務と発症との関連性を時間的にみた場合、業務による過重な負荷は、発症に近ければ近いほど影響が強いと考えられることから、発症に最も密接な関連性を有する業務は、発症直前から前日までの間の業務であるので、まず、この間の業務が特に過重であるか否かを判断する。",src:"令和3.9.14基発0914第1号／最終改正令和5.10.18基発1018第1号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問1",opt:"E",q:"複数業務要因災害による脳・心臓疾患の「長期間の過重業務」及び「短期間の過重業務」の判断について、業務の過重性の検討に当たっては、異なる事業における労働時間を通算して評価する。また、労働時間以外の負荷要因については、異なる事業における負荷を合わせて評価する。",a:true,exp:"設問の通り正しい。なお、認定基準では、複数業務要因災害による脳・心臓疾患の「異常な出来事」に関し、これが認められる場合には、一の事業における業務災害に該当すると考えられることから、一般的には、異なる事業における負荷を合わせて評価することはないものと考えられる、としている。",src:"令和3.9.14基発0914第1号／最終改正令和5.10.18基発1018第1号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問2",opt:"A",q:"休業補償給付の額の算定の基礎として用いる休業給付基礎日額については、原則として、四半期ごとの平均給与額が、その休業を開始した日の属する四半期の平均給与額の100分の110を超え、又は100分の90を下るに至った場合には、その上昇し、又は低下した比率を基準として厚生労働大臣が定める率（いわゆるスライド率）を労災保険法第8条の規定により給付基礎日額として算定した額に乗じて得た額とする。",a:false,exp:"「その休業を開始した日」を「算定事由発生日」と読み替えると、正しい記述となる。なお、改定された休業給付基礎日額は、その上昇し、又は低下するに至った四半期の翌々四半期に属する最初の日以後に支給すべき事由が生じた休業補償給付から適用される。",src:"法8条の2,1項2号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問2",opt:"B",q:"算定事由発生日の属する年度の翌年度の7月以前の分として支給する年金たる保険給付については、労災保険法第8条の規定により給付基礎日額として算定した額を年金給付基礎日額とし、算定事由発生日の属する年度の翌年度の8月以後は、当該給付基礎日額についてスライド率による改定が行われる。",a:false,exp:"算定事由発生日の属する年度の「翌々年度」の7月以前の分として支給する年金たる保険給付については、労災保険法第8条の規定により給付基礎日額として算定した額を年金給付基礎日額とし、算定事由発生日の属する年度の「翌々年度」の8月以後は、当該給付基礎日額についてスライド率による改定が行われる。なお、年金給付基礎日額に係るスライド率は、「年金たる保険給付を支給すべき月の属する年度の前年度（当該月が4月から7月までの月に該当する場合にあっては、前々年度）の平均給与額を算定事由発生日の属する年度の平均給与額で除して得た率を基準として厚生労働大臣が定める率」である。",src:"法8条の3,1項2号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問2",opt:"C",q:"複数事業労働者の給付基礎日額は、複数事業労働者を使用する事業ごとに算定した給付基礎日額に相当する額を合算した額とされているが、その算定に当たり、当該事業ごとに算定した給付基礎日額に相当する額が自動変更対象額に満たないときは、これを自動変更対象額として算定することとなる。",a:false,exp:"複数事業労働者の給付基礎日額の算定に当たり、事業ごとに算定した給付基礎日額に相当する額には、自動変更対象額の規定は適用されず、事業ごとに算定した給付基礎日額に相当する額を合算した額（＝給付基礎日額）について、自動変更対象額の規定が適用される。",src:"法8条3項、則9条の2の2,1号、2号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問2",opt:"D",q:"休業給付基礎日額又は年金給付基礎日額について、年齢階層別の最低・最高限度額の規定が適用され、かつ、スライド率による改定が行われるべき場合には、スライド率による改定後の給付基礎日額について年齢階層別の最低・最高限度額の規定が適用される。",a:true,exp:"設問の通り正しい。",src:"法8条の2,2項、8条の3,2項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問2",opt:"E",q:"障害補償一時金等の一時金の額の算定の基礎として用いる給付基礎日額については、年齢階層別の最低・最高限度額の規定の適用はなく、スライド率による改定も行われない。",a:false,exp:"一時金の額の算定の基礎として用いる給付基礎日額については、年齢階層別の最低・最高限度額の規定の適用はないが、年金給付基礎日額と同様の仕組みにより、スライド率による改定は行われる。",src:"法8条の4",cat:"択一式（労災保険法・徴収法）"},
+{no:"問3",opt:"A",q:"療養の給付の範囲は、①診察、②薬剤又は治療材料の支給、③処置、手術その他の治療、④居宅における療養上の管理及びその療養に伴う世話その他の看護、⑤病院又は診療所への入院及びその療養に伴う世話その他の看護及び⑥移送のうち、医師が必要と認めるものに限られる。",a:false,exp:"「医師」とする記述が誤りである。療養の給付の範囲は、①診察、②薬剤又は治療材料の支給、③処置、手術その他の治療、④居宅における療養上の管理及びその療養に伴う世話その他の看護、⑤病院又は診療所への入院及びその療養に伴う世話その他の看護及び⑥移送のうち、「政府」が必要と認めるものに限られる。",src:"法13条2項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問3",opt:"B",q:"療養の給付に代えて療養の費用を支給することができるのは、療養の給付をすることが困難な場合のほか、療養の給付を受けないことについて労働者に相当の理由がある場合に限られる。",a:true,exp:"設問の通り正しい。なお、「療養の給付をすることが困難な場合、療養の給付を受けないことについて労働者に相当の理由がある場合」とする文言は、正確に押さえておこう。",src:"法13条3項、則11条の2",cat:"択一式（労災保険法・徴収法）"},
+{no:"問3",opt:"C",q:"療養の給付は、社会復帰促進等事業として設置された病院若しくは診療所又は都道府県労働局長の指定する病院若しくは診療所、薬局若しくは訪問看護事業者において行われる。",a:true,exp:"設問の通り正しい。設問の病院等を「指定病院等」という。なお、二次健康診断等給付は、健診給付病院等（社会復帰促進等事業として設置された病院若しくは診療所又は都道府県労働局長の指定する病院若しくは診療所）において行われるが、「指定病院等」と「健診給付病院等」は必ずしも一致しない（例えば、指定病院等であるからといって、健診給付病院等であるとは限らない。）。",src:"則11条1項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問3",opt:"D",q:"療養補償給付たる療養の費用の請求に当たっては、請求書の記載事項のうち、「傷病名及び療養の内容」及び「療養に要した費用の額」について、診療担当者の証明を受けなければならない。",a:true,exp:"設問の通り正しい。なお、診療担当者とは、医師その他の診療、薬剤の支給、手当又は訪問看護を担当した者をいう。",src:"則12条の2,2項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問3",opt:"E",q:"療養補償給付たる療養の費用の支給を受けようとする者は、所定の事項を記載した請求書を、所轄労働基準監督署長に提出しなければならないが、都道府県労働局長が定める指名施術所において治療を受ける場合にあっては、当該請求書を、当該指名施術所を経由して所轄労働基準監督署長に提出することができる。",a:true,exp:"設問の通り正しい。指名施術所において治療を受ける場合の請求書の提出について、「指名施術所を経由すること」は任意であり、義務ではないことに注意。なお、指名施術所とは、施術所（あん摩マッサージ指圧師、はり師、きゅう師等に関する法律に規定する届出に係る施術所及び柔道整復師法に規定する施術所をいう。）のうち都道府県労働局長が定めるものをいう。",src:"則12条の2,1項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問4",opt:"A",q:"傷病補償年金の傷病等級に係る障害の程度は、傷病等級の第1級、第2級及び第3級とされており、3か月以上の期間にわたって存する障害の状態により認定する。",a:false,exp:"傷病補償年金の傷病等級に係る障害の程度は、傷病等級の第1級、第2級及び第3級とされており、「6か月以上」の期間にわたって存する障害の状態により認定する。",src:"法12条の8,3項2号、則18条、則別表第2",cat:"択一式（労災保険法・徴収法）"},
+{no:"問4",opt:"B",q:"傷病補償年金を受ける労働者の当該障害の程度に変更があったため、新たに他の傷病等級に該当するに至った場合において、当該受給権者の請求があったときは、所轄労働基準監督署長は、当該変更に関する決定をしなければならない。",a:false,exp:"「当該受給権者の請求があったときは」とする記述が誤りである。傷病補償年金を受ける労働者の当該障害の程度に変更があったため、新たに他の傷病等級に該当するに至った場合には、政府は、新たに該当するに至った傷病等級に応ずる傷病補償年金を支給するものとし、その後は、従前の傷病補償年金は支給しないこととされており、この場合には、所轄労働基準監督署長は、当該労働者について傷病等級の変更による傷病補償年金の変更に関する決定をしなければならない。傷病補償年金の支給決定及び傷病等級の変更は、所轄労働基準監督署長の職権で行われるので、受給権者の請求は必要ない。",src:"法18条の2、則18条の3",cat:"択一式（労災保険法・徴収法）"},
+{no:"問4",opt:"C",q:"傷病補償年金を受けている者が傷病等級に該当しなくなった場合には、傷病補償年金の受給権は消滅するが、なおも療養のために労働することができず賃金の支払を受けることができないときは、その者の請求により、当該受給権が消滅した月の翌月から休業補償給付が行われる。",a:true,exp:"設問の通り正しい。「傷病補償年金を受ける者には、休業補償給付は行わない」こととされているが、傷病補償年金の受給権消滅後に引き続き休業補償給付の要件を満たす場合には、その者の請求により、傷病補償年金の受給権が消滅した月の翌月から休業補償給付が行われることとなる（傷病補償年金は、「受給権を取得した月の翌月から当該受給権が消滅した月まで」支給される。したがって、傷病補償年金の受給権消滅後に引き続き休業補償給付の要件を満たす場合、休業補償給付が行われるのは傷病補償年金の受給権が消滅した月の翌月（の初日）からとなる。また、休業補償給付が行われている者が傷病補償年金の受給権を取得した場合、休業補償給付は傷病補償年金の受給権を取得した月の末日まで行われ、その取得した月の翌月から傷病補償年金が行われることとなる。）。",src:"法9条1項、12条の8,3項、18条2項、昭和52.3.30基発192号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問4",opt:"D",q:"介護補償給付は、障害補償年金又は傷病補償年金を受ける権利を有する労働者が、その受ける権利を有する障害補償年金又は傷病補償年金の支給事由となる障害であって厚生労働省令で定める程度のものにより、常時又は随時介護を要する状態にある場合には、常時又は随時介護を受けていないときであっても、支給される場合がある。",a:false,exp:"介護補償給付は、常時又は随時介護を受けていないときは、支給されない。介護補償給付は、障害補償年金又は傷病補償年金を受ける権利を有する労働者が、その受ける権利を有する障害補償年金又は傷病補償年金の支給事由となる障害であって厚生労働省令で定める程度のものにより、常時又は随時介護を要する状態にあり、かつ、常時又は随時介護を受けているときに、当該介護を受けている間（次の①〜③に掲げる間を除く。）、当該労働者に対し、その請求に基づいて行われる。①障害者支援施設に入所している間（生活介護を受けている場合に限る。）②障害者支援施設（生活介護を行うものに限る。）に準ずる施設として厚生労働大臣が定めるものに入所している間 ③病院又は診療所に入院している間",src:"法32条の4,1項、派遣法44条2項、平成9.3.25基発195号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問4",opt:"E",q:"介護補償給付を支給すべき事由が生じた月において介護に要する費用を支出した日がなく、親族又はこれに準ずる者による介護を受けた日があるときは、当該月について、介護補償給付として厚生労働省令で定める最低保障額が支給される。",a:false,exp:"介護補償給付を支給すべき事由が生じた月において介護に要する費用を支出した日がないときは、親族又はこれに準ずる者による介護を受けたときであっても、介護補償給付は支給されない。",src:"法19条の2、則18条の3の4,1項2号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問5",opt:"A",q:"同一の業務災害により障害等級表に該当する障害が2以上あって厚生労働省令で定める要件を満たす場合には、その障害等級は、厚生労働省令で定めるところに従い繰り上げた障害等級による。繰り上げた障害等級の具体例を挙げれば、次のとおりである。①第8級、第10級、第12級の3障害がある場合……第7級 ②第5級、第6級、第8級、第14級の4障害がある場合…第3級 ③第4級、第5級の2障害がある場合……第1級",a:true,exp:"設問の通り正しい。設問の①は、第13級以上の障害が2以上ある場合なので、重い方の障害等級（第8級）を1級繰上げ、第7級となる。設問の②は、第8級以上の障害が2以上ある場合なので、重い方の障害等級（第5級）を2級繰上げ、第3級となる。設問の③は、第5級以上の障害が2以上ある場合なので、重い方の障害等級（第4級）を3級繰上げ、第1級となる。",src:"法15条1項、則14条3項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問5",opt:"B",q:"既に障害等級第8級の障害のあった者が、業務上の負傷又は疾病により同一の部位について障害の程度を障害等級第5級に加重した場合における当該事由に係る障害補償給付は、障害等級第5級に応ずる障害補償年金とされ、その額は、障害等級第5級に応ずる障害補償年金の額から、既にあった障害等級第8級に応ずる障害補償一時金の額を25で除して得た額を差し引いた額となる。",a:true,exp:"設問の通り正しい。障害等級の加重に関する問題である。加重の場合、障害補償給付の額は、加重の前後がともに年金である場合又はともに一時金である場合には、加重後の障害等級に応ずる障害補償給付の額から、加重前の障害等級に応ずる障害補償給付の額を差し引いた額となる。また、設問の場合のように、加重前が一時金・加重後が年金である場合には、加重後の障害等級に応ずる障害補償年金の額から、加重前の障害等級に応ずる障害補償一時金の額を25で除して得た額を差し引いた額となる。",src:"法15条1項、則14条5項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問5",opt:"C",q:"障害等級第12級に応ずる障害補償一時金を受けた労働者の当該障害の程度が自然的経過により変更したため、新たに障害等級第10級に該当するに至った場合であっても、新たに該当するに至った障害等級第10級に応ずる障害補償一時金は支給されず、また、障害等級第10級と障害等級第12級との差額が支給されることもない。",a:true,exp:"設問の通り正しい。障害補償一時金の支給を受けた者の障害の程度が自然的経過により増悪又は軽減しても、新たな障害等級による障害補償給付が行われることはなく、差額の支給も行われない。なお、障害補償年金を受ける労働者の当該障害の程度に変更があったため、新たに他の障害等級に該当するに至った場合には、政府は、新たに該当するに至った障害等級に応ずる障害補償年金又は障害補償一時金を支給するものとし、その後は、従前の障害補償年金は支給しないこととされている。",src:"法15条の2",cat:"択一式（労災保険法・徴収法）"},
+{no:"問5",opt:"D",q:"障害補償年金前払一時金の請求は、同一の事由に関し、1回に限り行うことができる。",a:true,exp:"設問の通り正しい。なお、障害補償年金前払一時金の請求は、障害補償年金の請求と同時に行わなければならないとされているが、障害補償年金の支給の決定の通知のあった日の翌日から起算して1年を経過する日までの間は、当該障害補償年金を請求した後においても障害補償年金前払一時金を請求することができる。また、障害補償年金前払一時金は、その請求が障害補償年金の支給の決定の通知のあった日の翌日から起算して1年を経過する日までの間に行われる場合（障害補償年金の請求と同時に行わない場合）は、1月、3月、5月、7月、9月又は11月のうち当該障害補償年金前払一時金の請求が行われた月後の最初の月に支給される。",src:"則附則27項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問5",opt:"E",q:"障害補償年金差額一時金を受けることができる遺族として、障害補償年金の受給権者である労働者の死亡の当時、生計を同じくしていなかった妻と生計を同じくしていた妹がある場合、妻が障害補償年金差額一時金の受給権者となる。",a:false,exp:"設問の場合、「妹」が障害補償年金差額一時金の受給権者となる。障害補償年金差額一時金を受けることができる遺族は、次の①②に掲げる者とされ、この場合において、障害補償年金差額一時金を受けるべき遺族の順位は、次の①②の順序により、①②に掲げる者のうちにあっては、それぞれ、①②に掲げる順序によるものとされている。①労働者の死亡の当時その者と生計を同じくしていた配偶者、子、父母、孫、祖父母及び兄弟姉妹 ②上記①に該当しない配偶者、子、父母、孫、祖父母及び兄弟姉妹",src:"法附則58条2項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問6",opt:"A",q:"休業特別支給金の額は、1日につき算定基礎日額の100分の20に相当する額である。",a:false,exp:"休業特別支給金の額は、1日につき「休業給付基礎日額」の100分の20に相当する額である。なお、休業特別支給金の支給を受けようとする者は、当該休業特別支給金の支給の申請の際に、所轄労働基準監督署長に、特別給与の総額を記載した届書を提出しなければならない。",src:"法29条2項、支給金則3条1項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問6",opt:"B",q:"算定基礎年額は、原則として、負傷又は発病の日以前6か月間（雇入後6か月に満たない者については、雇入後の期間）に当該労働者に対して支払われた特別給与の総額である。",a:false,exp:"算定基礎年額は、原則として、負傷又は発病の日以前「1年」間（雇入後「1年」に満たない者については、雇入後の期間）に当該労働者に対して支払われた特別給与の総額である。なお、特別給与の総額が、当該労働者に係る給付基礎日額に365を乗じて得た額の100分の20に相当する額を超える場合には、当該100分の20に相当する額を算定基礎年額とすることとされている。また、上記により算定された額が150万円を超える場合には、150万円を算定基礎年額とする。",src:"法29条2項、支給金則6条1項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問6",opt:"C",q:"特別加入者には、特別支給金は支給されない。",a:false,exp:"特別加入者（中小事業主等、一人親方等及び海外派遣者）については、特別給与を算定基礎とする特別支給金の規定は適用されない（支給されない）が、定額・定率の特別支給金の規定は適用される（支給される）。",src:"法29条2項、支給金則16条1項、17条1項、18条1項、19条",cat:"択一式（労災保険法・徴収法）"},
+{no:"問6",opt:"D",q:"遺族特別年金前払一時金が支給される場合には、遺族特別年金は、各月に支給されるべき額の合計額が厚生労働省令で定める算定方法に従い当該遺族特別年金前払一時金の額に達するまでの間、その支給が停止される。",a:false,exp:"遺族特別年金前払一時金という特別支給金はない。特別支給金には前払制度がないので、例えば、遺族補償年金前払一時金の支給を受けた場合には、遺族補償年金は、一定の期間その支給が停止されるが、この場合であっても、遺族特別年金は支給停止されない。",src:"法29条2項、特支則9条他",cat:"択一式（労災保険法・徴収法）"},
+{no:"問6",opt:"E",q:"特別支給金の原因である事故が第三者の行為によって生じた場合、特別支給金を受けるべき者が当該第三者から同一の事故について損害賠償を受けたときであっても、特別支給金はその全額が支給される。",a:true,exp:"設問の通り正しい。特別支給金については、保険給付と異なり、第三者行為災害における損害賠償との調整（求償及び控除）は行われない。",src:"法29条2項、特支則20条他",cat:"択一式（労災保険法・徴収法）"},
+{no:"問7",opt:"A",q:"労災保険法に基づく保険給付を受ける権利を有する者が死亡した場合において、その死亡した者に支給すべき保険給付でまだその者に支給しなかったものがあるときは、その者の配偶者（婚姻の届出をしていないが、事実上婚姻関係と同様の事情にあった者を含む。以下同じ。）、子、父母、孫、祖父母又は兄弟姉妹であって、その者の死亡の当時その者と生計を同じくしていたもの（遺族補償年金については当該遺族補償年金を受けることができる他の遺族、複数事業労働者遺族年金については当該複数事業労働者遺族年金を受けることができる他の遺族、遺族年金については当該遺族年金を受けることができる他の遺族）は、自己の名で、その未支給の保険給付の支給を請求することができる。",a:true,exp:"設問の通り正しい。未支給の遺族（補償）等年金については、当該遺族（補償）等年金を受けることができる他の遺族が請求権者となることに注意。",src:"法11条1項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問7",opt:"B",q:"傷病補償年金を受ける権利を有する者が死亡したためその支給を受ける権利が消滅したにもかかわらず、その死亡の日の属する月の翌月以後の分として当該傷病補償年金の過誤払が行われた場合において、当該過誤払による返還金に係る債権に係る債務の弁済をすべき者に支払うべき障害補償年金があるときは、当該障害補償年金の支払金の金額を当該過誤払による返還金債権の金額に充当することができる。",a:false,exp:"設問の充当処理の対象となる保険給付は、年金たる保険給付の受給権者の死亡に伴い支給される保険給付であり、障害補償年金はその対象とならない。",src:"法12条の2、則10条の2",cat:"択一式（労災保険法・徴収法）"},
+{no:"問7",opt:"C",q:"保険給付を受ける権利は、労働者の退職によって変更されることはない。",a:true,exp:"設問の通り正しい。",src:"法12条の5,1項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問7",opt:"D",q:"保険給付を受ける権利は、譲り渡し、担保に供し、又は差し押さえることができない。",a:true,exp:"設問の通り正しい。なお、租税その他の公課は、保険給付として支給を受けた金品を標準として課することはできない。",src:"法12条の5,2項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問7",opt:"E",q:"労災保険に係る保険関係が成立し、若しくは成立していた事業の事業主又は労働保険事務組合若しくは労働保険事務組合であった団体は、労災保険に関する書類（労働保険徴収法又は同法施行規則による書類を除く。）を、その完結の日から3年間保存しなければならない。",a:true,exp:"設問の通り正しい。",src:"則51条",cat:"択一式（労災保険法・徴収法）"},
+{no:"問8",opt:"A",q:"常時3人の労働者を使用する個人経営の林業の事業は、労災保険暫定任意適用事業であり、当該事業の事業主が任意加入の申請をし、厚生労働大臣の認可があったときは、その日に労災保険に係る保険関係が成立する。",a:false,exp:"常時3人の労働者を使用する個人経営の林業の事業は、労災保険暫定任意適用事業ではなく、労災保険の（強制）適用事業である。なお、労災保険暫定任意適用事業については、事業主が任意加入の申請をし、厚生労働大臣の認可があったときは、その日に労災保険に係る保険関係が成立する。",src:"(44)労災保険法附則12条、整備法5条1項、整備政令17条、平成12.12.25厚労告120条",cat:"択一式（労災保険法・徴収法）"},
+{no:"問8",opt:"B",q:"労災保険法第3条第1項の適用事業に該当する事業が労災保険暫定任意適用事業に該当するに至ったときは、その日に、その事業につき厚生労働大臣の認可があったものとみなす。",a:false,exp:"設問の場合、「その翌日」に、その事業につき厚生労働大臣の（任意加入の）認可があったものとみなす。",src:"整備法5条3項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問8",opt:"C",q:"常時3人の労働者を雇用する個人経営の林業の事業であって、雇用保険に係る保険関係が成立している暫定任意適用事業の事業主は、当該労働者のうち2人の同意を得れば、当該保険関係の消滅の申請を行うことができる。",a:false,exp:"雇用保険に係る保険関係が成立している雇用保険暫定任意適用事業の保険関係の消滅の申請については、その事業に使用される労働者の4分の3以上の同意を得なければ行うことができない。設問の場合、3人の労働者のうち2人の同意（3分の2の同意）であるから、保険関係の消滅の申請を行うことはできない。",src:"法附則4条、雇用保険法附則2条、同法施行令附則2条",cat:"択一式（労災保険法・徴収法）"},
+{no:"問8",opt:"D",q:"雇用保険に係る保険関係が成立していない雇用保険暫定任意適用事業の事業主は、その事業に使用される労働者の2分の1以上が希望する場合には、任意加入の申請をしなければならないが、これに違反して申請をしなかったときであっても、罰則の適用はない。",a:false,exp:"設問の違反については、罰則（6月以下の拘禁刑又は30万円以下の罰金）が適用される。なお、労災保険に係る保険関係が成立していない労災保険暫定任意適用事業の事業主は、その事業に使用される労働者の過半数が希望する場合には、任意加入の申請をしなければならないが、これに違反して申請をしなかったときであっても、罰則の適用はない。",src:"法附則2条3項、7条1項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問8",opt:"E",q:"労災保険に係る保険関係が成立している労災保険暫定任意適用事業の事業主は、当該保険関係の消滅の申請をしようとする場合には、当該事業に使用される労働者の過半数の同意を得たことを証明することができる書類を添えて、所定の申請書を所轄都道府県労働局長に提出しなければならない。",a:true,exp:"設問の通り正しい。なお、設問の申請書の提出は、所轄労働基準監督署長を経由して行うものとされている。",src:"整備法8条1項、2項、整備省令3条",cat:"択一式（労災保険法・徴収法）"},
+{no:"問9",opt:"A",q:"労働保険徴収法において「賃金」とは、賃金、給料、手当、賞与その他名称のいかんを問わず、労働の対償として事業主が労働者に支払うもの（3か月を超える期間ごとに受けるものを除く。）をいう。",a:false,exp:"「3か月を超える期間ごとに受けるものを除く」とする記述が誤りである。労働保険徴収法において「賃金」とは、賃金、給料、手当、賞与その他名称のいかんを問わず、労働の対償として事業主が労働者に支払うもの（通貨以外のもので支払われるものであって、厚生労働省令で定める範囲外のものを除く。）をいう。なお、賃金のうち通貨以外のもので支払われるものの評価に関し必要な事項は、厚生労働大臣が定めることとされており、また、賃金に算入すべき通貨以外のもので支払われる賃金の範囲は、食事、被服及び住居の利益のほか、所轄労働基準監督署長又は所轄公共職業安定所長の定めるところによることとされている。",src:"法2条2項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問9",opt:"B",q:"労働基準法の規定による休業手当、年次有給休暇中の賃金及び解雇予告手当は、同法上使用者にその支払が義務付けられているものであり、労働保険徴収法上の賃金に該当する。",a:false,exp:"休業手当及び年次有給休暇中の賃金については賃金に該当するが、解雇予告手当については賃金に該当しない。なお、労働基準法の規定による休業補償、健康保険法の規定による傷病手当金についても、賃金に該当しない。",src:"法2条2項、昭和23.8.18基収2520号、昭和25.4.10基収950号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問9",opt:"C",q:"労働者が業務外の疾病又は負傷のため勤務に服することができないため、事業主から支払われる手当金や、個人的、臨時的な吉凶禍福に対して支払われる結婚祝金、死亡弔慰金、災害見舞金は、労働協約、就業規則等で労働者の権利として保障されているときは、労働保険徴収法上の賃金に該当する。",a:false,exp:"個人的、臨時的な吉凶禍福に対して支払われる結婚祝金、死亡弔慰金、災害見舞金は、労働協約、就業規則等で労働者の権利として保障されているときであっても、労働保険徴収法上の賃金に該当しない。なお、労働者が業務外の疾病又は負傷のため勤務に服することができないため、事業主から支払われる手当金は、労働協約、就業規則等で労働者の権利として保障されているときは、賃金に該当する（労働協約、就業規則等に定められておらず、単に恩恵的に見舞金として支給されている場合は、賃金に該当しない。）。",src:"法2条2項、昭和24.6.14基災収3850号、昭和25.2.16基発127号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問9",opt:"D",q:"労働者が在職中に、退職金相当額の全部又は一部を給与や賞与に上乗せするなど前払いされる場合は、労働の対償としての性格が明確であり、労働者の通常の生計にあてられる経常的な収入としての意義を有することから、原則として、一般保険料の算定基礎となる賃金総額に算入することとされている。",a:true,exp:"設問の通り正しい。なお、退職を事由として支払われる退職金であって、退職時に支払われるもの又は事業主の都合等により退職前に一時金として支払われるものについては、一般保険料の算定基礎となる賃金総額に算入しないこととされている。",src:"法2条2項、11条1項、2項、平成15.10.1基徴発1001001号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問9",opt:"E",q:"6月になってベースアップが1月に遡って行われることが決まり、各労働者の賃金の1月から6月までの差額及び支給が確定して6月に現実に支払われるような場合、4月から6月までの差額分は当保険年度の賃金総額に算入し、1月から3月までの差額分は前保険年度の賃金総額に算入することとなる。",a:false,exp:"設問の場合、1月から6月までの差額分は「賃金差額の支給が確定した日の属する年度」（6月に支給が確定しているので、当保険年度）の賃金総額に算入することとなる。",src:"法2条2項、11条1項、2項、昭和33.10.9基収5571号の2",cat:"択一式（労災保険法・徴収法）"},
+{no:"問10",opt:"ア",q:"延滞金の額が1,000円未満であるとき。",a:false,exp:"延滞金の額が「100円未満」であるときは、延滞金は徴収されない。",src:"法28条5項3号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問10",opt:"イ",q:"納期を繰り上げて徴収するとき。",a:false,exp:"設問のような規定は設けられていない。延滞金が徴収されない事由は、次のとおりである。①督促状に指定した期限までに労働保険料その他労働保険徴収法の規定による徴収金を完納したとき。②納付義務者の住所又は居所がわからないため、公示送達の方法によって督促したとき。③労働保険料の額が1,000円未満であるとき。④延滞金の額が100円未満であるとき。⑤労働保険料について滞納処分の執行を停止し、又は猶予したとき（その執行を停止し、又は猶予した期間に対応する部分の金額に限る。）。⑥労働保険料を納付しないことについてやむを得ない理由があると認められるとき。",src:"法28条5項",cat:"択一式（労災保険法・徴収法）"},
+{no:"問10",opt:"ウ",q:"督促状に指定した期限までに労働保険料その他労働保険徴収法の規定による徴収金を完納したとき。",a:true,exp:"設問の通り正しい。",src:"法28条5項1号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問10",opt:"エ",q:"納付義務者の住所又は居所がわからないため、公示送達の方法によって督促したとき。",a:true,exp:"設問の通り正しい。",src:"法28条5項2号",cat:"択一式（労災保険法・徴収法）"},
+{no:"問10",opt:"オ",q:"労働保険料について滞納処分の執行を停止し、又は猶予したとき（その執行を停止し、又は猶予した期間に対応する部分の金額に限る。）。",a:true,exp:"設問の通り正しい。",src:"法28条5項4号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問1",opt:"A",q:"次の(1)、(2)及び(3)のいずれの要件も満たす対象疾病は、労働基準法施行規則別表第1の2第9号に該当する業務上の疾病として取り扱う。(1)対象疾病を発病していること。(2)対象疾病の発病前おおむね6か月の間に、業務による強い心理的負荷が認められること。(3)業務以外の心理的負荷及び個体側要因により対象疾病を発病したとは認められないこと。",a:true,exp:"設問の通り正しい。なお、対象疾病とは、疾病及び関連保健問題の国際統計分類第10回改訂版（ICD-10）第V章「精神及び行動の障害」に分類される精神障害であって、器質性のもの及び有害物質に起因するものを除くものである。",src:"令和5.9.1基発0901第2号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問1",opt:"B",q:"発病の時期を判断する際、強い心理的負荷と認められる出来事の前と後の両方に発病の兆候と理解し得る言動があるものの、診断基準を満たした時期の特定が困難な場合には、出来事の後に発病したものと取り扱う。",a:true,exp:"設問の通り正しい。なお、生死にかかわるケガ、強姦等の特に強い心理的負荷となる出来事を体験した場合、出来事の直後に解離等の心理的反応が生じ、受診時期が遅れることがある。このような場合には、当該心理的反応が生じた時期（特に強い心理的負荷となる出来事の直後）を発病時期と判断して当該出来事を評価の対象とする。",src:"令和5.9.1基発0901第2号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問1",opt:"C",q:"心理的負荷の評価に当たっては、精神障害を発病した労働者が、その出来事及び出来事後の状況を主観的にどう受け止めたかによって評価するのではなく、同じ事態に遭遇した場合、同種の労働者が一般的にその出来事及び出来事後の状況をどう受け止めるかという観点から評価する。",a:true,exp:"設問の通り正しい。なお、「同種の労働者」は、精神障害を発病した労働者と職種、職場における立場や職責、年齢、経験等が類似する者をいう。",src:"令和5.9.1基発0901第2号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問1",opt:"D",q:"ハラスメントやいじめのように出来事が繰り返されるものについては、繰り返される出来事を一体のものとして評価することとなるので、発病の6か月よりも前にそれが開始されている場合でも、発病前おおむね6か月の期間にも継続しているときは、発病前おおむね6か月の間の行為を評価の対象とする。",a:false,exp:"「発病前おおむね6か月の間の行為を評価の対象とする」とする記述が誤りである。ハラスメントやいじめのように出来事が繰り返されるものについては、繰り返される出来事を一体のものとして評価することとなるので、発病の6か月よりも前にそれが開始されている場合でも、発病前おおむね6か月の期間にも継続しているときは、「開始時からのすべての行為」を評価の対象とする。なお、出来事の起点が発病の6か月より前であっても、その出来事（出来事後の状況）が継続している場合にあっては、発病前おおむね6か月の間における状況や対応について評価の対象とする。例えば、業務上の傷病により長期療養中の場合、その傷病の発生は発病の6か月より前であっても、当該傷病により発病前おおむね6か月の間に生じている強い苦痛や社会復帰が困難な状況等を出来事として評価する。",src:"令和5.9.1基発0901第2号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問1",opt:"E",q:"セクシュアルハラスメントを受けた者は、勤務を継続したいとか、セクシュアルハラスメントを行った者（以下「行為者」という。）からのセクシュアルハラスメントの被害をできるだけ軽くしたいとの心理などから、やむを得ず行為者に迎合するようなメール等を送ることや、行為者の誘いを受け入れることがあるが、これらの事実はセクシュアルハラスメントを受けたことを単純に否定する理由にはならない。",a:true,exp:"設問の通り正しい。セクシュアルハラスメントが原因で対象疾病を発病したとして労災請求がなされた事案の心理的負荷の評価に際しては、特に次の事項に留意することとされている。①セクシュアルハラスメントを受けた者（被害者）は、勤務を継続したいとか、セクシュアルハラスメントを行った者（行為者）からのセクシュアルハラスメントの被害をできるだけ軽くしたいとの心理などから、やむを得ず行為者に迎合するようなメール等を送ることや、行為者の誘いを受け入れることがあるが、これらの事実はセクシュアルハラスメントを受けたことを単純に否定する理由にはならないこと。②被害者は、被害を受けてからすぐに相談行動をとらないことがあるが、この事実は心理的負荷が弱いと単純に判断する理由にならないこと。③被害者は、医療機関でもセクシュアルハラスメントを受けたということをすぐに話せないこともあるが、初診時にセクシュアルハラスメントの事実を申し立てていないことは心理的負荷が弱いと単純に判断する理由にならないこと。④行為者が上司であり被害者が部下である場合や行為者が正規雇用労働者であり被害者が非正規雇用労働者である場合等のように行為者が雇用関係上被害者に対して優越的な立場にある事実は心理的負荷を強める要素となり得ること。",src:"令和5.9.1基発0901第2号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問2",opt:"A",q:"一次健康診断において、血圧検査、血液検査その他業務上の事由による脳血管疾患及び心臓疾患の発生にかかわる身体の状態に関する検査であって、厚生労働省令で定めるものが行われた場合において、当該検査を受けた労働者がそのいずれの項目にも異常の所見があると診断されたときは、既に脳血管疾患又は心臓疾患の症状を有するか否かにかかわらず、その者の請求に基づいて、二次健康診断等給付が行われる。",a:false,exp:"二次健康診断等給付は、一次健康診断の結果その他の事情により既に脳血管疾患又は心臓疾患の症状を有すると認められるものには、行われない。なお、二次健康診断の結果その他の事情により既に脳血管疾患又は心臓疾患の症状を有すると認められる労働者については、当該二次健康診断に係る特定保健指導は行われない。",src:"法26条1項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問2",opt:"B",q:"二次健康診断等給付のうち、二次健康診断は、脳血管及び心臓の状態を把握するために必要な検査であって厚生労働省令で定めるものを行う医師による健康診断であり、一次健康診断ごとに1回に限られる。",a:false,exp:"二次健康診断は、「一次健康診断ごとに1回」ではなく、「1年度につき1回」に限られる。その他の記述は正しい。",src:"法26条2項1号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問2",opt:"C",q:"二次健康診断等給付の請求は、一次健康診断の結果を知った日から3か月以内に行わなければならないが、天災その他請求をしなかったことについてやむを得ない理由があるときは、この限りでない。",a:false,exp:"二次健康診断等給付の請求は、「一次健康診断の結果を知った日」ではなく、「一次健康診断を受けた日」から3か月以内に行わなければならない。その他の記述は正しい。なお、二次健康診断等給付の請求書は、健診給付病院等を経由して所轄都道府県労働局長に提出しなければならない。",src:"法28条、則18条の19,4項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問2",opt:"D",q:"二次健康診断を受けた労働者から3か月以内に当該二次健康診断の結果を証明する書面の提出を受けた事業者は、二次健康診断の結果（当該二次健康診断の項目に異常の所見があると診断された労働者に係るものに限る。）に基づき、当該労働者の健康を保持するために必要な措置について、医師の意見を聴かなければならない。",a:true,exp:"設問の通り正しい。なお、医師の意見聴取は、二次健康診断の結果を証明する書面が事業者に提出された日から2月以内に行うこととされており、聴取した医師の意見は、健康診断個人票に記載することとされている。",src:"法27条、安衛法66条の4",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問2",opt:"E",q:"二次健康診断の受診に要した時間の賃金の支払いについては、二次健康診断は、事業の遂行に伴い労災保険法上労働者の請求により当然実施されなければならない性格のものであり、その受診に要した時間は労働時間と解されるので、当該二次健康診断が法定労働時間外に行われた場合には、当然割増賃金を支払わなければならないものである。",a:false,exp:"二次健康診断の受診に要した時間は、労働時間に該当せず、その時間の賃金の支払いについては労使協議して定めるべきものとされている。したがって、二次健康診断が法定労働時間外に行われた場合であっても、割増賃金を支払う必要はない。なお、脳及び心臓疾患の発症のおそれのある労働者の健康確保は、事業の円滑な運営の不可欠な条件であることを考えると、その受診に要した時間の賃金を事業主が支払うことが望ましいとされている。",src:"平成13.3.30基発233号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問3",opt:"A",q:"療養のため労働することができないため、療養開始から1年6か月を経過しても引き続き休業補償給付の支給を受けている労働者が、ある日について、所定労働時間8時間のうち3時間労働して5,000円の賃金の支払を受け、残りの時間について無給の休業をした。当該労働者の平均賃金（給付基礎日額も同額とする。）が18,000円、年齢階層別の最高限度額が15,625円である場合、当該日の休業補償給付の額は、(15,625円－5,000円)×100分の60で計算される。",a:false,exp:"設問の場合、当該日の休業補償給付の額は、(18,000円－5,000円)×100分の60で計算される。設問の労働者は、療養開始から1年6か月を経過しているので、年齢階層別の最高限度額が適用されるが、労働者が業務上の負傷又は疾病による療養のため所定労働時間のうちその一部分についてのみ労働する日若しくは賃金が支払われる休暇（部分算定日）における休業補償給付の額は、給付基礎日額（最高限度額を給付基礎日額とすることとされている場合にあっては、最高限度額の規定の適用がないものとした場合における給付基礎日額）（設問の場合18,000円）から部分算定日に対して支払われる賃金の額（設問の場合5,000円）を控除して得た額〔当該控除して得た額が最高限度額を超える場合にあっては、最高限度額に相当する額（設問の場合、控除して得た額である13,000円は最高限度額を超えていない）〕の100分の60に相当する額とされている。",src:"法14条1項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問3",opt:"B",q:"療養のため労働することができないため、引き続き休業補償給付の支給を受けている労働者が、ある日について、所定労働時間8時間の全部について労働不能であるものの、そのうち6時間について労働基準法第39条第4項の規定によるいわゆる時間単位年休の取得により7,000円の賃金の支払を受け、残りの時間について無給の休業をした。当該労働者の平均賃金（給付基礎日額も同額とする。）が10,000円である場合、当該日について休業補償給付は支給されない。",a:true,exp:"設問の通り正しい。所定労働時間の全部について労働することができない場合（全部労働不能の場合）であって、平均賃金の100分の60以上の金額を受ける日は、休業補償給付の支給要件である「賃金を受けない日」に該当しないため、休業補償給付は支給されない。設問の場合、全部労働不能であって、平均賃金（10,000円）の100分の60以上の賃金（7,000円）の支払を受けているので、休業補償給付は支給されない。",src:"法14条1項、令和3.3.18基保発0318第1号他",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問3",opt:"C",q:"労働者が刑事施設、労役場その他これらに準ずる施設に拘禁されている場合（厚生労働省令で定める場合に限る。）には、休業補償給付は行わないこととされており、この場合には、休業特別支給金も支給されない。",a:true,exp:"設問の通り正しい。なお、少年院その他これに準ずる施設に収容されている場合（厚生労働省令で定める場合に限る。）についても同様に、休業補償給付及び休業特別支給金の支給はともに行われない。",src:"法14条の2、29条2項、支給金則3条2項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問3",opt:"D",q:"休業補償給付の支給を受けている労働者について、老齢厚生年金の支給を受けることができることとなった場合には、休業補償給付の額は減額されないが、同一の事由について障害厚生年金の支給を受けることができることとなった場合には、休業補償給付の額は減額される。",a:true,exp:"設問の通り正しい。社会保険の年金給付との調整が行われるのは、同一の事由による社会保険の年金給付であり、老齢厚生年金との調整は行われない。また、休業補償給付を受ける労働者が同一の事由について障害厚生年金を受けることができるときは、当該労働者に支給する休業補償給付の額は、給付基礎日額の100分の60に相当する額に政令で定める率のうち傷病補償年金について定める率を乗じて得た額（その額が政令で定める額を下回る場合には、当該政令で定める額）に減額される。",src:"法14条2項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問3",opt:"E",q:"同一の業務上の事由による負傷又は疾病に関し、休業補償給付を受けている労働者が障害補償給付を受ける権利を有することとなり、かつ、休業補償給付を行わないこととなった場合において、その後も休業補償給付が支払われたときは、その支払われた休業補償給付は、当該障害補償給付の内払とみなされる。",a:true,exp:"設問の通り正しい。",src:"法12条3項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問4",opt:"A",q:"遺族補償年金を受けることができる遺族が、死亡した労働者の妻（32歳）、母（58歳）及び弟（29歳）であり、妻と母の2人が生計を同じくし、弟が生計を同じくしていない場合、妻に対して給付基礎日額の153日分の遺族補償年金が支給される。なお、労働者の死亡の当時厚生労働省令で定める障害の状態にある遺族はいないものとする。",a:true,exp:"設問の通り正しい。設問の遺族補償年金を受けることができる遺族（受給資格者）のうち、最先順位者は妻であり、妻が遺族補償年金の受給権者となる。また、遺族補償年金の額は、遺族補償年金の受給権者及びその者と生計を同じくしている受給資格者の人数により定められているが、若年停止者（55歳以上60歳未満の夫、父母、祖父母、兄弟姉妹であって厚生労働省令で定める障害の状態にないもの）は、その人数に含まれない。設問の場合、受給権者（妻）と生計を同じくしている受給資格者は58歳の母であるから、遺族補償年金の額の基礎となる遺族は妻1人となる。遺族補償年金の額の基礎となる遺族が妻1人の場合、遺族補償年金の額は、その妻が55歳以上又は厚生労働省令で定める障害の状態にあるときを除き、給付基礎日額の153日分であり、設問の場合（妻が32歳であり、厚生労働省令で定める障害の状態にない場合）、遺族補償年金の額は給付基礎日額の153日分となる。",src:"法16条の2,3項、16条の3,1項、法別表第1",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問4",opt:"B",q:"遺族補償年金の受給権者である死亡した労働者の子（15歳）が、厚生労働省令で定める障害の状態になかったが、17歳のときに当該障害の状態に該当するに至ったときは、18歳に達した日以後の最初の3月31日が終了しても受給権は消滅しない。",a:false,exp:"設問の場合、18歳に達した日以後の最初の3月31日が終了したときは、受給権は消滅する。なお、労働者の死亡の時から引き続き厚生労働省令で定める障害の状態にあるときは、18歳に達した日以後の最初の3月31日が終了しても受給権は消滅しない。",src:"法16条の4,1項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問4",opt:"C",q:"遺族補償年金を受ける権利を有する者の所在が1年以上明らかでない場合には、当該遺族補償年金は、同順位者があるときは同順位者の、同順位者がないときは次順位者の申請によって、その申請があった月の翌月から、その支給が停止される。",a:false,exp:"遺族補償年金を受ける権利を有する者の所在が1年以上明らかでない場合には、当該遺族補償年金は、同順位者があるときは同順位者の、同順位者がないときは次順位者の申請によって、その「所在が明らかでない間」、その支給が停止される。なお、この場合、同順位者がないときは、その間、次順位者を先順位者とすることとされている。",src:"法16条の5,1項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問4",opt:"D",q:"遺族補償年金の受給権者である死亡した労働者の55歳以上60歳未満の夫は、60歳に達する月までの間は、遺族補償年金の支給が停止されるが、その支給停止の間においても遺族補償年金前払一時金の支給を受けることはできる。この場合、遺族補償年金前払一時金の支給を受けたときは、その支給を受けたことによる支給停止は行われず、60歳に達した月の翌月から、遺族補償年金が支給されることとなる。",a:false,exp:"設問後段のような規定はない。設問のように遺族補償年金前払一時金の支給を受けた場合、60歳に達する月までの間は、いわゆる若年停止により支給停止が行われ、60歳に達した月の翌月から、遺族補償年金前払一時金の支給を受けたことによる支給停止が行われる。",src:"法附則60条3項、(40)法附則43条1項、3項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問4",opt:"E",q:"遺族補償一時金を受けることができる遺族として、労働者の死亡の当時、その収入により生計を維持していなかった父と生計を維持していた弟がある場合、弟が遺族補償一時金の受給権者となる。",a:false,exp:"設問の場合、「父」が遺族補償一時金の受給権者となる。遺族補償一時金を受けるべき遺族の順位は、①〜④の順序により、②及び③に掲げる者のうちにあっては、それぞれ、②③に掲げる順序によるものとされている。①配偶者 ②労働者の死亡の当時その収入によって生計を維持していた子、父母、孫及び祖父母 ③前記②に該当しない子、父母、孫及び祖父母 ④兄弟姉妹",src:"法16条の7",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問5",opt:"A",q:"サービス業を主たる事業とする事業主であって常時100人以下の労働者を使用する事業主は、労働保険事務組合に労働保険事務の処理を委託していれば、中小事業主等の特別加入の対象となる。",a:true,exp:"設問の通り正しい。次に掲げる数以下の労働者を使用する事業の事業主で、労働保険事務組合に労働保険事務の処理を委託するものは、中小事業主の特別加入の対象となる。①金融業若しくは保険業、不動産業又は小売業：常時50人以下 ②卸売業又はサービス業：常時100人以下 ③上記①②以外の事業：常時300人以下",src:"法33条1号、則46条の16",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問5",opt:"B",q:"中小事業主等の特別加入者であって、自動車を使用して行う旅客若しくは貨物の運送の事業又は原動機付自転車若しくは自転車を使用して行う貨物の運送の事業に従事する者については、通勤災害に関する保険給付は行われない。",a:false,exp:"中小事業主等の特別加入者には、通勤災害に関する保険給付は行われる。通勤災害に関する保険給付が行われないのは、一人親方等の特別加入者であって、次の①又は②に掲げる事業を労働者を使用しないで行うことを常態とする者及びこれらの者が行う事業に従事する者並びに③又は④に掲げる作業に従事する者である。①自動車を使用して行う旅客若しくは貨物の運送の事業又は原動機付自転車若しくは自転車を使用して行う貨物の運送の事業 ②漁船による水産動植物の採捕の事業（船員法に規定する船員が行う事業を除く。）③特定農作業・指定農業機械作業 ④家内労働者又はその補助者が行う作業",src:"法35条1項、則46条の22の2",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問5",opt:"C",q:"一人親方等の特別加入者の事故が、第2種特別加入保険料が滞納されている期間中に生じたものであるときは、政府は、当該事故に係る保険給付の全部又は一部を行わないことができる。",a:true,exp:"設問の通り正しい。中小事業主等の特別加入者、一人親方等の特別加入者又は海外派遣の特別加入者の事故が、特別加入保険料が滞納されている期間中に生じたものであるときは、政府は、当該事故に係る保険給付の全部又は一部を行わないことができる（支給制限）とされている。",src:"法35条1項7号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問5",opt:"D",q:"特別加入者には、二次健康診断等給付は行われない。",a:true,exp:"設問の通り正しい。",src:"法34条1項、35条1項、36条1項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問5",opt:"E",q:"特別加入者に係る業務災害、複数業務要因災害及び通勤災害の認定は、厚生労働省労働基準局長が定める基準によって行うこととされている。",a:true,exp:"設問の通り正しい。",src:"法37条、則46条の26",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問6",opt:"A",q:"通勤は、「就業に関し」行われるものであるが、1日について1回のみしか認められないものではなく、昼休み等就業の時間の間に相当の間隔があって帰宅するような場合には、昼休みについていえば、午前中の業務を終了して帰り、午後の業務に就くために出勤するものと考えられるので、その往復行為は就業との関連性が認められる。",a:true,exp:"設問の通り正しい。「就業に関し」とは、移動行為が業務に就くため又は業務を終えたことにより行われるものであることを必要とする趣旨を示すものであり、通勤と認められるには、移動行為が業務と密接な関連（就業関連性）をもって行われることを要することを示している。",src:"法7条2項、平成28.12.28基発1228第1号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問6",opt:"B",q:"友人宅で麻雀をし、翌朝そこから直接出勤する場合等は、その友人宅は就業の拠点となっているものではないので、通勤に係る「住居」とは認められない。",a:true,exp:"設問の通り正しい。なお、通勤に係る「住居」とは、労働者が居住して日常生活の用に供している家屋等の場所で、本人の就業のための拠点となるところを指す。",src:"法7条2項、平成28.12.28基発1228第1号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問6",opt:"C",q:"鉄道、バス等の公共交通機関を利用し、自動車、自転車等を本来の用法に従って使用する場合は、通勤に係る「合理的な方法」と認められ、したがって事業主の提供する専用交通機関を利用してする移動は、通勤に当たる。",a:false,exp:"事業主の提供する専用交通機関を利用してする通勤は、「業務の性質を有するもの」に当たり、労災保険法7条2項の通勤に当たらない。",src:"法7条2項、平成28.12.28基発1228第1号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問6",opt:"D",q:"物品を得意先に届けてその届け先から直接帰宅する場合の物品の届け先、全員参加で出勤扱いとなる会社主催の運動会の会場等は、通勤に係る「就業の場所」に当たる。",a:true,exp:"設問の通り正しい。なお、通勤に係る「就業の場所」とは、業務を開始し、又は終了する場所をいう。",src:"法7条2項、平成28.12.28基発1228第1号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問6",opt:"E",q:"経路の近くにある公衆便所を使用する場合、帰途に経路の近くにある公園で短時間休息する場合や、経路上の店でタバコ、雑誌等を購入する場合は、通勤に係る「逸脱又は中断」に該当しない。",a:true,exp:"設問の通り正しい。設問のように、通常経路の途中で行うようなささいな行為を行う場合には、逸脱、中断に該当しない。なお、通勤に係る「逸脱」とは、通勤の途中において就業又は通勤とは関係のない目的で合理的な経路をそれることをいい、「中断」とは、通勤の経路上において通勤とは関係のない行為を行うことをいう。",src:"法7条2項、3項、平成28.12.28基発1228第1号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問7",opt:"ア",q:"労働者の死亡前に、当該労働者の死亡によって遺族補償年金を受けることができる先順位の遺族となるべき者を故意に死亡させた者は、遺族補償年金を受けることができる遺族としない。",a:true,exp:"設問の通り正しい。労働者の死亡前に、当該労働者の死亡によって遺族補償年金を受けることができる先順位又は同順位の遺族となるべき者を故意に死亡させた者は、遺族補償年金を受けることができる遺族としない。",src:"法16条の9,2項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問7",opt:"イ",q:"遺族補償年金を受ける権利を有する遺族が、遺族補償年金を受けることができる同順位の他の遺族を故意に死亡させたときは、その権利は、消滅する。",a:true,exp:"設問の通り正しい。",src:"法16条の9,4項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問7",opt:"ウ",q:"遺族補償年金を受けることができる遺族が、遺族補償年金を受けることができる後順位の他の遺族を故意に死亡させたときは、その者は、遺族補償年金を受けることができる遺族でなくなる。",a:false,exp:"「後順位」とする記述が誤りである。遺族補償年金を受けることができる遺族が、遺族補償年金を受けることができる「先順位又は同順位」の他の遺族を故意に死亡させたときは、その者は、遺族補償年金を受けることができる遺族でなくなる。",src:"法16条の9,4項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問7",opt:"エ",q:"労働者の死亡前に、当該労働者の死亡によって遺族補償年金を受けることができる遺族となるべき者を故意に死亡させた者は、遺族補償一時金を受けることができる遺族としない。",a:true,exp:"設問の通り正しい。",src:"法16条の9,3項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問7",opt:"オ",q:"遺族補償年金を受けることができる遺族を故意に死亡させた者は、遺族補償一時金を受けることができる遺族としない。",a:true,exp:"設問の通り正しい。",src:"法16条の9,3項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問8",opt:"A",q:"労災保険に係る保険関係が成立している事業のうち請負による建設の事業であって、賃金総額を正確に算定することが困難なものについては、その事業の種類に従い、請負金額（消費税等相当額を除く。以下同じ。）に労務費率を乗じて得た額を賃金総額とするが、機械装置の組立て又はすえ付けの事業についての請負代金の額にその事業に使用する機械装置の価額が含まれていない場合には、その機械装置の価額に相当する額（消費税等相当額を除く。）をその請負代金の額（消費税等相当額を除く。）に加算した額を請負金額とする。",a:false,exp:"設問の後半部分が誤りである。機械装置の組立て又はすえ付けの事業についての請負代金の額にその事業に使用する機械装置の価額が含まれていない場合には、その機械装置の価額に相当する額（消費税等相当額を除く。以下同じ。）をその請負代金の額（消費税等相当額を除く。以下同じ。）に加算しない額が請負金額（消費税等相当額を除く。以下同じ。）となる。なお、機械装置の組立て又はすえ付けの事業についての請負代金の額にその事業に使用する機械装置の価額が含まれている場合には、その機械装置の価額に相当する額をその請負代金の額から「控除」した額を請負金額とする。なお、機械装置の組み立て又はすえ付けの事業以外の建設の事業の請負金額については、事業主が注文者その他の者からその事業に使用する物の支給を受け、又は機械器具等の貸与を受けた場合には、支給された物の価額に相当する額（消費税等相当額を除く。）又は機械器具等の損料に相当する額（消費税等相当額を除く。）を請負代金の額に加算した額となる。",src:"法11条3項、則12条1号、13条、昭和58.2.21労告14号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問8",opt:"B",q:"労災保険に係る保険関係が成立している事業のうち造林の事業、木炭又は薪を生産する事業その他の林業の事業については、所轄都道府県労働局長が定める素材1立方メートルを生産するために必要な労務費の額に、生産するすべての素材の材積を乗じて得た額を賃金総額とする。",a:false,exp:"労災保険に係る保険関係が成立している事業のうち「立木の伐採の事業」であって、賃金総額を正確に算定することが困難なものについては、所轄都道府県労働局長が定める素材1立方メートルを生産するために必要な労務費の額に、生産するすべての素材の材積を乗じて得た額を賃金総額とする。なお、労災保険に係る保険関係が成立している事業のうち造林の事業、木炭又は薪を生産する事業その他の林業の事業（立木の伐採の事業を除く。）であって、賃金総額を正確に算定することが困難なものについては、その事業の労働者につき労働基準法の規定に基づき厚生労働大臣が定める平均賃金に相当する額に、それぞれの労働者の使用期間の総日数を乗じて得た額の合算額を賃金総額とする。",src:"法11条3項、則12条2号、3号、14条、15条",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問8",opt:"C",q:"政府は、労働保険の事業に要する費用にあてるため保険料を徴収するものとされており、徴収する保険料（「労働保険料」という。）は、労災保険料、雇用保険料、第1種特別加入保険料、第2種特別加入保険料、第3種特別加入保険料、印紙保険料及び特例納付保険料とされている。",a:false,exp:"徴収する保険料（労働保険料）は、「一般保険料」、第1種特別加入保険料、第2種特別加入保険料、第3種特別加入保険料、印紙保険料及び特例納付保険料とされている。労働保険徴収法における労働保険料には、労災保険料、雇用保険料という概念はない（それぞれ一般保険料の額のうち労災保険率に応ずる部分の額、一般保険料の額のうち雇用保険率に応ずる部分の額である。）。",src:"法10条",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問8",opt:"D",q:"労災保険率は、労災保険法の適用を受ける全ての事業の過去3年間の業務災害、複数業務要因災害及び通勤災害に係る災害率並びに社会復帰促進等事業として行う事業の種類及び内容その他の事情を考慮して厚生労働大臣が定めるものとされており、二次健康診断等給付に要した費用の額は考慮されない。",a:false,exp:"「二次健康診断等給付に要した費用の額は考慮されない」とする部分が誤りである。労災保険率は、労災保険法の適用を受ける全ての事業の過去3年間の業務災害、複数業務要因災害及び通勤災害に係る災害率並びに「二次健康診断等給付に要した費用の額」、社会復帰促進等事業として行う事業の種類及び内容その他の事情を考慮して厚生労働大臣が定める。なお、特別加入保険料率については、特別加入者に二次健康診断等給付が行われないことから、二次健康診断等給付に要した費用の額は考慮されない（第1種特別加入保険料率は、二次健康診断等給付に要した費用の額を考慮して厚生労働大臣の定める率を減じる）こととなる。",src:"法12条2項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問8",opt:"E",q:"雇用保険率は、失業等給付費等充当徴収保険率、育児休業給付費充当徴収保険率及び二事業費充当徴収保険率を合計して得た率である。",a:true,exp:"設問の通り正しい。",src:"法12条4項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問9",opt:"A",q:"既に有期事業として単独で保険関係が成立している事業については、労働保険徴収法第7条に規定する有期事業の一括の要件に該当する場合であっても、一括の対象とならない。",a:true,exp:"設問の通り正しい。当初、独立の有期事業として保険関係が成立した事業は、その後事業の規模の変更等があった場合でも、一括扱いの対象とならない。また、有期事業の一括により一括された個々の事業については、その後、事業の規模の変更等があった場合でも、あくまで当初の一括扱いによることとされ、新たに独立の有期事業として取り扱われない。",src:"法7条、昭和40.7.31基発901号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問9",opt:"B",q:"有期事業の一括に係る個々の事業については、それぞれの事業が労災保険率表に定める労災保険率を同じくしていれば、必ずしも事業の種類を同じくしていなくとも、他の要件を満たす限り一括の対象となる。",a:false,exp:"有期事業の一括の対象とされるには、それぞれの事業が、労災保険率表に掲げる事業の種類を同じくすることが必要である。",src:"法7条5号、則6条2項2号",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問9",opt:"C",q:"9月1日に保険関係が成立した一括有期事業について、当該事業に係る労働保険事務の処理が労働保険事務組合に委託されておらず、納付すべき概算保険料の額が30万円である場合、当該事業の事業主は、当該概算保険料を延納することができる。",a:true,exp:"設問の通り正しい。一括有期事業については、継続事業と同様の方法により概算保険料の延納が行われるが、次に掲げる場合には、事業主が概算保険料申告書を提出する際に申請をすることにより、概算保険料を延納することができる。設問の事業は、一括有期事業なので、労災保険に係る保険関係のみが成立している事業に該当することに注意。①納付すべき概算保険料の額が40万円（労災保険に係る保険関係又は雇用保険に係る保険関係のみが成立している事業については、20万円）以上である場合又は当該事業に係る労働保険事務の処理が労働保険事務組合に委託されている場合 ②当該保険年度において10月1日以降に保険関係が成立した事業ではない場合（9月30日までに保険関係が成立した事業である場合）",src:"法18条、則27条1項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問9",opt:"D",q:"労働保険徴収法第9条の規定により継続事業の一括に係る厚生労働大臣の認可を受けた場合であっても、一括された個々の事業（以下「被一括事業」という。）における雇用保険の被保険者に関する事務は、それぞれの被一括事業の所轄公共職業安定所長が行うこととなる。",a:true,exp:"設問の通り正しい。継続事業の一括の認可が行われた場合、労働保険徴収法の規定の適用については、当該認可に係る2以上の事業に使用されるすべての労働者は、これらの事業のうち厚生労働大臣が指定するいずれか一の事業に使用される労働者とみなすこととされているが、労災保険法の規定によるもの（労災保険の給付）及び雇用保険法の規定によるもの（雇用保険の被保険者及び給付）については一括の効果は及ばないので、これらの事務は、それぞれの被一括事業の所轄労働基準監督署長等又は所轄公共職業安定所長が行う。",src:"法9条",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問9",opt:"E",q:"継続事業の一括に係る厚生労働大臣が指定する事業（以下「指定事業」という。）の事業の名称又は事業の行われる場所に変更があった場合には、その変更を生じた日の翌日から起算して10日以内に、所定の事項を記載した届書を所轄労働基準監督署長又は所轄公共職業安定所長に提出しなければならない。",a:true,exp:"設問の通り正しい。指定事業の事業の名称又は事業の行われる場所に変更があった場合には、その変更を生じた日の翌日から起算して10日以内に、名称、所在地等変更届を所轄労働基準監督署長又は所轄公共職業安定所長に提出しなければならない。なお、被一括事業の事業の名称又は当該事業の行われる場所に変更があったときは、遅滞なく、継続被一括事業名称・所在地変更届を、指定事業に係る所轄都道府県労働局長に提出しなければならない。",src:"法4条の2,2項、則5条1項、2項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問10",opt:"A",q:"事業主が概算保険料申告書を提出せず、政府が決定した概算保険料を納付しなければならない場合には、政府は、原則としてその納付すべき額（その額に1,000円未満の端数があるときは、その端数は、切り捨てる。）に100分の10を乗じて得た額の追徴金を徴収する。",a:false,exp:"政府が決定した概算保険料（認定決定による概算保険料）については、追徴金は徴収されない。なお、事業主が確定保険料申告書を提出しないため、政府が決定した確定保険料（認定決定による確定保険料）を納付しなければならない場合には、政府は、原則としてその納付すべき額（その額に1,000円未満の端数があるときは、その端数は、切り捨てる。）に100分の10を乗じて得た額の追徴金を徴収する。",src:"法21条1項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問10",opt:"B",q:"追徴金を納付しない者があるときは、政府は、期限を指定して督促しなければならない。",a:true,exp:"設問の通り正しい。労働保険料その他労働保険徴収法の規定による徴収金を納付しない者があるときは、政府は、期限を指定して督促しなければならないとされており、ここにいう「徴収金」には、追徴金も含まれる。なお、追徴金の督促が行われた場合であっても、追徴金について延滞金が徴収されることはない。",src:"法27条1項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問10",opt:"C",q:"政府は、一般保険料率の引上げを行ったときは、労働保険料を追加徴収するが、この場合には、事業主に対して、期限を指定して、その納付すべき労働保険料の額を納付書により通知しなければならない。",a:true,exp:"設問の通り正しい。なお、設問の場合（労働保険料を追加徴収しようとする場合）、具体的には、所轄都道府県労働局歳入徴収官が、通知を発する日から起算して30日を経過した日をその納期限と定め、事業主に、所定の事項を納付書により通知しなければならないとされている。",src:"法17条、則38条4項、5項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問10",opt:"D",q:"事業主は、被保険者に賃金を支払う都度、当該賃金に応ずる被保険者の負担すべき一般保険料の額に相当する額を当該賃金から控除することができるが、日雇労働被保険者については、当該賃金に応ずる日雇労働被保険者の負担すべき一般保険料の額に相当する額のほか、印紙保険料の額の2分の1の額に相当する額を当該賃金から控除することができる。",a:true,exp:"設問の通り正しい。なお、賃金からの控除を行う場合、事業主は、一般保険料控除計算簿を作成し、事業場ごとにこれを備えなければならない。",src:"法32条1項、則60条1項",cat:"択一式（労災保険法・徴収法）"},
+{no:"第2-問10",opt:"E",q:"労働保険料その他労働保険徴収法の規定による徴収金の先取特権の順位は、国税及び地方税に次ぐものとする。",a:true,exp:"設問の通り正しい。なお、労働保険料その他労働保険徴収法の規定による徴収金は、労働保険徴収法に別段の定めがある場合を除き、国税徴収の例により徴収することとされている。",src:"法29条",cat:"択一式（労災保険法・徴収法）"},
+{type:"select",no:"選択1",opt:"空欄A",context:"労働者災害補償保険法第10条前段では、「船舶が沈没し、転覆し、滅失し、若しくは行方不明となった際現にその船舶に乗っていた労働者若しくは船舶に乗っていてその船舶の航行中に行方不明となった労働者の生死が【A】間わからない場合又はこれらの労働者の死亡が【A】以内に明らかとなり、かつ、その死亡の時期がわからない場合には、【B】の支給に関する規定の適用については、その船舶が沈没し、転覆し、滅失し、若しくは行方不明となった日又は労働者が行方不明となった日に、当該労働者は、死亡したものと推定する。」と規定している。",choices:["3か月", "6か月", "1年", "2年"],answer:"3か月",exp:"労災保険法10条前段における死亡の推定期間は3か月である。なお、死亡したものと推定される日は、「船舶が沈没し、転覆し、滅失し、若しくは行方不明となった日又は労働者が行方不明となった日」であり、3か月を経過した日ではない。",src:"法10条",cat:"選択式"},
+{type:"select",no:"選択1",opt:"空欄B",context:"労働者災害補償保険法第10条前段では、「船舶が沈没し、転覆し、滅失し、若しくは行方不明となった際現にその船舶に乗っていた労働者若しくは船舶に乗っていてその船舶の航行中に行方不明となった労働者の生死が3か月間わからない場合又はこれらの労働者の死亡が3か月以内に明らかとなり、かつ、その死亡の時期がわからない場合には、【B】の支給に関する規定の適用については、その船舶が沈没し、転覆し、滅失し、若しくは行方不明となった日又は労働者が行方不明となった日に、当該労働者は、死亡したものと推定する。」と規定している。",choices:["遺族補償給付、葬祭料、遺族給付及び葬祭給付", "遺族補償年金、葬祭料、遺族年金及び葬祭給付", "遺族補償年金、葬祭料、複数事業労働者遺族年金、複数事業労働者葬祭給付、遺族年金及び葬祭給付", "遺族補償給付、複数事業労働者遺族給付及び遺族給付"],answer:"遺族補償給付、葬祭料、遺族給付及び葬祭給付",exp:"「死亡の推定」の規定は、遺族補償給付、葬祭料、遺族給付及び葬祭給付のほか、障害補償年金差額一時金・障害年金差額一時金についても適用されること、また、複数業務要因災害（複数事業労働者遺族給付、複数事業労働者葬祭給付）には適用されないことに注意。",src:"法10条",cat:"選択式"},
+{type:"select",no:"選択1",opt:"空欄C",context:"業務災害に関する保険給付（【C】を除く。）は、労働基準法に規定する災害補償の事由又は【D】に規定する災害補償の事由が生じた場合に、補償を受けるべき労働者若しくは遺族又は【E】に対し、その請求に基づいて行う。",choices:["傷病補償年金及び介護補償給付", "遺族補償一時金及び障害補償一時金", "二次健康診断等給付", "介護を行う者"],answer:"傷病補償年金及び介護補償給付",exp:"労災保険法の業務災害に関する保険給付のうち、傷病補償年金は昭和51年の労災保険法の改正により、介護補償給付は平成7年の労災保険法の改正により設けられたものであり、労働基準法の災害補償中に直接対応するものはない。",src:"法12条の8,2項",cat:"選択式"},
+{type:"select",no:"選択1",opt:"空欄D",context:"業務災害に関する保険給付（傷病補償年金及び介護補償給付を除く。）は、労働基準法に規定する災害補償の事由又は【D】に規定する災害補償の事由が生じた場合に、補償を受けるべき労働者若しくは遺族又は【E】に対し、その請求に基づいて行う。",choices:["船員法", "船員保険法", "国家公務員災害補償法若しくは地方公務員災害補償法", "国家公務員法若しくは地方公務員法"],answer:"船員法",exp:"船員法の災害補償の事由が生じた場合には、従来船員保険法において給付が行われていたが、平成22年に船員保険法の職務上疾病・年金部門のうち労災保険相当分は労災保険法に統合されており、船員法の災害補償の事由が生じた場合についても、船員保険法の独自給付分・上乗せ給付分を除き、労災保険法により給付が行われている。",src:"法12条の8,2項",cat:"選択式"},
+{type:"select",no:"選択1",opt:"空欄E",context:"業務災害に関する保険給付（傷病補償年金及び介護補償給付を除く。）は、労働基準法に規定する災害補償の事由又は船員法に規定する災害補償の事由が生じた場合に、補償を受けるべき労働者若しくは遺族又は【E】に対し、その請求に基づいて行う。",choices:["葬祭を行う者", "葬祭料", "診療を担当する者", "その他同居の親族"],answer:"葬祭を行う者",exp:"業務災害に関する保険給付のうち、葬祭料については、補償を受けるべき労働者若しくは遺族ではなく、「葬祭を行う者」に対し、その請求に基づいて行われる。",src:"法12条の8,2項",cat:"選択式"},
+{type:"select",no:"第2-選択1",opt:"空欄A",context:"労働者災害補償保険等関係事務のうち、保険給付（【A】を除く。）並びに社会復帰促進等事業のうち労災就学等援護費及び特別支給金の支給並びに厚生労働省労働基準局長が定める給付に関する事務は、都道府県労働局長の指揮監督を受けて、所轄労働基準監督署長が行う。",choices:["二次健康診断等給付", "通勤災害に関する保険給付", "特別加入者に関する保険給付", "未支給の保険給付"],answer:"二次健康診断等給付",exp:"労働者災害補償保険等関係事務は、厚生労働省労働基準局長の指揮監督を受けて、所轄都道府県労働局長が行うものとされているが、このうち、保険給付（二次健康診断等給付を除く。）並びに社会復帰促進等事業のうち労災就学等援護費及び特別支給金の支給並びに厚生労働省労働基準局長が定める給付に関する事務は、都道府県労働局長の指揮監督を受けて、所轄労働基準監督署長が行うこととされている。したがって、二次健康診断等給付の請求先は所轄都道府県労働局長であり、それ以外の保険給付の請求先は所轄労働基準監督署長である。",src:"則1条3項",cat:"選択式"},
+{type:"select",no:"第2-選択1",opt:"空欄B",context:"労働者災害補償保険等関係事務のうち、当該労働者災害補償保険等関係事務が【B】に関するものである場合 … 生計維持事業の主たる事務所の所在地を管轄する労働基準監督署長",choices:["複数業務要因災害", "通勤災害", "特別加入者", "二次健康診断等給付"],answer:"複数業務要因災害",exp:"複数業務要因災害に関する保険給付に関する事務は、生計維持事業の主たる事務所の所在地を管轄する労働基準監督署長が行うこととされているが、複数事業労働者の業務災害及び通勤災害に関する保険給付に関する事務については、（業務災害又は通勤災害に係る）所轄労働基準監督署長が行うこととなる（必ずしも生計維持事業の主たる事務所の所在地を管轄する労働基準監督署長とは限らない。）。なお、生計維持事業とは、複数事業労働者の2以上の事業のうち、その収入が当該複数事業労働者の生計を維持する程度が最も高いものをいう。",src:"則1条3項",cat:"選択式"},
+{type:"select",no:"第2-選択1",opt:"空欄C",context:"所轄労働基準監督署長は、業務上の事由により負傷し、又は疾病にかかった労働者の当該負傷又は疾病が療養の開始後【C】を経過した日において治っていないときは、同日以後【D】以内に、当該労働者から所定の事項を記載した届書（傷病の状態等に関する届）を提出させるものとする。",choices:["6か月", "1年", "1年6か月", "3年"],answer:"1年6か月",exp:"傷病補償年金の支給事由は、業務上の事由による療養の開始後1年6か月を経過した日又は同日後において、当該負傷又は疾病が治っていないこと及び当該負傷又は疾病による障害の程度が厚生労働省令で定める傷病等級に該当していることとされている。所轄労働基準監督署長は、療養開始後1年6か月を経過しても治っていない労働者について、その後1か月以内に傷病の状態等に関する届を提出させるものとされている。",src:"則18条の2,2項",cat:"選択式"},
+{type:"select",no:"第2-選択1",opt:"空欄D",context:"所轄労働基準監督署長は、業務上の事由により負傷し、又は疾病にかかった労働者の当該負傷又は疾病が療養の開始後1年6か月を経過した日において治っていないときは、同日以後【D】以内に、当該労働者から所定の事項を記載した届書（傷病の状態等に関する届）を提出させるものとする。",choices:["10日", "1か月", "2か月", "3か月"],answer:"1か月",exp:"所轄労働基準監督署長は、療養開始後1年6か月を経過しても治っていない労働者について、その後1か月以内に傷病の状態等に関する届を提出させるものとされている。",src:"則18条の2,2項",cat:"選択式"},
+{type:"select",no:"第2-選択1",opt:"空欄E",context:"毎年【E】から同月末日までの間に業務上の事由による負傷又は疾病に係る療養のため労働することができないために賃金を受けなかった日がある労働者が、その日について休業補償給付の支給を請求しようとする場合に、同月1日において当該負傷又は疾病に係る療養の開始後1年6か月を経過しているときは、当該労働者は、当該賃金を受けなかった日に係る休業補償給付の請求書に添えて所定の事項を記載した報告書（傷病の状態等に関する報告書）を所轄労働基準監督署長に提出しなければならない。",choices:["1月1日", "4月1日", "8月1日", "12月1日"],answer:"1月1日",exp:"1年6か月を経過しても治っておらず、しかも傷病補償年金の支給決定を受けるに至っていない労働者は、毎年1月分の休業補償給付を請求する際に、傷病の状態に関する報告書を併せて提出しなければならないこととされている。",src:"則19条の2,1項",cat:"選択式"}
 ];
 
 // ============================================================
@@ -666,6 +670,8 @@ function mergeCloudData(data) {
   localSave();
   updateBmBadge();
   updateWeakBtn();
+  updateLeastTriedBtn();
+  updateResumeBtn();
   if (pendingResume) offerResume();
 }
 
@@ -675,336 +681,342 @@ function mergeCloudData(data) {
 const LS_KEY  = 'sharoushi_' + DRIVE_FILE_NAME;
 const LS_AUTH = 'sharoushi_auth_hint';
 
-function localSave()     { try { localStorage.setItem(LS_KEY, JSON.stringify(buildSavePayload())); } catch(e){} }
-function localLoad()     { try { const s = localStorage.getItem(LS_KEY); if(s) mergeCloudData(JSON.parse(s)); } catch(e){} }
-function saveAuthHint()  { try { localStorage.setItem(LS_AUTH, '1'); } catch(e){} }
-function getSavedAuth()  { try { return localStorage.getItem(LS_AUTH); } catch(e){ return null; } }
-function clearSavedAuth(){ try { localStorage.removeItem(LS_AUTH); } catch(e){} }
+function localSave() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      bookmarks: [...bookmarks], stats: questionStats, session: pendingResume
+    }));
+  } catch {}
+}
+function localLoad() {
+  try {
+    const data = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
+    if (data.bookmarks) bookmarks = new Set(data.bookmarks);
+    if (data.stats) questionStats = data.stats;
+    if (data.session) pendingResume = data.session;
+  } catch {}
+}
+function saveAuthHint()  { try { localStorage.setItem(LS_AUTH, '1'); } catch {} }
+function getSavedAuth()  { try { return localStorage.getItem(LS_AUTH) === '1'; } catch { return false; } }
+function clearSavedAuth() { try { localStorage.removeItem(LS_AUTH); } catch {} }
 
 // ============================================================
-//  RESUME (中断再開)
+//  BOOKMARK
 // ============================================================
-let pendingResume = null;
-let currentSession = false;
-
-function offerResume() {
-  if (!pendingResume) return;
-  const s = pendingResume;
-  const total = s.questionIndices.length;
-  const done  = s.answers.filter(a => a !== null).length;
-  document.getElementById('resumeMsg').textContent =
-    `${total}問中 ${done}問まで回答済みです。続きから再開しますか？`;
-  document.getElementById('resumeModal').classList.add('show');
+let bookmarks = new Set();
+function toggleBookmark() {
+  const idx = getOrigIdx(questions[current]);
+  if (bookmarks.has(idx)) bookmarks.delete(idx);
+  else bookmarks.add(idx);
+  localSave(); updateQuestion(); updateBmBadge(); scheduleAutoSave();
 }
-function resumeSession() {
-  document.getElementById('resumeModal').classList.remove('show');
-  if (!pendingResume) return;
-  const s = pendingResume;
-  const pool = s.questionIndices.map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
-  questions = pool;
-  current   = s.current || 0;
-  answers   = [...(s.answers || new Array(pool.length).fill(null))];
-  pendingResume = null;
-  currentSession = true;
-  document.getElementById('startScreen').style.display = 'none';
-  document.getElementById('resultScreen').classList.remove('show');
-  document.getElementById('quizScreen').style.display = 'block';
-  document.getElementById('navTabs').style.display    = 'none';
-  renderQuestion();
-}
-function dismissResume() {
-  document.getElementById('resumeModal').classList.remove('show');
-  pendingResume = null;
+function updateBmBadge() {
+  const badge = document.getElementById('bmBadge');
+  if (bookmarks.size > 0) {
+    badge.textContent = bookmarks.size;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
 }
 
 // ============================================================
-//  ★ NEW: 中断して保存
+//  STATS
 // ============================================================
-function suspendSession() {
-  if (!currentSession || questions.length === 0) return;
-  // 現在の進行状態を pendingResume に保存
-  pendingResume = {
-    questionIndices: questions.map(q => getOrigIdx(q)),
-    current,
-    answers: [...answers]
-  };
-  currentSession = false;
-  localSave();
-  scheduleAutoSave();
-  // スタート画面に戻る
-  document.getElementById('quizScreen').style.display = 'none';
-  document.getElementById('navTabs').style.display    = 'flex';
-  document.getElementById('startScreen').style.display = '';
-  document.getElementById('bookmarkList').classList.remove('show');
-  document.querySelectorAll('.nav-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
-  showToast('中断して保存しました。次回「続きから再開」できます。', 'success');
-}
+let questionStats = {}; // { origIdx: {correct:N, total:N} }
 
-// ============================================================
-//  QUESTION STATS（正答率トラッキング）
-// ============================================================
-let questionStats = {}; // { origIdx: { correct: N, total: N } }
-
-function recordStat(origIdx, correct) {
-  if (!questionStats[origIdx]) questionStats[origIdx] = { correct: 0, total: 0 };
-  if (correct) questionStats[origIdx].correct++;
+function recordStat(origIdx, isCorrect) {
+  if (!questionStats[origIdx]) questionStats[origIdx] = {correct:0, total:0};
   questionStats[origIdx].total++;
+  if (isCorrect) questionStats[origIdx].correct++;
+  localSave(); scheduleAutoSave(); updateWeakBtn(); updateLeastTriedBtn();
 }
 function getAccuracyInfo(origIdx) {
   const s = questionStats[origIdx];
   if (!s || s.total === 0) return null;
   const pct = Math.round((s.correct / s.total) * 100);
-  return { pct, total: s.total, cls: pct < 50 ? 'low' : pct < 70 ? 'mid' : 'high' };
+  return {
+    total: s.total, pct,
+    cls: pct >= 80 ? 'high' : (pct >= 50 ? 'mid' : 'low')
+  };
 }
 
 // ============================================================
-//  ★ NEW: 苦手問題モード (正答率50%以下)
+//  WEAK QUESTIONS
 // ============================================================
-const WEAK_THRESHOLD = 0.5;
-
 function updateWeakBtn() {
-  const btn = document.getElementById('btnStartWeak');
-  if (!btn) return;
-  let pool = ALL_QUESTIONS;
-  if (selectedCats.size > 0) pool = pool.filter(q => selectedCats.has(q.cat));
-  const weakPool = pool.filter((q, _) => {
-    const idx = ALL_QUESTIONS.indexOf(q);
-    const s   = questionStats[idx];
-    return s && s.total > 0 && (s.correct / s.total) <= WEAK_THRESHOLD;
+  const pool = ALL_QUESTIONS.filter((q,i) => {
+    const s = questionStats[i];
+    return s && s.total > 0 && (s.correct / s.total) <= 0.5;
   });
-  if (weakPool.length > 0) {
+  const btn = document.getElementById('btnWeakStart');
+  btn.style.display = pool.length > 0 ? 'block' : 'none';
+  if (pool.length === 0) btn.textContent = 'まだ回答データがありません';
+  else btn.textContent = `正答率50%以下の問題を出題（${pool.length}問）`;
+}
+function startWeak() {
+  const s = { useWeak: true };
+  startSession(s);
+}
+function updateLeastTriedBtn() {
+  const pool = ALL_QUESTIONS.filter((q,i) => {
+    const s = questionStats[i];
+    return !s || s.total === 0 || s.total < 3; // 3回未満
+  });
+  const btn = document.getElementById('btnLeastTried');
+  if (!btn) return;
+  if (pool.length > 0) {
     btn.style.display = 'block';
-    btn.textContent   = `📉 正答率50%以下の問題を出題（${weakPool.length}問）`;
+    btn.textContent = `挑戦回数が少ない問題を出題（${pool.length}問）`;
   } else {
     btn.style.display = 'none';
   }
 }
-function startWeak() {
-  // データがない場合はトースト表示
-  const totalAnswered = Object.values(questionStats).filter(s => s && s.total > 0).length;
-  if (totalAnswered === 0) {
-    showToast('まだ回答データがありません', 'warn');
-    return;
-  }
-  let pool = ALL_QUESTIONS.map((q, i) => ({ ...q, _origIdx: i }));
-  if (selectedCats.size > 0) pool = pool.filter(q => selectedCats.has(q.cat));
-  pool = pool.filter(q => {
-    const s = questionStats[q._origIdx];
-    return s && s.total > 0 && (s.correct / s.total) <= WEAK_THRESHOLD;
-  });
-  if (pool.length === 0) { showToast('正答率50%以下の問題はありません', 'warn'); return; }
-  startQuiz(shuffleArray(pool));
+function startLeastTried() {
+  // 挑戦回数でソート（少ない順）→上位20問を出題
+  const indexed = ALL_QUESTIONS.map((q,i) => ({q, i, tries: (questionStats[i]||{total:0}).total}));
+  indexed.sort((a,b) => a.tries - b.tries);
+  const maxTries = indexed[Math.min(19, indexed.length-1)].tries;
+  const pool = indexed.filter(x => x.tries <= maxTries).map(x => ({...x.q, _origIdx: x.i}));
+  if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
+  const take = pool.slice(0, 20);
+  questions = take; answers = Array(take.length).fill(null); current = 0;
+  currentSession = { questionIndices: take.map(q => q._origIdx), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`挑戦回数の少ない${take.length}問を出題`, 'success');
 }
 
 // ============================================================
-//  CORE STATE
+//  RESUME SESSION
 // ============================================================
-let questions = [], current = 0, answers = [];
-let bookmarks = new Set(), selectedCats = new Set();
-let shuffleMode = false, currentQIndex = -1;
+let pendingResume = null;
 
-// ★ NEW: ランダム出題数 (デフォルト10)
-let randCount = 10;
+function offerResume() {
+  // モーダル廃止：スタート画面の「続きから開始」ボタンを表示
+  updateResumeBtn();
+}
+function updateResumeBtn() {
+  const btn = document.getElementById('btnResumeStart');
+  if (!btn) return;
+  if (pendingResume) {
+    const done = pendingResume.answers.filter(a => a !== null).length;
+    const total = pendingResume.questionIndices.length;
+    btn.textContent = `▶ 続きから開始（${done}/${total}問 回答済み）`;
+    btn.style.display = 'block';
+  } else {
+    btn.style.display = 'none';
+  }
+}
+function resumeSession() {
+  if (!pendingResume) return;
+  const pool = pendingResume.questionIndices.map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
+  if (pool.length === 0) { clearResume(); return; }
+  questions = pool; answers = [...pendingResume.answers]; current = pendingResume.current || 0;
+  currentSession = { ...pendingResume }; pendingResume = null;
+  localSave(); showQuestionScreen(); updateQuestion();
+  showToast('前回の続きから再開しました', 'success');
+}
+function clearResume() {
+  pendingResume = null; localSave();
+  updateResumeBtn();
+  scheduleAutoSave();
+}
+
+// ============================================================
+//  MAIN LOGIC
+// ============================================================
+let questions = [], answers = [], current = 0, currentSession = null;
 
 const CATS = [...new Set(ALL_QUESTIONS.map(q => q.cat))];
 
-function shuffleArray(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
 // ============================================================
-//  ★ ランダム出題（指定数・フィルター適用後の問題プールから抽出）
-// ============================================================
-function getFilteredPool() {
-  let p = ALL_QUESTIONS;
-  if (selectedCats.size > 0) p = p.filter(q => selectedCats.has(q.cat));
-  return p;
-}
-function onRandInputChange() {
-  const inp = document.getElementById('randInput');
-  if (!inp) return;
-  let v = parseInt(inp.value, 10);
-  if (isNaN(v) || v < 1) v = 1;
-  const max = getFilteredPool().length;
-  if (v > max) v = max;
-  randCount = v;
-  inp.value = v;
-  updateRandBtnLabel();
-}
-function updateRandBtnLabel() {
-  const btn = document.getElementById('btnStartRand');
-  if (!btn) return;
-  btn.textContent = `${randCount}問ランダムで出題`;
-}
-function clampRandCount() {
-  // フィルター変更時等、上限を超えていたらクランプ
-  const max = getFilteredPool().length;
-  if (max === 0) { randCount = 1; }
-  else if (randCount > max) randCount = max;
-  if (randCount < 1) randCount = 1;
-  const inp = document.getElementById('randInput');
-  if (inp) {
-    inp.max = max;
-    inp.value = randCount;
-  }
-  updateRandBtnLabel();
-}
-function startRandom() {
-  // randCountをinput値で再同期
-  onRandInputChange();
-  let pool = getFilteredPool().map(q => ({ ...q, _origIdx: ALL_QUESTIONS.indexOf(q) }));
-  if (pool.length === 0) { showToast('該当する問題がありません', 'warn'); return; }
-  pool = shuffleArray(pool);
-  // X問がプール数を超える場合はプール全問を出題
-  const n = Math.min(randCount, pool.length);
-  pool = pool.slice(0, n);
-  startQuiz(pool);
-}
-
-// ============================================================
-//  FILTERS
+//  FILTER
 // ============================================================
 function initFilters() {
-  const row = document.getElementById('filterRow');
-  const all = document.createElement('button');
-  all.className = 'filter-btn active'; all.textContent = 'すべて'; all.dataset.val = 'all';
-  all.onclick = () => {
-    selectedCats.clear();
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.val === 'all'));
-    clampRandCount(); updateStartCount(); updateWeakBtn();
-  };
-  row.appendChild(all);
-  CATS.forEach(c => {
+  const btns = document.getElementById('filterBtns');
+  CATS.forEach(cat => {
     const btn = document.createElement('button');
-    btn.className = 'filter-btn'; btn.textContent = c; btn.dataset.val = c;
-    btn.onclick = () => {
-      document.querySelector('.filter-btn[data-val="all"]').classList.remove('active');
-      btn.classList.toggle('active');
-      if (selectedCats.has(c)) selectedCats.delete(c); else selectedCats.add(c);
-      if (selectedCats.size === 0) document.querySelector('.filter-btn[data-val="all"]').classList.add('active');
-      clampRandCount(); updateStartCount(); updateWeakBtn();
-    };
-    row.appendChild(btn);
+    btn.className = 'btn-filter'; btn.textContent = cat; btn.dataset.cat = cat;
+    btn.onclick = () => selectFilter(cat, btn);
+    btns.appendChild(btn);
   });
 }
-function updateStartCount() {
-  const pool  = getFilteredPool();
-  document.getElementById('startCount').textContent = pool.length;
+function selectFilter(cat, btn) {
+  document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  
+  let p = ALL_QUESTIONS;
+  if (cat !== 'all') p = p.filter(q => q.cat === cat);
+  
+  document.getElementById('startCount').textContent = p.length;
+  
+  // ランダム入力の max を更新
+  const input = document.getElementById('randomInput');
+  input.max = p.length; 
+  if (parseInt(input.value) > p.length) input.value = p.length;
+  updateRandomBtn();
 }
-function updateBmBadge() {
-  const cnt   = bookmarks.size;
-  const badge = document.getElementById('bmBadge');
-  badge.style.display = cnt > 0 ? 'inline-block' : 'none';
-  badge.textContent   = cnt;
-  const btn = document.getElementById('btnStartBm');
-  if (btn) btn.style.display = cnt > 0 ? 'block' : 'none';
-}
-function toggleShuffle() {
-  shuffleMode = !shuffleMode;
-  document.getElementById('btnShuffle').classList.toggle('active', shuffleMode);
-}
-function switchTab(tab) {
-  document.querySelectorAll('.nav-tab').forEach((t, i) => {
-    t.classList.toggle('active', (i === 0 && tab === 'start') || (i === 1 && tab === 'bookmark'));
-  });
-  document.getElementById('startScreen').style.display = tab === 'start' ? '' : 'none';
-  const bl = document.getElementById('bookmarkList');
-  if (tab === 'bookmark') { bl.classList.add('show'); renderBmList(); }
-  else bl.classList.remove('show');
+function getFilteredPool() {
+  const active = document.querySelector('.btn-filter.active');
+  if (!active) return ALL_QUESTIONS;
+  const cat = active.dataset.cat;
+  if (cat === 'all') return ALL_QUESTIONS;
+  return ALL_QUESTIONS.filter(q => q.cat === cat);
 }
 
 // ============================================================
-//  BOOKMARK LIST
+//  RANDOM MODE
 // ============================================================
-function renderBmList() {
-  const container = document.getElementById('bmItems');
-  const actions   = document.getElementById('bmActions');
-  if (bookmarks.size === 0) {
-    container.innerHTML = '<div class="empty-bm">栞がついている問題はありません。</div>';
-    actions.innerHTML = ''; return;
+function updateRandomBtn() {
+  const input = document.getElementById('randomInput');
+  const btn = document.getElementById('btnRandomStart');
+  btn.textContent = `${input.value}問ランダムで出題`;
+}
+function startRandom() {
+  const num = parseInt(document.getElementById('randomInput').value) || 10;
+  let pool = getFilteredPool().map(q => ({ ...q, _origIdx: ALL_QUESTIONS.indexOf(q) }));
+  if (num >= pool.length) pool = pool;
+  else {
+    pool = pool.sort(() => Math.random() - 0.5).slice(0, num);
   }
-  container.innerHTML = '';
-  [...bookmarks].forEach(idx => {
-    const q = ALL_QUESTIONS[idx]; if (!q) return;
-    const acc = getAccuracyInfo(idx);
-    const accHtml = acc
-      ? `<span class="bm-acc ${acc.cls}">${acc.pct}%</span>`
-      : '';
-    const div = document.createElement('div');
-    div.className = 'bm-item';
-    div.innerHTML = `<span class="bm-star">★</span><span class="bm-tag">${q.no} ${q.opt || ''}</span><span class="bm-text">${q.q}</span>${accHtml}`;
-    container.appendChild(div);
-  });
-  actions.innerHTML = `
-    <button class="btn-retry" onclick="startBookmarked()">★ 栞の問題を解く</button>
-    <button class="btn-retry" style="border-color:#e05050;color:#e05050;margin-left:8px" onclick="clearBookmarks()">すべて削除</button>`;
-}
-function clearBookmarks() {
-  if (!confirm('すべての栞を削除しますか？')) return;
-  bookmarks.clear(); localSave(); scheduleAutoSave(); updateBmBadge(); renderBmList();
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => q._origIdx), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`${pool.length}問をランダム出題開始`, 'success');
 }
 
 // ============================================================
-//  QUIZ FLOW
+//  SHUFFLE
 // ============================================================
-function startQuiz(pool) {
-  if (!pool) {
+function shuffle() {
+  const pool = getFilteredPool();
+  const indices = Array.from({length: pool.length}, (_, i) => i);
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  ALL_QUESTIONS.length = 0;
+  indices.forEach(i => ALL_QUESTIONS.push(pool[i]));
+  showToast('問題をシャッフルしました', 'success');
+}
+
+// ============================================================
+//  START MODES
+// ============================================================
+function start() {
+  const s = {};
+  startSession(s);
+}
+function startBookmarks() {
+  if (bookmarks.size === 0) { showToast('栞がありません', 'warn'); return; }
+  const s = { useBookmarks: true };
+  startSession(s);
+}
+function startSession(s) {
+  let pool = [];
+  
+  if (s.useBookmarks) {
+    pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
+  } else if (s.useWeak) {
     let p = ALL_QUESTIONS.map((q, i) => ({ ...q, _origIdx: i }));
-    if (selectedCats.size > 0) p = p.filter(q => selectedCats.has(q.cat));
-    if (shuffleMode) p = shuffleArray(p);
-    pool = p;
+    pool = p.filter(q => {
+      const stat = questionStats[q._origIdx];
+      return stat && stat.total > 0 && (stat.correct / stat.total) <= 0.5;
+    });
+  } else {
+    pool = getFilteredPool().map(q => ({ ...q, _origIdx: ALL_QUESTIONS.indexOf(q) }));
   }
-  questions = pool; current = 0;
-  answers   = new Array(questions.length).fill(null);
-  currentSession = true; pendingResume = null;
-  document.getElementById('startScreen').style.display = 'none';
-  document.getElementById('bookmarkList').classList.remove('show');
-  document.getElementById('resultScreen').classList.remove('show');
-  document.getElementById('quizScreen').style.display = 'block';
-  document.getElementById('navTabs').style.display    = 'none';
-  renderQuestion();
+
+  if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
+  
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => q._origIdx), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
 }
-function startBookmarked() {
-  const pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
-  if (pool.length === 0) return;
-  startQuiz(pool);
-}
+
 function getOrigIdx(q) { return q._origIdx !== undefined ? q._origIdx : ALL_QUESTIONS.indexOf(q); }
 
 // ============================================================
-//  RENDER
+//  SCREENS
 // ============================================================
-function renderQuestion() {
-  if (current >= questions.length) { showResult(); return; }
+function showMain() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('show'));
+  document.getElementById('screenMain').classList.add('show');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tabMain').classList.add('active');
+  
+  // メイン画面表示時に進行中セッションがあれば questionScreen に、なければ startScreen に
+  if (questions.length > 0 && current < questions.length) {
+    showQuestionScreen(); updateQuestion();
+  } else {
+    document.getElementById('startScreen').style.display = 'block';
+    document.getElementById('questionScreen').style.display = 'none';
+    document.getElementById('resultScreen').style.display = 'none';
+    document.getElementById('progressWrap').style.display = 'none';
+  }
+}
+function showBookmarks() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('show'));
+  document.getElementById('screenBookmarks').classList.add('show');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tabBookmarks').classList.add('active');
+  renderBookmarks();
+}
+
+function showQuestionScreen() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('questionScreen').style.display = 'block';
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'block';
+}
+function showResultScreen() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('questionScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'block';
+  document.getElementById('progressWrap').style.display = 'none';
+  renderResults();
+}
+
+// ============================================================
+//  UPDATE QUESTION
+// ============================================================
+function updateQuestion() {
+  if (questions.length === 0 || current >= questions.length) return;
+  
   const q = questions[current];
-  currentQIndex = getOrigIdx(q);
-
-  document.getElementById('progressNum').textContent = `${current + 1} / ${questions.length}`;
-  const corrCount = answers.filter(a => a && a.correct).length;
-  document.getElementById('progressScore').textContent = `正解 ${corrCount} 問`;
-  document.getElementById('progressFill').style.width  = `${(current / questions.length) * 100}%`;
-
-  document.getElementById('qTag').textContent = q.no;
-  document.getElementById('qNum').textContent = q.opt || '';
-  document.getElementById('qText').textContent = q.q;
-
-  // 問題タイプバッジ
+  const currentQIndex = getOrigIdx(q);
+  
+  // プログレスバー
+  const progressInfo = `${current + 1} / ${questions.length}`;
+  const correctCount = answers.filter(a => a && a.correct).length;
+  document.getElementById('progressNum').textContent = progressInfo;
+  document.getElementById('progressScore').textContent = `正解: ${correctCount}問`;
+  document.getElementById('progressFill').style.width = `${((current + 1) / questions.length) * 100}%`;
+  
+  // 問題カード
+  document.getElementById('qTag').textContent = q.cat;
+  document.getElementById('qNum').textContent = q.no + (q.opt ? '-' + q.opt : '');
+  if (q.type === 'select') {
+    document.getElementById('qText').innerHTML = q.context;
+    // 空欄を強調
+    const regex = /【[A-Z]】/g;
+    document.getElementById('qText').innerHTML = document.getElementById('qText').innerHTML.replace(
+      regex, '<span class="q-blank">$&</span>'
+    );
+  } else {
+    document.getElementById('qText').textContent = q.q;
+  }
+  
+  // タイプバッジ
   const typeBadge = document.getElementById('qTypeBadge');
-  if (typeBadge) {
-    if (q.type === 'select') {
-      typeBadge.textContent = '選択式';
-      typeBadge.className = 'q-type-badge sel';
-      typeBadge.style.display = 'inline-block';
-    } else {
-      typeBadge.textContent = '○×';
-      typeBadge.className = 'q-type-badge ox';
-      typeBadge.style.display = 'inline-block';
-    }
+  if (q.type === 'select') {
+    typeBadge.textContent = '選択式';
+    typeBadge.className = 'q-type-badge sel';
+    typeBadge.style.display = 'inline-block';
+  } else {
+    typeBadge.textContent = '○×';
+    typeBadge.className = 'q-type-badge ox';
+    typeBadge.style.display = 'inline-block';
   }
 
   // ★ 正答率バッジ
@@ -1017,6 +1029,12 @@ function renderQuestion() {
   } else {
     accEl.style.display = 'none';
   }
+  // ★ 挑戦回数バッジ
+  const triesEl = document.getElementById('qTries');
+  const s = questionStats[currentQIndex];
+  const tries = s ? s.total : 0;
+  triesEl.textContent = `挑戦${tries}回`;
+  triesEl.style.display = 'inline-block';
 
   // 栞ボタン
   const bBtn = document.getElementById('btnBookmark');
@@ -1048,6 +1066,9 @@ function renderQuestion() {
 function renderOxButtons(q, userChoice, isAnswered) {
   const bm = document.getElementById('btnMaru');
   const bb = document.getElementById('btnBatsu');
+  // ラベルをリセット
+  bm.innerHTML = '<div>○</div><div class="btn-label">正しい</div>';
+  bb.innerHTML = '<div>×</div><div class="btn-label">誤り</div>';
   bm.className = 'btn-answer btn-maru'; bb.className = 'btn-answer btn-batsu';
   bm.disabled = false; bb.disabled = false;
   if (isAnswered) {
@@ -1055,9 +1076,13 @@ function renderOxButtons(q, userChoice, isAnswered) {
     if (userChoice === true) {
       bm.className = q.a === true  ? 'btn-answer correct-chosen' : 'btn-answer wrong-chosen';
       if (q.a !== true)  bb.className = 'btn-answer reveal-correct';
+      // あなたの選択ラベル
+      bm.innerHTML += '<div class="your-choice-label">▶ あなたの選択</div>';
     } else {
       bb.className = q.a === false ? 'btn-answer correct-chosen' : 'btn-answer wrong-chosen';
       if (q.a !== false) bm.className = 'btn-answer reveal-correct';
+      // あなたの選択ラベル
+      bb.innerHTML += '<div class="your-choice-label">▶ あなたの選択</div>';
     }
   }
 }
@@ -1073,6 +1098,7 @@ function renderChoices(q, userChoice, isAnswered) {
       btn.disabled = true;
       if (c === q.answer)   btn.className = c === userChoice ? 'btn-choice correct-chosen' : 'btn-choice reveal-correct';
       if (c === userChoice && c !== q.answer) btn.className = 'btn-choice wrong-chosen';
+      if (c === userChoice) btn.innerHTML += '<div class="your-choice-label">▶ あなたの選択</div>';
     } else {
       btn.onclick = () => answerSelect(c);
     }
@@ -1097,119 +1123,238 @@ function answerOx(userAnswer) {
   const q         = questions[current];
   const isCorrect = userAnswer === q.a;
   answers[current] = { correct: isCorrect, userChoice: userAnswer };
-  recordStat(currentQIndex, isCorrect);
-  renderOxButtons(q, userAnswer, true);
-  showResultPanel(q, isCorrect);
-  document.getElementById('btnNext').style.display = 'block';
-  document.getElementById('btnSkip').style.display = 'none';
-  document.getElementById('progressScore').textContent =
-    `正解 ${answers.filter(a => a && a.correct).length} 問`;
-  // 回答後に正答率バッジを更新
-  const accInfo = getAccuracyInfo(currentQIndex);
-  const accEl   = document.getElementById('qAcc');
-  if (accInfo) {
-    accEl.textContent   = `過去${accInfo.total}回: ${accInfo.pct}%正解`;
-    accEl.className     = `q-acc ${accInfo.cls}`;
-    accEl.style.display = 'inline-block';
-  }
-  localSave(); scheduleAutoSave();
+  recordStat(getOrigIdx(q), isCorrect);
+  localSave(); updateQuestion(); scheduleAutoSave();
 }
-function answerSelect(choice) {
+function answerSelect(userChoice) {
   if (answers[current]) return;
   const q         = questions[current];
-  const isCorrect = choice === q.answer;
-  answers[current] = { correct: isCorrect, userChoice: choice };
-  recordStat(currentQIndex, isCorrect);
-  renderChoices(q, choice, true);
-  showResultPanel(q, isCorrect);
-  document.getElementById('btnNext').style.display = 'block';
-  document.getElementById('btnSkip').style.display = 'none';
-  document.getElementById('progressScore').textContent =
-    `正解 ${answers.filter(a => a && a.correct).length} 問`;
+  const isCorrect = userChoice === q.answer;
+  answers[current] = { correct: isCorrect, userChoice };
+  recordStat(getOrigIdx(q), isCorrect);
+  localSave(); updateQuestion(); scheduleAutoSave();
+}
+
+// ============================================================
+//  NAVIGATION
+// ============================================================
+function nextQuestion() {
+  if (current < questions.length - 1) { current++; updateQuestion(); }
+  else { finishSession(); }
+  currentSession.current = current; localSave();
+}
+function prevQuestion() {
+  if (current > 0) { current--; updateQuestion(); }
+  currentSession.current = current; localSave();
+}
+function skip() {
+  if (current < questions.length - 1) { current++; updateQuestion(); }
+  else { finishSession(); }
+  currentSession.current = current; localSave();
+}
+function suspend() {
+  // 中断時にセッションデータをpendingResumeに移す
+  if (currentSession) {
+    pendingResume = {
+      questionIndices: questions.map(q => getOrigIdx(q)),
+      current,
+      answers: [...answers]
+    };
+    currentSession = null;
+    localSave(); scheduleAutoSave();
+  }
+  
+  questions = []; answers = []; current = 0;
+  document.getElementById('startScreen').style.display = 'block';
+  document.getElementById('questionScreen').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  updateResumeBtn();
+  showToast('セッションを中断しました', 'warn');
+}
+
+// ============================================================
+//  FINISH & RESULTS
+// ============================================================
+function finishSession() {
+  // 完了時にセッションデータをクリア
+  currentSession = null; pendingResume = null;
   localSave(); scheduleAutoSave();
+  showResultScreen();
 }
+function renderResults() {
+  const correct = answers.filter(a => a && a.correct).length;
+  const wrong   = answers.filter(a => a && !a.correct).length;
+  const skipped = answers.filter(a => !a).length;
+  const total   = questions.length;
+  const rate    = total > 0 ? Math.round((correct / total) * 100) : 0;
 
-function nextQuestion()  { current++; renderQuestion(); }
-function goBack()        { if (current === 0) return; current--; renderQuestion(); }
-function skipQuestion()  { if (answers[current]) return; current++; renderQuestion(); }
-
-function toggleBookmark() {
-  if (currentQIndex < 0) return;
-  if (bookmarks.has(currentQIndex)) bookmarks.delete(currentQIndex);
-  else bookmarks.add(currentQIndex);
-  localSave(); scheduleAutoSave(); updateBmBadge();
-  const bBtn = document.getElementById('btnBookmark');
-  bBtn.textContent = bookmarks.has(currentQIndex) ? '★' : '☆';
-  bBtn.classList.toggle('active', bookmarks.has(currentQIndex));
+  document.getElementById('resultScoreText').textContent = `${correct} / ${total}`;
+  document.getElementById('correctCount').textContent   = correct;
+  document.getElementById('wrongCount').textContent     = wrong;
+  document.getElementById('skippedCount').textContent   = skipped;
+  
+  let msg = `正解率: ${rate}%\n`;
+  if (rate >= 80) msg += '素晴らしい結果です！';
+  else if (rate >= 60) msg += '良い成績です！';
+  else if (rate >= 40) msg += 'もう少し頑張りましょう。';
+  else msg += '復習をお勧めします。';
+  
+  document.getElementById('resultMessage').textContent = msg;
+  
+  // 再挑戦ボタンの表示制御
+  document.getElementById('btnRetryWrong').style.display = wrong > 0 ? 'inline-block' : 'none';
+  document.getElementById('btnRetrySkipped').style.display = skipped > 0 ? 'inline-block' : 'none';
 }
 
 // ============================================================
-//  RESULT
+//  RETRY
 // ============================================================
-function showResult() {
-  currentSession = false; pendingResume = null;
-  document.getElementById('quizScreen').style.display = 'none';
-  document.getElementById('navTabs').style.display    = 'flex';
-  document.getElementById('resultScreen').classList.add('show');
-  const total = questions.length;
-  const ok    = answers.filter(a => a && a.correct).length;
-  const ng    = answers.filter(a => a && !a.correct).length;
-  const sk    = answers.filter(a => a === null).length;
-  document.getElementById('finalScore').textContent = ok;
-  document.getElementById('finalDenom').textContent = `/ ${total}`;
-  document.getElementById('finalPct').textContent   = `正解率 ${Math.round(ok / total * 100)}%`;
-  document.getElementById('okCount').textContent    = ok;
-  document.getElementById('ngCount').textContent    = ng;
-  document.getElementById('skCount').textContent    = sk;
-  const pct = Math.round(ok / total * 100);
-  document.getElementById('scoreMsg').textContent =
-    pct >= 80 ? '素晴らしい！本試験レベルの高得点です。\n引き続き精度を高めましょう。'
-    : pct >= 60 ? '合格ラインに近い水準です。\n間違えた問題を重点的に復習しましょう。'
-    : '基礎からの確認が必要です。\n繰り返し解いて定着させましょう。';
-  const wrongIdx  = answers.map((a, i) => a && !a.correct ? i : -1).filter(i => i >= 0);
-  const skipIdx   = answers.map((a, i) => a === null ? i : -1).filter(i => i >= 0);
-  const btnW = document.getElementById('btnRetryWrong');
-  const btnS = document.getElementById('btnRetrySkipped');
-  btnW.style.display = wrongIdx.length > 0 ? 'inline-block' : 'none';
-  btnS.style.display = skipIdx.length  > 0 ? 'inline-block' : 'none';
-  btnW.onclick = () => startQuiz(wrongIdx.map(i => ({ ...questions[i] })));
-  btnS.onclick = () => startQuiz(skipIdx.map(i  => ({ ...questions[i] })));
-  updateWeakBtn();
+function retryWrong() {
+  const wrongIndices = [];
+  answers.forEach((a, i) => { if (a && !a.correct) wrongIndices.push(i); });
+  if (wrongIndices.length === 0) return;
+  
+  const pool = wrongIndices.map(i => questions[i]);
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => getOrigIdx(q)), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`${pool.length}問の復習を開始`, 'success');
+}
+function retrySkipped() {
+  const skippedIndices = [];
+  answers.forEach((a, i) => { if (!a) skippedIndices.push(i); });
+  if (skippedIndices.length === 0) return;
+  
+  const pool = skippedIndices.map(i => questions[i]);
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => getOrigIdx(q)), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`${pool.length}問の復習を開始`, 'success');
+}
+function restart() {
+  questions = []; answers = []; current = 0;
+  currentSession = null; pendingResume = null;
   localSave();
-  if (accessToken) saveToDrive();
+  document.getElementById('startScreen').style.display = 'block';
+  document.getElementById('questionScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
 }
-function resetToStart() {
-  document.getElementById('resultScreen').classList.remove('show');
-  document.getElementById('startScreen').style.display = '';
-  switchTab('start');
+
+// ============================================================
+//  BOOKMARKS
+// ============================================================
+function renderBookmarks() {
+  const container = document.getElementById('bookmarkItems');
+  const empty = document.getElementById('emptyBookmarks');
+  
+  if (bookmarks.size === 0) {
+    container.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  
+  empty.style.display = 'none';
+  container.innerHTML = '';
+  
+  [...bookmarks].sort((a, b) => a - b).forEach(idx => {
+    const q = ALL_QUESTIONS[idx];
+    if (!q) return;
+    
+    const item = document.createElement('div');
+    item.className = 'bm-item';
+    item.onclick = () => startFromBookmark(idx);
+    
+    const star = document.createElement('div');
+    star.className = 'bm-star'; star.textContent = '★';
+    
+    const tag = document.createElement('div');
+    tag.className = 'bm-tag'; tag.textContent = q.cat;
+    
+    const acc = document.createElement('div');
+    const accInfo = getAccuracyInfo(idx);
+    if (accInfo) {
+      acc.className = `bm-acc ${accInfo.cls}`;
+      acc.textContent = `${accInfo.pct}%`;
+    }
+    
+    const text = document.createElement('div');
+    text.className = 'bm-text';
+    if (q.type === 'select') {
+      text.textContent = `【${q.opt}】${q.context.slice(0, 80)}...`;
+    } else {
+      text.textContent = `${q.no}-${q.opt}: ${q.q.slice(0, 80)}...`;
+    }
+    
+    item.appendChild(star);
+    item.appendChild(tag);
+    if (accInfo) item.appendChild(acc);
+    item.appendChild(text);
+    container.appendChild(item);
+  });
 }
-function retryWrong()   {} // showResult() 内の onclick で処理
-function retrySkipped() {}
+
+function startFromBookmark(startIdx) {
+  const pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i }))
+    .filter(Boolean).sort((a, b) => a._origIdx - b._origIdx);
+  const startPos = pool.findIndex(q => q._origIdx === startIdx);
+  
+  questions = pool; answers = Array(pool.length).fill(null); 
+  current = Math.max(0, startPos);
+  currentSession = { questionIndices: pool.map(q => q._origIdx), current, answers: [...answers] };
+  showMain(); showQuestionScreen(); updateQuestion();
+}
 
 // ============================================================
 //  TOAST
 // ============================================================
-let toastTimer = null;
-function showToast(msg, type = '') {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'toast' + (type ? ' ' + type : '');
-  t.classList.add('show');
-  if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+function showToast(message, type = 'info') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = `toast${type ? ' ' + type : ''}`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
 // ============================================================
-//  BOOT
+//  INIT
 // ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  localLoad();
+  initFilters();
+  updateBmBadge();
+  updateWeakBtn();
+  updateLeastTriedBtn();
+  updateResumeBtn();
+  if (pendingResume) offerResume();
+});
+
+// アプリ情報の表示
 document.getElementById('appTitle').textContent    = APP_CONFIG.title;
 document.getElementById('appSubtitle').textContent = APP_CONFIG.subtitle;
 
-localLoad();        // ローカルストレージから復元
-initFilters();      // フィルターボタン生成
-updateBmBadge();    // 栞バッジ
-updateWeakBtn();    // 苦手モードボタン
-updateStartCount(); // 出題数表示
-clampRandCount();   // ランダム入力欄の初期化（max設定など）
+// 栞ボタンの表示制御
+function checkBookmarkButton() {
+  const btn = document.getElementById('btnBookmarkStart');
+  btn.style.display = bookmarks.size > 0 ? 'block' : 'none';
+}
+
+// 初期化時に栞ボタンをチェック
+document.addEventListener('DOMContentLoaded', () => {
+  checkBookmarkButton();
+});
+
+// 栞の更新時に栞ボタンもチェック
+function updateBmBadge() {
+  const badge = document.getElementById('bmBadge');
+  if (bookmarks.size > 0) {
+    badge.textContent = bookmarks.size;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+  checkBookmarkButton(); // 栞ボタンの表示も更新
+}
 </script>
 </body>
 </html>
