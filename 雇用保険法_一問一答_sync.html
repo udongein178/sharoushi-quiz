@@ -510,12 +510,18 @@ let autoSaveTimer = null;
 let tokenRefreshTimer = null; // トークン自動更新タイマー
 
 window.addEventListener('load', () => {
-  // ログイン済みの場合は「再接続中」表示
+  // ログイン済みの場合は「再接続中」表示＋ボタン制御
   if (getSavedAuth()) {
     const dot = document.getElementById('syncDot');
     const txt = document.getElementById('syncStatusText');
+    const btnSignIn    = document.getElementById('btnSignIn');
+    const btnManualSync = document.getElementById('btnManualSync');
+    const btnSignOut   = document.getElementById('btnSignOut');
     if (dot) dot.className = 'sync-dot syncing';
     if (txt) txt.textContent = '再接続中…';
+    if (btnSignIn)     btnSignIn.style.display     = 'none';
+    if (btnManualSync) { btnManualSync.style.display = 'block'; btnManualSync.disabled = true; }
+    if (btnSignOut)    btnSignOut.style.display    = 'block';
   }
   gapi.load('client', async () => {
     await gapi.client.init({});
@@ -580,8 +586,10 @@ function updateSyncUI(loggedIn) {
   document.getElementById('syncStatusText').textContent = loggedIn ? 'Googleドライブに同期中' : 'Googleアカウントで同期';
   document.getElementById('syncUser').style.display = 'none';
   document.getElementById('btnSignIn').style.display    = loggedIn ? 'none'  : 'flex';
-  document.getElementById('btnManualSync').style.display = loggedIn ? 'block' : 'none';
-  document.getElementById('btnManualSync').disabled = !loggedIn;
+  // 同期ボタンはログイン済みでなくても表示（押すと自動でログインフロー起動）
+  document.getElementById('btnManualSync').style.display = 'block';
+  document.getElementById('btnManualSync').disabled = false;
+  document.getElementById('btnManualSync').textContent = loggedIn ? '↑↓ 同期' : '↑↓ 接続';
   document.getElementById('btnSignOut').style.display   = loggedIn ? 'block' : 'none';
 }
 function setSyncing(v) {
@@ -648,7 +656,13 @@ async function saveToDrive() {
   setSyncing(false);
 }
 async function manualSync() {
-  if (!accessToken) { showToast('先にログインしてください', 'error'); return; }
+  if (!accessToken) {
+    // トークンがない場合は自動でログインフローを起動
+    if (!gapiInited || !gisInited) { showToast('初期化中です、少々お待ちください', 'warn'); return; }
+    showToast('Googleアカウントに接続しています…', 'warn');
+    tokenClient.requestAccessToken({ prompt: 'select_account' });
+    return;
+  }
   await loadFromDrive();
 }
 function scheduleAutoSave() {
