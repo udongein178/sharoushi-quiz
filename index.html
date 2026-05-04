@@ -4,15 +4,54 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>社労士試験対策 — 一問一答</title>
+<script src="https://apis.google.com/js/api.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-serif;background:#11161e;color:#e8e0d0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px}
 .wrap{width:100%;max-width:560px}
 
-.header{text-align:center;padding:32px 0 36px}
+/* ===== LOGIN SCREEN ===== */
+#loginScreen{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:80vh;text-align:center;padding:40px 20px;
+}
+.login-badge{font-size:11px;letter-spacing:.2em;color:#556070;text-transform:uppercase;margin-bottom:16px}
+.login-title{font-size:28px;font-weight:700;color:#e8e0d0;margin-bottom:12px}
+.login-subtitle{font-size:14px;color:#556070;line-height:1.7;margin-bottom:40px}
+.login-icon{font-size:56px;margin-bottom:24px}
+.btn-gsign-large{
+  display:flex;align-items:center;gap:10px;
+  background:#fff;color:#3c4043;border:none;border-radius:10px;
+  padding:14px 28px;font-size:15px;font-weight:600;
+  cursor:pointer;transition:background .15s,transform .1s;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+.btn-gsign-large:hover{background:#f1f3f4;transform:translateY(-1px)}
+.btn-gsign-large:active{transform:translateY(0)}
+.btn-gsign-large svg{flex-shrink:0;width:22px;height:22px}
+.login-note{font-size:11px;color:#3a4a5a;margin-top:20px;line-height:1.6}
+.login-connecting{font-size:14px;color:#c9a84c;margin-top:16px;display:none}
+
+/* ===== MAIN SCREEN ===== */
+#mainScreen{display:none}
+
+.header{text-align:center;padding:24px 0 30px}
 .header .badge{font-size:11px;letter-spacing:.2em;color:#556070;text-transform:uppercase;margin-bottom:10px}
 .header h1{font-size:26px;font-weight:700;color:#e8e0d0;letter-spacing:.04em;margin-bottom:8px}
 .header p{font-size:13px;color:#556070;line-height:1.6}
+
+/* Sync bar (compact, after login) */
+.sync-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  background:#1a2434;border:1px solid #283848;border-radius:10px;
+  padding:10px 14px;margin-bottom:20px;gap:10px;
+}
+.sync-status{display:flex;align-items:center;gap:8px;font-size:12px;color:#8a9bb0;min-width:0;overflow:hidden}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#3dbe82;flex-shrink:0}
+.sync-dot.syncing{background:#c9a84c;animation:pulse 1s infinite}
+.sync-user{font-size:11px;color:#3dbe82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.btn-signout{background:transparent;border:1px solid #283848;color:#556070;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;white-space:nowrap}
+.btn-signout:hover{border-color:#e05050;color:#e05050}
 
 /* Subject cards */
 .section-label{font-size:11px;letter-spacing:.15em;color:#556070;text-transform:uppercase;margin-bottom:12px;padding-left:4px}
@@ -21,23 +60,17 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
   background:#1a2434;border:1px solid #283848;border-radius:12px;
   padding:18px 20px;text-decoration:none;color:inherit;
   display:flex;align-items:center;gap:16px;
-  transition:border-color .15s,background .15s,transform .1s;
-  cursor:pointer;
+  transition:border-color .15s,background .15s,transform .1s;cursor:pointer;
 }
 .card:hover{border-color:#c97a4a;background:#1e2a3a;transform:translateY(-1px)}
 .card:active{transform:translateY(0)}
-.card-icon{
-  width:44px;height:44px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:20px;flex-shrink:0;
-}
+.card-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .card-body{flex:1;min-width:0}
 .card-title{font-size:15px;font-weight:700;color:#e8e0d0;margin-bottom:3px;letter-spacing:.02em}
 .card-sub{font-size:12px;color:#8a9bb0}
 .card-arrow{font-size:16px;color:#556070;flex-shrink:0}
 .card:hover .card-arrow{color:#c97a4a}
 
-/* Colors per subject */
 .icon-kenpo{background:rgba(74,158,202,.15);color:#4a9eca}
 .icon-koyo{background:rgba(74,158,202,.15);color:#4a9eca}
 .icon-roki{background:rgba(201,122,74,.15);color:#c97a4a}
@@ -46,125 +79,259 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
 .icon-choushuu{background:rgba(180,74,201,.15);color:#b44ac9}
 .icon-general{background:rgba(201,74,74,.15);color:#c94a4a}
 
-/* Progress dots (future use) */
-.card-meta{display:flex;gap:6px;align-items:center;margin-top:4px}
-.dot-ok{width:6px;height:6px;border-radius:50%;background:#3dbe82}
-.dot-empty{width:6px;height:6px;border-radius:50%;background:#283848}
-
-/* Coming soon */
 .card.disabled{opacity:.45;cursor:default;pointer-events:none}
 .coming-badge{font-size:10px;background:rgba(85,96,112,.2);border:1px solid #283848;border-radius:4px;padding:1px 6px;color:#556070;margin-left:6px;letter-spacing:.05em}
 
-/* Footer */
 .footer{text-align:center;padding:20px 0;font-size:11px;color:#3a4a5a;letter-spacing:.05em}
 .footer a{color:#4a6a8a;text-decoration:none}
 .footer a:hover{color:#8a9bb0}
 
-/* Sync hint */
-.sync-hint{
-  background:#1a2434;border:1px solid #283848;border-radius:10px;
-  padding:12px 16px;margin-bottom:24px;
-  display:flex;align-items:center;gap:10px;
-  font-size:12px;color:#8a9bb0;
-}
-.sync-hint-icon{font-size:18px;flex-shrink:0}
-.sync-hint-text{line-height:1.5}
-.sync-hint-text strong{color:#c97a4a}
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a2434;border:1px solid #283848;border-radius:8px;padding:10px 18px;font-size:13px;color:#e8e0d0;opacity:0;transition:all .3s;pointer-events:none;z-index:100;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:#3dbe82;color:#3dbe82}
+.toast.warn{border-color:#c9a84c;color:#c9a84c}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <div class="header">
-    <div class="badge">社会保険労務士 試験対策</div>
-    <h1>一問一答アプリ</h1>
-    <p>科目を選んで学習を始めてください。<br>Googleドライブ同期で進捗がどのデバイスでも共有されます。</p>
+  <!-- ===== LOGIN SCREEN ===== -->
+  <div id="loginScreen">
+    <div class="login-badge">社会保険労務士 試験対策</div>
+    <div class="login-icon">📚</div>
+    <div class="login-title">一問一答アプリ</div>
+    <div class="login-subtitle">
+      Googleアカウントでログインして<br>学習を始めましょう。<br>
+      栞・正答率・学習進捗がクラウドに保存され、<br>どのデバイスからでもアクセスできます。
+    </div>
+    <button class="btn-gsign-large" onclick="signIn()">
+      <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Googleでログイン
+    </button>
+    <div id="loginConnecting" class="login-connecting">🔄 再接続中…</div>
+    <div class="login-note">
+      ※ ログイン情報はGoogleドライブのアプリデータにのみ保存されます。<br>
+      ※ 個人情報は収集しません。
+    </div>
   </div>
 
-  <div class="sync-hint">
-    <span class="sync-hint-icon">☁️</span>
-    <span class="sync-hint-text">各アプリで<strong>Googleでログイン</strong>すると、栞・正答率・学習進捗が自動でクラウド保存されます。</span>
-  </div>
+  <!-- ===== MAIN SCREEN ===== -->
+  <div id="mainScreen">
 
-  <!-- 労働科目 -->
-  <div class="section-label">労働科目</div>
-  <div class="cards">
-    <a class="card" href="労基法安衛法_一問一答_sync.html">
-      <div class="card-icon icon-roki">⚖️</div>
-      <div class="card-body">
-        <div class="card-title">労働基準法・安全衛生法</div>
-        <div class="card-sub">択一式100問 ＋ 選択式10問　計110問</div>
+    <!-- Sync bar -->
+    <div class="sync-bar">
+      <div class="sync-status">
+        <div id="syncDot" class="sync-dot"></div>
+        <span id="syncStatusText">同期中</span>
+        <span id="syncUser" class="sync-user"></span>
       </div>
-      <span class="card-arrow">›</span>
-    </a>
-    <a class="card" href="労災保険法_一問一答_sync.html">
-      <div class="card-icon icon-roho">🏥</div>
-      <div class="card-body">
-        <div class="card-title">労災保険法・徴収法</div>
-        <div class="card-sub">択一式100問 ＋ 選択式10問　計110問</div>
-      </div>
-      <span class="card-arrow">›</span>
-    </a>
-    <a class="card" href="雇用保険法_一問一答_sync.html">
-      <div class="card-icon icon-koyo">💼</div>
-      <div class="card-body">
-        <div class="card-title">雇用保険法</div>
-        <div class="card-sub">択一式100問 ＋ 選択式10問　計110問</div>
-      </div>
-      <span class="card-arrow">›</span>
-    </a>
-    <a class="card disabled" href="#">
-      <div class="card-icon icon-choushuu">📋</div>
-      <div class="card-body">
-        <div class="card-title">労働保険徴収法 <span class="coming-badge">準備中</span></div>
-        <div class="card-sub">追加予定</div>
-      </div>
-      <span class="card-arrow">›</span>
-    </a>
-  </div>
+      <button class="btn-signout" onclick="signOut()">ログアウト</button>
+    </div>
 
-  <!-- 社会保険科目 -->
-  <div class="section-label">社会保険科目</div>
-  <div class="cards">
-    <a class="card" href="健康保険法_一問一答_sync.html">
-      <div class="card-icon icon-kenpo">🏨</div>
-      <div class="card-body">
-        <div class="card-title">健康保険法</div>
-        <div class="card-sub">択一式60問</div>
-      </div>
-      <span class="card-arrow">›</span>
-    </a>
-    <a class="card disabled" href="#">
-      <div class="card-icon icon-nenkin">📊</div>
-      <div class="card-body">
-        <div class="card-title">厚生年金保険法 <span class="coming-badge">準備中</span></div>
-        <div class="card-sub">追加予定</div>
-      </div>
-      <span class="card-arrow">›</span>
-    </a>
-    <a class="card disabled" href="#">
-      <div class="card-icon icon-nenkin">🗓️</div>
-      <div class="card-body">
-        <div class="card-title">国民年金法 <span class="coming-badge">準備中</span></div>
-        <div class="card-sub">追加予定</div>
-      </div>
-      <span class="card-arrow">›</span>
-    </a>
-    <a class="card disabled" href="#">
-      <div class="card-icon icon-general">📚</div>
-      <div class="card-body">
-        <div class="card-title">社会保険一般常識 <span class="coming-badge">準備中</span></div>
-        <div class="card-sub">追加予定</div>
-      </div>
-      <span class="card-arrow">›</span>
-    </a>
-  </div>
+    <div class="header">
+      <div class="badge">社会保険労務士 試験対策</div>
+      <h1>一問一答アプリ</h1>
+      <p>科目を選んで学習を始めてください。</p>
+    </div>
 
-  <div class="footer">
-    TAC 社労士講座 準拠教材 ·
-    <a href="https://github.com/udongein178/sharoushi-quiz" target="_blank">GitHub</a>
-  </div>
+    <!-- 労働科目 -->
+    <div class="section-label">労働科目</div>
+    <div class="cards">
+      <a class="card" href="労基法安衛法_一問一答_sync.html">
+        <div class="card-icon icon-roki">⚖️</div>
+        <div class="card-body">
+          <div class="card-title">労働基準法・安全衛生法</div>
+          <div class="card-sub">選択式20問 ＋ 択一式60問　計80問</div>
+        </div>
+        <span class="card-arrow">›</span>
+      </a>
+      <a class="card disabled" href="#">
+        <div class="card-icon icon-roho">🏥</div>
+        <div class="card-body">
+          <div class="card-title">労災保険法 <span class="coming-badge">準備中</span></div>
+          <div class="card-sub">追加予定</div>
+        </div>
+        <span class="card-arrow">›</span>
+      </a>
+      <a class="card" href="雇用保険法_一問一答_sync.html">
+        <div class="card-icon icon-koyo">💼</div>
+        <div class="card-body">
+          <div class="card-title">雇用保険法</div>
+          <div class="card-sub">TAC 択一式100問 ＋ 選択式10問　計110問</div>
+        </div>
+        <span class="card-arrow">›</span>
+      </a>
+      <a class="card disabled" href="#">
+        <div class="card-icon icon-choushuu">📋</div>
+        <div class="card-body">
+          <div class="card-title">労働保険徴収法 <span class="coming-badge">準備中</span></div>
+          <div class="card-sub">追加予定</div>
+        </div>
+        <span class="card-arrow">›</span>
+      </a>
+    </div>
 
-</div>
+    <!-- 社会保険科目 -->
+    <div class="section-label">社会保険科目</div>
+    <div class="cards">
+      <a class="card" href="健康保険法_一問一答_sync.html">
+        <div class="card-icon icon-kenpo">🏨</div>
+        <div class="card-body">
+          <div class="card-title">健康保険法</div>
+          <div class="card-sub">択一式60問</div>
+        </div>
+        <span class="card-arrow">›</span>
+      </a>
+      <a class="card disabled" href="#">
+        <div class="card-icon icon-nenkin">📊</div>
+        <div class="card-body">
+          <div class="card-title">厚生年金保険法 <span class="coming-badge">準備中</span></div>
+          <div class="card-sub">追加予定</div>
+        </div>
+        <span class="card-arrow">›</span>
+      </a>
+      <a class="card disabled" href="#">
+        <div class="card-icon icon-nenkin">🗓️</div>
+        <div class="card-body">
+          <div class="card-title">国民年金法 <span class="coming-badge">準備中</span></div>
+          <div class="card-sub">追加予定</div>
+        </div>
+        <span class="card-arrow">›</span>
+      </a>
+      <a class="card disabled" href="#">
+        <div class="card-icon icon-general">📚</div>
+        <div class="card-body">
+          <div class="card-title">社会保険一般常識 <span class="coming-badge">準備中</span></div>
+          <div class="card-sub">追加予定</div>
+        </div>
+        <span class="card-arrow">›</span>
+      </a>
+    </div>
+
+    <div class="footer">
+      TAC 社労士講座 準拠教材 ·
+      <a href="https://github.com/udongein178/sharoushi-quiz" target="_blank">GitHub</a>
+    </div>
+
+  </div><!-- /mainScreen -->
+
+</div><!-- /wrap -->
+
+<div id="toast" class="toast"></div>
+
+<script>
+const CLIENT_ID = '194094449743-hoj6t28jfidlfhueiiv6iromc2lvssgf.apps.googleusercontent.com';
+const SCOPES    = 'https://www.googleapis.com/auth/drive.appdata';
+const LS_AUTH   = 'sharoushi_auth_hint';
+const LS_USER   = 'sharoushi_auth_user';
+
+let tokenClient = null, gapiInited = false, gisInited = false;
+let tokenRefreshTimer = null;
+
+function getSavedAuth()  { try { return localStorage.getItem(LS_AUTH) === '1'; } catch { return false; } }
+function getSavedUser()  { try { return localStorage.getItem(LS_USER) || ''; } catch { return ''; } }
+function saveAuth(email) { try { localStorage.setItem(LS_AUTH, '1'); if (email) localStorage.setItem(LS_USER, email); } catch {} }
+function clearAuth()     { try { localStorage.removeItem(LS_AUTH); localStorage.removeItem(LS_USER); } catch {} }
+
+window.addEventListener('load', () => {
+  // ログイン済みなら再接続中表示
+  if (getSavedAuth()) {
+    document.getElementById('loginConnecting').style.display = 'block';
+    const saved = getSavedUser();
+    if (saved) {
+      document.getElementById('syncUser').textContent = saved;
+    }
+  }
+
+  gapi.load('client', async () => { await gapi.client.init({}); gapiInited = true; maybeEnableSync(); });
+
+  const s = document.createElement('script');
+  s.src = 'https://accounts.google.com/gsi/client';
+  s.onload = () => {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID, scope: SCOPES,
+      callback: async (resp) => {
+        if (resp.error) {
+          // サイレント再接続失敗→ログイン画面を表示したまま
+          document.getElementById('loginConnecting').style.display = 'none';
+          if (getSavedAuth()) {
+            clearAuth();
+            showToast('再接続できませんでした。再度ログインしてください', 'warn');
+          }
+          return;
+        }
+        // ログイン成功
+        onSignedIn();
+        // 55分後に自動更新
+        if (tokenRefreshTimer) clearTimeout(tokenRefreshTimer);
+        tokenRefreshTimer = setTimeout(() => {
+          if (getSavedAuth()) tokenClient.requestAccessToken({ prompt: '' });
+        }, 55 * 60 * 1000);
+      }
+    });
+    gisInited = true;
+    maybeEnableSync();
+  };
+  document.head.appendChild(s);
+});
+
+function maybeEnableSync() {
+  if (gapiInited && gisInited && getSavedAuth()) {
+    tokenClient.requestAccessToken({ prompt: '' });
+  }
+}
+
+function signIn() {
+  if (!gapiInited || !gisInited) { showToast('初期化中です、少々お待ちください', 'warn'); return; }
+  tokenClient.requestAccessToken({ prompt: 'consent' });
+}
+
+function signOut() {
+  clearAuth();
+  if (tokenRefreshTimer) { clearTimeout(tokenRefreshTimer); tokenRefreshTimer = null; }
+  // 科目ページでもログアウト扱いにするためLS_AUTHを削除済み
+  showLoginScreen();
+  showToast('ログアウトしました');
+}
+
+function onSignedIn() {
+  // メールアドレス取得
+  fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+    headers: { Authorization: 'Bearer ' + gapi.client.getToken().access_token }
+  }).then(r => r.json()).then(info => {
+    const email = info.email || '';
+    saveAuth(email);
+    showMainScreen(email);
+  }).catch(() => {
+    saveAuth('');
+    showMainScreen('');
+  });
+}
+
+function showLoginScreen() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('mainScreen').style.display  = 'none';
+  document.getElementById('loginConnecting').style.display = 'none';
+}
+
+function showMainScreen(email) {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('mainScreen').style.display  = 'block';
+  document.getElementById('syncUser').textContent = email || '';
+  document.getElementById('syncDot').className = 'sync-dot connected';
+  document.getElementById('syncStatusText').textContent = '全科目で同期中';
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' ' + type : '');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+</script>
 </body>
 </html>
