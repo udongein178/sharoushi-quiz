@@ -148,11 +148,11 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
         </div>
         <span class="card-arrow">›</span>
       </a>
-      <a class="card disabled" href="#">
+      <a class="card" href="労災保険法_一問一答_sync.html">
         <div class="card-icon icon-roho">🏥</div>
         <div class="card-body">
-          <div class="card-title">労災保険法 <span class="coming-badge">準備中</span></div>
-          <div class="card-sub">追加予定</div>
+          <div class="card-title">労災保険法</div>
+          <div class="card-sub">TAC 択一式100問 ＋ 選択式10問　計110問</div>
         </div>
         <span class="card-arrow">›</span>
       </a>
@@ -229,6 +229,7 @@ const LS_AUTH   = 'sharoushi_auth_hint';
 const LS_USER   = 'sharoushi_auth_user';
 
 let tokenClient = null, gapiInited = false, gisInited = false;
+let accessToken = null;
 let tokenRefreshTimer = null;
 
 function getSavedAuth()  { try { return localStorage.getItem(LS_AUTH) === '1'; } catch { return false; } }
@@ -264,6 +265,7 @@ window.addEventListener('load', () => {
           return;
         }
         // ログイン成功
+        accessToken = resp.access_token;
         onSignedIn();
         // 55分後に自動更新
         if (tokenRefreshTimer) clearTimeout(tokenRefreshTimer);
@@ -300,7 +302,7 @@ function signOut() {
 function onSignedIn() {
   // メールアドレス取得
   fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-    headers: { Authorization: 'Bearer ' + gapi.client.getToken().access_token }
+    headers: { Authorization: 'Bearer ' + accessToken }
   }).then(r => r.json()).then(info => {
     const email = info.email || '';
     saveAuth(email);

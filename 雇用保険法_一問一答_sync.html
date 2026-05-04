@@ -529,10 +529,12 @@ window.addEventListener('load', () => {
       client_id: CLIENT_ID, scope: SCOPES,
       callback: async (resp) => {
         if (resp.error) {
-          // サイレント認証失敗時はログインボタンを表示（ログアウト扱いにしない）
+          // サイレント認証失敗時→自動的にログイン処理を起動（クリック不要）
           if (getSavedAuth()) {
-            updateSyncUI(false);
-            showToast('再接続できませんでした。再度ログインしてください', 'warn');
+            showToast('Googleアカウントに再接続しています…', 'warn');
+            setTimeout(() => {
+              if (tokenClient) tokenClient.requestAccessToken({ prompt: 'select_account' });
+            }, 500);
           }
           return;
         }
