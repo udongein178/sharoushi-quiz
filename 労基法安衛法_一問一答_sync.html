@@ -649,6 +649,13 @@ function scheduleAutoSave() {
   if (autoSaveTimer) clearTimeout(autoSaveTimer);
   autoSaveTimer = setTimeout(() => saveToDrive(), 3000);
 }
+// ページが非表示になる瞬間（タブ切替・閉じる直前）に即時保存
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && accessToken) {
+    if (autoSaveTimer) { clearTimeout(autoSaveTimer); autoSaveTimer = null; }
+    saveToDrive();
+  }
+});
 
 // ============================================================
 //  SAVE / LOAD PAYLOAD
@@ -728,7 +735,8 @@ function toggleBookmark() {
   const idx = getOrigIdx(questions[current]);
   if (bookmarks.has(idx)) bookmarks.delete(idx);
   else bookmarks.add(idx);
-  localSave(); updateQuestion(); updateBmBadge(); scheduleAutoSave();
+  localSave(); updateQuestion(); updateBmBadge();
+  if (accessToken) saveToDrive(); else scheduleAutoSave();
 }
 function updateBmBadge() {
   const badge = document.getElementById('bmBadge');
