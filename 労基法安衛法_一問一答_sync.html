@@ -1020,6 +1020,7 @@ function showBookmarks() {
   document.getElementById('screenBookmarks').classList.add('show');
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tabBookmarks').classList.add('active');
+  document.querySelector('.bookmark-list').classList.add('show');
   renderBookmarks();
 }
 
