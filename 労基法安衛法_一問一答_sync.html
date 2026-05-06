@@ -588,12 +588,33 @@ async function loadFromDrive() {
   if (!accessToken) return;
   setSyncing(true);
   try {
-    // gapi.client.requestを使わずfetchで統一（互換性向上）
+    // トークン有効性チェック
+    const tokenInfo = await fetch(
+      'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=' + accessToken
+    );
+    if (!tokenInfo.ok) {
+      accessToken = null;
+      clearSavedAuth();
+      updateSyncUI(false);
+      showToast('セッション切れ：再度ログインしてください', 'warn');
+      setSyncing(false);
+      return;
+    }
+
+    // Drive ファイル一覧取得
+    const params = new URLSearchParams({
+      spaces: 'appDataFolder',
+      q: `name='${DRIVE_FILE_NAME}'`,
+      fields: 'files(id,name)'
+    });
     const listRes = await fetch(
-      `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D'${encodeURIComponent(DRIVE_FILE_NAME)}'&fields=files(id,name)`,
+      `https://www.googleapis.com/drive/v3/files?${params}`,
       { headers: { 'Authorization': 'Bearer ' + accessToken } }
     );
-    if (!listRes.ok) throw new Error('list:' + listRes.status);
+    if (!listRes.ok) {
+      const errBody = await listRes.text();
+      throw new Error(`list:${listRes.status} ${errBody.substring(0, 100)}`);
+    }
     const listData = await listRes.json();
     const files = listData.files || [];
     if (files.length > 0) {
@@ -602,7 +623,10 @@ async function loadFromDrive() {
         `https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`,
         { headers: { 'Authorization': 'Bearer ' + accessToken } }
       );
-      if (!fileRes.ok) throw new Error('read:' + fileRes.status);
+      if (!fileRes.ok) {
+        const errBody = await fileRes.text();
+        throw new Error(`read:${fileRes.status} ${errBody.substring(0, 100)}`);
+      }
       const data = await fileRes.json();
       mergeCloudData(data);
       showToast('クラウドから読み込みました', 'success');
@@ -611,8 +635,12 @@ async function loadFromDrive() {
       await saveToDrive();
     }
   } catch (e) {
-    console.error(e);
-    showToast('読み込み失敗: ' + (e?.message || '通信エラー'), 'error');
+    console.error('Drive load error:', e);
+    let msg = '通信エラー';
+    if (e instanceof Error && e.message) msg = e.message;
+    else if (e && typeof e === 'object') msg = JSON.stringify(e).substring(0, 100);
+    else if (e) msg = String(e);
+    showToast('読み込み失敗: ' + msg, 'error');
   }
   setSyncing(false);
 }
