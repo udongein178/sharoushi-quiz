@@ -7,7 +7,7 @@
 <script src="https://apis.google.com/js/api.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-serif;background:#11161e;color:#e8e0d0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#11161e;color:#e8e0d0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
 .app{width:100%;max-width:640px}
 
 /* ===== SYNC BAR ===== */
@@ -49,14 +49,14 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
 /* ===== QUESTION CARD ===== */
 .card{background:#1a2434;border:1px solid #283848;border-radius:12px;padding:22px 20px;margin-bottom:14px;position:relative}
 .q-meta{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
-.q-tag{font-size:10px;letter-spacing:.1em;color:#c97a4a;background:rgba(201,122,74,.12);border:1px solid rgba(201,122,74,.25);border-radius:4px;padding:2px 8px;font-weight:600}
-.q-num{font-size:11px;color:#556070}
+.q-tag{font-size:14px;letter-spacing:.1em;color:#c97a4a;background:rgba(201,122,74,.12);border:1px solid rgba(201,122,74,.25);border-radius:4px;padding:2px 8px;font-weight:600}
+.q-num{font-size:15px;color:#556070}
 /* Accuracy badge on card */
 .q-acc{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;display:none}
 .q-acc.low{background:rgba(224,80,80,.12);border:1px solid rgba(224,80,80,.3);color:#e05050}
 .q-acc.mid{background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);color:#c9a84c}
 .q-acc.high{background:rgba(61,190,130,.12);border:1px solid rgba(61,190,130,.3);color:#3dbe82}
-.q-text{font-size:14px;line-height:1.8;color:#d8d0c0;word-break:break-word;white-space:pre-wrap;padding-right:40px}
+.q-text{font-size:18px;line-height:1.8;color:#d8d0c0;word-break:break-word;white-space:pre-wrap;padding-right:40px}
 .btn-bookmark{position:absolute;top:18px;right:14px;background:none;border:none;cursor:pointer;font-size:20px;line-height:1;padding:4px;color:#556070;transition:color .15s,transform .1s}
 .btn-bookmark:hover{color:#e8c97a;transform:scale(1.1)}
 .btn-bookmark.active{color:#e8c97a}
@@ -74,6 +74,10 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
 .btn-answer.wrong-chosen{background:#331616;border-color:#e05050;color:#e05050}
 .btn-answer.reveal-correct{background:#163328;border-color:#3dbe82;color:#3dbe82}
 .btn-answer:disabled{cursor:default}
+/* あなたの選択ラベル */
+.your-choice-label{font-size:9px;letter-spacing:.08em;opacity:.85;margin-top:2px;font-weight:700}
+/* 挑戦回数バッジ */
+.q-tries{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;background:rgba(138,155,176,.12);border:1px solid #283848;color:#8a9bb0;display:none}
 
 /* ===== SELECT CHOICES (選択式用) ===== */
 .choices-grid{display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
@@ -92,11 +96,11 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
 .result-panel{border-radius:10px;padding:14px 16px;margin-bottom:14px;display:none;animation:fadeUp .2s ease}
 .result-panel.correct{background:#0d2a1e;border:1px solid #2a6044}
 .result-panel.wrong{background:#2a0d0d;border:1px solid #6a2020}
-.result-header{font-size:14px;font-weight:700;margin-bottom:8px}
+.result-header{font-size:18px;font-weight:700;margin-bottom:8px}
 .result-panel.correct .result-header{color:#3dbe82}
 .result-panel.wrong .result-header{color:#e05050}
-.result-exp{font-size:13px;line-height:1.7;color:#a0b0c0}
-.result-source{font-size:11px;color:#556070;margin-top:8px}
+.result-exp{font-size:17px;line-height:1.7;color:#a0b0c0}
+.result-source{font-size:15px;color:#556070;margin-top:8px}
 
 /* ===== NAV BUTTONS ===== */
 .nav-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px}
@@ -264,6 +268,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
     <button class="btn-shuffle" onclick="shuffle()">🔀 シャッフル</button>
     <button id="btnResumeStart" class="btn-start" onclick="resumeSession()" style="display:none">▶ 続きから開始</button>
     <button id="btnWeakStart" class="btn-start" onclick="startWeak()" style="display:none">正答率50%以下の問題を出題</button>
+    <button id="btnLeastTried" class="btn-start" onclick="startLeastTried()" style="display:none">挑戦回数が少ない問題を出題</button>
     <button class="btn-start primary" onclick="start()">学習スタート</button>
     <button id="btnBookmarkStart" class="btn-start" onclick="startBookmarks()" style="display:none">栞の問題のみ</button>
   </div>
@@ -277,6 +282,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
       <span id="qTypeBadge" class="q-type-badge"></span>
       <span id="qNum" class="q-num"></span>
       <span id="qAcc" class="q-acc"></span>
+      <span id="qTries" class="q-tries"></span>
     </div>
     <div id="qText" class="q-text"></div>
     <button id="btnBookmark" class="btn-bookmark" onclick="toggleBookmark()">☆</button>
@@ -354,17 +360,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
 </div>
 </div>
 
-<!-- ===== RESUME MODAL ===== -->
-<div id="resumeModal" class="modal-overlay">
-<div class="modal">
-  <div class="modal-title">前回の続き</div>
-  <div class="modal-desc">前回の学習が途中で終了しています。続きから始めますか？</div>
-  <div class="modal-btns">
-    <button class="btn-modal" onclick="clearResume()">最初から</button>
-    <button class="btn-modal primary" onclick="resumeSession()">続きから</button>
-  </div>
-</div>
-</div>
+<!-- モーダル廃止：続きから開始はスタート画面のボタンに統合 -->
 
 <!-- ===== TOAST ===== -->
 <div id="toast" class="toast"></div>
@@ -603,18 +599,22 @@ async function loadFromDrive() {
   if (!accessToken) return;
   setSyncing(true);
   try {
-    const res = await gapi.client.request({
-      path: 'https://www.googleapis.com/drive/v3/files',
-      params: { spaces: 'appDataFolder', q: `name='${DRIVE_FILE_NAME}'`, fields: 'files(id,name)' }
-    });
-    const files = res.result.files || [];
+    const tokenInfo = await fetch('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=' + accessToken);
+    if (!tokenInfo.ok) {
+      accessToken = null; clearSavedAuth(); updateSyncUI(false);
+      showToast('セッション切れ：再度ログインしてください', 'warn');
+      setSyncing(false); return;
+    }
+    const params = new URLSearchParams({ spaces: 'appDataFolder', q: `name='${DRIVE_FILE_NAME}'`, fields: 'files(id,name)' });
+    const listRes = await fetch(`https://www.googleapis.com/drive/v3/files?${params}`, { headers: { 'Authorization': 'Bearer ' + accessToken } });
+    if (!listRes.ok) { const eb = await listRes.text(); throw new Error(`list:${listRes.status} ${eb.substring(0,100)}`); }
+    const listData = await listRes.json();
+    const files = listData.files || [];
     if (files.length > 0) {
       driveFileId = files[0].id;
-      const fileRes = await gapi.client.request({
-        path: `https://www.googleapis.com/drive/v3/files/${driveFileId}`,
-        params: { alt: 'media' }
-      });
-      const data = typeof fileRes.result === 'string' ? JSON.parse(fileRes.result) : fileRes.result;
+      const fileRes = await fetch(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`, { headers: { 'Authorization': 'Bearer ' + accessToken } });
+      if (!fileRes.ok) throw new Error(`read:${fileRes.status}`);
+      const data = await fileRes.json();
       mergeCloudData(data);
       showToast('クラウドから読み込みました', 'success');
     } else {
@@ -622,8 +622,9 @@ async function loadFromDrive() {
       await saveToDrive();
     }
   } catch (e) {
-    console.error(e);
-    showToast('読み込み失敗: ' + (e?.message || '通信エラー'), 'error');
+    console.error('Drive load error:', e);
+    const msg = (e instanceof Error && e.message) ? e.message : (typeof e === 'object' ? JSON.stringify(e).substring(0,100) : String(e)) || '通信エラー';
+    showToast('読み込み失敗: ' + msg, 'error');
   }
   setSyncing(false);
 }
@@ -670,6 +671,12 @@ function scheduleAutoSave() {
   if (autoSaveTimer) clearTimeout(autoSaveTimer);
   autoSaveTimer = setTimeout(() => saveToDrive(), 3000);
 }
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && accessToken) {
+    if (autoSaveTimer) { clearTimeout(autoSaveTimer); autoSaveTimer = null; }
+    saveToDrive();
+  }
+});
 
 // ============================================================
 //  SAVE / LOAD PAYLOAD
@@ -711,6 +718,7 @@ function mergeCloudData(data) {
   localSave();
   updateBmBadge();
   updateWeakBtn();
+  updateLeastTriedBtn();
   updateResumeBtn();
   if (pendingResume) offerResume();
 }
@@ -758,7 +766,8 @@ function toggleBookmark() {
   const idx = questions.length > 0 ? getOrigIdx(questions[current]) : 0;
   if (bookmarks.has(idx)) bookmarks.delete(idx);
   else bookmarks.add(idx);
-  localSave(); updateQuestion(); updateBmBadge(); scheduleAutoSave();
+  localSave(); updateQuestion(); updateBmBadge();
+  if (accessToken) saveToDrive(); else scheduleAutoSave();
 }
 function updateBmBadge() {
   const badge = document.getElementById('bmBadge');
@@ -779,7 +788,7 @@ function recordStat(origIdx, isCorrect) {
   if (!questionStats[origIdx]) questionStats[origIdx] = {correct:0, total:0};
   questionStats[origIdx].total++;
   if (isCorrect) questionStats[origIdx].correct++;
-  localSave(); scheduleAutoSave(); updateWeakBtn();
+  localSave(); scheduleAutoSave(); updateWeakBtn(); updateLeastTriedBtn();
 }
 function getAccuracyInfo(origIdx) {
   const s = questionStats[origIdx];
@@ -807,6 +816,33 @@ function updateWeakBtn() {
 function startWeak() {
   const s = { useWeak: true };
   startSession(s);
+}
+function updateLeastTriedBtn() {
+  const pool = ALL_QUESTIONS.filter((q,i) => {
+    const s = questionStats[i];
+    return !s || s.total === 0 || s.total < 3; // 3回未満
+  });
+  const btn = document.getElementById('btnLeastTried');
+  if (!btn) return;
+  if (pool.length > 0) {
+    btn.style.display = 'block';
+    btn.textContent = `挑戦回数が少ない問題を出題（${pool.length}問）`;
+  } else {
+    btn.style.display = 'none';
+  }
+}
+function startLeastTried() {
+  // 挑戦回数でソート（少ない順）→上位20問を出題
+  const indexed = ALL_QUESTIONS.map((q,i) => ({q, i, tries: (questionStats[i]||{total:0}).total}));
+  indexed.sort((a,b) => a.tries - b.tries);
+  const maxTries = indexed[Math.min(19, indexed.length-1)].tries;
+  const pool = indexed.filter(x => x.tries <= maxTries).map(x => ({...x.q, _origIdx: x.i}));
+  if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
+  const take = pool.slice(0, 20);
+  questions = take; answers = Array(take.length).fill(null); current = 0;
+  currentSession = { questionIndices: take.map(q => q._origIdx), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`挑戦回数の少ない${take.length}問を出題`, "success");
 }
 
 // ============================================================
@@ -982,6 +1018,7 @@ function showBookmarks() {
   document.getElementById('screenBookmarks').classList.add('show');
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tabBookmarks').classList.add('active');
+  document.querySelector('.bookmark-list').classList.add('show');
   renderBookmarks();
 }
 
@@ -1016,6 +1053,7 @@ function updateQuestion() {
   document.getElementById('progressFill').style.width = `${((current + 1) / questions.length) * 100}%`;
   
   // 問題カード
+  document.getElementById('qTag').textContent = q.cat;
   document.getElementById('qNum').textContent = q.no + (q.opt ? '-' + q.opt : '');
   if (q.type === 'select') {
     document.getElementById('qText').innerHTML = q.context;
@@ -1050,6 +1088,12 @@ function updateQuestion() {
   } else {
     accEl.style.display = 'none';
   }
+  // ★ 挑戦回数バッジ
+  const triesEl = document.getElementById('qTries');
+  const s = questionStats[currentQIndex];
+  const tries = s ? s.total : 0;
+  triesEl.textContent = `挑戦${tries}回`;
+  triesEl.style.display = 'inline-block';
 
   // 栞ボタン
   const bBtn = document.getElementById('btnBookmark');
@@ -1081,6 +1125,9 @@ function updateQuestion() {
 function renderOxButtons(q, userChoice, isAnswered) {
   const bm = document.getElementById('btnMaru');
   const bb = document.getElementById('btnBatsu');
+  // ラベルをリセット
+  bm.innerHTML = '<div>○</div><div class="btn-label">正しい</div>';
+  bb.innerHTML = '<div>×</div><div class="btn-label">誤り</div>';
   bm.className = 'btn-answer btn-maru'; bb.className = 'btn-answer btn-batsu';
   bm.disabled = false; bb.disabled = false;
   if (isAnswered) {
@@ -1088,9 +1135,13 @@ function renderOxButtons(q, userChoice, isAnswered) {
     if (userChoice === true) {
       bm.className = q.a === true  ? 'btn-answer correct-chosen' : 'btn-answer wrong-chosen';
       if (q.a !== true)  bb.className = 'btn-answer reveal-correct';
+      // あなたの選択ラベル
+      bm.innerHTML += '<div class="your-choice-label">▶ あなたの選択</div>';
     } else {
       bb.className = q.a === false ? 'btn-answer correct-chosen' : 'btn-answer wrong-chosen';
       if (q.a !== false) bm.className = 'btn-answer reveal-correct';
+      // あなたの選択ラベル
+      bb.innerHTML += '<div class="your-choice-label">▶ あなたの選択</div>';
     }
   }
 }
@@ -1106,6 +1157,7 @@ function renderChoices(q, userChoice, isAnswered) {
       btn.disabled = true;
       if (c === q.answer)   btn.className = c === userChoice ? 'btn-choice correct-chosen' : 'btn-choice reveal-correct';
       if (c === userChoice && c !== q.answer) btn.className = 'btn-choice wrong-chosen';
+      if (c === userChoice) btn.innerHTML += '<div class="your-choice-label">▶ あなたの選択</div>';
     } else {
       btn.onclick = () => answerSelect(c);
     }
@@ -1331,6 +1383,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFilters();
   updateBmBadge();
   updateWeakBtn();
+  updateLeastTriedBtn();
   updateResumeBtn();
   if (pendingResume) offerResume();
 });
