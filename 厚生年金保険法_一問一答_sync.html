@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>厚生年金保険法 一問一答 — 社労士試験対策</title>
+<script src="https://apis.google.com/js/api.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#11161e;color:#e8e0d0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+.app{width:100%;max-width:640px}
+
+/* ===== SYNC BAR ===== */
+.sync-bar{display:flex;align-items:center;justify-content:space-between;background:#1a2434;border:1px solid #283848;border-radius:10px;padding:10px 14px;margin-bottom:16px;gap:10px;flex-wrap:wrap}
+.sync-status{display:flex;align-items:center;gap:8px;font-size:12px;color:#8a9bb0}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#556070;flex-shrink:0;transition:background .3s}
+.sync-dot.connected{background:#3dbe82}
+.sync-dot.syncing{background:#c9a84c;animation:pulse 1s infinite}
+.sync-dot.error{background:#e05050}
+.sync-user{font-size:11px;color:#556070;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sync-btns{display:flex;gap:6px;align-items:center}
+.btn-gsign{display:flex;align-items:center;gap:6px;background:#fff;color:#3c4043;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap}
+.btn-gsign:hover{background:#f1f3f4}
+.btn-gsign svg{flex-shrink:0}
+.btn-sync{background:transparent;border:1px solid #283848;color:#8a9bb0;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-sync:hover{border-color:#4a9eca;color:#4a9eca}
+.btn-sync:disabled{opacity:.4;cursor:default}
+.btn-signout{background:transparent;border:1px solid #283848;color:#556070;border-radius:6px;padding:5px 8px;font-size:11px;cursor:pointer;transition:all .15s}
+.btn-signout:hover{border-color:#e05050;color:#e05050}
+
+/* ===== HEADER ===== */
+.header{text-align:center;padding:20px 0 16px}
+.header h1{font-size:12px;letter-spacing:.15em;color:#8a9bb0;text-transform:uppercase;margin-bottom:4px}
+.header .title{font-size:21px;font-weight:700;color:#e8e0d0}
+.header .subtitle{font-size:12px;color:#556070;margin-top:5px}
+.nav-tabs{display:flex;gap:4px;background:#131920;border-radius:10px;padding:4px;margin-bottom:18px}
+.nav-tab{flex:1;padding:8px;border:none;border-radius:8px;background:transparent;color:#556070;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.nav-tab.active{background:#1a2434;color:#e8e0d0}
+.bm-badge{display:inline-block;background:rgba(232,201,122,.2);color:#e8c97a;border-radius:4px;font-size:10px;padding:1px 5px;margin-left:4px;font-weight:700}
+
+/* ===== PROGRESS ===== */
+.progress-wrap{margin-bottom:18px}
+.progress-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.progress-num{font-size:12px;color:#8a9bb0}
+.progress-score{font-size:12px;color:#8a9bb0}
+.progress-bar-bg{width:100%;height:3px;background:#1a2434;border-radius:2px}
+.progress-bar-fill{height:3px;background:linear-gradient(90deg,#c97a4a,#e8a87a);border-radius:2px;transition:width .4s ease}
+
+/* ===== QUESTION CARD ===== */
+.card{background:#1a2434;border:1px solid #283848;border-radius:12px;padding:22px 20px;margin-bottom:14px;position:relative}
+.q-meta{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.q-tag{font-size:14px;letter-spacing:.1em;color:#c97a4a;background:rgba(201,122,74,.12);border:1px solid rgba(201,122,74,.25);border-radius:4px;padding:2px 8px;font-weight:600}
+.q-num{font-size:15px;color:#556070}
+/* Accuracy badge on card */
+.q-acc{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;display:none}
+.q-acc.low{background:rgba(224,80,80,.12);border:1px solid rgba(224,80,80,.3);color:#e05050}
+.q-acc.mid{background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);color:#c9a84c}
+.q-acc.high{background:rgba(61,190,130,.12);border:1px solid rgba(61,190,130,.3);color:#3dbe82}
+.q-text{font-size:18px;line-height:1.8;color:#d8d0c0;word-break:break-word;white-space:pre-wrap;padding-right:40px}
+.btn-bookmark{position:absolute;top:18px;right:14px;background:none;border:none;cursor:pointer;font-size:20px;line-height:1;padding:4px;color:#556070;transition:color .15s,transform .1s}
+.btn-bookmark:hover{color:#e8c97a;transform:scale(1.1)}
+.btn-bookmark.active{color:#e8c97a}
+
+/* ===== OX BUTTONS ===== */
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.btn-answer{border:none;border-radius:10px;padding:18px 12px;font-size:26px;font-weight:700;cursor:pointer;transition:transform .12s,background .15s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.btn-answer:active{transform:scale(.96)}
+.btn-maru{background:#1c3040;border:1.5px solid #2a4a60;color:#5bb8e0}
+.btn-maru:hover{background:#1e3a50;border-color:#5bb8e0}
+.btn-batsu{background:#301c1c;border:1.5px solid #50282a;color:#e07060}
+.btn-batsu:hover{background:#3a2020;border-color:#e07060}
+.btn-label{font-size:10px;letter-spacing:.1em;opacity:.7}
+.btn-answer.correct-chosen{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-answer.wrong-chosen{background:#331616;border-color:#e05050;color:#e05050}
+.btn-answer.reveal-correct{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-answer:disabled{cursor:default}
+/* あなたの選択ラベル */
+.your-choice-label{font-size:9px;letter-spacing:.08em;opacity:.85;margin-top:2px;font-weight:700}
+/* 挑戦回数バッジ */
+.q-tries{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;background:rgba(138,155,176,.12);border:1px solid #283848;color:#8a9bb0;display:none}
+
+/* ===== SELECT CHOICES (選択式用) ===== */
+.choices-grid{display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.btn-choice{background:#182030;border:1.5px solid #283848;border-radius:8px;padding:12px 10px;font-size:13px;color:#c8c0b0;cursor:pointer;transition:all .15s;text-align:center;line-height:1.5}
+.btn-choice:hover{border-color:#c97a4a;background:#1e2a3a}
+.btn-choice.correct-chosen{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-choice.wrong-chosen{background:#331616;border-color:#e05050;color:#e05050}
+.btn-choice.reveal-correct{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-choice:disabled{cursor:default}
+.q-type-badge{font-size:10px;border-radius:4px;padding:2px 7px;font-weight:600;letter-spacing:.05em}
+.q-type-badge.ox{background:rgba(91,184,224,.12);border:1px solid rgba(91,184,224,.25);color:#5bb8e0}
+.q-type-badge.sel{background:rgba(130,201,122,.12);border:1px solid rgba(130,201,122,.25);color:#82c97a}
+.q-blank{background:rgba(201,122,74,.15);border-bottom:2px solid #c97a4a;color:#e8a87a;padding:0 4px;font-weight:700;border-radius:2px}
+
+/* ===== RESULT PANEL ===== */
+.result-panel{border-radius:10px;padding:14px 16px;margin-bottom:14px;display:none;animation:fadeUp .2s ease}
+.result-panel.correct{background:#0d2a1e;border:1px solid #2a6044}
+.result-panel.wrong{background:#2a0d0d;border:1px solid #6a2020}
+.result-header{font-size:18px;font-weight:700;margin-bottom:8px}
+.result-panel.correct .result-header{color:#3dbe82}
+.result-panel.wrong .result-header{color:#e05050}
+.result-exp{font-size:17px;line-height:1.7;color:#a0b0c0}
+.result-source{font-size:15px;color:#556070;margin-top:8px}
+
+/* ===== NAV BUTTONS ===== */
+.nav-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px}
+.btn-nav{border-radius:9px;padding:11px 10px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid #283848;background:transparent;color:#8a9bb0;white-space:nowrap}
+.btn-nav:hover{background:#1a2434;color:#c8c0b0}
+.btn-nav:disabled{opacity:.3;cursor:default}
+/* ⏸ 中断ボタン */
+.btn-suspend{border-color:#4a3a10 !important;color:#e8c97a !important}
+.btn-suspend:hover{background:rgba(232,201,122,.1) !important;border-color:#e8c97a !important}
+.btn-next{border-radius:9px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;border:none;background:#c97a4a;color:#1a0800;letter-spacing:.05em;display:none;width:100%;margin-bottom:6px}
+.btn-next:hover{background:#e8a87a}
+
+/* ===== START SCREEN ===== */
+.start-screen{text-align:center;padding:24px 16px}
+.start-count{font-size:44px;font-weight:700;color:#c97a4a;display:block;margin-bottom:4px}
+.start-unit{font-size:13px;color:#8a9bb0;margin-bottom:22px;display:block}
+.start-desc{font-size:13px;color:#8a9bb0;line-height:1.7;margin-bottom:22px}
+.filters{margin-bottom:22px}
+.filter-label{font-size:12px;color:#8a9bb0;margin-bottom:8px}
+.filter-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.btn-filter{border:1.5px solid #283848;background:transparent;color:#8a9bb0;border-radius:18px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-filter.active{border-color:#c97a4a;background:rgba(201,122,74,.12);color:#c97a4a}
+.btn-filter:hover{border-color:#4a9eca;color:#4a9eca}
+.random-mode{margin-bottom:18px}
+.random-input-wrap{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:10px}
+.random-input{background:#1a2434;border:1.5px solid #283848;border-radius:6px;color:#e8e0d0;padding:8px 10px;font-size:14px;width:60px;text-align:center}
+.random-input:focus{outline:none;border-color:#c97a4a}
+.random-label{font-size:13px;color:#8a9bb0}
+.start-btns{display:flex;flex-direction:column;gap:10px;align-items:center}
+.btn-start{border:1.5px solid #c97a4a;background:transparent;color:#c97a4a;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-start:hover{background:rgba(201,122,74,.12)}
+.btn-start.primary{background:#c97a4a;color:#1a0800}
+.btn-start.primary:hover{background:#e8a87a}
+.btn-shuffle{border:1.5px solid #8a9bb0;background:transparent;color:#8a9bb0;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-shuffle:hover{background:rgba(138,155,176,.1)}
+
+/* ===== RESULT SCREEN ===== */
+.result-screen{text-align:center;padding:36px 16px}
+.result-title{font-size:24px;font-weight:700;color:#e8e0d0;margin-bottom:16px}
+.result-score{font-size:36px;font-weight:700;color:#c97a4a;margin-bottom:8px}
+.score-msg{font-size:13px;color:#8a9bb0;margin-bottom:22px;line-height:1.7;white-space:pre-line}
+.breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.breakdown-item{background:#1a2434;border:1px solid #283848;border-radius:10px;padding:12px;text-align:center}
+.breakdown-num{font-size:26px;font-weight:700}
+.breakdown-num.ok{color:#3dbe82}
+.breakdown-num.ng{color:#e05050}
+.breakdown-num.sk{color:#8a9bb0}
+.breakdown-label{font-size:11px;color:#8a9bb0;margin-top:3px}
+.btns-wrap{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.btn-retry{background:transparent;border:1.5px solid #c97a4a;color:#c97a4a;border-radius:10px;padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
+.btn-retry:hover{background:rgba(201,122,74,.12)}
+
+/* ===== BOOKMARK LIST ===== */
+.bookmark-list{display:none}
+.bookmark-list.show{display:block}
+.section-title{font-size:12px;color:#556070;letter-spacing:.1em;margin-bottom:12px;text-align:center;text-transform:uppercase}
+.bm-item{background:#1a2434;border:1px solid #283848;border-radius:10px;padding:12px 14px;margin-bottom:9px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:border-color .15s}
+.bm-item:hover{border-color:#c97a4a}
+.bm-star{font-size:14px;color:#e8c97a;flex-shrink:0}
+.bm-tag{font-size:10px;color:#c97a4a;background:rgba(201,122,74,.12);border:1px solid rgba(201,122,74,.25);border-radius:4px;padding:2px 6px;white-space:nowrap;flex-shrink:0;font-weight:600}
+.bm-acc{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;flex-shrink:0;align-self:flex-start;margin-top:1px}
+.bm-acc.low{background:rgba(224,80,80,.12);border:1px solid rgba(224,80,80,.3);color:#e05050}
+.bm-acc.mid{background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);color:#c9a84c}
+.bm-acc.high{background:rgba(61,190,130,.12);border:1px solid rgba(61,190,130,.3);color:#3dbe82}
+.bm-text{font-size:13px;line-height:1.55;color:#a0b0c0;flex:1;min-width:0}
+.empty-bm{text-align:center;padding:36px 20px;color:#556070;font-size:14px;line-height:1.7}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a2434;border:1px solid #283848;border-radius:8px;padding:10px 18px;font-size:13px;color:#e8e0d0;opacity:0;transition:all .3s;pointer-events:none;z-index:100;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:#3dbe82;color:#3dbe82}
+.toast.error{border-color:#e05050;color:#e05050}
+.toast.warn{border-color:#c9a84c;color:#c9a84c}
+
+/* ===== RESUME MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:999}
+.modal{background:#1a2434;border:1px solid #283848;border-radius:12px;padding:24px;max-width:400px;width:90vw}
+.modal-title{font-size:16px;font-weight:700;color:#e8e0d0;margin-bottom:12px}
+.modal-desc{font-size:14px;color:#a0b0c0;line-height:1.6;margin-bottom:20px}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end}
+.btn-modal{border:1.5px solid #283848;background:transparent;color:#8a9bb0;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-modal.primary{border-color:#c97a4a;color:#c97a4a}
+.btn-modal:hover{background:rgba(138,155,176,.1)}
+.btn-modal.primary:hover{background:rgba(201,122,74,.12)}
+
+/* ===== ANIMATIONS ===== */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.screen{display:none}
+.screen.show{display:block;animation:fadeUp .3s ease}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ===== GOOGLE DRIVE SYNC BAR ===== -->
+<div class="sync-bar">
+  <div class="sync-status">
+    <div id="syncDot" class="sync-dot"></div>
+    <span id="syncStatusText">Googleアカウントで同期</span>
+    <div id="syncUser" class="sync-user"></div>
+  </div>
+  <div class="sync-btns">
+    <button id="btnSignIn" class="btn-gsign" onclick="signIn()">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Googleでログイン
+    </button>
+    <button id="btnManualSync" class="btn-sync" onclick="manualSync()">↑↓ 同期</button>
+    <button id="btnSignOut" class="btn-signout" onclick="signOut()">ログアウト</button>
+  </div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <h1>社労士試験対策</h1>
+  <div id="appTitle" class="title">雇用保険法 一問一答</div>
+  <div id="appSubtitle" class="subtitle">TAC 択一式100問 ＋ 選択式10問　計110問</div>
+</div>
+
+<!-- ===== NAV TABS ===== -->
+<div class="nav-tabs">
+  <button id="tabMain"  class="nav-tab active" onclick="showMain()">学習</button>
+  <button id="tabBookmarks" class="nav-tab" onclick="showBookmarks()">栞<span id="bmBadge" class="bm-badge" style="display:none">0</span></button>
+</div>
+
+<!-- ===== MAIN SCREEN ===== -->
+<div id="screenMain" class="screen show">
+
+<!-- ===== PROGRESS BAR ===== -->
+<div id="progressWrap" class="progress-wrap" style="display:none">
+  <div class="progress-info">
+    <div id="progressNum" class="progress-num">0 / 0</div>
+    <div id="progressScore" class="progress-score">正解: 0問</div>
+  </div>
+  <div class="progress-bar-bg">
+    <div id="progressFill" class="progress-bar-fill" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- ===== START SCREEN ===== -->
+<div id="startScreen" class="start-screen">
+  <span id="startCount" class="start-count">110</span>
+  <span class="start-unit">問</span>
+  <div class="start-desc">厚生年金保険法の知識を一問一答で確認しよう。<br>第1予想55問・第2予想55問（択一式100問・選択式10問）を収録。</div>
+  
+  <!-- フィルター -->
+  <div class="filters">
+    <div class="filter-label">出題範囲</div>
+    <div id="filterBtns" class="filter-btns">
+      <button class="btn-filter active" data-cat="all">すべて</button>
+    </div>
+  </div>
+
+  <!-- ランダム出題モード -->
+  <div class="random-mode">
+    <div class="random-input-wrap">
+      <input id="randomInput" class="random-input" type="number" value="10" min="1" max="110" oninput="updateRandomBtn()">
+      <span class="random-label">問をランダムで出題</span>
+    </div>
+    <button id="btnRandomStart" class="btn-start" onclick="startRandom()">10問ランダムで出題</button>
+  </div>
+
+  <!-- ボタン群 -->
+  <div class="start-btns">
+    <button class="btn-shuffle" onclick="shuffle()">🔀 シャッフル</button>
+    <button id="btnResumeStart" class="btn-start" onclick="resumeSession()" style="display:none">▶ 続きから開始</button>
+    <button id="btnWeakStart" class="btn-start" onclick="startWeak()" style="display:none">正答率50%以下の問題を出題</button>
+    <button id="btnLeastTried" class="btn-start" onclick="startLeastTried()" style="display:none">挑戦回数が少ない問題を出題</button>
+    <button class="btn-start primary" onclick="start()">学習スタート</button>
+    <button id="btnBookmarkStart" class="btn-start" onclick="startBookmarks()" style="display:none">栞の問題のみ</button>
+  </div>
+</div>
+
+<!-- ===== QUESTION SCREEN ===== -->
+<div id="questionScreen" class="screen">
+  <div class="card">
+    <div class="q-meta">
+      <span id="qTag" class="q-tag">択一式（雇用保険法）</span>
+      <span id="qTypeBadge" class="q-type-badge"></span>
+      <span id="qNum" class="q-num"></span>
+      <span id="qAcc" class="q-acc"></span>
+      <span id="qTries" class="q-tries"></span>
+    </div>
+    <div id="qText" class="q-text"></div>
+    <button id="btnBookmark" class="btn-bookmark" onclick="toggleBookmark()">☆</button>
+  </div>
+
+  <!-- ○× ボタン -->
+  <div id="oxRow" class="btn-row">
+    <button id="btnMaru" class="btn-answer btn-maru" onclick="answerOx(true)">
+      <div>○</div><div class="btn-label">正しい</div>
+    </button>
+    <button id="btnBatsu" class="btn-answer btn-batsu" onclick="answerOx(false)">
+      <div>×</div><div class="btn-label">誤り</div>
+    </button>
+  </div>
+
+  <!-- 選択肢 -->
+  <div id="choicesGrid" class="choices-grid"></div>
+
+  <!-- 結果パネル -->
+  <div id="resultPanel" class="result-panel">
+    <div id="resultHeader" class="result-header"></div>
+    <div id="resultExp" class="result-exp"></div>
+    <div id="resultSource" class="result-source"></div>
+  </div>
+
+  <button id="btnNext" class="btn-next" onclick="nextQuestion()">次の問題</button>
+
+  <div class="nav-btns">
+    <button id="btnBack" class="btn-nav" onclick="prevQuestion()">← 戻る</button>
+    <button class="btn-nav btn-suspend" onclick="suspend()">⏸ 中断</button>
+    <button id="btnSkip" class="btn-nav" onclick="skip()">スキップ</button>
+  </div>
+</div>
+
+<!-- ===== RESULT SCREEN ===== -->
+<div id="resultScreen" class="screen">
+  <div class="result-screen">
+    <div class="result-title">結果</div>
+    <div id="resultScoreText" class="result-score">0 / 0</div>
+    <div id="resultMessage" class="score-msg"></div>
+    
+    <div class="breakdown">
+      <div class="breakdown-item">
+        <div id="correctCount" class="breakdown-num ok">0</div>
+        <div class="breakdown-label">正解</div>
+      </div>
+      <div class="breakdown-item">
+        <div id="wrongCount" class="breakdown-num ng">0</div>
+        <div class="breakdown-label">不正解</div>
+      </div>
+      <div class="breakdown-item">
+        <div id="skippedCount" class="breakdown-num sk">0</div>
+        <div class="breakdown-label">未回答</div>
+      </div>
+    </div>
+
+    <div class="btns-wrap">
+      <button id="btnRetryWrong" class="btn-retry" onclick="retryWrong()">間違えた問題を再挑戦</button>
+      <button id="btnRetrySkipped" class="btn-retry" onclick="retrySkipped()">未回答問題を再挑戦</button>
+      <button class="btn-retry" onclick="restart()">最初から</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ===== BOOKMARK SCREEN ===== -->
+<div id="screenBookmarks" class="screen">
+<div class="bookmark-list">
+  <h3 class="section-title">栞をつけた問題</h3>
+  <div id="bookmarkItems"></div>
+  <div id="emptyBookmarks" class="empty-bm" style="display:none">
+    まだ栞をつけた問題がありません。<br>学習中に ★ ボタンを押すと、<br>後で見返したい問題を保存できます。
+  </div>
+</div>
+</div>
+
+<!-- モーダル廃止：続きから開始はスタート画面のボタンに統合 -->
+
+<!-- ===== TOAST ===== -->
+<div id="toast" class="toast"></div>
+
+<script>
+// ============================================================
+//  ★ CONFIG — 科目ごとにここだけ変更
+// ============================================================
+const APP_CONFIG = {
+  title:    '厚生年金保険法 一問一答',
+  subtitle: 'TAC 択一式100問 ＋ 選択式10問　計110問',
+  driveFileName: 'sharoushi_progress_kousei.json',
+  clientId: '194094449743-hoj6t28jfidlfhueiiv6iromc2lvssgf.apps.googleusercontent.com',
+};
+
+// ============================================================
+//  ★ QUESTION DATA — 問題データをここに追加
+//   ○× 型: {no, opt, q, a:bool, exp, src, cat}
+//   選択式 型: {type:'select', no, opt, context, choices:[], answer, exp, src, cat:'選択式'}
+// ============================================================
+const ALL_QUESTIONS = [
+{no:"問1",opt:"A",q:"厚生年金保険法は、老齢、障害又は死亡によって国民生活の安定がそこなわれることを国民の共同連帯によって防止し、もって健全な国民生活の維持及び向上に寄与することを目的とする。",a:false,exp:"厚生年金保険法は、労働者の老齢、障害又は死亡について保険給付を行い、労働者及びその遺族の生活の安定と福祉の向上に寄与することを目的とする。なお、設問の規定は、国民年金法1条の規定である。",src:"法1条",cat:"択一式（厚生年金保険法）"},
+{no:"問1",opt:"B",q:"厚生年金保険事業の財政は、長期的にその均衡が保たれたものでなければならず、国民の生活水準、賃金その他の諸事情に著しい変動が生じた場合には、速やかに所要の措置が講ぜられなければならない。",a:false,exp:"厚生年金保険事業の財政は、長期的にその均衡が保たれたものでなければならず、「著しくその均衡を失すると見込まれる場合」には、速やかに所要の措置が講ぜられなければならない。なお、厚生年金保険法による年金たる保険給付の額は、国民の生活水準、賃金その他の諸事情に著しい変動が生じた場合には、変動後の諸事情に応ずるため、速やかに改定の措置が講ぜられなければならない。",src:"法2条の3",cat:"択一式（厚生年金保険法）"},
+{no:"問1",opt:"C",q:"政府は、財政の現況及び見通しを作成するに当たり、厚生年金保険事業の財政が、財政均衡期間の終了時に保険給付の支給に支障が生じないようにするために必要な積立金を政府等が保有しつつ当該財政均衡期間にわたってその均衡を保つことができないと見込まれる場合には、保険給付の額を調整するものとし、政令で、調整期間の開始年度を定めるものとされているが、財政の現況及び見通しにおいて、調整を行う必要がなくなったと認められるときは、調整期間の終了年度の見通しについても作成し、併せて、これを公表しなければならない。",a:false,exp:"設問文の後半が誤りである。財政の現況及び見通しにおいて、調整を行う必要がなくなったと認められるときは、「政令で、調整期間の終了年度を定めるものとする」とされている。なお、政府は、調整期間において財政の現況及び見通しを作成するときは、調整期間の終了年度の見通しについても作成し、併せて、これを公表しなければならない。",src:"法34条",cat:"択一式（厚生年金保険法）"},
+{no:"問1",opt:"D",q:"厚生年金保険は、政府が、管掌することとされているが、保険給付を受ける権利は、その権利を有する者の請求に基づいて、実施機関が裁定する。",a:true,exp:"設問の通り正しい。なお、実施機関は、第1号厚生年金被保険者に係るものは「厚生労働大臣」、第2号厚生年金被保険者に係るものは「国家公務員共済組合及び国家公務員共済組合連合会」、第3号厚生年金被保険者に係るものは「地方公務員共済組合、全国市町村職員共済組合連合会及び地方公務員共済組合連合会」、第4号厚生年金被保険者に係るものは「日本私立学校振興・共済事業団」である。また、厚生年金保険法による保険給付は、政府及び実施機関（厚生労働大臣を除く。）が行うこととされている。",src:"法2条、33条",cat:"択一式（厚生年金保険法）"},
+{no:"問1",opt:"E",q:"2以上の船舶の船舶所有者が同一である場合には、当該船舶所有者は、厚生労働大臣の承認を受けて、当該2以上の船舶を一の適用事業所とすることができるとされており、当該承認があったときは、当該2以上の船舶は、適用事業所でなくなったものとみなされる。",a:false,exp:"2以上の船舶の船舶所有者が同一である場合には、当該2以上の船舶は、当然に一の適用事業所とされるのであり、厚生労働大臣の承認を受ける必要はない。また、この場合には、当該2以上の船舶は、適用事業所でないものとみなされる。なお、2以上の適用事業所（船舶を除く。）の事業主が同一である場合には、当該事業主は、厚生労働大臣の承認を受けて、当該2以上の事業所を一の適用事業所とすることができるとされており、当該承認があったときは、当該2以上の適用事業所は、適用事業所でなくなったものとみなされる。",src:"法8条の3",cat:"択一式（厚生年金保険法）"},
+{no:"問2",opt:"A",q:"第1号厚生年金被保険者の資格の取得及び喪失に係る厚生労働大臣の確認は、適用事業所の事業主の届出、第1号厚生年金被保険者若しくは第1号厚生年金被保険者であった者の請求により、又は職権で行うものとされている。",a:true,exp:"設問の通り正しい。なお、第2号厚生年金被保険者、第3号厚生年金被保険者及び第4号厚生年金被保険者の資格の取得及び喪失については、厚生労働大臣による確認の規定は、適用されない。",src:"法18条2項",cat:"択一式（厚生年金保険法）"},
+{no:"問2",opt:"B",q:"任意単独被保険者の資格の取得及び喪失については、厚生労働大臣による確認が行われることはない。",a:false,exp:"任意単独被保険者の資格の取得及び「厚生労働大臣の認可を受けたこと」による任意単独被保険者の資格の喪失については、厚生労働大臣による確認は行われないが、適用事業所に使用されなくなったとき等の理由による任意単独被保険者の資格の喪失については、厚生労働大臣による確認が行われる。",src:"法18条1項",cat:"択一式（厚生年金保険法）"},
+{no:"問2",opt:"C",q:"第1号厚生年金被保険者が同時に第4号厚生年金被保険者の資格を有するに至ったときは、その日に、当該第1号厚生年金被保険者の資格を喪失することとなる。",a:true,exp:"設問の通り正しい。第1号厚生年金被保険者が同時に第2号厚生年金被保険者、第3号厚生年金被保険者又は第4号厚生年金被保険者の資格を有するに至ったときは、その日に、当該第1号厚生年金被保険者の資格を喪失する。",src:"法18条の2,2項",cat:"択一式（厚生年金保険法）"},
+{no:"問2",opt:"D",q:"被保険者が3月20日に適用事業所に使用されなくなり、3月21日から国民年金の第3号被保険者となった。この場合、3月31日まで引き続き国民年金の第3号被保険者であるときは、3月は厚生年金保険の被保険者期間とされない。",a:true,exp:"設問の通り正しい。被保険者の資格を取得した月にその資格を喪失したときは、原則として、その月を1か月として被保険者期間に算入するが、その月に更に被保険者又は国民年金の被保険者（第2号被保険者を除く。）の資格を取得したときは、後の資格取得についての期間のみをとって厚生年金保険又は国民年金の被保険者期間に算入することとなる。設問の場合、後の資格取得により国民年金の第3号被保険者となっているため、3月は国民年金の第3号被保険者としての被保険者期間となり、厚生年金保険の被保険者期間とならない。",src:"法19条2項",cat:"択一式（厚生年金保険法）"},
+{no:"問2",opt:"E",q:"被保険者期間を計算する場合には、月によるものとし、被保険者の資格を取得した月からその資格を喪失した月の前月までをこれに算入するが、被保険者の資格を喪失した後、更にその資格を取得した者については、前後の被保険者期間を合算する。",a:true,exp:"設問の通り正しい。なお、被保険者期間の計算は、被保険者の種別（第1号厚生年金被保険者、第2号厚生年金被保険者、第3号厚生年金被保険者又は第4号厚生年金被保険者のいずれであるかの区別をいう。）ごとに行われ、同一の月において被保険者の種別に変更があったときは、その月は変更後の被保険者の種別の被保険者であった月（2回以上にわたり被保険者の種別に変更があったときは、最後の被保険者の種別の被保険者であった月）とみなされる。",src:"法19条1項、3項",cat:"択一式（厚生年金保険法）"},
+{no:"問3",opt:"A",q:"年金は、その支給を停止すべき事由が生じたときは、その事由が生じた月の翌月からその事由が消滅した月までの間は、支給しないこととされている。また、年金は、毎年2月、4月、6月、8月、10月及び12月の6期に、それぞれその前月分までが支払われるが、年金の支給を停止した場合におけるその期の年金は、支払期月でない月であっても、支払われる。",a:true,exp:"設問の通り正しい。年金の支給は、年金を支給すべき事由が生じた月の翌月から始め、権利が消滅した月で終るものとされており、その支給を停止すべき事由が生じたときは、その事由が生じた月の翌月からその事由が消滅した月までの間は、支給しないとされている。また、年金は、毎年2月、4月、6月、8月、10月及び12月の6期に、それぞれその前月分までを支払うものとされているが、前支払期月に支払うべきであった年金又は権利が消滅した場合若しくは年金の支給を停止した場合におけるその期の年金は、支払期月でない月であっても、支払うものとされている。",src:"法36条2項、3項",cat:"択一式（厚生年金保険法）"},
+{no:"問3",opt:"B",q:"保険給付の受給権者が死亡した場合において、その死亡した者に支給すべき保険給付でまだその者に支給しなかったものがあるときに、その未支給の保険給付の支給を請求することができる遺族の順位は、その者の死亡の当時その者と生計を同じくしていた、①配偶者又は子、②父母、③孫、④祖父母、⑤兄弟姉妹、⑥これらの者以外の3親等内の親族の順序である。",a:false,exp:"配偶者と子は同順位ではないため、誤りである。未支給の保険給付を受けるべき者の順位は、死亡した者の①配偶者、②子、③父母、④孫、⑤祖父母、⑥兄弟姉妹、⑦これらの者以外の3親等内の親族の順序である。",src:"法37条4項、令3条の2",cat:"択一式（厚生年金保険法）"},
+{no:"問3",opt:"C",q:"年金たる保険給付（その全額につき支給を停止されている年金たる保険給付を除く。）は、その受給権者の申出により、その全額の支給が停止されるが、その額の一部につき支給を停止されているときは、停止されていない部分の額の支給が停止される。",a:true,exp:"設問の通り正しい。受給権者の申出による支給停止に関する問題である。なお、支給停止の申出は、いつでも、将来に向かって撤回することができる。",src:"法38条の2,1項",cat:"択一式（厚生年金保険法）"},
+{no:"問3",opt:"D",q:"同一人に対して国民年金法による老齢基礎年金の支給を停止して障害厚生年金（厚生労働大臣が支給するものに限る。以下本肢において同じ。）を支給すべき場合において、障害厚生年金を支給すべき事由が生じた月の翌月以後の分として老齢基礎年金の支払が行われたときは、その支払われた老齢基礎年金は、障害厚生年金の内払とみなすことができる。",a:true,exp:"設問の通り正しい。同一人に対して国民年金法による年金たる給付の支給を停止して年金たる保険給付（厚生労働大臣が支給するものに限る。以下本解説において同じ。）を支給すべき場合において、年金たる保険給付を支給すべき事由が生じた月の翌月以後の分として同法による年金たる給付の支払が行われたときは、その支払われた同法による年金たる給付は、年金たる保険給付の内払とみなすことができる（国民年金制度との内払調整）。",src:"法39条3項",cat:"択一式（厚生年金保険法）"},
+{no:"問3",opt:"E",q:"脱退一時金を受ける権利は、国税滞納処分（その例による処分を含む。）により差し押えることができる。",a:true,exp:"設問の通り正しい。保険給付を受ける権利は、原則として、譲り渡し、担保に供し、又は差し押えることができないが、老齢厚生年金又は脱退一時金を受ける権利を国税滞納処分（その例による処分を含む。）により差し押える場合は、この限りでないとされている。",src:"法41条1項、法附則29条9項、令14条",cat:"択一式（厚生年金保険法）"},
+{no:"問4",opt:"A",q:"厚生年金保険の被保険者であった期間の一部が平成15年4月1日前であるときは、老齢厚生年金の報酬比例部分の額は、原則として、平成15年4月1日前の被保険者であった期間の平均標準報酬月額の1000分の7.125に相当する額に当該被保険者期間の月数を乗じて得た額と平成15年4月1日以後の被保険者であった期間の平均標準報酬額の1000分の5.481に相当する額に当該被保険者期間の月数を乗じて得た額とを合算した額となる。",a:true,exp:"設問の通り正しい。なお、昭和21年4月1日以前に生まれた者については、設問の給付乗率（1000分の7.125・1000分の5.481）が読み替えられることとなる。",src:"法43条1項、(12)法附則20条1項",cat:"択一式（厚生年金保険法）"},
+{no:"問4",opt:"B",q:"老齢厚生年金の経過的加算の額の算定に当たり、老齢基礎年金相当部分の額については、原則として、厚生年金保険の被保険者期間のうち昭和36年4月1日以後の期間に係るもの（20歳に達した日の属する月以前の期間及び60歳に達した日の属する月後の期間に係るものを除く。）の月数を基礎として計算する。",a:false,exp:"老齢厚生年金の経過的加算の額の算定に当たり、老齢基礎年金相当部分の額については、原則として、厚生年金保険の被保険者期間のうち昭和36年4月1日以後の期間に係るもの（20歳に達した日の属する「月前」の期間及び60歳に達した日の属する「月以後」の期間に係るものを除く。）の月数を基礎として計算する。つまり、計算の基礎となるのは、20歳以上60歳未満の月数である。",src:"(60)法附則59条2項",cat:"択一式（厚生年金保険法）"},
+{no:"問4",opt:"C",q:"令和8年4月1日に63歳になる女性（第1号厚生年金被保険者期間を有しているものとする。）は、老齢基礎年金の受給資格期間を満たしており、かつ、厚生年金保険の被保険者期間が1月以上あれば、同日に特別支給の老齢厚生年金の受給権者となる。",a:false,exp:"「1年」以上の厚生年金保険の被保険者期間を有していなければ、特別支給の老齢厚生年金の受給権者とならないので、設問文は誤りである。なお、設問の女性（第1号厚生年金被保険者期間を有している令和8年4月1日に63歳になる女性）は、昭和38年4月2日生まれであるため、老齢基礎年金の受給資格期間を満たしており、かつ、厚生年金保険の被保険者期間が「1年」以上あれば、同日（令和8年4月1日）に特別支給の老齢厚生年金の受給権者となる。",src:"法附則8条、8条の2,2項",cat:"択一式（厚生年金保険法）"},
+{no:"問4",opt:"D",q:"4月に被保険者の資格を取得した特別支給の老齢厚生年金の受給権者が、引き続き9月1日において被保険者である場合には、当該年金の額は、8月までの被保険者であった期間をその計算の基礎として10月から改定されることとなる。",a:false,exp:"特別支給の老齢厚生年金の受給権者には、設問の在職定時改定の規定は適用されないので、誤りである。なお、在職定時改定とは、受給権者が毎年9月1日（以下「基準日」という。）において被保険者である場合（基準日に被保険者の資格を取得した場合を除く。）の老齢厚生年金の額は、基準日の属する月前（8月まで）の被保険者であった期間をその計算の基礎とするものとし、基準日の属する月の翌月（10月）から、年金の額を改定する。ただし、基準日に被保険者の資格を取得した者又は同日において被保険者でなかった者であっても、基準日が被保険者の資格を喪失した日から再び被保険者の資格を取得した日までの間に到来し、かつ、当該被保険者の資格を喪失した日から再び被保険者の資格を取得した日までの期間が1月以内である場合は、基準日の属する月前の被保険者であった期間を老齢厚生年金の額の計算の基礎とするものとし、基準日の属する月の翌月から、年金の額を改定する。",src:"法43条2項、法附則9条",cat:"択一式（厚生年金保険法）"},
+{no:"問4",opt:"E",q:"特別支給の老齢厚生年金の受給権者であってその受給権を取得した日から起算して1年を経過した日前に当該老齢厚生年金を請求していなかったものは、実施機関に当該老齢厚生年金の支給繰下げの申出をすることができる。なお、当該受給権者は、他の年金たる給付（他の年金たる保険給付又は国民年金法による年金たる給付（老齢基礎年金及び付加年金並びに障害基礎年金を除く。）をいう。）の受給権者となったことはないものとする。",a:false,exp:"特別支給の老齢厚生年金については、支給を繰り下げることはできない。",src:"法44条の3,1項他",cat:"択一式（厚生年金保険法）"},
+{no:"問5",opt:"A",q:"障害等級3級の障害厚生年金の額は、老齢厚生年金の額の規定の例により計算した額（当該障害厚生年金の額の計算の基礎となる被保険者期間の月数が300に満たないときは、これを300とする。）であるが、当該障害厚生年金の額が国民年金法第33条第1項に規定する障害基礎年金の額に4分の3を乗じて得た額に満たないときは、当該額が障害厚生年金の額とされる。",a:true,exp:"設問の通り正しい。なお、設問の最低保障額の規定（障害厚生年金の額が国民年金法33条1項に規定する障害基礎年金の額に4分の3を乗じて得た額に満たないときは、当該額を障害厚生年金の額とする規定）は、障害厚生年金の給付事由となった障害について国民年金法による障害基礎年金を受けることができない場合に適用されるので、障害等級1級又は2級の障害厚生年金の額についても適用される場合がある。",src:"法50条1項、3項",cat:"択一式（厚生年金保険法）"},
+{no:"問5",opt:"B",q:"障害等級2級の障害厚生年金の受給権者は、その権利を取得した日の翌日以後にその者によって生計を維持している18歳に達する日以後の最初の3月31日までの間にある子を有するに至った場合であっても、当該障害厚生年金に加給年金額が加算されることはない。",a:true,exp:"設問の通り正しい。障害厚生年金については、子に係る加給年金額の規定はない。なお、障害等級1級又は2級に該当する者に支給する障害厚生年金の額は、受給権者によって生計を維持しているその者の「65歳未満の配偶者」があるときは、加給年金額を加算した額とすることとされ、また、受給権者がその権利を取得した日の翌日以後にその者によって生計を維持しているその者の「65歳未満の配偶者」を有するに至った場合には、加給年金額を加算することとなり、当該配偶者を有するに至った日の属する月の翌月から、障害厚生年金の額を改定する。",src:"法50条の2,1項",cat:"択一式（厚生年金保険法）"},
+{no:"問5",opt:"C",q:"初診日が令和6年10月1日で、障害認定日が令和8年4月1日である場合、障害厚生年金の額の計算に当たっては、令和8年4月までの被保険者期間を基礎として計算することとなる。",a:true,exp:"設問の通り正しい。障害厚生年金の額については、当該障害厚生年金の支給事由となった障害に係る障害認定日の属する月後における被保険者であった期間は、その計算の基礎としないこととされており、障害認定日の属する月（設問の場合、令和8年4月）までは、障害厚生年金の額の計算の基礎となる。",src:"法51条",cat:"択一式（厚生年金保険法）"},
+{no:"問5",opt:"D",q:"障害等級2級の障害厚生年金の受給権者の当該障害の程度が軽減し、62歳のときに障害等級3級にも該当しなくなりそのままの状態が継続していたが、当該障害の状態が悪化し、66歳のときに障害等級3級の障害の程度に該当するに至った。この場合であっても、66歳から当該障害による障害等級3級の障害厚生年金は支給されない。",a:true,exp:"設問の通り正しい。設問の場合、障害等級（3級）に該当する程度の障害の状態に該当しなくなった日から起算して障害等級（3級）に該当する程度の障害の状態に該当することなく3年を経過しており、かつ、3年を経過した日において、当該受給権者が65歳以上であるため、障害厚生年金の受給権は消滅している。したがって、設問の場合、障害等級3級の障害厚生年金は支給されない。",src:"法53条",cat:"択一式（厚生年金保険法）"},
+{no:"問5",opt:"E",q:"初診日に厚生年金保険の被保険者であり、障害認定日に障害等級2級の障害の程度である者が、当該障害認定日に20歳に達する日前であるときは、障害厚生年金の受給権は当該障害認定日に発生するが、障害基礎年金の受給権は20歳に達した日に発生することとなる。",a:false,exp:"設問の場合、初診日に厚生年金保険の被保険者（国民年金の第2号被保険者）であるから、（20歳前傷病による障害基礎年金ではなく、一般的な障害基礎年金が支給されることとなり、）障害基礎年金の受給権についても障害認定日に発生することとなる。なお、その他の記述は正しい。",src:"法47条1項、国民年金法30条1項",cat:"択一式（厚生年金保険法）"},
+{no:"問6",opt:"A",q:"被保険者であった者が、被保険者の資格を喪失した後に、被保険者であった間に初診日がある傷病により当該資格を喪失した日から起算して5年を経過する日前に死亡したときは、死亡した者が遺族厚生年金の保険料納付要件を満たしていれば、その者の死亡の当時その者によって生計を維持していた一定の遺族に対して遺族厚生年金が支給される。",a:false,exp:"設問の場合、「当該資格を喪失した日から起算して5年」ではなく、「当該初診日から起算して5年」を経過する日前に死亡したときは、死亡した者が遺族厚生年金の保険料納付要件を満たしていれば、その者の死亡の当時その者によって生計を維持していた一定の遺族に対して遺族厚生年金が支給される。",src:"法58条1項2号",cat:"択一式（厚生年金保険法）"},
+{no:"問6",opt:"B",q:"遺族厚生年金は、当該被保険者又は被保険者であった者の死亡について労働者災害補償保険法の規定による遺族補償給付の支給が行われるべきものであるときは、死亡の日から6年間、その支給が停止される。",a:false,exp:"設問のような規定はない。遺族厚生年金は、当該被保険者又は被保険者であった者の死亡について「労働基準法79条の規定による遺族補償」の支給が行われるべきものであるときは、死亡の日から6年間、その支給が停止される。なお、遺族厚生年金と同一の事由について遺族（補償）等年金が支給されるときは、遺族（補償）等年金が一定の割合で減額されることとなる（遺族厚生年金はその全額が支給される。）。",src:"法64条",cat:"択一式（厚生年金保険法）"},
+{no:"問6",opt:"C",q:"死亡した被保険者の母が遺族厚生年金の受給権者となった場合において、当該被保険者の死亡の当時胎児であった子が出生したときは、母の遺族厚生年金の受給権は消滅することとなる。",a:true,exp:"設問の通り正しい。父母、孫又は祖父母の有する遺族厚生年金の受給権は、被保険者又は被保険者であった者の死亡の当時胎児であった子が出生したときは、消滅する。なお、被保険者又は被保険者であった者の死亡の当時胎児であった子が出生したときは、遺族厚生年金の遺族に関する規定の適用については、将来に向って、その子は、被保険者又は被保険者であった者の死亡の当時その者によって生計を維持していた子とみなすこととされており、設問の場合、出生した子が遺族厚生年金の受給権者となる。",src:"法63条3項",cat:"択一式（厚生年金保険法）"},
+{no:"問6",opt:"D",q:"障害等級1級又は2級に該当する障害の状態にある障害厚生年金の受給権者が死亡したことにより支給される遺族厚生年金の額の計算に当たり、その死亡した者が昭和21年4月1日以前に生まれた者であるときは、給付乗率が読み替えられることとなる。",a:false,exp:"設問の短期要件の場合には、給付乗率の読み替えは行われない。なお、長期要件（保険料納付済期間と保険料免除期間とを合算した期間が25年以上である者が死亡したことにより支給される遺族厚生年金）の場合には、その死亡した者が昭和21年4月1日以前に生まれた者であるときは、給付乗率が読み替えられることとなる。",src:"法58条1項3号、60条1項、(60)法附則59条1項",cat:"択一式（厚生年金保険法）"},
+{no:"問6",opt:"E",q:"遺族厚生年金の支給に関する規定の適用に当たり、船舶が沈没した際現にその船舶に乗っていた被保険者の生死が3月間わからない場合には、その3月間が経過した日に、その者が死亡したものと推定することとされている。",a:false,exp:"遺族厚生年金の支給に関する規定の適用に当たり、船舶が沈没した際現にその船舶に乗っていた被保険者の生死が3月間わからない場合には、その「船舶が沈没した日」に、その者が死亡したものと推定することとされている。",src:"法59条の2",cat:"択一式（厚生年金保険法）"},
+{no:"問7",opt:"A",q:"老齢厚生年金の加給年金額に係る生計維持関係の認定について、収入に係る要件については、原則として、前年の収入が年額850万円未満であるか、又は前年の所得が年額655.5万円未満であることを要するが、前年の収入又は前年の所得がこれらの額以上であったとしても、定年退職等の事情によりおおむね5年以内に収入が年額850万円未満又は所得が年額655.5万円未満となると認められる場合には、収入に係る要件を満たしているものとされる。",a:true,exp:"設問の通り正しい。老齢厚生年金の加給年金額の対象となるのは、その者によって生計を維持していたその者の65歳未満の配偶者又は子（18歳に達する日以後の最初の3月31日までの間にある子及び20歳未満で障害等級1級若しくは2級に該当する障害の状態にある子に限る。）であり、具体的には、次の①〜④のいずれかに該当する場合に老齢厚生年金の加給年金額についての収入に係る要件を満たすこととなる。①前年の収入（前年の収入が確定しない場合にあっては、前々年の収入）が年額850万円未満であること。②前年の所得（前年の所得が確定しない場合にあっては、前々年の所得）が年額655.5万円未満であること。③一時的な所得があるときは、これを除いた後、上記①又は②に該当すること。④上記の①、②又は③に該当しないが、定年退職等の事情により近い将来（おおむね5年以内）収入が年額850万円未満又は所得が年額655.5万円未満となると認められること。",src:"法44条1項、令3条の5,1項、令和6.11.27年発1127第2号",cat:"択一式（厚生年金保険法）"},
+{no:"問7",opt:"B",q:"老齢厚生年金の受給権者である被保険者が当該受給権を取得した当時65歳未満の配偶者の生計を維持していた場合において、その年金額の計算の基礎となる被保険者期間の月数が240未満であったため当該配偶者を対象とする加給年金額が加算されなかったとしても、その後に在職定時改定により被保険者期間の月数が240以上となったときは、当該配偶者を対象とする加給年金額が加算されることがある。",a:true,exp:"設問の通り正しい。設問の場合、在職定時改定により被保険者期間の月数が240以上となるに至った当時に、65歳未満の配偶者の生計を維持していたときは、当該配偶者を対象とする加給年金額が加算されることとなる。",src:"法44条1項",cat:"択一式（厚生年金保険法）"},
+{no:"問7",opt:"C",q:"老齢厚生年金の加給年金額の対象となる子が2人の場合、加給年金の額は、それぞれの子について同額である。",a:true,exp:"設問の通り正しい。子を対象とする加給年金の額は、2人目までの子はそれぞれ（1人につき）224,700円に改定率を乗じて得た額（当該額に50円未満の端数が生じたときは、これを切り捨て、50円以上100円未満の端数が生じたときは、これを100円に切り上げるものとする。）であり、3人目以降の子は1人につき74,900円に改定率を乗じて得た額（当該額に50円未満の端数が生じたときは、これを切り捨て、50円以上100円未満の端数が生じたときは、これを100円に切り上げるものとする。）である。",src:"法44条2項",cat:"択一式（厚生年金保険法）"},
+{no:"問7",opt:"D",q:"老齢厚生年金の加給年金額の算定に当たっては、老齢厚生年金の受給権者の年齢にかかわらず、国民年金法に定める新規裁定者の改定率を用いることとされている。",a:true,exp:"設問の通り正しい。なお、配偶者特別加算額の計算に係る改定率についても、同様である。",src:"法44条2項",cat:"択一式（厚生年金保険法）"},
+{no:"問7",opt:"E",q:"老齢厚生年金の加給年金額の対象者である配偶者が昭和9年4月2日以後に生まれた者である場合には、加給年金額は特別加算を加算した額とされるが、障害厚生年金の加給年金額の対象者である配偶者には、加給年金額に特別加算が行われることはない。",a:false,exp:"特別加算が行われるかどうかは、配偶者の生年月日ではなく、受給権者の生年月日で判断される。老齢厚生年金の加給年金額の対象者である配偶者については、「老齢厚生年金の受給権者」が昭和9年4月2日以後に生まれた者である場合には、加給年金額は特別加算を加算した額とされる。なお、特別加算の制度は老齢厚生年金の配偶者加給年金を対象とするものであり、障害厚生年金の加給年金額の対象者である配偶者については、障害厚生年金の受給権者の生年月日にかかわらず、加給年金額に特別加算が行われることはない。",src:"法44条2項、(60)法附則60条2項",cat:"択一式（厚生年金保険法）"},
+{no:"問8",opt:"A",q:"被保険者は、同時に2以上の事業所に使用されるに至ったとき（当該2以上の事業所に係る日本年金機構（以下「機構」という。）の業務が2以上の年金事務所に分掌されている場合に限る。）は、その者に係る機構の業務を分掌する年金事務所を選択しなければならない。",a:true,exp:"設問の通り正しい。なお、設問の選択は、2以上の事業所に使用されるに至った日から10日以内に、所定の事項を記載した届書を、機構に提出することによって行うものとされている。",src:"則1条1項",cat:"択一式（厚生年金保険法）"},
+{no:"問8",opt:"B",q:"適用事業所に使用される高齢任意加入被保険者は、その個人番号を変更したときは、速やかに、所定の事項を記載した届書を機構に提出しなければならない。",a:true,exp:"設問の通り正しい。なお、被保険者（適用事業所に使用される高齢任意加入被保険者及び第4種被保険者等を除く。）は、その個人番号を変更したときは、速やかに、変更後の個人番号及び変更の年月日を事業主に申し出なければならないとされており、また、事業主は、当該申出を受けたときは、速やかに、所定の事項を記載した届書を機構に提出しなければならない。",src:"則5条の6",cat:"択一式（厚生年金保険法）"},
+{no:"問8",opt:"C",q:"被保険者（船員被保険者を除く。）の賞与額に関する事業主による届出は、賞与を支払った日から5日以内に、所定の届書又は当該届書に記載すべき事項を記録した光ディスクを機構に提出することによって行うものとされているが、特定法人の事業所の事業主にあっては、原則として、電子情報処理組織を使用して行うものとされている。",a:true,exp:"設問の通り正しい。なお、船員被保険者の賞与額に関する事業主による届出は、賞与を支払った日から10日以内に、所定の事項を記載した届書を機構に提出することによって行うものとされている。",src:"則19条の5,1項、3項",cat:"択一式（厚生年金保険法）"},
+{no:"問8",opt:"D",q:"事業主（船舶所有者を除く。以下本肢及びE肢において同じ。）に変更があったときは、変更前の事業主は、5日以内に、所定の事項を記載した届書を、機構に提出しなければならない。",a:false,exp:"事業主（船舶所有者を除く。）に変更があったときは、「変更後」の事業主は、5日以内に、所定の事項を記載した届書を、機構に提出しなければならない。",src:"則24条1項",cat:"択一式（厚生年金保険法）"},
+{no:"問8",opt:"E",q:"事業主は、厚生年金保険法の規定に基づいて事業主がしなければならない事項につき、代理人をして処理させようとするときは、あらかじめ、文書でその旨を機構に届け出なければならない。",a:true,exp:"設問の通り正しい。",src:"則29条",cat:"択一式（厚生年金保険法）"},
+{no:"問9",opt:"A",q:"特例の対象となる特定期間とは、特定被保険者が被保険者であった期間であり、かつ、その被扶養配偶者が当該特定被保険者の配偶者として第3号被保険者であった期間をいうが、平成20年4月1日前の期間については、特定期間に算入されない。",a:true,exp:"設問の通り正しい。なお、特定被保険者とは、被保険者又は被保険者であった者をいい、被扶養配偶者とは、当該特定被保険者の配偶者として国民年金の第3号被保険者に該当していたものをいう。",src:"法78条の14,1項、(16)法附則49条",cat:"択一式（厚生年金保険法）"},
+{no:"問9",opt:"B",q:"特例による標準報酬の改定及び決定の請求（以下「3号分割標準報酬改定請求」という。）は、特定被保険者又は被扶養配偶者の双方又はその一方が、実施機関に対して行うことができる。",a:false,exp:"「特定被保険者又は被扶養配偶者の双方又はその一方」とする記述が誤りである。3号分割標準報酬改定請求は、「特定被保険者の被扶養配偶者」が、実施機関に対して行うことができる。",src:"法78条の14,1項",cat:"択一式（厚生年金保険法）"},
+{no:"問9",opt:"C",q:"実施機関は、3号分割標準報酬改定請求があった場合において、特定期間に係る被保険者期間の各月ごとに、当該特定被保険者及び被扶養配偶者の標準報酬月額を当該特定被保険者の標準報酬月額に按分割合を乗じて得た額にそれぞれ改定し、及び決定することができる。",a:false,exp:"「按分割合」とする記述が誤りである。実施機関は、3号分割標準報酬改定請求があった場合において、特定期間に係る被保険者期間の各月ごとに、当該特定被保険者及び被扶養配偶者の標準報酬月額を当該特定被保険者の標準報酬月額に「2分の1」を乗じて得た額にそれぞれ改定し、及び決定することができる。",src:"法78条の14,2項",cat:"択一式（厚生年金保険法）"},
+{no:"問9",opt:"D",q:"老齢厚生年金の受給権者について、3号分割標準報酬改定請求による標準報酬の改定又は決定が行われたときは、改定又は決定後の標準報酬を老齢厚生年金の額の計算の基礎とするものとされ、改定又は決定が行われた日の属する月の翌月から、年金の額が改定される。",a:false,exp:"設問の場合、「改定又は決定が行われた日」ではなく、「3号分割標準報酬改定請求があった日」の属する月の翌月から、年金の額が改定される。",src:"法78条の18",cat:"択一式（厚生年金保険法）"},
+{no:"問9",opt:"E",q:"特定被保険者が特定期間の全部をその額の計算の基礎とする障害厚生年金の受給権者である場合には、3号分割標準報酬改定請求による標準報酬の改定又は決定が行われたときであっても、障害厚生年金の額は改定されない。",a:false,exp:"設問のような規定はない。特定被保険者が特定期間の全部をその額の計算の基礎とする障害厚生年金の受給権者である場合には、3号分割標準報酬改定請求をすることはできない。なお、特定期間に係る被保険者期間の一部が当該障害厚生年金の額の計算の基礎となっている場合には、障害厚生年金の額の計算の基礎となった期間を除いた特定期間に係る被保険者期間について、3号分割標準報酬改定請求をすることができる。",src:"法78条の14,1項、令3条の12の11",cat:"択一式（厚生年金保険法）"},
+{no:"問10",opt:"A",q:"特別会計積立金の運用は、厚生労働大臣が、運用の目的に沿った運用に基づく納付金の納付を目的として、年金積立金管理運用独立行政法人に対し、特別会計積立金を寄託することにより行うものとされている。",a:true,exp:"設問の通り正しい。なお、実施機関積立金の運用は、運用の目的に沿って、実施機関（厚生労働大臣を除く。）が行うものとされている。【運用の目的】積立金〔年金特別会計の厚生年金勘定の積立金（「特別会計積立金」という。）及び実施機関（厚生労働大臣を除く。）の積立金のうち厚生年金保険事業（基礎年金拠出金の納付を含む。）に係る部分に相当する部分として政令で定める部分（「実施機関積立金」という。）をいう。〕の運用は、積立金が厚生年金保険の被保険者から徴収された保険料の一部であり、かつ、将来の保険給付の貴重な財源となるものであることに特に留意し、専ら厚生年金保険の被保険者の利益のために、長期的な観点から、安全かつ効率的に行うことにより、将来にわたって、厚生年金保険事業の運営の安定に資することを目的として行うものとする。",src:"法79条の3,1項",cat:"択一式（厚生年金保険法）"},
+{no:"問10",opt:"B",q:"国庫は、毎年度、厚生年金保険事業の事務（基礎年金拠出金の負担に関する事務を含む。）の執行（実施機関（厚生労働大臣を除く。）によるものを除く。）に要する費用の額の2分の1に相当する額を負担する。",a:false,exp:"「2分の1に相当する額」とする記述が誤りである。国庫は、毎年度、予算の範囲内で、厚生年金保険事業の事務（基礎年金拠出金の負担に関する事務を含む。）の執行〔実施機関（厚生労働大臣を除く。）によるものを除く。〕に要する費用を負担する。なお、国庫は、毎年度、厚生年金保険の実施者たる政府が負担する基礎年金拠出金の額の2分の1に相当する額を負担するとされている。また、実施機関（厚生労働大臣を除く。以下同じ。）が納付する基礎年金拠出金及び実施機関による厚生年金保険事業の事務（基礎年金拠出金の負担に関する事務を含む。）の執行に要する費用の負担については、厚生年金保険法に定めるもののほか、共済各法の定めるところによるとされている。",src:"法80条2項",cat:"択一式（厚生年金保険法）"},
+{no:"問10",opt:"C",q:"厚生年金保険法第86条によれば、厚生労働大臣は、督促を受けた納付義務者がその指定の期限までに保険料その他厚生年金保険法の規定による徴収金を納付しない場合には、国税滞納処分の例によってこれを処分することができるほか、納付義務者の居住地若しくはその者の財産所在地の市町村（特別区を含むものとし、地方自治法第252条の19第1項の指定都市にあっては、区又は総合区とする。）に対して、その処分を請求することができるが、処分の請求を受けた市町村が市町村税の例によってこれを処分した場合には、徴収金の100分の10に相当する額を当該市町村に交付しなければならない。",a:false,exp:"「100分の10」を「100分の4」と読み替えると、正しい記述となる。なお、第2号厚生年金被保険者、第3号厚生年金被保険者及び第4号厚生年金被保険者に係る保険料その他厚生年金保険法の規定による徴収金の督促及び滞納処分については、共済各法の定めるところによる。",src:"法86条5項、6項",cat:"択一式（厚生年金保険法）"},
+{no:"問10",opt:"D",q:"保険給付を受ける権利は、その支給すべき事由が生じた日から5年を経過したとき、当該権利に基づき支払期月ごとに支払うものとされる保険給付の支給を受ける権利は、当該日の属する月の翌月以後に到来する当該保険給付の支給に係る支払期月の初日から5年を経過したときは、時効によって、消滅する。",a:false,exp:"保険給付を受ける権利は、その支給すべき事由が生じた日から5年を経過したとき、当該権利に基づき支払期月ごとに支払うものとされる保険給付の支給を受ける権利は、当該日の属する月の翌月以後に到来する当該保険給付の支給に係る「支払期月の翌月の初日」から5年を経過したときは、時効によって、消滅する。",src:"法92条1項",cat:"択一式（厚生年金保険法）"},
+{no:"問10",opt:"E",q:"保険給付を受ける権利又は当該権利に基づき支払期月ごとに支払うものとされる保険給付の支給を受ける権利の時効については、その援用を要せず、また、その利益を放棄することができないものとされている。",a:false,exp:"設問のような規定はない。なお、「保険料その他厚生年金保険法の規定による徴収金を徴収し、若しくはその還付を受ける権利又は保険給付の返還を受ける権利の時効」については、その援用を要せず、また、その利益を放棄することができないものとされている。また、保険給付を受ける権利又は当該権利に基づき支払期月ごとに支払うものとされる保険給付の支給を受ける権利については、会計法31条の規定（「国に対する権利で、金銭の給付を目的とするものの時効による消滅については、別段の規定がないときは、時効の援用を要せず、また、その利益を放棄することができないものとする」等の規定）を適用しないこととされている。",src:"法92条2項、5項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問1",opt:"A",q:"適用事業所に使用される被保険者以外の70歳未満の者は、厚生労働大臣の認可を受けて、厚生年金保険の被保険者となることができるが、当該認可を受けるには、その適用事業所の事業主の同意を得なければならない。",a:false,exp:"設問のような規定はない。なお、「適用事業所以外の事業所」に使用される70歳未満の者は、厚生労働大臣の認可を受けて、厚生年金保険の被保険者（任意単独被保険者）となることができるが、当該認可を受けるには、その事業所の事業主の同意を得なければならない。",src:"法10条",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問1",opt:"B",q:"産前産後休業をしている被保険者が使用される事業所の事業主が、実施機関に申出をしたときは、所定の期間について保険料が免除されるが、任意単独被保険者については、保険料は免除されない。",a:false,exp:"設問の場合、任意単独被保険者についても保険料は免除される。育児休業等期間中の保険料免除及び産前産後休業期間中の保険料免除の規定は、任意単独被保険者及び高齢任意加入被保険者についても適用される。",src:"法81条の2の2,1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問1",opt:"C",q:"適用事業所に使用される高齢任意加入被保険者は、老齢又は退職を支給事由とする年金たる給付であって政令で定める給付の受給権を取得したときは、その日の翌日に、被保険者の資格を喪失する。",a:true,exp:"設問文の通り正しい。なお、適用事業所以外の事業所に使用される高齢任意加入被保険者についても同様である。",src:"法附則4条の3,5項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問1",opt:"D",q:"適用事業所に使用される高齢任意加入被保険者は、保険料の半額を負担し、かつ、その被保険者及び自己の負担する保険料を納付する義務を負うことにつき事業主が同意をしていない場合には、保険料（初めて納付すべき保険料を除く。）を滞納し、督促状の指定の期限までに、その保険料を納付しないときは、当該指定の期限の属する月の前月の末日に、被保険者の資格を喪失する。",a:false,exp:"設問の場合、「指定の期限の属する月の前月の末日」ではなく、「保険料の納期限（本来の納期限）の属する月の前月の末日」に、被保険者の資格を喪失する。なお、設問の事業主の同意がある場合には、保険料の滞納により資格を喪失することはない（適用事業所以外の事業所に使用される高齢任意加入被保険者については事業主の同意が資格取得の要件であるため、保険料の滞納により資格を喪失することはない。）。",src:"法附則4条の3,6項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問1",opt:"E",q:"適用事業所に使用される高齢任意加入被保険者が、老齢又は退職を支給事由とする年金たる給付であって政令で定める給付の受給権を取得したことにより資格を喪失したとき、又は保険料の滞納により資格を喪失したときは、被保険者の資格喪失の届出をしなければならない。",a:false,exp:"設問の場合、被保険者の資格喪失の届出は必要ない。また、適用事業所に使用される高齢任意加入被保険者の資格喪失の申出が受理されたことによる資格喪失についても、被保険者の資格喪失の届出は必要ない（これらの場合には、法18条による被保険者資格の得喪の確認も必要とされない。）。",src:"則22条1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問2",opt:"A",q:"老齢厚生年金（厚生労働大臣が支給するものに限る。以下本問において同じ。）の受給権者は、その権利を取得した当時胎児であった子が出生したときは、10日以内に、所定の事項を記載した届書を、日本年金機構（以下「機構」という。）に提出しなければならない。",a:true,exp:"設問の通り正しい。設問の届出（胎児出生の届出）に係る届書は、10日以内に、提出しなければならない。",src:"則31条1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問2",opt:"B",q:"老齢厚生年金の受給権者は、当該老齢厚生年金の加給年金額の対象者である18歳に達する日以後の最初の3月31日までの間にある子が障害等級1級又は2級の障害の状態に該当するに至ったときは、速やかに、所定の事項を記載した届書を、機構に提出しなければならない。",a:true,exp:"設問の通り正しい。設問の届出（加給年金額対象者の障害状態該当の届出）に係る届書は、速やかに、提出しなければならない。",src:"則31条の3,1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問2",opt:"C",q:"老齢厚生年金の受給権者は、当該老齢厚生年金の加給年金額の対象者である子（障害等級1級又は2級に該当する障害の状態にある子を除く。）について、18歳に達した日以後の最初の3月31日が終了したときは、10日以内に、所定の事項を記載した届書を機構に提出しなければならない。",a:false,exp:"老齢厚生年金の受給権者は、当該老齢厚生年金の加給年金額の対象者が、その対象者に該当しなくなったときは、10日以内に、所定の事項を記載した届書（加給年金額対象者の不該当の届出に係る届書）を機構に提出しなければならないとされているが、加給年金額の対象者に該当しなくなった事由が「配偶者が65歳に達したとき」、「子（障害等級1級又は2級に該当する障害の状態にある子を除く。）について、18歳に達した日以後の最初の3月31日が終了したとき」又は「子が20歳に達したとき」である場合には、当該届書を提出する必要はない。",src:"則32条",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問2",opt:"D",q:"障害厚生年金（厚生労働大臣が支給するものに限る。以下本問において同じ。）の受給権者であって、その障害の程度の診査が必要であると認めて厚生労働大臣が指定したものは、厚生労働大臣が指定した年において、指定日までに、指定日前3月以内に作成されたその障害の現状に関する医師又は歯科医師の診断書を機構に提出しなければならないが、当該障害厚生年金の額の全部につき支給が停止されているときは、その提出を要しない。",a:true,exp:"設問の通り正しい。なお、指定日は、年金たる保険給付の受給権者の誕生日の属する月の末日である。",src:"則51条の4,1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問2",opt:"E",q:"障害厚生年金の受給権者の所在が1月以上明らかでないときに、速やかに、所定の事項を記載した所在不明の届出等に係る届書を機構に提出しなければならないのは、当該受給権者の属する世帯の世帯主その他その世帯に属する者である。",a:true,exp:"設問の通り正しい。なお、老齢厚生年金の受給権者に係る所在不明の届出等、遺族厚生年金の受給権者に係る所在不明の届出等についても同様である。",src:"則56条の2,1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問3",opt:"A",q:"厚生年金保険の被保険者であった者（標準報酬月額47万円）が令和7年8月5日に資格を喪失し、再就職先を探していたが、令和8年4月8日に配偶者が出産したことからその子を養育することとなった。その後、同年6月に再就職（標準報酬月額26万円）をし、引き続き当該子を養育している場合には、実施機関に申出をしたときであっても、再就職した6月以降の月について、47万円を平均標準報酬額の計算の基礎となる標準報酬月額とみなすこととはならない。",a:false,exp:"設問の場合、再就職した月（令和8年6月）以降の月の標準報酬月額（26万円）が、子を養育することとなった日（令和8年4月8日）の属する月の前月〔当該月において被保険者でない場合にあっては、当該月前1年以内における被保険者であった月のうち直近の月（令和7年7月）〕の標準報酬月額（47万円）を下回っているため、「3歳に満たない子を養育する被保険者等の標準報酬月額の特例」の規定により、47万円（従前標準報酬月額）が平均標準報酬額の計算の基礎となる標準報酬月額とみなされる。",src:"法26条1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問3",opt:"B",q:"毎年3月31日における全被保険者の標準報酬月額を平均した額の100分の200に相当する額が標準報酬月額等級の最高等級の標準報酬月額を超える場合において、その状態が継続すると認められるときは、その年の9月1日から、健康保険法第40条第1項に規定する標準報酬月額の等級区分を参酌して、政令で、当該最高等級の上に更に等級を加える標準報酬月額の等級区分の改定を行うことができる。",a:true,exp:"設問の通り正しい。なお、健康保険法では、「毎年3月31日における標準報酬月額等級の最高等級に該当する被保険者数の被保険者総数に占める割合が100分の1.5を超える場合において、その状態が継続すると認められるときは、その年の9月1日から、政令で、当該最高等級の上に更に等級を加える標準報酬月額の等級区分の改定を行うことができる。ただし、その年の3月31日において、改定後の標準報酬月額等級の最高等級に該当する被保険者数の同日における被保険者総数に占める割合が100分の0.5を下回ってはならない。」とされている。",src:"法20条2項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問3",opt:"C",q:"適用事業所の事業主は、第1号厚生年金被保険者に対して賞与を支払った場合には、厚生年金保険法第81条の2に規定する育児休業期間中の保険料の徴収の特例により当該賞与に係る保険料の徴収が免除されているときであっても、賞与額の届出をしなければならない。",a:true,exp:"設問の通り正しい。育児休業等期間中の保険料免除又は産前産後休業期間中の保険料免除の規定の適用を受ける場合であっても、賞与額の届出をしなければならない。",src:"則19条の5",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問3",opt:"D",q:"前月から引き続き適用事業所に使用される被保険者が、令和8年3月31日に70歳に達した場合には、3月分の保険料は徴収されない。",a:true,exp:"設問の通り正しい。保険料は、被保険者期間の計算の基礎となる各月につき、徴収するものとされており、被保険者期間を計算する場合には、月によるものとし、被保険者の資格を取得した月からその資格を喪失した月の前月までをこれに算入することとされている。設問の被保険者は、70歳に達した日である令和8年3月31日に被保険者の資格を喪失するので、その前月（令和8年2月）までが保険料の計算の対象となる。",src:"法19条1項、81条2項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問3",opt:"E",q:"事業主は、第1号厚生年金被保険者に対して通貨をもって報酬を支払う場合においては、当該被保険者の負担すべき前月の標準報酬月額に係る保険料（被保険者がその事業所又は船舶に使用されなくなった場合においては、前月及びその月の標準報酬月額に係る保険料）を報酬から控除することができるが、保険料を控除したときは、保険料の控除に関する計算書を作成し、その控除額を被保険者に通知しなければならない。",a:true,exp:"設問の通り正しい。なお、事業主は、第1号厚生年金被保険者に対して通貨をもって賞与を支払う場合においては、被保険者の負担すべき標準賞与額に係る保険料に相当する額を当該賞与から控除することができるとされており、保険料を控除したときは、保険料の控除に関する計算書を作成し、その控除額を被保険者に通知しなければならない。",src:"法84条1項、3項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問4",opt:"A",q:"65歳で定年退職した老齢厚生年金の受給権者が、67歳となった令和8年4月1日に適用事業所に使用されることとなり、被保険者となった場合において、その者の標準報酬月額が38万円に決定されたときは、その者の総報酬月額相当額を38万円として4月から在職老齢年金の規定が適用されることとなる。なお、当該被保険者は、賞与の支払を受けていないものとする。",a:false,exp:"在職老齢年金の規定が適用されるのは、前月以前の月に属する日から引き続き当該被保険者の資格を有する者に限られており、被保険者の資格を取得した月については、在職老齢年金の規定は適用されない（支給停止は行われない。）。",src:"法46条1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問4",opt:"B",q:"在職老齢年金に係る基本月額には、加給年金額及び老齢厚生年金の支給を繰り下げた場合における繰下げ加算額を除くものとされており、在職老齢年金の仕組みにより老齢厚生年金の全部の支給が停止されるときであっても、加給年金額及び繰下げ加算額の支給は停止されない。",a:false,exp:"設問の後半が誤りである。在職老齢年金の仕組みにより老齢厚生年金の全部の支給が停止されるときは、繰下げ加算額の支給は停止されないが、加給年金額は支給停止される。その他の記述は正しい。なお、経過的加算額については、基本月額から除くものとされており、また、在職老齢年金の仕組みにより老齢厚生年金の全部の支給が停止されるときであっても、経過的加算額の支給は停止されない。",src:"法46条1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問4",opt:"C",q:"老齢厚生年金の受給権者の総報酬月額相当額が64万円、基本月額が10万円の場合、在職老齢年金の仕組みによる支給停止後の老齢厚生年金の月額は、6万円となる。なお、支給停止調整額は62万円とする。",a:false,exp:"設問の場合、在職老齢年金の仕組みによる支給停止後の老齢厚生年金の月額は、「4万円」となる。在職老齢年金の仕組みによる支給停止は、総報酬月額相当額と基本月額との合計額が支給停止調整額を超えるときに行われるが、老齢厚生年金の支給停止の月額は、総報酬月額相当額と基本月額との合計額から支給停止調整額を控除して得た額の2分の1に相当する額である。設問の場合、総報酬月額相当額（64万円）と基本月額（10万円）との合計額（74万円）が支給停止調整額（62万円）を超えているため、在職老齢年金の仕組みによる支給停止が行われ、その支給停止の月額は、74万円から62万円を控除して得た額の2分の1に相当する額（6万円）である。したがって、支給停止後の老齢厚生年金の月額は、「10万円－6万円＝4万円」となる。",src:"法46条1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問4",opt:"D",q:"老齢厚生年金の受給権を有する者であってその受給権を取得した日から起算して1年を経過した日前に当該老齢厚生年金を請求していなかったものは、実施機関に当該老齢厚生年金の支給繰下げの申出をすることができるが、その者が当該老齢厚生年金の受給権を取得したときに障害基礎年金の受給権者であったときは、支給繰下げの申出をすることはできない。",a:false,exp:"老齢厚生年金の受給権を取得したときに障害基礎年金の受給権者であったときであっても、他の要件を満たす限り、老齢厚生年金の支給繰下げの申出をすることができる。老齢厚生年金の受給権を有する者であってその受給権を取得した日から起算して1年を経過した日（以下「1年を経過した日」という。）前に当該老齢厚生年金を請求していなかったものは、実施機関に当該老齢厚生年金の支給繰下げの申出をすることができるが、その者が当該老齢厚生年金の受給権を取得したときに、他の年金たる給付〔他の年金たる保険給付又は国民年金法による年金たる給付（老齢基礎年金及び付加年金並びに「障害基礎年金」を除く。）をいう。〕の受給権者であったとき、又は当該老齢厚生年金の受給権を取得した日から1年を経過した日までの間において他の年金たる給付の受給権者となったときは、支給繰下げの申出をすることができない。",src:"法44条の3,1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問4",opt:"E",q:"老齢厚生年金の支給繰下げの申出は、老齢基礎年金の支給を繰り下げることができる場合であっても、老齢基礎年金の支給繰下げと同時に行う必要はなく、また、特別支給の老齢厚生年金の支給を受けていた者であっても、老齢厚生年金の支給繰下げの申出をすることができる。",a:true,exp:"設問の通り正しい。なお、老齢厚生年金の支給繰上げの請求は、老齢基礎年金の支給繰上げの請求を行うことができる者にあっては、当該請求と同時に行わなければならない。",src:"法44条の3,1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問5",opt:"A",q:"障害厚生年金に係る障害認定日は、疾病又は負傷及びこれらに起因する疾病（以下「傷病」という。）につき始めて医師又は歯科医師の診療を受けた日から起算して1年6月を経過した日又は同日後にその傷病が治った日（その症状が固定し治療の効果が期待できない状態に至った日を含む。）があるときは、その日をいう。",a:false,exp:"障害厚生年金に係る障害認定日は、疾病又は負傷及びこれらに起因する疾病（以下「傷病」という。）につき始めて医師又は歯科医師の診療を受けた日（初診日）から起算して1年6月を経過した日又はその「期間内」にその傷病が治った日（その症状が固定し治療の効果が期待できない状態に至った日を含む。）があるときは、その日をいう。",src:"法47条1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問5",opt:"B",q:"被扶養配偶者みなし被保険者期間を有する者が、当該期間中に初診日がある傷病により障害認定日において障害等級3級に該当する程度の障害の状態にあるときは、その者に対して、障害厚生年金が支給される。なお、当該傷病に係る初診日の前日において、保険料納付要件を満たしているものとする。",a:false,exp:"障害厚生年金の支給の対象となるのは、初診日において「被保険者であった者」であるが、設問の者は、被扶養配偶者みなし被保険者期間（国民年金の第3号被保険者期間）中に初診日があることから、障害厚生年金の支給要件に該当しない。",src:"法47条1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問5",opt:"C",q:"障害等級2級の障害厚生年金の受給権者に対して更に障害等級2級の障害厚生年金を支給すべき事由が生じたときは、前後の障害を併合した障害の程度による障害厚生年金が支給されるが、その併合後の障害厚生年金の額が従前の障害厚生年金の額より低額であるときは、併合を行わず、引き続き従前の障害厚生年金が支給されることとなる。",a:false,exp:"併合後の障害厚生年金の額が、従前の障害厚生年金の額より低額であるときは、併合後の障害厚生年金の額は、従前の障害厚生年金の額に相当する額とされる。「併合を行わず、引き続き従前の障害厚生年金が支給されることとなる」のではない。",src:"法48条1項、50条4項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問5",opt:"D",q:"63歳の障害等級3級の障害厚生年金の受給権者（受給権を取得した当時から引き続き障害等級1級又は2級に該当したことはなかったものとする。）が、繰上げ支給の老齢基礎年金の受給権者である場合には、その後65歳に達する日の前日までの間に当該障害厚生年金に係る障害の程度が増進したときであっても、実施機関に対し、障害の程度が増進したことによる障害厚生年金の額の改定を請求することはできない。",a:true,exp:"設問の通り正しい。設問の障害の程度の増進による改定請求は、65歳以上の者又は（繰上げ支給の）老齢基礎年金の受給権者であって、かつ、障害厚生年金の受給権者（当該障害厚生年金と同一の支給事由に基づく国民年金法による障害基礎年金の受給権を有しないものに限る。）については、適用されない。",src:"法52条7項、法附則16条の3,2項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問5",opt:"E",q:"障害手当金は、障害の程度を定めるべき日において、当該傷病について労働者災害補償保険法の規定による障害補償給付を受ける権利を有する者については支給されないが、老齢基礎年金の受給権者については支給されることがある。",a:false,exp:"障害手当金は、障害の程度を定めるべき日において、老齢基礎年金の受給権者であるものには支給されない。その他の記述は正しい。なお、障害手当金に係る障害の程度を定めるべき日は、初診日から起算して5年を経過する日までの間におけるその傷病の治った日である。",src:"法56条2号、3号",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問6",opt:"ア",q:"遺族厚生年金の支給を受けている者が、65歳に達することにより老齢厚生年金の受給権を有することとなったときは、当該遺族厚生年金は、当該老齢厚生年金の額（加給年金額が加算された老齢厚生年金にあっては、加給年金額を加算しない額とする。）に相当する部分の支給が停止される。",a:true,exp:"設問の通り正しい。遺族厚生年金（その受給権者が65歳に達しているものに限る。）は、その受給権者が老齢厚生年金の受給権を有するときは、当該老齢厚生年金の額（加給年金額が加算されている場合には、加給年金額を加算しない額）に相当する部分の支給が停止される。なお、65歳以後は、老齢厚生年金と遺族厚生年金とを併給することができる。",src:"法64条の2",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問6",opt:"イ",q:"遺族厚生年金の受給権は、遺族厚生年金と当該遺族厚生年金と同一の支給事由に基づく遺族基礎年金の受給権を有する妻が30歳に到達する日後に当該遺族基礎年金の受給権が消滅した場合には、当該遺族基礎年金の受給権が消滅した日から起算して5年を経過したときに、消滅する。",a:false,exp:"遺族厚生年金の受給権は、遺族厚生年金と当該遺族厚生年金と同一の支給事由に基づく遺族基礎年金の受給権を有する妻が「30歳に到達する日前」に当該遺族基礎年金の受給権が消滅した場合には、当該遺族基礎年金の受給権が消滅した日から起算して5年を経過したときに、消滅する。なお、遺族厚生年金の受給権を取得した当時30歳未満である妻が当該遺族厚生年金と同一の支給事由に基づく遺族基礎年金の受給権を取得しないときは、当該遺族厚生年金の受給権を取得した日から起算して5年を経過したときに、遺族厚生年金の受給権が消滅する。",src:"法63条1項5号ロ",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問6",opt:"ウ",q:"子に対する遺族厚生年金は、夫が遺族厚生年金の受給権を有する期間、その支給を停止するものとされており、その夫の申出により、当該夫の遺族厚生年金の全額の支給を停止することとなった場合であっても、夫が遺族厚生年金の受給権を有する限り、子に対する遺族厚生年金の支給は停止される。",a:true,exp:"設問の通り正しい。子に対する遺族厚生年金は、配偶者が遺族厚生年金の受給権を有する期間、その支給を停止することとされており、配偶者の申出により、配偶者の遺族厚生年金の全額の支給が停止される場合であっても、子に対する遺族厚生年金の支給は停止される。なお、配偶者に対する遺族厚生年金が、「①夫について60歳に達するまでの期間、支給停止されるとき」、「②配偶者が遺族基礎年金の受給権を有しない場合であって子が当該遺族基礎年金の受給権を有することにより支給停止されるとき」又は「③配偶者の所在が1年以上明らかでないことにより子の申請により支給停止されるとき」は、その支給を停止されている間は、子に対する遺族厚生年金の支給は停止されないこととされている。",src:"法38条の2、66条1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問6",opt:"エ",q:"遺族厚生年金（長期要件に該当することにより支給されるものであって、その額の計算の基礎となる被保険者期間の月数が240未満であるものを除く。）の受給権者である妻について、遺族厚生年金の額に遺族基礎年金の額に4分の3を乗じて得た額（中高齢寡婦加算額）を加算することとされるのは、当該遺族厚生年金の受給権を取得した当時40歳以上60歳未満の妻に限られる。",a:false,exp:"中高齢寡婦加算額を加算することとされるのは、当該遺族厚生年金の受給権を取得した当時40歳以上60歳未満の妻に限られていない。受給権取得当時40歳以上65歳未満の妻のほか、受給権取得当時40歳未満の妻であっても、40歳に達した当時当該被保険者若しくは被保険者であった者の子で遺族基礎年金の支給を受けることができる要件に該当するもの（当該被保険者又は被保険者であった者の死亡後に遺族基礎年金の減額改定事由のいずれかに該当したことがあるものを除く。）と生計を同じくしていたものが65歳未満であるときは、中高齢寡婦加算額の加算の対象となる。なお、中高齢寡婦加算額が加算された遺族厚生年金は、その受給権者である妻が当該被保険者又は被保険者であった者の死亡について遺族基礎年金の支給を受けることができるときは、その間、中高齢寡婦加算額に相当する部分の支給が停止される。",src:"法62条1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問6",opt:"オ",q:"遺族厚生年金の受給権者が父母の2人である場合、父の所在が1年以上明らかでないときは、父に対する遺族厚生年金は、母の申請によって、その所在が明らかでなくなった時にさかのぼって支給停止されるが、父は、いつでも、その支給停止の解除を申請することができる。",a:true,exp:"設問の通り正しい。配偶者以外の者に対する遺族厚生年金の受給権者が2人以上である場合において、受給権者のうち1人以上の者の所在が1年以上明らかでないときは、その者に対する遺族厚生年金は、他の受給権者の申請によって、その所在が明らかでなくなった時にさかのぼって、その支給を停止するものとされており、また、遺族厚生年金の支給を停止された者は、いつでも、その支給の停止の解除を申請することができる。なお、配偶者又は子に対する遺族厚生年金は、その配偶者又は子の所在が1年以上明らかでないときは、遺族厚生年金の受給権を有する子又は配偶者の申請によって、その所在が明らかでなくなった時にさかのぼって、その支給を停止するものとされており、また、配偶者又は子は、いつでも、支給の停止の解除を申請することができる。",src:"法68条1項、2項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問7",opt:"A",q:"特別支給の老齢厚生年金は、その受給権者が雇用保険法の規定による基本手当の求職の申込みをしたときは、当該基本手当に係る離職の日の属する月の翌月から、その支給が停止される。",a:false,exp:"「基本手当に係る離職の日の属する月の翌月」ではなく、「求職の申込みがあった月の翌月」から、支給が停止される。",src:"法附則7条の4,1項、11条の5",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問7",opt:"B",q:"特別支給の老齢厚生年金と雇用保険法の規定による基本手当との調整を行う期間中に、基本手当の支給を受けた日とみなされる日及びこれに準ずる日として政令で定める日が1日もない月があるときは、その月の分の特別支給の老齢厚生年金の支給停止は行われない。",a:true,exp:"設問の通り正しい。なお、基本手当との調整が行われる期間は、求職の申込みがあった月の翌月から次の①又は②のいずれかに該当するに至った月までの各月とされている。①基本手当の受給資格に係る受給期間が経過したとき。②特別支給の老齢厚生年金の受給権者が基本手当の受給資格に係る所定給付日数に相当する日数分の基本手当の支給を受け終わったとき（延長給付を受ける者にあっては、当該延長給付が終わったとき。）。",src:"法附則7条の4,2項、11条の5",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問7",opt:"C",q:"特別支給の老齢厚生年金の受給権者が、雇用保険法の規定による教育訓練休暇給付金の支給を受けることができる場合であっても、特別支給の老齢厚生年金について、教育訓練休暇給付金との支給調整は行われない。",a:true,exp:"設問の通り正しい。なお、特別支給の老齢厚生年金の受給権者が、雇用保険法の規定による高年齢雇用継続給付の支給を受けることができる場合には、在職老齢年金の仕組みによる支給調整後の特別支給の老齢厚生年金について、高年齢雇用継続給付との支給調整が行われる。特別支給の老齢厚生年金との支給調整が行われる雇用保険の保険給付は、基本手当及び高年齢雇用継続給付だけである。また、65歳以後に支給される老齢厚生年金については、雇用保険の保険給付との支給調整は行われることはない。",src:"法附則11条の6他",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問7",opt:"D",q:"遺族厚生年金は、その受給権者が65歳に達している場合には、障害基礎年金と併せて受給することができる。",a:true,exp:"設問の通り正しい。遺族厚生年金は、その受給権者が65歳に達している場合には、老齢基礎年金又は障害基礎年金と併せて受給することができる。",src:"法38条1項、国年法20条、国年法附則9条の2の4",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問7",opt:"E",q:"障害厚生年金は、その受給権者が65歳に達している場合であっても、老齢基礎年金と併せて受給することはできない。",a:true,exp:"設問の通り正しい。障害厚生年金は、その受給権者の年齢にかかわらず、老齢基礎年金と併せて受給することはできない。なお、障害基礎年金は、その受給権者が65歳に達している場合には、老齢厚生年金又は遺族厚生年金と併せて受給することができる。",src:"法38条1項、国年法20条、国年法附則9条の2の4",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問8",opt:"A",q:"厚生年金保険の被保険者期間が第2号厚生年金被保険者期間の10か月だけであったため特別支給の老齢厚生年金の支給を受けることができなかった者が、その後に第1号厚生年金被保険者期間を2か月有することとなった場合には、他の要件を満たす限り、その者は特別支給の老齢厚生年金の支給を受けることができる。",a:true,exp:"設問の通り正しい。特別支給の老齢厚生年金の支給を受けるためには、厚生年金保険の被保険者期間が1年以上であることを要するが、この1年以上の期間については、その者が2以上の被保険者の種別に係る被保険者であった期間に係る被保険者期間を有する場合には、これを合算するものとされている。設問の者は、第2号厚生年金被保険者期間を10か月、第1号厚生年金被保険者期間を2か月有しており、合算して12か月の被保険者期間を有しているので、他の要件を満たす限り、特別支給の老齢厚生年金の支給を受けることができる。",src:"法附則8条、20条1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問8",opt:"B",q:"2以上の種別の被保険者であった期間を有する者に係る老齢厚生年金について、各号の厚生年金被保険者期間のうち一の期間に基づく老齢厚生年金の受給権を有する者であってその受給権を取得した日から起算して1年を経過した日（以下「1年を経過した日」という。）前に当該一の期間に基づく老齢厚生年金を請求していなかったものは、実施機関に当該老齢厚生年金の支給繰下げの申出をすることができるが、1年を経過した日において他の期間に基づく老齢厚生年金の支給を受けている場合には、支給繰下げの申出をすることはできない。なお、設問の者は、老齢厚生年金、老齢基礎年金以外の公的年金給付の受給権を取得したことはない。",a:true,exp:"設問の通り正しい。2以上の種別の被保険者であった期間を有する者に係る老齢厚生年金について、支給繰下げを行う場合には、一の期間に基づく老齢厚生年金についての支給繰下げの申出は、他の期間に基づく老齢厚生年金についての当該申出と同時に行わなければならず、設問の場合には、当該申出を行うことはできない。",src:"法78条の28、令3条の13の2,1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問8",opt:"C",q:"第1号厚生年金被保険者である障害等級1級に該当する障害の状態にある障害厚生年金の受給権者（当該障害に係る傷病の初診日においては、第4号厚生年金被保険者であった者とする。）が死亡し、その者の遺族に遺族厚生年金が支給される場合には、当該初診日における実施機関である日本私立学校振興・共済事業団が遺族厚生年金の支給に関する事務を行う。",a:false,exp:"設問の場合、遺族厚生年金の支給に関する事務は、死亡日における実施機関である厚生労働大臣が行う。短期要件の遺族厚生年金の支給に関する事務は、次の①〜③に掲げる区分に応じて行われるが、①〜③のうち2つ以上に該当する場合には、①の死亡日における実施機関（②及び③の2つに該当する場合は③の実施機関）が遺族厚生年金の支給に関する事務を行うこととされている。設問の場合は、①及び③に該当するので、①の死亡日における実施機関（厚生労働大臣）が行うこととなる。①被保険者が死亡したことにより支給される遺族厚生年金…死亡日における実施機関。②被保険者であった者が、被保険者の資格を喪失した後に、被保険者であった間に初診日がある傷病により当該初診日から起算して5年を経過する日前に死亡したことにより支給される遺族厚生年金…初診日における実施機関。③障害等級1級又は2級に該当する障害の状態にある障害厚生年金の受給権者が死亡したことにより支給される遺族厚生年金…障害厚生年金の支給事由となった障害に係る傷病の初診日における実施機関。",src:"法78条の33,2項、令3条の13の10,4項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問8",opt:"D",q:"厚生年金保険の被保険者期間が10か月だけであったため特別支給の老齢厚生年金の支給を受けることができなかった者が、その後に離婚時みなし被保険者期間を2か月有することとなった場合であっても、その者は特別支給の老齢厚生年金の支給を受けることはできない。",a:true,exp:"設問の通り正しい。特別支給の老齢厚生年金の支給を受けるためには、厚生年金保険の被保険者期間が1年以上であることを要するが、この1年以上の期間については、離婚時みなし被保険者期間を除くものとされている。なお、被扶養配偶者みなし被保険者期間についても同様の取扱いとなる。",src:"法附則8条、法附則17条の10",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問8",opt:"E",q:"障害厚生年金の受給権者について、当該障害厚生年金の額の計算の基礎となる被保険者期間に係る標準報酬が標準報酬改定請求により改定され、又は決定されたときは、改定又は決定後の標準報酬を基礎として、当該標準報酬改定請求のあった日の属する月の翌月から年金額が改定されるが、年金額の計算の基礎となる被保険者期間の月数が300に満たないため、これを300として計算した障害厚生年金については、離婚時みなし被保険者期間は、その計算の基礎とされない。",a:true,exp:"設問の通り正しい。",src:"法78条の10,2項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問9",opt:"A",q:"厚生年金保険法の規定による脱退一時金の支給を受けることができる者が、同時に、国民年金法の規定による脱退一時金の支給を受けることができるときは、その双方の支給を請求することができる。",a:true,exp:"設問の通り正しい。なお、設問の場合（厚生年金保険法の規定による脱退一時金と国民年金法の規定による脱退一時金を同時に請求する場合）には、脱退一時金の支給に関する事務は、厚生労働大臣が行うこととされている。",src:"法附則29条、国年法附則9条の3の2",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問9",opt:"B",q:"脱退一時金に係る支給率は、最終月（最後に被保険者の資格を喪失した日の属する月の前月をいう。以下同じ。）の属する年の前年9月の保険料率（最終月が1月から8月までの場合にあっては、前々年9月の保険料率）に2分の1を乗じて得た率に、被保険者であった期間に応じて政令で定める数を乗じて得た率であり、その率に小数点以下1位未満の端数があるときは、これを切り上げるものとされている。",a:false,exp:"脱退一時金に係る支給率は、最終月（最後に被保険者の資格を喪失した日の属する月の前月をいう。以下同じ。）の属する年の前年「10月」の保険料率（最終月が1月から8月までの場合にあっては、前々年「10月」の保険料率）に2分の1を乗じて得た率に、被保険者であった期間に応じて政令で定める数を乗じて得た率であり、その率に小数点以下1位未満の端数があるときは、これを「四捨五入」するものとされている。",src:"法附則29条4項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問9",opt:"C",q:"脱退一時金の額は、被保険者であった期間に応じて、その期間の平均標準報酬額（被保険者期間の計算の基礎となる各月の標準報酬月額と標準賞与額に再評価率を乗じて得た額の総額を、当該被保険者期間の月数で除して得た額をいう。）に支給率を乗じて得た額とする。",a:false,exp:"脱退一時金の額の計算の基礎となる平均標準報酬額に係る標準報酬月額及び標準賞与額には、再評価率は乗じられない。",src:"法附則29条3項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問9",opt:"D",q:"国内に住所を有し、日本国籍を有しない被保険者が、令和6年2月2日にその資格を喪失し、国民年金の第3号被保険者となった。その後に配偶者である第2号被保険者の転勤によりその者に伴い日本国外に居住することとなり、令和7年3月3日に日本国内に住所を有しなくなった。この者が60歳に達したことにより令和8年4月4日に第3号被保険者の資格を喪失した場合であって、脱退一時金の要件を満たしているときは、令和7年3月3日から起算して2年を経過する日までの間に限り、その支給を請求することができる。",a:false,exp:"脱退一時金は、最後に国民年金の被保険者の資格を喪失した日（同日において日本国内に住所を有していた者にあっては、同日後初めて、日本国内に住所を有しなくなった日）から起算して2年を経過しているときは、その支給を請求することができない。したがって、設問の場合、令和8年4月4日から起算して2年を経過する日までの間に限り、脱退一時金の支給を請求することができることとなる。",src:"法附則29条1項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問9",opt:"E",q:"厚生労働大臣による脱退一時金に関する処分に不服がある者は、社会保険審査官に対して審査請求をすることができる。",a:false,exp:"厚生労働大臣による脱退一時金に関する処分に不服がある者は、「社会保険審査会」に対して審査請求をすることができる。なお、厚生労働大臣による脱退一時金に関する処分の取消しの訴えは、当該処分についての審査請求に対する社会保険審査会の裁決を経た後でなければ、提起することができない。",src:"法附則29条6項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問10",opt:"A",q:"被保険者又は被保険者であった者が、自己の故意の犯罪行為により、障害の原因となった事故を生ぜしめたときは、当該障害を支給事由とする障害厚生年金又は障害手当金は、支給しない。",a:false,exp:"設問の場合には、「当該障害を支給事由とする障害厚生年金又は障害手当金は、支給しない」のではなく、「保険給付の全部又は一部を行わないことができる」とされている。なお、被保険者又は被保険者であった者が、故意に、障害又はその直接の原因となった事故を生ぜしめたときは、当該障害を支給事由とする障害厚生年金又は障害手当金は、支給しない。",src:"法73条の2",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問10",opt:"B",q:"遺族厚生年金の受給権は、受給権者が他の受給権者を故意に死亡させたときは、消滅する。",a:true,exp:"設問の通り正しい。なお、遺族厚生年金は、被保険者又は被保険者であった者を故意に死亡させた者には、支給しないこととされており、また、被保険者又は被保険者であった者の死亡前に、その者の死亡によって遺族厚生年金の受給権者となるべき者を故意に死亡させた者についても、支給しないこととされている。",src:"法76条2項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問10",opt:"C",q:"機構は、滞納処分等をしたときは、速やかに、厚生労働大臣の承認を受けなければならない。",a:false,exp:"機構は、滞納処分等を行う場合には、あらかじめ、厚生労働大臣の認可を受けるとともに、滞納処分等実施規程に従い、徴収職員に行わせなければならない。また、機構は、滞納処分等をしたときは、速やかに、その結果を厚生労働大臣に報告しなければならない。",src:"法100条の6,1項、3項",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問10",opt:"D",q:"事業主が、正当な理由がなくて、被保険者の資格の取得及び喪失に関する届出をしなかったときは、6月以下の拘禁刑又は30万円以下の罰金に処せられる。",a:false,exp:"設問の場合、「6月以下の拘禁刑又は30万円以下の罰金」ではなく、「6月以下の拘禁刑又は50万円以下の罰金」に処せられる。",src:"法102条1項1号",cat:"択一式（厚生年金保険法）"},
+{no:"第2-問10",opt:"E",q:"市町村長は、実施機関又は受給権者に対して、当該市町村の条例の定めるところにより、被保険者、被保険者であった者又は受給権者の戸籍に関し、無料で証明を行わなければならない。",a:false,exp:"設問の戸籍事項の無料証明は、「行わなければならない」のではなく、「行うことができる」とされている。",src:"法95条",cat:"択一式（厚生年金保険法）"},
+{type:"select",no:"選択1",opt:"空欄A",context:"遺族厚生年金の額は、当該遺族厚生年金と同一の支給事由に基づく国民年金法による遺族基礎年金の支給を受ける場合を除き、老齢厚生年金の受給権を有する配偶者が遺族厚生年金の受給権を取得したときは、次の(1)又は(2)の額のうちいずれか多い額とされる。(1)死亡した被保険者又は被保険者であった者の被保険者期間を基礎として老齢厚生年金の額の規定の例により計算した額の【A】に相当する額（厚生年金保険法第58条第1項第1号から第3号まで（短期要件）のいずれかに該当することにより支給される遺族厚生年金については、その額の計算の基礎となる被保険者期間の月数が300に満たないときは、これを300として計算した額）",choices:["2分の1", "3分の2", "4分の3", "5分の4"],answer:"4分の3",exp:"遺族厚生年金の額は、原則として、設問文(1)の額〔死亡した被保険者又は被保険者であった者の被保険者期間を基礎として老齢厚生年金の額の規定の例により計算した額の4分の3に相当する額（短期要件のいずれかに該当することにより支給される遺族厚生年金については、その額の計算の基礎となる被保険者期間の月数が300に満たないときは、これを300として計算した額）〕であるが、遺族厚生年金の受給権者が老齢厚生年金の受給権を有する配偶者であるときは、この(1)の額と設問文(2)の額とを比較して、いずれか多い額となる。",src:"法60条1項",cat:"選択式"},
+{type:"select",no:"選択1",opt:"空欄B",context:"(2) 上記(1)の額に【B】を乗じて得た額及び当該遺族厚生年金の受給権者の老齢厚生年金の額（加給年金額が加算される場合には、これを含まない額）に2分の1を乗じて得た額を合算した額",choices:["2分の1", "3分の2", "4分の3", "5分の4"],answer:"3分の2",exp:"(2)の額は、おおまかにいうと、死亡した者の老齢厚生年金の2分の1相当額と受給権者の老齢厚生年金の2分の1相当額を合算した額である。具体的には、上記(1)の額（老齢厚生年金の額の規定の例により計算した額の4分の3に相当する額）に「3分の2」を乗じて得た額（つまり、老齢厚生年金の額の規定の例により計算した額の2分の1）及び当該遺族厚生年金の受給権者の老齢厚生年金の額に2分の1を乗じて得た額を合算した額となる。",src:"法60条1項",cat:"選択式"},
+{type:"select",no:"選択1",opt:"空欄C",context:"(2) 上記(1)の額に3分の2を乗じて得た額及び当該遺族厚生年金の受給権者の老齢厚生年金の額（加給年金額が加算される場合には、これを含まない額）に【C】を乗じて得た額を合算した額",choices:["2分の1", "3分の2", "4分の3", "5分の4"],answer:"2分の1",exp:"(2)の額は、上記(1)の額に3分の2を乗じて得た額及び当該遺族厚生年金の受給権者の老齢厚生年金の額（加給年金額が加算される場合には、これを含まない額）に「2分の1」を乗じて得た額を合算した額である。",src:"法60条1項",cat:"選択式"},
+{type:"select",no:"選択1",opt:"空欄D",context:"障害厚生年金は、当該傷病に係る初診日の前日において、当該【D】までに国民年金の被保険者期間がある場合には、当該被保険者期間に係る保険料納付済期間と保険料免除期間とを合算した期間が当該被保険者期間の3分の2に満たないときは、保険料納付要件を満たさないこととなり、支給されない。",choices:["初診日の前日の属する月", "初診日の前日に属する月の前月", "初診日の属する月の前月", "初診日の属する月の前々月"],answer:"初診日の属する月の前々月",exp:"障害厚生年金に係る保険料納付要件には、特例が設けられており、初診日が令和18年4月1日前にある傷病による障害については、保険料納付済期間と保険料免除期間とを合算した期間が当該被保険者期間の3分の2に満たない場合であっても、当該初診日の前日において当該初診日の属する月の前々月までの直近の1年間のうちに保険料納付済期間と保険料免除期間以外の月がないときは、保険料納付要件を満たすこととなる。",src:"法47条1項",cat:"選択式"},
+{type:"select",no:"選択1",opt:"空欄E",context:"障害厚生年金は、当該傷病に係る初診日の前日において、当該初診日の属する月の前々月までに国民年金の被保険者期間がある場合には、当該被保険者期間に係る保険料納付済期間と保険料免除期間とを合算した期間が当該被保険者期間の【E】に満たないときは、保険料納付要件を満たさないこととなり、支給されない。",choices:["2分の1", "3分の2", "4分の3", "5分の4"],answer:"3分の2",exp:"障害厚生年金に係る保険料納付要件として、当該初診日の前日において、当該初診日の属する月の前々月までに国民年金の被保険者期間がある場合には、当該被保険者期間に係る保険料納付済期間と保険料免除期間とを合算した期間が当該被保険者期間の3分の2以上であることが必要である。",src:"法47条1項",cat:"選択式"},
+{type:"select",no:"第2-選択1",opt:"空欄A",context:"令和6年における国民年金法に規定する財政の現況及び見通し及び厚生年金保険法に規定する財政の現況及び見通しを踏まえ、令和8年度から、【A】までの間は、厚生年金保険法第34条第1項及び第2項（調整期間）の規定にかかわらず、同条第1項に規定する調整期間とすることとされている。",choices:["次期財政検証作成年度", "次期財政検証作成年度の前年度", "次期財政検証作成年度の翌年度", "次期財政検証作成年度の翌々年度"],answer:"次期財政検証作成年度の翌年度",exp:"令和7年年金改正法により、令和6年における財政検証を踏まえ、令和8年度から、次期財政検証作成年度の翌年度までの間は、厚生年金保険法第34条第1項及び第2項の規定にかかわらず、同条第1項に規定する調整期間とすることとされている。",src:"法43条の4,1項、(R7)法附則3条1項",cat:"選択式"},
+{type:"select",no:"第2-選択1",opt:"空欄B",context:"この場合においては、当該調整期間における再評価率については、【B】に、調整率に1から調整率を控除して得た率に3分の2を乗じて得た率を加えて得た率（以下「経過的軽減調整率」という。）に当該年度の前年度の特別調整率を乗じて得た率を乗じて得た率（当該率が1を下回るときは、1）を基準として改定する。",choices:["可処分所得割合変化率", "物価変動率", "名目手取り賃金変動率", "所得代替率"],answer:"名目手取り賃金変動率",exp:"経過的軽減調整率による調整は、厚生年金保険の年金額の改定（再評価率の改定）の際に用いられるものであり、その基準率は「名目手取り賃金変動率」である。なお、経過的軽減調整率による調整は、国民年金の年金額の改定（改定率の改定）の際には用いられない。",src:"法43条の4,1項",cat:"選択式"},
+{type:"select",no:"第2-選択1",opt:"空欄C",context:"この場合においては、当該調整期間における再評価率については、名目手取り賃金変動率に、調整率に1から調整率を控除して得た率に【C】を乗じて得た率を加えて得た率（以下「経過的軽減調整率」という。）に当該年度の前年度の特別調整率を乗じて得た率を乗じて得た率（当該率が1を下回るときは、1）を基準として改定する。",choices:["2分の1", "3分の1", "3分の2", "4分の3"],answer:"3分の2",exp:"経過的軽減調整率は、名目手取り賃金変動率に、調整率に1から調整率を控除して得た率に「3分の2」を乗じて得た率を加えて得た率である。",src:"法43条の4,1項",cat:"選択式"},
+{type:"select",no:"第2-選択1",opt:"空欄D",context:"改正法附則第3条の2第1項では、「政府は、今後の社会経済情勢の変化を見極め、改正法の公布の日以後初めて作成される国民年金法に規定する財政の現況及び見通し及び厚生年金保険法に規定する財政の現況及び見通しにおいて、国民年金法第16条の2第1項に規定する調整期間の見通しと厚生年金保険法第34条第1項に規定する調整期間の見通しとの間に著しい差異があり、公的年金制度の【D】の低下により老齢基礎年金の給付水準の低下が見込まれる場合には、…」と定められている。",choices:["景気安定化機能", "最低保障機能", "所得再分配機能", "所得代替率"],answer:"所得再分配機能",exp:"基礎年金の給付調整が長期間となるため、将来においては、厚生年金保険の受給者を含めて年金の総額が低下するとともに、所得再分配機能も低下し、低所得層ほど年金額の低下が大きくなる。そこで、令和7年年金改正法により、国民年金と厚生年金保険それぞれの財政均衡を維持するための法制上の措置を講ずるものとされた。",src:"(R7)法附則3条の2,1項",cat:"選択式"},
+{type:"select",no:"第2-選択1",opt:"空欄E",context:"老齢基礎年金又は老齢厚生年金の受給権者の将来における老齢基礎年金の給付水準の向上を図るため、国民年金法第16条の2第1項の調整と厚生年金保険法第34条第1項の調整を【E】させるために必要な法制上の措置を講ずるものとする。",choices:["延長", "軽減", "早期に終了", "同時に終了"],answer:"同時に終了",exp:"令和7年年金改正法により、国民年金法第16条の2第1項の調整と厚生年金保険法第34条第1項の調整を「同時に終了」させるために必要な法制上の措置を講ずるものとされた。これは、基礎年金の給付調整と報酬比例部分のマクロ経済スライドによる給付調整を同時に終了させることを意味する。",src:"(R7)法附則3条の2,1項",cat:"選択式"}
+];
+
+// ============================================================
+//  GOOGLE DRIVE SYNC
+// ============================================================
+const CLIENT_ID    = APP_CONFIG.clientId;
+const SCOPES       = 'https://www.googleapis.com/auth/drive.appdata';
+const DRIVE_FILE_NAME = APP_CONFIG.driveFileName;
+let tokenClient = null, gapiInited = false, gisInited = false;
+let accessToken = null, driveFileId = null, isSyncing = false;
+let autoSaveTimer = null;
+let tokenRefreshTimer = null; // トークン自動更新タイマー
+
+window.addEventListener('load', () => {
+  // ログイン済みの場合は「再接続中」表示
+  if (getSavedAuth()) {
+    const dot = document.getElementById('syncDot');
+    const txt = document.getElementById('syncStatusText');
+    if (dot) dot.className = 'sync-dot syncing';
+    if (txt) txt.textContent = '再接続中…';
+  }
+  gapi.load('client', async () => {
+    await gapi.client.init({});
+    gapiInited = true;
+    maybeEnableSync();
+  });
+  const s = document.createElement('script');
+  s.src = 'https://accounts.google.com/gsi/client';
+  s.onload = () => {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID, scope: SCOPES,
+      callback: async (resp) => {
+        if (resp.error) {
+          if (getSavedAuth()) {
+            updateSyncUI(false);
+            showToast('再接続できませんでした。再度ログインしてください', 'warn');
+          }
+          return;
+        }
+        accessToken = resp.access_token;
+        gapi.client.setToken({ access_token: accessToken });
+        onSignedIn();
+        // 55分後にトークンを自動更新（アクセストークンは1時間で失効）
+        if (tokenRefreshTimer) clearTimeout(tokenRefreshTimer);
+        tokenRefreshTimer = setTimeout(() => {
+          if (getSavedAuth()) tokenClient.requestAccessToken({ prompt: '' });
+        }, 55 * 60 * 1000);
+      }
+    });
+    gisInited = true;
+    maybeEnableSync();
+  };
+  document.head.appendChild(s);
+});
+
+function maybeEnableSync() {
+  if (gapiInited && gisInited && getSavedAuth()) {
+    tokenClient.requestAccessToken({ prompt: '' });
+  }
+}
+function signIn() {
+  if (!gapiInited || !gisInited) { showToast('初期化中です、少々お待ちください', 'error'); return; }
+  tokenClient.requestAccessToken({ prompt: 'consent' });
+}
+function signOut() {
+  if (accessToken) google.accounts.oauth2.revoke(accessToken);
+  accessToken = null; driveFileId = null;
+  if (tokenRefreshTimer) { clearTimeout(tokenRefreshTimer); tokenRefreshTimer = null; }
+  clearSavedAuth(); updateSyncUI(false);
+  showToast('ログアウトしました');
+}
+function onSignedIn() {
+  updateSyncUI(true); saveAuthHint();
+  showToast('ログイン成功、データを読み込んでいます…', 'success');
+  loadFromDrive();
+}
+function updateSyncUI(loggedIn) {
+  document.getElementById('syncDot').className = 'sync-dot' + (loggedIn ? ' connected' : '');
+  document.getElementById('syncStatusText').textContent = loggedIn ? 'Googleドライブに同期中' : 'Googleアカウントで同期';
+  document.getElementById('syncUser').style.display = 'none';
+  document.getElementById('btnSignIn').style.display    = loggedIn ? 'none'  : 'flex';
+  document.getElementById('btnManualSync').style.display = loggedIn ? 'block' : 'none';
+  document.getElementById('btnManualSync').disabled = !loggedIn;
+  document.getElementById('btnSignOut').style.display   = loggedIn ? 'block' : 'none';
+}
+function setSyncing(v) {
+  isSyncing = v;
+  const dot = document.getElementById('syncDot');
+  const btn = document.getElementById('btnManualSync');
+  if (v) { dot.className = 'sync-dot syncing'; if (btn) { btn.disabled = true; btn.textContent = '同期中…'; } }
+  else   { dot.className = 'sync-dot connected'; if (btn) { btn.disabled = false; btn.textContent = '↑↓ 同期'; } }
+}
+async function loadFromDrive() {
+  if (!accessToken) return;
+  setSyncing(true);
+  try {
+    const tokenInfo = await fetch('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=' + accessToken);
+    if (!tokenInfo.ok) {
+      accessToken = null; clearSavedAuth(); updateSyncUI(false);
+      showToast('セッション切れ：再度ログインしてください', 'warn');
+      setSyncing(false); return;
+    }
+    const params = new URLSearchParams({ spaces: 'appDataFolder', q: `name='${DRIVE_FILE_NAME}'`, fields: 'files(id,name)' });
+    const listRes = await fetch(`https://www.googleapis.com/drive/v3/files?${params}`, { headers: { 'Authorization': 'Bearer ' + accessToken } });
+    if (!listRes.ok) { const eb = await listRes.text(); throw new Error(`list:${listRes.status} ${eb.substring(0,100)}`); }
+    const listData = await listRes.json();
+    const files = listData.files || [];
+    if (files.length > 0) {
+      driveFileId = files[0].id;
+      const fileRes = await fetch(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`, { headers: { 'Authorization': 'Bearer ' + accessToken } });
+      if (!fileRes.ok) throw new Error(`read:${fileRes.status}`);
+      const data = await fileRes.json();
+      mergeCloudData(data);
+      showToast('クラウドから読み込みました', 'success');
+    } else {
+      showToast('クラウドにデータがありません（初回）');
+      await saveToDrive();
+    }
+  } catch (e) {
+    console.error('Drive load error:', e);
+    const msg = (e instanceof Error && e.message) ? e.message : (typeof e === 'object' ? JSON.stringify(e).substring(0,100) : String(e)) || '通信エラー';
+    showToast('読み込み失敗: ' + msg, 'error');
+  }
+  setSyncing(false);
+}
+async function saveToDrive() {
+  if (!accessToken) return;
+  setSyncing(true);
+  try {
+    const body = JSON.stringify(buildSavePayload());
+    if (driveFileId) {
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+        body
+      });
+    } else {
+      const meta = JSON.stringify({ name: DRIVE_FILE_NAME, parents: ['appDataFolder'] });
+      const form = new FormData();
+      form.append('metadata', new Blob([meta], { type: 'application/json' }));
+      form.append('file', new Blob([body], { type: 'application/json' }));
+      const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&spaces=appDataFolder', {
+        method: 'POST', headers: { 'Authorization': 'Bearer ' + accessToken }, body: form
+      });
+      driveFileId = (await res.json()).id;
+    }
+    showToast('クラウドに保存しました', 'success');
+  } catch (e) {
+    console.error(e);
+    showToast('保存失敗: ' + (e?.message || '通信エラー'), 'error');
+  }
+  setSyncing(false);
+}
+async function manualSync() {
+  if (!accessToken) { showToast('先にログインしてください', 'error'); return; }
+  await loadFromDrive();
+}
+function scheduleAutoSave() {
+  if (!accessToken) return;
+  if (autoSaveTimer) clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => saveToDrive(), 3000);
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && accessToken) {
+    if (autoSaveTimer) { clearTimeout(autoSaveTimer); autoSaveTimer = null; }
+    saveToDrive();
+  }
+});
+// ページが非表示になる瞬間（タブ切替・閉じる直前）に即時保存
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && accessToken) {
+    if (autoSaveTimer) { clearTimeout(autoSaveTimer); autoSaveTimer = null; }
+    saveToDrive();
+  }
+});
+
+// ============================================================
+//  SAVE / LOAD PAYLOAD
+//  ★ v2: stats（正答率）と session（中断データ）を両方保存
+// ============================================================
+function buildSavePayload() {
+  // 現在進行中のセッション or 中断済みの pendingResume を保存
+  let sessionData = null;
+  if (currentSession && questions.length > 0) {
+    sessionData = {
+      questionIndices: questions.map(q => getOrigIdx(q)),
+      current,
+      answers: [...answers]
+    };
+  } else if (pendingResume) {
+    sessionData = pendingResume;
+  }
+  return {
+    version: 2,
+    bookmarks: [...bookmarks],          // ★ 栞 → Drive同期で他デバイスにも反映
+    stats: JSON.parse(JSON.stringify(questionStats)), // ★ 正答率データ
+    session: sessionData,               // ★ 中断セーブ
+    savedAt: new Date().toISOString()
+  };
+}
+function mergeCloudData(data) {
+  if (!data) return;
+  // 栞
+  if (data.bookmarks) bookmarks = new Set(data.bookmarks);
+  // ★ 正答率データを復元
+  if (data.stats) {
+    Object.entries(data.stats).forEach(([k, v]) => { questionStats[k] = v; });
+  }
+  // ★ 中断セッションを復元（1問以上回答済みの場合のみ）
+  if (data.session && data.session.questionIndices && data.session.answers) {
+    const answered = data.session.answers.filter(a => a !== null).length;
+    if (answered > 0) pendingResume = data.session;
+  }
+  localSave();
+  updateBmBadge();
+  updateWeakBtn();
+  updateLeastTriedBtn();
+  updateResumeBtn();
+  if (pendingResume) offerResume();
+}
+
+// ============================================================
+//  LOCAL STORAGE
+// ============================================================
+const LS_KEY  = 'sharoushi_' + DRIVE_FILE_NAME;
+const LS_AUTH = 'sharoushi_auth_hint';
+
+function localSave() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      bookmarks: [...bookmarks], stats: questionStats, session: pendingResume
+    }));
+  } catch {}
+}
+function localLoad() {
+  try {
+    const data = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
+    if (data.bookmarks) bookmarks = new Set(data.bookmarks);
+    if (data.stats) questionStats = data.stats;
+    if (data.session) pendingResume = data.session;
+  } catch {}
+}
+function saveAuthHint()  { try { localStorage.setItem(LS_AUTH, '1'); } catch {} }
+function getSavedAuth()  { try { return localStorage.getItem(LS_AUTH) === '1'; } catch { return false; } }
+function clearSavedAuth() { try { localStorage.removeItem(LS_AUTH); } catch {} }
+
+// ============================================================
+//  BOOKMARK
+// ============================================================
+let bookmarks = new Set();
+function toggleBookmark() {
+  const idx = getOrigIdx(questions[current]);
+  if (bookmarks.has(idx)) bookmarks.delete(idx);
+  else bookmarks.add(idx);
+  localSave(); updateQuestion(); updateBmBadge();
+  if (accessToken) saveToDrive(); else scheduleAutoSave();
+}
+function updateBmBadge() {
+  const badge = document.getElementById('bmBadge');
+  if (bookmarks.size > 0) {
+    badge.textContent = bookmarks.size;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+// ============================================================
+//  STATS
+// ============================================================
+let questionStats = {}; // { origIdx: {correct:N, total:N} }
+
+function recordStat(origIdx, isCorrect) {
+  if (!questionStats[origIdx]) questionStats[origIdx] = {correct:0, total:0};
+  questionStats[origIdx].total++;
+  if (isCorrect) questionStats[origIdx].correct++;
+  localSave(); scheduleAutoSave(); updateWeakBtn(); updateLeastTriedBtn();
+}
+function getAccuracyInfo(origIdx) {
+  const s = questionStats[origIdx];
+  if (!s || s.total === 0) return null;
+  const pct = Math.round((s.correct / s.total) * 100);
+  return {
+    total: s.total, pct,
+    cls: pct >= 80 ? 'high' : (pct >= 50 ? 'mid' : 'low')
+  };
+}
+
+// ============================================================
+//  WEAK QUESTIONS
+// ============================================================
+function updateWeakBtn() {
+  const pool = ALL_QUESTIONS.filter((q,i) => {
+    const s = questionStats[i];
+    return s && s.total > 0 && (s.correct / s.total) <= 0.5;
+  });
+  const btn = document.getElementById('btnWeakStart');
+  btn.style.display = pool.length > 0 ? 'block' : 'none';
+  if (pool.length === 0) btn.textContent = 'まだ回答データがありません';
+  else btn.textContent = `正答率50%以下の問題を出題（${pool.length}問）`;
+}
+function startWeak() {
+  const s = { useWeak: true };
+  startSession(s);
+}
+function updateLeastTriedBtn() {
+  const pool = ALL_QUESTIONS.filter((q,i) => {
+    const s = questionStats[i];
+    return !s || s.total === 0 || s.total < 3; // 3回未満
+  });
+  const btn = document.getElementById('btnLeastTried');
+  if (!btn) return;
+  if (pool.length > 0) {
+    btn.style.display = 'block';
+    btn.textContent = `挑戦回数が少ない問題を出題（${pool.length}問）`;
+  } else {
+    btn.style.display = 'none';
+  }
+}
+function startLeastTried() {
+  // 挑戦回数でソート（少ない順）→上位20問を出題
+  const indexed = ALL_QUESTIONS.map((q,i) => ({q, i, tries: (questionStats[i]||{total:0}).total}));
+  indexed.sort((a,b) => a.tries - b.tries);
+  const maxTries = indexed[Math.min(19, indexed.length-1)].tries;
+  const pool = indexed.filter(x => x.tries <= maxTries).map(x => ({...x.q, _origIdx: x.i}));
+  if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
+  const take = pool.slice(0, 20);
+  questions = take; answers = Array(take.length).fill(null); current = 0;
+  currentSession = { questionIndices: take.map(q => q._origIdx), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`挑戦回数の少ない${take.length}問を出題`, 'success');
+}
+
+// ============================================================
+//  RESUME SESSION
+// ============================================================
+let pendingResume = null;
+
+function offerResume() {
+  // モーダル廃止：スタート画面の「続きから開始」ボタンを表示
+  updateResumeBtn();
+}
+function updateResumeBtn() {
+  const btn = document.getElementById('btnResumeStart');
+  if (!btn) return;
+  if (pendingResume) {
+    const done = pendingResume.answers.filter(a => a !== null).length;
+    const total = pendingResume.questionIndices.length;
+    btn.textContent = `▶ 続きから開始（${done}/${total}問 回答済み）`;
+    btn.style.display = 'block';
+  } else {
+    btn.style.display = 'none';
+  }
+}
+function resumeSession() {
+  if (!pendingResume) return;
+  const pool = pendingResume.questionIndices.map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
+  if (pool.length === 0) { clearResume(); return; }
+  questions = pool; answers = [...pendingResume.answers]; current = pendingResume.current || 0;
+  currentSession = { ...pendingResume }; pendingResume = null;
+  localSave(); showQuestionScreen(); updateQuestion();
+  showToast('前回の続きから再開しました', 'success');
+}
+function clearResume() {
+  pendingResume = null; localSave();
+  updateResumeBtn();
+  scheduleAutoSave();
+}
+
+// ============================================================
+//  MAIN LOGIC
+// ============================================================
+let questions = [], answers = [], current = 0, currentSession = null;
+
+const CATS = [...new Set(ALL_QUESTIONS.map(q => q.cat))];
+
+// ============================================================
+//  FILTER
+// ============================================================
+function initFilters() {
+  const btns = document.getElementById('filterBtns');
+  CATS.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-filter'; btn.textContent = cat; btn.dataset.cat = cat;
+    btn.onclick = () => selectFilter(cat, btn);
+    btns.appendChild(btn);
+  });
+}
+function selectFilter(cat, btn) {
+  document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  
+  let p = ALL_QUESTIONS;
+  if (cat !== 'all') p = p.filter(q => q.cat === cat);
+  
+  document.getElementById('startCount').textContent = p.length;
+  
+  // ランダム入力の max を更新
+  const input = document.getElementById('randomInput');
+  input.max = p.length; 
+  if (parseInt(input.value) > p.length) input.value = p.length;
+  updateRandomBtn();
+}
+function getFilteredPool() {
+  const active = document.querySelector('.btn-filter.active');
+  if (!active) return ALL_QUESTIONS;
+  const cat = active.dataset.cat;
+  if (cat === 'all') return ALL_QUESTIONS;
+  return ALL_QUESTIONS.filter(q => q.cat === cat);
+}
+
+// ============================================================
+//  RANDOM MODE
+// ============================================================
+function updateRandomBtn() {
+  const input = document.getElementById('randomInput');
+  const btn = document.getElementById('btnRandomStart');
+  btn.textContent = `${input.value}問ランダムで出題`;
+}
+function startRandom() {
+  const num = parseInt(document.getElementById('randomInput').value) || 10;
+  let pool = getFilteredPool().map(q => ({ ...q, _origIdx: ALL_QUESTIONS.indexOf(q) }));
+  if (num >= pool.length) pool = pool;
+  else {
+    pool = pool.sort(() => Math.random() - 0.5).slice(0, num);
+  }
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => q._origIdx), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`${pool.length}問をランダム出題開始`, 'success');
+}
+
+// ============================================================
+//  SHUFFLE
+// ============================================================
+function shuffle() {
+  const pool = getFilteredPool();
+  const indices = Array.from({length: pool.length}, (_, i) => i);
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  ALL_QUESTIONS.length = 0;
+  indices.forEach(i => ALL_QUESTIONS.push(pool[i]));
+  showToast('問題をシャッフルしました', 'success');
+}
+
+// ============================================================
+//  START MODES
+// ============================================================
+function start() {
+  const s = {};
+  startSession(s);
+}
+function startBookmarks() {
+  if (bookmarks.size === 0) { showToast('栞がありません', 'warn'); return; }
+  const s = { useBookmarks: true };
+  startSession(s);
+}
+function startSession(s) {
+  let pool = [];
+  
+  if (s.useBookmarks) {
+    pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
+  } else if (s.useWeak) {
+    let p = ALL_QUESTIONS.map((q, i) => ({ ...q, _origIdx: i }));
+    pool = p.filter(q => {
+      const stat = questionStats[q._origIdx];
+      return stat && stat.total > 0 && (stat.correct / stat.total) <= 0.5;
+    });
+  } else {
+    pool = getFilteredPool().map(q => ({ ...q, _origIdx: ALL_QUESTIONS.indexOf(q) }));
+  }
+
+  if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
+  
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => q._origIdx), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+}
+
+function getOrigIdx(q) { return q._origIdx !== undefined ? q._origIdx : ALL_QUESTIONS.indexOf(q); }
+
+// ============================================================
+//  SCREENS
+// ============================================================
+function showMain() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('show'));
+  document.getElementById('screenMain').classList.add('show');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tabMain').classList.add('active');
+  
+  // メイン画面表示時に進行中セッションがあれば questionScreen に、なければ startScreen に
+  if (questions.length > 0 && current < questions.length) {
+    showQuestionScreen(); updateQuestion();
+  } else {
+    document.getElementById('startScreen').style.display = 'block';
+    document.getElementById('questionScreen').style.display = 'none';
+    document.getElementById('resultScreen').style.display = 'none';
+    document.getElementById('progressWrap').style.display = 'none';
+  }
+}
+function showBookmarks() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('show'));
+  document.getElementById('screenBookmarks').classList.add('show');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tabBookmarks').classList.add('active');
+  document.querySelector('.bookmark-list').classList.add('show');
+  renderBookmarks();
+}
+
+function showQuestionScreen() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('questionScreen').style.display = 'block';
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'block';
+}
+function showResultScreen() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('questionScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'block';
+  document.getElementById('progressWrap').style.display = 'none';
+  renderResults();
+}
+
+// ============================================================
+//  UPDATE QUESTION
+// ============================================================
+function updateQuestion() {
+  if (questions.length === 0 || current >= questions.length) return;
+  
+  const q = questions[current];
+  const currentQIndex = getOrigIdx(q);
+  
+  // プログレスバー
+  const progressInfo = `${current + 1} / ${questions.length}`;
+  const correctCount = answers.filter(a => a && a.correct).length;
+  document.getElementById('progressNum').textContent = progressInfo;
+  document.getElementById('progressScore').textContent = `正解: ${correctCount}問`;
+  document.getElementById('progressFill').style.width = `${((current + 1) / questions.length) * 100}%`;
+  
+  // 問題カード
+  document.getElementById('qTag').textContent = q.cat;
+  document.getElementById('qTag').textContent = q.cat;
+  document.getElementById('qNum').textContent = q.no + (q.opt ? '-' + q.opt : '');
+  if (q.type === 'select') {
+    document.getElementById('qText').innerHTML = q.context;
+    // 空欄を強調
+    const regex = /【[A-Z]】/g;
+    document.getElementById('qText').innerHTML = document.getElementById('qText').innerHTML.replace(
+      regex, '<span class="q-blank">$&</span>'
+    );
+  } else {
+    document.getElementById('qText').textContent = q.q;
+  }
+  
+  // タイプバッジ
+  const typeBadge = document.getElementById('qTypeBadge');
+  if (q.type === 'select') {
+    typeBadge.textContent = '選択式';
+    typeBadge.className = 'q-type-badge sel';
+    typeBadge.style.display = 'inline-block';
+  } else {
+    typeBadge.textContent = '○×';
+    typeBadge.className = 'q-type-badge ox';
+    typeBadge.style.display = 'inline-block';
+  }
+
+  // ★ 正答率バッジ
+  const accEl  = document.getElementById('qAcc');
+  const accInfo = getAccuracyInfo(currentQIndex);
+  if (accInfo) {
+    accEl.textContent = `過去${accInfo.total}回: ${accInfo.pct}%正解`;
+    accEl.className   = `q-acc ${accInfo.cls}`;
+    accEl.style.display = 'inline-block';
+  } else {
+    accEl.style.display = 'none';
+  }
+  // ★ 挑戦回数バッジ
+  const triesEl = document.getElementById('qTries');
+  const s = questionStats[currentQIndex];
+  const tries = s ? s.total : 0;
+  triesEl.textContent = `挑戦${tries}回`;
+  triesEl.style.display = 'inline-block';
+
+  // 栞ボタン
+  const bBtn = document.getElementById('btnBookmark');
+  bBtn.textContent = bookmarks.has(currentQIndex) ? '★' : '☆';
+  bBtn.classList.toggle('active', bookmarks.has(currentQIndex));
+
+  const ans    = answers[current];
+  const panel  = document.getElementById('resultPanel');
+  const nextBtn = document.getElementById('btnNext');
+  const isSelect = (q.type === 'select');
+  // ボタン群の表示切替
+  document.getElementById('oxRow').style.display       = isSelect ? 'none' : 'grid';
+  document.getElementById('choicesGrid').style.display = isSelect ? 'grid' : 'none';
+  if (ans) {
+    if (isSelect) renderChoices(q, ans.userChoice, true);
+    else          renderOxButtons(q, ans.userChoice, true);
+    showResultPanel(q, ans.correct);
+    nextBtn.style.display = 'block';
+  } else {
+    if (isSelect) renderChoices(q, null, false);
+    else          renderOxButtons(q, null, false);
+    panel.style.display = 'none'; panel.className = 'result-panel';
+    nextBtn.style.display = 'none';
+  }
+  document.getElementById('btnBack').disabled = (current === 0);
+  document.getElementById('btnSkip').style.display = ans ? 'none' : 'block';
+}
+
+function renderOxButtons(q, userChoice, isAnswered) {
+  const bm = document.getElementById('btnMaru');
+  const bb = document.getElementById('btnBatsu');
+  // ラベルをリセット
+  bm.innerHTML = '<div>○</div><div class="btn-label">正しい</div>';
+  bb.innerHTML = '<div>×</div><div class="btn-label">誤り</div>';
+  bm.className = 'btn-answer btn-maru'; bb.className = 'btn-answer btn-batsu';
+  bm.disabled = false; bb.disabled = false;
+  if (isAnswered) {
+    bm.disabled = true; bb.disabled = true;
+    if (userChoice === true) {
+      bm.className = q.a === true  ? 'btn-answer correct-chosen' : 'btn-answer wrong-chosen';
+      if (q.a !== true)  bb.className = 'btn-answer reveal-correct';
+      // あなたの選択ラベル
+      bm.innerHTML += '<div class="your-choice-label">▶ あなたの選択</div>';
+    } else {
+      bb.className = q.a === false ? 'btn-answer correct-chosen' : 'btn-answer wrong-chosen';
+      if (q.a !== false) bm.className = 'btn-answer reveal-correct';
+      // あなたの選択ラベル
+      bb.innerHTML += '<div class="your-choice-label">▶ あなたの選択</div>';
+    }
+  }
+}
+
+// 選択式問題の描画（選択式を含む科目でオーバーライドして使用）
+function renderChoices(q, userChoice, isAnswered) {
+  const grid = document.getElementById('choicesGrid');
+  grid.innerHTML = '';
+  q.choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-choice'; btn.textContent = c;
+    if (isAnswered) {
+      btn.disabled = true;
+      if (c === q.answer)   btn.className = c === userChoice ? 'btn-choice correct-chosen' : 'btn-choice reveal-correct';
+      if (c === userChoice && c !== q.answer) btn.className = 'btn-choice wrong-chosen';
+      if (c === userChoice) btn.innerHTML += '<div class="your-choice-label">▶ あなたの選択</div>';
+    } else {
+      btn.onclick = () => answerSelect(c);
+    }
+    grid.appendChild(btn);
+  });
+}
+
+function showResultPanel(q, isCorrect) {
+  const panel = document.getElementById('resultPanel');
+  panel.style.display = 'block';
+  panel.className     = isCorrect ? 'result-panel correct' : 'result-panel wrong';
+  document.getElementById('resultHeader').textContent = isCorrect ? '✓ 正解！' : '✗ 不正解';
+  document.getElementById('resultExp').textContent    = q.exp;
+  document.getElementById('resultSource').textContent = '根拠：' + q.src;
+}
+
+// ============================================================
+//  ANSWER
+// ============================================================
+function answerOx(userAnswer) {
+  if (answers[current]) return;
+  const q         = questions[current];
+  const isCorrect = userAnswer === q.a;
+  answers[current] = { correct: isCorrect, userChoice: userAnswer };
+  recordStat(getOrigIdx(q), isCorrect);
+  localSave(); updateQuestion(); scheduleAutoSave();
+}
+function answerSelect(userChoice) {
+  if (answers[current]) return;
+  const q         = questions[current];
+  const isCorrect = userChoice === q.answer;
+  answers[current] = { correct: isCorrect, userChoice };
+  recordStat(getOrigIdx(q), isCorrect);
+  localSave(); updateQuestion(); scheduleAutoSave();
+}
+
+// ============================================================
+//  NAVIGATION
+// ============================================================
+function nextQuestion() {
+  if (current < questions.length - 1) { current++; updateQuestion(); }
+  else { finishSession(); }
+  currentSession.current = current; localSave();
+}
+function prevQuestion() {
+  if (current > 0) { current--; updateQuestion(); }
+  currentSession.current = current; localSave();
+}
+function skip() {
+  if (current < questions.length - 1) { current++; updateQuestion(); }
+  else { finishSession(); }
+  currentSession.current = current; localSave();
+}
+function suspend() {
+  // 中断時にセッションデータをpendingResumeに移す
+  if (currentSession) {
+    pendingResume = {
+      questionIndices: questions.map(q => getOrigIdx(q)),
+      current,
+      answers: [...answers]
+    };
+    currentSession = null;
+    localSave(); scheduleAutoSave();
+  }
+  
+  questions = []; answers = []; current = 0;
+  document.getElementById('startScreen').style.display = 'block';
+  document.getElementById('questionScreen').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  updateResumeBtn();
+  showToast('セッションを中断しました', 'warn');
+}
+
+// ============================================================
+//  FINISH & RESULTS
+// ============================================================
+function finishSession() {
+  // 完了時にセッションデータをクリア
+  currentSession = null; pendingResume = null;
+  localSave(); scheduleAutoSave();
+  showResultScreen();
+}
+function renderResults() {
+  const correct = answers.filter(a => a && a.correct).length;
+  const wrong   = answers.filter(a => a && !a.correct).length;
+  const skipped = answers.filter(a => !a).length;
+  const total   = questions.length;
+  const rate    = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+  document.getElementById('resultScoreText').textContent = `${correct} / ${total}`;
+  document.getElementById('correctCount').textContent   = correct;
+  document.getElementById('wrongCount').textContent     = wrong;
+  document.getElementById('skippedCount').textContent   = skipped;
+  
+  let msg = `正解率: ${rate}%\n`;
+  if (rate >= 80) msg += '素晴らしい結果です！';
+  else if (rate >= 60) msg += '良い成績です！';
+  else if (rate >= 40) msg += 'もう少し頑張りましょう。';
+  else msg += '復習をお勧めします。';
+  
+  document.getElementById('resultMessage').textContent = msg;
+  
+  // 再挑戦ボタンの表示制御
+  document.getElementById('btnRetryWrong').style.display = wrong > 0 ? 'inline-block' : 'none';
+  document.getElementById('btnRetrySkipped').style.display = skipped > 0 ? 'inline-block' : 'none';
+}
+
+// ============================================================
+//  RETRY
+// ============================================================
+function retryWrong() {
+  const wrongIndices = [];
+  answers.forEach((a, i) => { if (a && !a.correct) wrongIndices.push(i); });
+  if (wrongIndices.length === 0) return;
+  
+  const pool = wrongIndices.map(i => questions[i]);
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => getOrigIdx(q)), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`${pool.length}問の復習を開始`, 'success');
+}
+function retrySkipped() {
+  const skippedIndices = [];
+  answers.forEach((a, i) => { if (!a) skippedIndices.push(i); });
+  if (skippedIndices.length === 0) return;
+  
+  const pool = skippedIndices.map(i => questions[i]);
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => getOrigIdx(q)), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`${pool.length}問の復習を開始`, 'success');
+}
+function restart() {
+  questions = []; answers = []; current = 0;
+  currentSession = null; pendingResume = null;
+  localSave();
+  document.getElementById('startScreen').style.display = 'block';
+  document.getElementById('questionScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+}
+
+// ============================================================
+//  BOOKMARKS
+// ============================================================
+function renderBookmarks() {
+  const container = document.getElementById('bookmarkItems');
+  const empty = document.getElementById('emptyBookmarks');
+  
+  if (bookmarks.size === 0) {
+    container.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  
+  empty.style.display = 'none';
+  container.innerHTML = '';
+  
+  [...bookmarks].sort((a, b) => a - b).forEach(idx => {
+    const q = ALL_QUESTIONS[idx];
+    if (!q) return;
+    
+    const item = document.createElement('div');
+    item.className = 'bm-item';
+    item.onclick = () => startFromBookmark(idx);
+    
+    const star = document.createElement('div');
+    star.className = 'bm-star'; star.textContent = '★';
+    
+    const tag = document.createElement('div');
+    tag.className = 'bm-tag'; tag.textContent = q.cat;
+    
+    const acc = document.createElement('div');
+    const accInfo = getAccuracyInfo(idx);
+    if (accInfo) {
+      acc.className = `bm-acc ${accInfo.cls}`;
+      acc.textContent = `${accInfo.pct}%`;
+    }
+    
+    const text = document.createElement('div');
+    text.className = 'bm-text';
+    if (q.type === 'select') {
+      text.textContent = `【${q.opt}】${q.context.slice(0, 80)}...`;
+    } else {
+      text.textContent = `${q.no}-${q.opt}: ${q.q.slice(0, 80)}...`;
+    }
+    
+    item.appendChild(star);
+    item.appendChild(tag);
+    if (accInfo) item.appendChild(acc);
+    item.appendChild(text);
+    container.appendChild(item);
+  });
+}
+
+function startFromBookmark(startIdx) {
+  const pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i }))
+    .filter(Boolean).sort((a, b) => a._origIdx - b._origIdx);
+  const startPos = pool.findIndex(q => q._origIdx === startIdx);
+  
+  questions = pool; answers = Array(pool.length).fill(null); 
+  current = Math.max(0, startPos);
+  currentSession = { questionIndices: pool.map(q => q._origIdx), current, answers: [...answers] };
+  showMain(); showQuestionScreen(); updateQuestion();
+}
+
+// ============================================================
+//  TOAST
+// ============================================================
+function showToast(message, type = 'info') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = `toast${type ? ' ' + type : ''}`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  localLoad();
+  initFilters();
+  updateBmBadge();
+  updateWeakBtn();
+  updateLeastTriedBtn();
+  updateResumeBtn();
+  if (pendingResume) offerResume();
+});
+
+// アプリ情報の表示
+document.getElementById('appTitle').textContent    = APP_CONFIG.title;
+document.getElementById('appSubtitle').textContent = APP_CONFIG.subtitle;
+
+// 栞ボタンの表示制御
+function checkBookmarkButton() {
+  const btn = document.getElementById('btnBookmarkStart');
+  btn.style.display = bookmarks.size > 0 ? 'block' : 'none';
+}
+
+// 初期化時に栞ボタンをチェック
+document.addEventListener('DOMContentLoaded', () => {
+  checkBookmarkButton();
+});
+
+// 栞の更新時に栞ボタンもチェック
+function updateBmBadge() {
+  const badge = document.getElementById('bmBadge');
+  if (bookmarks.size > 0) {
+    badge.textContent = bookmarks.size;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+  checkBookmarkButton(); // 栞ボタンの表示も更新
+}
+</script>
+</body>
+</html>
