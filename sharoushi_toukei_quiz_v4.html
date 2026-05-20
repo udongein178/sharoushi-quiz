@@ -1,0 +1,207 @@
+
+<h2 class="sr-only">社労士試験 全統計ソース対応 年次トレンド問題</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-text-primary);background:transparent}
+.wrap{padding:1rem 0}
+.hdr h2{font-size:18px;font-weight:500;margin-bottom:4px}
+.hdr p{font-size:13px;color:var(--color-text-secondary);margin-bottom:1.25rem}
+.filter-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem}
+.chip{font-size:11px;padding:3px 10px;border-radius:10px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.chip.on{background:#E1F5EE;border-color:#1D9E75;color:#085041}
+.gen-btn{width:100%;padding:10px;border:0.5px solid var(--color-border-primary);border-radius:var(--border-radius-md);font-size:14px;font-weight:500;cursor:pointer;background:var(--color-background-primary);color:var(--color-text-primary);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s;margin-bottom:1rem}
+.gen-btn:hover{background:var(--color-background-secondary)}
+.prog{height:3px;background:var(--color-background-secondary);border-radius:2px;margin-bottom:1.25rem;overflow:hidden}
+.prog-fill{height:100%;background:#1D9E75;border-radius:2px;transition:width .4s}
+.qcard{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem}
+.qmeta{display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.qnum{font-size:11px;color:var(--color-text-secondary);font-weight:500}
+.tag{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500;white-space:nowrap}
+.t-max{background:#FAEEDA;color:#633806;border:0.5px solid #EF9F27}
+.t-pol{background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5}
+.t-trd{background:#E6F1FB;color:#0C447C;border:0.5px solid #85B7EB}
+.t-cmp{background:#EEEDFE;color:#26215C;border:0.5px solid #AFA9EC}
+.src-b{font-size:11px;color:var(--color-text-secondary)}
+.qtext{font-size:15px;line-height:1.7;margin-bottom:14px}
+.brow{display:flex;gap:8px}
+.abtn{flex:1;padding:9px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);font-size:14px;font-weight:500;cursor:pointer;background:var(--color-background-primary);color:var(--color-text-primary);transition:background .15s}
+.abtn:hover:not(:disabled){background:var(--color-background-secondary)}
+.abtn:disabled{cursor:default}
+.a-ok{background:#E1F5EE!important;border-color:#1D9E75!important;color:#085041!important}
+.a-ng{background:#FCEBEB!important;border-color:#A32D2D!important;color:#791F1F!important}
+.a-show{background:#E1F5EE!important;border-color:#1D9E75!important;color:#085041!important}
+.expl{margin-top:12px;padding:10px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border-left:3px solid #1D9E75;font-size:13px;line-height:1.7}
+.exlbl{font-size:11px;font-weight:500;color:#0F6E56;margin-bottom:4px}
+.result{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.5rem;text-align:center;margin-top:.5rem}
+.rscore{font-size:36px;font-weight:500}
+.rsub{font-size:14px;color:var(--color-text-secondary);margin:.25rem 0 1rem}
+.rdots{display:flex;gap:4px;justify-content:center;margin-bottom:1.25rem}
+.rd{width:28px;height:8px;border-radius:4px}
+.rd-ok{background:#1D9E75}
+.rd-ng{background:#E24B4A}
+.rbtn{padding:9px 24px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-primary);font-size:14px;cursor:pointer;background:var(--color-background-primary);color:var(--color-text-primary)}
+.rbtn:hover{background:var(--color-background-secondary)}
+.new-badge{font-size:10px;padding:1px 6px;border-radius:6px;background:#E6F1FB;color:#0C447C;border:0.5px solid #85B7EB;font-weight:500}
+</style>
+<div class="wrap">
+<div class="hdr">
+  <h2>社労士 全統計ソース 年次トレンド問題</h2>
+  <p>最新公式データに基づく年次推移・過去最高最低・政策目標問題。ソースで絞り込んで出題。</p>
+</div>
+<div class="filter-row" id="chips"></div>
+<button class="gen-btn" onclick="start()"><i class="ti ti-refresh" aria-hidden="true"></i> 5問ランダム出題</button>
+<div id="qa"></div>
+</div>
+<script>
+const QS=[
+  {g:"人口動態統計",tag:"過去最低",tc:"t-max",
+   text:"令和6年（2024年）の合計特殊出生率は1.15で、前年より低下し、統計開始以来の過去最低を更新した。",
+   ans:true,expl:"合計特殊出生率は1.15（前年1.20から低下）で過去最低、9年連続の低下です。「過去最低か」「低下傾向か」は試験頻出の問われ方です。出典：令和6年人口動態統計（確定数）厚労省。"},
+  {g:"人口動態統計",tag:"過去最少",tc:"t-max",
+   text:"令和6年の出生数は、統計開始以来初めて70万人を下回った。",
+   ans:true,expl:"出生数は686,173人で初めて70万人を割り込み、9年連続減少で過去最少となりました。「初めて○○を下回った」という問われ方は頻出です。出典：令和6年人口動態統計（確定数）。"},
+  {g:"人口動態統計",tag:"過去最多",tc:"t-max",
+   text:"令和6年の死亡数は160万人を超え、調査開始以来の過去最多となった。",
+   ans:true,expl:"死亡数は1,605,378人で調査開始以来最多。出生数の過去最少と同時に起きており、自然減は91万人超に達しています。出典：令和6年人口動態統計（確定数）。"},
+  {g:"人口動態統計",tag:"大小比較",tc:"t-cmp",
+   text:"令和6年において、死亡数から出生数を引いた自然減少数は50万人を超えた。",
+   ans:true,expl:"自然増減数は△91万9,237人で、90万人を超える自然減です。少子高齢化の社会保険制度への影響として重要な指標です。"},
+  {g:"国民医療費",tag:"過去最高",tc:"t-max",
+   text:"令和4年度の国民医療費は46兆円を超え、過去最高を記録した。",
+   ans:true,expl:"令和4年度の国民医療費は46兆6,967億円（前年度比+3.7%）で過去最高。高齢化の進行と医療技術の高度化が背景にあります。出典：令和4年度国民医療費の概況（厚労省）。"},
+  {g:"国民医療費",tag:"大小比較",tc:"t-cmp",
+   text:"国民医療費の制度区分別にみると、後期高齢者医療給付分の構成割合が最も高い。",
+   ans:false,expl:"最も高いのは医療保険等給付分（約45%）です。後期高齢者医療給付分は約35%で2番目となっています。「どの制度区分が最大か」は頻出の問われ方です。出典：令和4年度国民医療費の概況。"},
+  {g:"被保護者調査",tag:"トレンド",tc:"t-trd",
+   text:"生活保護の被保護実人員は近年減少傾向にある一方、保護の申請件数は増加傾向にある。",
+   ans:true,expl:"被保護実人員は約201万人で緩やかな減少傾向ですが、申請件数は前年同月比+11.5%と大幅増加。「人員減少・申請増加」の一見矛盾した状況を問う設問は頻出パターンです。出典：被保護者調査（令和6年）。"},
+  {g:"被保護者調査",tag:"大小比較",tc:"t-cmp",
+   text:"被保護世帯の類型別にみると、高齢者世帯が全体の半数以上を占めている。",
+   ans:true,expl:"被保護世帯のうち高齢者世帯は55%超で最も多く、単身高齢者が中心です。「高齢者世帯が過半数か」は社会保険法の文脈でも重要な知識です。出典：被保護者調査（令和6年）。"},
+  {g:"賃金構造基本統計",tag:"過去最高",tc:"t-max",
+   text:"令和6年の一般労働者の賃金（月額）は過去最高となり、伸び率も30年超ぶりの高水準だった。",
+   ans:true,expl:"一般労働者賃金は330,400円で過去最高。伸び率3.8%は平成3年（1991年）以来33年ぶりの高水準です。出典：令和6年賃金構造基本統計調査（厚労省）。"},
+  {g:"賃金構造基本統計",tag:"政策推進",tc:"t-pol",
+   text:"令和6年の男女間賃金格差（男性100に対する女性の賃金）は、比較可能な統計開始以来、最も縮小した。",
+   ans:true,expl:"女性の賃金は男性の75.8で、昭和51年以降で最も格差が縮小しました。女性活躍推進や同一労働同一賃金の政策効果が反映されています。出典：令和6年賃金構造基本統計調査。"},
+  {g:"賃金構造基本統計",tag:"大小比較",tc:"t-cmp",
+   text:"令和6年において、大企業の賃金水準は中企業・小企業を上回り、企業規模間で格差がある。",
+   ans:true,expl:"大企業364,500円（+5.3%）、中企業323,100円（+3.8%）、小企業299,300円（+1.8%）で規模が大きいほど賃金水準も伸び率も高くなっています。出典：令和6年賃金構造基本統計調査。"},
+  {g:"就労条件総合調査",tag:"過去最高",tc:"t-max",
+   text:"令和6年就労条件総合調査によると、令和5年の年次有給休暇取得率は昭和59年以降の過去最高を記録した。",
+   ans:true,expl:"取得率は65.3%（前年62.1%）で昭和59年以降の最高値を更新。年5日取得義務化（2019年〜）の効果が出ています。政府目標の70%（令和10年まで）にはまだ届いていません。出典：令和6年就労条件総合調査（厚労省）。"},
+  {g:"就労条件総合調査",tag:"政策推進",tc:"t-pol",
+   text:"令和5年の年次有給休暇取得率は65.3%で、政府が令和10年に掲げる目標値70%を既に達成した。",
+   ans:false,expl:"65.3%は過去最高ですが、政府目標の70%にはまだ届いていません（4.7ポイント不足）。「目標達成か否か」の問われ方は頻出です。出典：令和6年就労条件総合調査。"},
+  {g:"毎月勤労統計",tag:"政策推進",tc:"t-pol",
+   text:"令和8年3月において、名目賃金が物価上昇を上回ったことで、実質賃金は前年同月比でプラスとなった。",
+   ans:true,expl:"名目賃金+2.7%に対し消費者物価+1.6%で、実質賃金は+1.0%のプラス。長期のマイナス基調からの転換が焦点です。出典：毎月勤労統計R8年3月速報。"},
+  {g:"労働力調査",tag:"トレンド",tc:"t-trd",
+   text:"令和8年3月の完全失業率（季節調整値）は2.7%で、2%台で推移している。",
+   ans:true,expl:"2.7%は「2%台」の範囲内です。年平均でも2023年2.6%、2024年2.5%、2025年2.5%と安定して2%台で推移しています。出典：労働力調査R8年3月（総務省）。"},
+  {g:"労働力調査",tag:"政策推進",tc:"t-pol",
+   text:"非労働力人口は近年49か月連続で減少しており、高齢者や女性の就業参加が進んでいる。",
+   ans:true,expl:"非労働力人口は3,983万人で前年同月比36万人の減少、49か月連続減少です。就労促進政策（女性活躍推進法・高齢者雇用安定法等）の効果が継続しています。出典：労働力調査R8年3月（総務省）。"},
+  // 外国人雇用実態調査（令和6年）★新規追加
+  {g:"外国人雇用実態調査",tag:"大小比較",tc:"t-cmp",
+   text:"令和6年外国人雇用実態調査によると、産業別の外国人労働者数は「製造業」が最も多い。",
+   ans:true,expl:"製造業が約56万人（30.7%）で最多。次いでサービス業（17.6%）、卸売・小売業（10.6%）、建設業（8.4%）の順で、上位4産業で全体の約2/3を占めます。出典：令和6年外国人雇用実態調査（厚労省）。"},
+  {g:"外国人雇用実態調査",tag:"大小比較",tc:"t-cmp",
+   text:"令和6年外国人雇用実態調査によると、外国人労働者を雇用する理由（複数回答）で最も多いのは「在留資格申請等の事務負担が面倒・煩雑」である。",
+   ans:false,expl:"雇用する理由の最多は「労働力不足の解消・緩和のため」（69.0%）です。「在留資格申請等の事務負担」は雇用の課題の2位であり、理由ではありません。この混同を狙った設問は試験で頻出のパターンです。出典：令和6年外国人雇用実態調査（厚労省）。"},
+  {g:"外国人雇用実態調査",tag:"大小比較",tc:"t-cmp",
+   text:"令和6年外国人雇用実態調査によると、外国人労働者の雇用に関する課題（複数回答）で最も多いのは「在留資格申請等の事務負担が面倒・煩雑」である。",
+   ans:false,expl:"雇用課題の最多は「日本語能力等のためにコミュニケーションが取りにくい」（43.9%）です。「在留資格申請等の事務負担」は25.4%で2位。1位と2位の順序は試験で頻出の引っかけです。出典：令和6年外国人雇用実態調査（厚労省）。"},
+  {g:"外国人雇用実態調査",tag:"大小比較",tc:"t-cmp",
+   text:"令和6年外国人雇用実態調査によると、外国人労働者の国籍・地域別では「ベトナム」が最も多い。",
+   ans:true,expl:"ベトナムが32.4%で最多。次いで中国（香港・マカオ含む）14.7%、フィリピン10.5%の順です。前年（29.8%）からさらにシェアが拡大しています。出典：令和6年外国人雇用実態調査（厚労省）。"},
+];
+
+const GROUPS=[...new Set(QS.map(q=>q.g))];
+let sel=new Set(GROUPS);
+let pool=[],answers=[],revealed=[],score=0;
+
+function renderChips(){
+  document.getElementById("chips").innerHTML=
+    ['全て',...GROUPS].map(g=>{
+      const isAll=g==='全て';
+      const on=isAll?(sel.size===GROUPS.length):sel.has(g);
+      const isNew=g==='外国人雇用実態調査';
+      return`<button class="chip ${on?'on':''}" onclick="toggle('${g}')">${g}${isNew?' <span class="new-badge">NEW</span>':''}</button>`;
+    }).join('');
+}
+
+function toggle(g){
+  if(g==='全て'){
+    if(sel.size===GROUPS.length)sel=new Set([GROUPS[0]]);
+    else sel=new Set(GROUPS);
+  } else {
+    if(sel.has(g)){if(sel.size>1)sel.delete(g);}
+    else sel.add(g);
+  }
+  renderChips();
+}
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function start(){
+  const avail=QS.filter(q=>sel.has(q.g));
+  if(!avail.length){document.getElementById("qa").innerHTML=`<div style="text-align:center;padding:1.5rem;font-size:13px;color:var(--color-text-secondary)">選択したソースに問題がありません。</div>`;return;}
+  pool=shuffle([...avail]).slice(0,5);
+  answers=new Array(pool.length).fill(null);
+  revealed=new Array(pool.length).fill(false);
+  score=0;
+  render();
+}
+
+function render(){
+  const done=revealed.filter(Boolean).length,total=pool.length;
+  let h=`<div class="prog"><div class="prog-fill" style="width:${total?Math.round(done/total*100):0}%"></div></div>`;
+  pool.forEach((q,i)=>{
+    const rev=revealed[i],ua=answers[i],ok=q.ans;
+    let ob='abtn',xb='abtn';
+    if(rev){
+      if(ua===true)ob+=ok?' a-ok':' a-ng';
+      if(ua===false)xb+=!ok?' a-ok':' a-ng';
+      if(ok===true&&ua!==true)ob+=' a-show';
+      if(ok===false&&ua!==false)xb+=' a-show';
+    }
+    h+=`<div class="qcard">
+      <div class="qmeta">
+        <span class="qnum">問${i+1}</span>
+        <span class="tag ${q.tc}">${q.tag}</span>
+        <span class="src-b">${q.g}</span>
+      </div>
+      <div class="qtext">${q.text}</div>
+      <div class="brow">
+        <button class="${ob}" onclick="ans(${i},true)" ${rev?'disabled':''}>○ 正しい</button>
+        <button class="${xb}" onclick="ans(${i},false)" ${rev?'disabled':''}>× 誤り</button>
+      </div>
+      ${rev?`<div class="expl"><div class="exlbl">${ua===ok?'✓ 正解':'✗ 不正解'} — ${ok?'○（正しい）':'×（誤り）'}</div>${q.expl}</div>`:''}
+    </div>`;
+  });
+  if(done===total&&total>0){
+    const pct=Math.round(score/total*100);
+    h+=`<div class="result">
+      <div class="rscore">${score} / ${total}</div>
+      <div class="rsub">${pct>=80?'年次トレンドが掴めています！':'解説でトレンドの方向性を確認しましょう'}</div>
+      <div class="rdots">${pool.map((_,i)=>`<div class="rd ${answers[i]===pool[i].ans?'rd-ok':'rd-ng'}"></div>`).join('')}</div>
+      <button class="rbtn" onclick="start()"><i class="ti ti-refresh" aria-hidden="true"></i> 別の5問を出題</button>
+    </div>`;
+  }
+  document.getElementById("qa").innerHTML=h;
+}
+
+function ans(idx,val){
+  if(revealed[idx])return;
+  answers[idx]=val;revealed[idx]=true;
+  if(val===pool[idx].ans)score++;
+  render();
+  setTimeout(()=>{
+    const cards=document.querySelectorAll('.qcard');
+    if(cards[idx+1])cards[idx+1].scrollIntoView({behavior:'smooth',block:'nearest'});
+  },200);
+}
+
+renderChips();
+</script>
