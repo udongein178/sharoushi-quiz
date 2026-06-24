@@ -1079,32 +1079,42 @@ function updateQuestion() {
     typeBadge.style.display = 'inline-block';
   }
 
-  // ★ 正答率バッジ
+  // ★ 正答率バッジ・挑戦回数バッジ・栞ボタン（回答後のみ表示）
   const accEl  = document.getElementById('qAcc');
-  const accInfo = getAccuracyInfo(currentQIndex);
-  if (accInfo) {
-    accEl.textContent = `過去${accInfo.total}回: ${accInfo.pct}%正解`;
-    accEl.className   = `q-acc ${accInfo.cls}`;
-    accEl.style.display = 'inline-block';
-  } else {
-    accEl.style.display = 'none';
-  }
-  // ★ 挑戦回数バッジ
   const triesEl = document.getElementById('qTries');
-  const s = questionStats[currentQIndex];
-  const tries = s ? s.total : 0;
-  triesEl.textContent = `挑戦${tries}回`;
-  triesEl.style.display = 'inline-block';
-
-  // 栞ボタン
   const bBtn = document.getElementById('btnBookmark');
-  bBtn.textContent = bookmarks.has(currentQIndex) ? '★' : '☆';
-  bBtn.classList.toggle('active', bookmarks.has(currentQIndex));
 
   const ans    = answers[current];
   const panel  = document.getElementById('resultPanel');
   const nextBtn = document.getElementById('btnNext');
   const isSelect = (q.type === 'select');
+
+  if (ans) {
+    // 回答後：バッジ・栞を表示
+    const accInfo = getAccuracyInfo(currentQIndex);
+    if (accInfo) {
+      accEl.textContent = `過去${accInfo.total}回: ${accInfo.pct}%正解`;
+      accEl.className   = `q-acc ${accInfo.cls}`;
+      accEl.style.display = 'inline-block';
+    } else {
+      accEl.style.display = 'none';
+    }
+    const s = questionStats[currentQIndex];
+    const tries = s ? s.total : 0;
+    triesEl.textContent = `挑戦${tries}回`;
+    triesEl.style.display = 'inline-block';
+    bBtn.textContent = bookmarks.has(currentQIndex) ? '★' : '☆';
+    bBtn.classList.toggle('active', bookmarks.has(currentQIndex));
+    bBtn.style.visibility = 'visible';
+  } else {
+    // 回答前：バッジ・栞を非表示
+    accEl.style.display = 'none';
+    triesEl.style.display = 'none';
+    bBtn.textContent = '☆';
+    bBtn.classList.remove('active');
+    bBtn.style.visibility = 'hidden';
+  }
+
   // ボタン群の表示切替
   document.getElementById('oxRow').style.display       = isSelect ? 'none' : 'grid';
   document.getElementById('choicesGrid').style.display = isSelect ? 'grid' : 'none';
