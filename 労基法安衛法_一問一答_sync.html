@@ -1438,7 +1438,16 @@ function renderOxButtons(q, userChoice, isAnswered) {
 function renderChoices(q, userChoice, isAnswered) {
   const grid = document.getElementById('choicesGrid');
   grid.innerHTML = '';
-  q.choices.forEach(c => {
+  // 選択肢を問題ごとに1回だけシャッフルしてキャッシュ（回答後の再描画でも順序を固定）
+  if (!q._shuffledChoices) {
+    const arr = [...q.choices];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const jj = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[jj]] = [arr[jj], arr[i]];
+    }
+    q._shuffledChoices = arr;
+  }
+  q._shuffledChoices.forEach(c => {
     const btn = document.createElement('button');
     btn.className = 'btn-choice'; btn.textContent = c;
     if (isAnswered) {
