@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>労働・社会保険一般常識 一問一答 — 社労士試験対策</title>
+<script src="https://apis.google.com/js/api.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#11161e;color:#e8e0d0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+.app{width:100%;max-width:640px}
+
+/* ===== SYNC BAR ===== */
+.sync-bar{display:flex;align-items:center;justify-content:space-between;background:#1a2434;border:1px solid #283848;border-radius:10px;padding:10px 14px;margin-bottom:16px;gap:10px;flex-wrap:wrap}
+.sync-status{display:flex;align-items:center;gap:8px;font-size:12px;color:#8a9bb0}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#556070;flex-shrink:0;transition:background .3s}
+.sync-dot.connected{background:#3dbe82}
+.sync-dot.syncing{background:#c9a84c;animation:pulse 1s infinite}
+.sync-dot.error{background:#e05050}
+.sync-user{font-size:11px;color:#556070;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sync-btns{display:flex;gap:6px;align-items:center}
+.btn-gsign{display:flex;align-items:center;gap:6px;background:#fff;color:#3c4043;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap}
+.btn-gsign:hover{background:#f1f3f4}
+.btn-gsign svg{flex-shrink:0}
+.btn-sync{background:transparent;border:1px solid #283848;color:#8a9bb0;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-sync:hover{border-color:#4a9eca;color:#4a9eca}
+.btn-sync:disabled{opacity:.4;cursor:default}
+.btn-signout{background:transparent;border:1px solid #283848;color:#556070;border-radius:6px;padding:5px 8px;font-size:11px;cursor:pointer;transition:all .15s}
+.btn-signout:hover{border-color:#e05050;color:#e05050}
+
+/* ===== HEADER ===== */
+.header{text-align:center;padding:20px 0 16px}
+.header h1{font-size:12px;letter-spacing:.15em;color:#8a9bb0;text-transform:uppercase;margin-bottom:4px}
+.header .title{font-size:21px;font-weight:700;color:#e8e0d0}
+.header .subtitle{font-size:12px;color:#556070;margin-top:5px}
+.nav-tabs{display:flex;gap:4px;background:#131920;border-radius:10px;padding:4px;margin-bottom:18px}
+.nav-tab{flex:1;padding:8px;border:none;border-radius:8px;background:transparent;color:#556070;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.nav-tab.active{background:#1a2434;color:#e8e0d0}
+.bm-badge{display:inline-block;background:rgba(232,201,122,.2);color:#e8c97a;border-radius:4px;font-size:10px;padding:1px 5px;margin-left:4px;font-weight:700}
+
+/* ===== PROGRESS ===== */
+.progress-wrap{margin-bottom:18px}
+.progress-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.progress-num{font-size:12px;color:#8a9bb0}
+.progress-score{font-size:12px;color:#8a9bb0}
+.progress-bar-bg{width:100%;height:3px;background:#1a2434;border-radius:2px}
+.progress-bar-fill{height:3px;background:linear-gradient(90deg,#c97a4a,#e8a87a);border-radius:2px;transition:width .4s ease}
+
+/* ===== QUESTION CARD ===== */
+.card{background:#1a2434;border:1px solid #283848;border-radius:12px;padding:22px 20px;margin-bottom:14px;position:relative}
+.q-meta{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.q-tag{font-size:14px;letter-spacing:.1em;color:#c97a4a;background:rgba(201,122,74,.12);border:1px solid rgba(201,122,74,.25);border-radius:4px;padding:2px 8px;font-weight:600}
+.q-num{font-size:15px;color:#556070}
+/* Accuracy badge on card */
+.q-acc{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;display:none}
+.q-acc.low{background:rgba(224,80,80,.12);border:1px solid rgba(224,80,80,.3);color:#e05050}
+.q-acc.mid{background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);color:#c9a84c}
+.q-acc.high{background:rgba(61,190,130,.12);border:1px solid rgba(61,190,130,.3);color:#3dbe82}
+.q-text{font-size:18px;line-height:1.8;color:#d8d0c0;word-break:break-word;white-space:pre-wrap;padding-right:40px}
+.btn-bookmark{position:absolute;top:18px;right:14px;background:none;border:none;cursor:pointer;font-size:20px;line-height:1;padding:4px;color:#556070;transition:color .15s,transform .1s}
+.btn-bookmark:hover{color:#e8c97a;transform:scale(1.1)}
+.btn-bookmark.active{color:#e8c97a}
+
+/* ===== OX BUTTONS ===== */
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.btn-answer{border:none;border-radius:10px;padding:18px 12px;font-size:26px;font-weight:700;cursor:pointer;transition:transform .12s,background .15s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.btn-answer:active{transform:scale(.96)}
+.btn-maru{background:#1c3040;border:1.5px solid #2a4a60;color:#5bb8e0}
+.btn-maru:hover{background:#1e3a50;border-color:#5bb8e0}
+.btn-batsu{background:#301c1c;border:1.5px solid #50282a;color:#e07060}
+.btn-batsu:hover{background:#3a2020;border-color:#e07060}
+.btn-label{font-size:10px;letter-spacing:.1em;opacity:.7}
+.btn-answer.correct-chosen{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-answer.wrong-chosen{background:#331616;border-color:#e05050;color:#e05050}
+.btn-answer.reveal-correct{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-answer:disabled{cursor:default}
+/* あなたの選択ラベル */
+.your-choice-label{font-size:9px;letter-spacing:.08em;opacity:.85;margin-top:2px;font-weight:700}
+/* 挑戦回数バッジ */
+.q-tries{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;background:rgba(138,155,176,.12);border:1px solid #283848;color:#8a9bb0;display:none}
+
+/* ===== SELECT CHOICES (選択式用) ===== */
+.choices-grid{display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.btn-choice{background:#182030;border:1.5px solid #283848;border-radius:8px;padding:12px 10px;font-size:13px;color:#c8c0b0;cursor:pointer;transition:all .15s;text-align:center;line-height:1.5}
+.btn-choice:hover{border-color:#c97a4a;background:#1e2a3a}
+.btn-choice.correct-chosen{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-choice.wrong-chosen{background:#331616;border-color:#e05050;color:#e05050}
+.btn-choice.reveal-correct{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-choice:disabled{cursor:default}
+.q-type-badge{font-size:10px;border-radius:4px;padding:2px 7px;font-weight:600;letter-spacing:.05em}
+.q-type-badge.ox{background:rgba(91,184,224,.12);border:1px solid rgba(91,184,224,.25);color:#5bb8e0}
+.q-type-badge.sel{background:rgba(130,201,122,.12);border:1px solid rgba(130,201,122,.25);color:#82c97a}
+.q-blank{background:rgba(201,122,74,.15);border-bottom:2px solid #c97a4a;color:#e8a87a;padding:0 4px;font-weight:700;border-radius:2px}
+
+/* ===== RESULT PANEL ===== */
+.result-panel{border-radius:10px;padding:14px 16px;margin-bottom:14px;display:none;animation:fadeUp .2s ease}
+.result-panel.correct{background:#0d2a1e;border:1px solid #2a6044}
+.result-panel.wrong{background:#2a0d0d;border:1px solid #6a2020}
+.result-header{font-size:18px;font-weight:700;margin-bottom:8px}
+.result-panel.correct .result-header{color:#3dbe82}
+.result-panel.wrong .result-header{color:#e05050}
+.result-exp{font-size:17px;line-height:1.7;color:#a0b0c0}
+.result-exp b{color:#f0c987;font-weight:700}
+.result-source{font-size:15px;color:#556070;margin-top:8px}
+
+/* ===== NAV BUTTONS ===== */
+.nav-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px}
+.btn-nav{border-radius:9px;padding:11px 10px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid #283848;background:transparent;color:#8a9bb0;white-space:nowrap}
+.btn-nav:hover{background:#1a2434;color:#c8c0b0}
+.btn-nav:disabled{opacity:.3;cursor:default}
+/* ⏸ 中断ボタン */
+.btn-suspend{border-color:#4a3a10 !important;color:#e8c97a !important}
+.btn-suspend:hover{background:rgba(232,201,122,.1) !important;border-color:#e8c97a !important}
+.btn-next{border-radius:9px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;border:none;background:#c97a4a;color:#1a0800;letter-spacing:.05em;display:none;width:100%;margin-bottom:6px}
+.btn-next:hover{background:#e8a87a}
+
+/* ===== START SCREEN ===== */
+.start-screen{text-align:center;padding:24px 16px}
+.start-count{font-size:44px;font-weight:700;color:#c97a4a;display:block;margin-bottom:4px}
+.start-unit{font-size:13px;color:#8a9bb0;margin-bottom:22px;display:block}
+.start-desc{font-size:13px;color:#8a9bb0;line-height:1.7;margin-bottom:22px}
+.filters{margin-bottom:22px}
+.filter-label{font-size:12px;color:#8a9bb0;margin-bottom:8px}
+.filter-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.btn-filter{border:1.5px solid #283848;background:transparent;color:#8a9bb0;border-radius:18px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-filter.active{border-color:#c97a4a;background:rgba(201,122,74,.12);color:#c97a4a}
+.btn-filter:hover{border-color:#4a9eca;color:#4a9eca}
+.random-mode{margin-bottom:18px}
+.random-input-wrap{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:10px}
+.random-input{background:#1a2434;border:1.5px solid #283848;border-radius:6px;color:#e8e0d0;padding:8px 10px;font-size:14px;width:60px;text-align:center}
+.random-input:focus{outline:none;border-color:#c97a4a}
+.random-label{font-size:13px;color:#8a9bb0}
+.start-btns{display:flex;flex-direction:column;gap:10px;align-items:center}
+.btn-start{border:1.5px solid #c97a4a;background:transparent;color:#c97a4a;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-start:hover{background:rgba(201,122,74,.12)}
+.btn-start.primary{background:#c97a4a;color:#1a0800}
+.btn-start.primary:hover{background:#e8a87a}
+.btn-shuffle{border:1.5px solid #8a9bb0;background:transparent;color:#8a9bb0;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-shuffle:hover{background:rgba(138,155,176,.1)}
+
+/* ===== RESULT SCREEN ===== */
+.result-screen{text-align:center;padding:36px 16px}
+.result-title{font-size:24px;font-weight:700;color:#e8e0d0;margin-bottom:16px}
+.result-score{font-size:36px;font-weight:700;color:#c97a4a;margin-bottom:8px}
+.score-msg{font-size:13px;color:#8a9bb0;margin-bottom:22px;line-height:1.7;white-space:pre-line}
+.breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.breakdown-item{background:#1a2434;border:1px solid #283848;border-radius:10px;padding:12px;text-align:center}
+.breakdown-num{font-size:26px;font-weight:700}
+.breakdown-num.ok{color:#3dbe82}
+.breakdown-num.ng{color:#e05050}
+.breakdown-num.sk{color:#8a9bb0}
+.breakdown-label{font-size:11px;color:#8a9bb0;margin-top:3px}
+.btns-wrap{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.btn-retry{background:transparent;border:1.5px solid #c97a4a;color:#c97a4a;border-radius:10px;padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
+.btn-retry:hover{background:rgba(201,122,74,.12)}
+
+/* ===== BOOKMARK LIST ===== */
+.bookmark-list{display:none}
+.bookmark-list.show{display:block}
+.section-title{font-size:12px;color:#556070;letter-spacing:.1em;margin-bottom:12px;text-align:center;text-transform:uppercase}
+.bm-item{background:#1a2434;border:1px solid #283848;border-radius:10px;padding:12px 14px;margin-bottom:9px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:border-color .15s}
+.bm-item:hover{border-color:#c97a4a}
+.bm-star{font-size:14px;color:#e8c97a;flex-shrink:0}
+.bm-tag{font-size:10px;color:#c97a4a;background:rgba(201,122,74,.12);border:1px solid rgba(201,122,74,.25);border-radius:4px;padding:2px 6px;white-space:nowrap;flex-shrink:0;font-weight:600}
+.bm-acc{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;flex-shrink:0;align-self:flex-start;margin-top:1px}
+.bm-acc.low{background:rgba(224,80,80,.12);border:1px solid rgba(224,80,80,.3);color:#e05050}
+.bm-acc.mid{background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);color:#c9a84c}
+.bm-acc.high{background:rgba(61,190,130,.12);border:1px solid rgba(61,190,130,.3);color:#3dbe82}
+.bm-text{font-size:13px;line-height:1.55;color:#a0b0c0;flex:1;min-width:0}
+.empty-bm{text-align:center;padding:36px 20px;color:#556070;font-size:14px;line-height:1.7}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a2434;border:1px solid #283848;border-radius:8px;padding:10px 18px;font-size:13px;color:#e8e0d0;opacity:0;transition:all .3s;pointer-events:none;z-index:100;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:#3dbe82;color:#3dbe82}
+.toast.error{border-color:#e05050;color:#e05050}
+.toast.warn{border-color:#c9a84c;color:#c9a84c}
+
+/* ===== RESUME MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:999}
+.modal{background:#1a2434;border:1px solid #283848;border-radius:12px;padding:24px;max-width:400px;width:90vw}
+.modal-title{font-size:16px;font-weight:700;color:#e8e0d0;margin-bottom:12px}
+.modal-desc{font-size:14px;color:#a0b0c0;line-height:1.6;margin-bottom:20px}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end}
+.btn-modal{border:1.5px solid #283848;background:transparent;color:#8a9bb0;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-modal.primary{border-color:#c97a4a;color:#c97a4a}
+.btn-modal:hover{background:rgba(138,155,176,.1)}
+.btn-modal.primary:hover{background:rgba(201,122,74,.12)}
+
+/* ===== ANIMATIONS ===== */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.screen{display:none}
+.screen.show{display:block;animation:fadeUp .3s ease}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ===== GOOGLE DRIVE SYNC BAR ===== -->
+<div class="sync-bar">
+  <div class="sync-status">
+    <div id="syncDot" class="sync-dot"></div>
+    <span id="syncStatusText">Googleアカウントで同期</span>
+    <div id="syncUser" class="sync-user"></div>
+  </div>
+  <div class="sync-btns">
+    <button id="btnSignIn" class="btn-gsign" onclick="signIn()">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Googleでログイン
+    </button>
+    <button id="btnManualSync" class="btn-sync" onclick="manualSync()">↑↓ 同期</button>
+    <button id="btnSignOut" class="btn-signout" onclick="signOut()">ログアウト</button>
+  </div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <h1>社労士試験対策</h1>
+  <div id="appTitle" class="title">雇用保険法 一問一答</div>
+  <div id="appSubtitle" class="subtitle">ベーステンプレート（サンプル問題のみ）</div>
+</div>
+
+<!-- ===== NAV TABS ===== -->
+<div class="nav-tabs">
+  <button id="tabMain"  class="nav-tab active" onclick="showMain()">学習</button>
+  <button id="tabBookmarks" class="nav-tab" onclick="showBookmarks()">栞<span id="bmBadge" class="bm-badge" style="display:none">0</span></button>
+</div>
+
+<!-- ===== MAIN SCREEN ===== -->
+<div id="screenMain" class="screen show">
+
+<!-- ===== PROGRESS BAR ===== -->
+<div id="progressWrap" class="progress-wrap" style="display:none">
+  <div class="progress-info">
+    <div id="progressNum" class="progress-num">0 / 0</div>
+    <div id="progressScore" class="progress-score">正解: 0問</div>
+  </div>
+  <div class="progress-bar-bg">
+    <div id="progressFill" class="progress-bar-fill" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- ===== START SCREEN ===== -->
+<div id="startScreen" class="start-screen">
+  <span id="startCount" class="start-count">320</span>
+  <span class="start-unit">問</span>
+  <div class="start-desc">労働・社会保険一般常識（労一・社一）を一問一答で確認しよう。<br>労一155問・社一165問（択一式280問・選択式40問／計320問）を収録。</div>
+  
+  <!-- フィルター -->
+  <div class="filters">
+    <div class="filter-label">出題範囲</div>
+    <div id="filterBtns" class="filter-btns">
+      <button class="btn-filter active" data-cat="all">すべて</button>
+    </div>
+  </div>
+
+  <!-- ランダム出題モード -->
+  <div class="random-mode">
+    <div class="random-input-wrap">
+      <input id="randomInput" class="random-input" type="number" value="10" min="1" max="320" oninput="updateRandomBtn()">
+      <span class="random-label">問をランダムで出題</span>
+    </div>
+    <button id="btnRandomStart" class="btn-start" onclick="startRandom()">10問ランダムで出題</button>
+  </div>
+
+  <!-- 栞ランダム出題モード -->
+  <div id="bookmarkRandomMode" class="random-mode" style="display:none">
+    <div class="random-input-wrap">
+      <input id="bookmarkRandomInput" class="random-input" type="number" value="10" min="1" max="110" oninput="updateBookmarkRandomBtn()">
+      <span class="random-label">問を栞からランダムで出題</span>
+    </div>
+    <button id="btnBookmarkRandomStart" class="btn-start" onclick="startBookmarkRandom()">栞から10問ランダムで出題</button>
+  </div>
+
+  <!-- ボタン群 -->
+  <div class="start-btns">
+    <button class="btn-shuffle" onclick="shuffle()">🔀 シャッフル</button>
+    <button id="btnResumeStart" class="btn-start" onclick="resumeSession()" style="display:none">▶ 続きから開始</button>
+    <button id="btnWeakStart" class="btn-start" onclick="startWeak()" style="display:none">正答率50%以下の問題を出題</button>
+    <button id="btnLeastTried" class="btn-start" onclick="startLeastTried()" style="display:none">挑戦回数が少ない問題を出題</button>
+    <button class="btn-start primary" onclick="start()">学習スタート</button>
+    <button id="btnBookmarkStart" class="btn-start" onclick="startBookmarks()" style="display:none">栞の問題のみ</button>
+  </div>
+</div>
+
+<!-- ===== QUESTION SCREEN ===== -->
+<div id="questionScreen" class="screen">
+  <div class="card">
+    <div class="q-meta">
+      <span id="qTag" class="q-tag">択一式（雇用保険法）</span>
+      <span id="qTypeBadge" class="q-type-badge"></span>
+      <span id="qNum" class="q-num"></span>
+      <span id="qAcc" class="q-acc"></span>
+      <span id="qTries" class="q-tries"></span>
+    </div>
+    <div id="qText" class="q-text"></div>
+    <button id="btnBookmark" class="btn-bookmark" onclick="toggleBookmark()">☆</button>
+  </div>
+
+  <!-- ○× ボタン -->
+  <div id="oxRow" class="btn-row">
+    <button id="btnMaru" class="btn-answer btn-maru" onclick="answerOx(true)">
+      <div>○</div><div class="btn-label">正しい</div>
+    </button>
+    <button id="btnBatsu" class="btn-answer btn-batsu" onclick="answerOx(false)">
+      <div>×</div><div class="btn-label">誤り</div>
+    </button>
+  </div>
+
+  <!-- 選択肢 -->
+  <div id="choicesGrid" class="choices-grid"></div>
+
+  <!-- 結果パネル -->
+  <div id="resultPanel" class="result-panel">
+    <div id="resultHeader" class="result-header"></div>
+    <div id="resultExp" class="result-exp"></div>
+    <div id="resultSource" class="result-source"></div>
+  </div>
+
+  <button id="btnNext" class="btn-next" onclick="nextQuestion()">次の問題</button>
+
+  <div class="nav-btns">
+    <button id="btnBack" class="btn-nav" onclick="prevQuestion()">← 戻る</button>
+    <button class="btn-nav btn-suspend" onclick="suspend()">⏸ 中断</button>
+    <button id="btnSkip" class="btn-nav" onclick="skip()">スキップ</button>
+  </div>
+</div>
+
+<!-- ===== RESULT SCREEN ===== -->
+<div id="resultScreen" class="screen">
+  <div class="result-screen">
+    <div class="result-title">結果</div>
+    <div id="resultScoreText" class="result-score">0 / 0</div>
+    <div id="resultMessage" class="score-msg"></div>
+    
+    <div class="breakdown">
+      <div class="breakdown-item">
+        <div id="correctCount" class="breakdown-num ok">0</div>
+        <div class="breakdown-label">正解</div>
+      </div>
+      <div class="breakdown-item">
+        <div id="wrongCount" class="breakdown-num ng">0</div>
+        <div class="breakdown-label">不正解</div>
+      </div>
+      <div class="breakdown-item">
+        <div id="skippedCount" class="breakdown-num sk">0</div>
+        <div class="breakdown-label">未回答</div>
+      </div>
+    </div>
+
+    <div class="btns-wrap">
+      <button id="btnRetryWrong" class="btn-retry" onclick="retryWrong()">間違えた問題を再挑戦</button>
+      <button id="btnRetrySkipped" class="btn-retry" onclick="retrySkipped()">未回答問題を再挑戦</button>
+      <button class="btn-retry" onclick="restart()">最初から</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ===== BOOKMARK SCREEN ===== -->
+<div id="screenBookmarks" class="screen">
+<div class="bookmark-list">
+  <h3 class="section-title">栞をつけた問題</h3>
+  <div id="bookmarkItems"></div>
+  <div id="emptyBookmarks" class="empty-bm" style="display:none">
+    まだ栞をつけた問題がありません。<br>学習中に ★ ボタンを押すと、<br>後で見返したい問題を保存できます。
+  </div>
+</div>
+</div>
+
+<!-- モーダル廃止：続きから開始はスタート画面のボタンに統合 -->
+
+<!-- ===== TOAST ===== -->
+<div id="toast" class="toast"></div>
+
+<script>
+// ============================================================
+//  ★ CONFIG — 科目ごとにここだけ変更
+// ============================================================
+const APP_CONFIG = {
+  title:    '労働・社会保険一般常識 一問一答',
+  subtitle: '労一155問・社一165問　択一280＋選択40　計320問',
+  driveFileName: 'sharoushi_progress_ippan.json',
+  clientId: '194094449743-hoj6t28jfidlfhueiiv6iromc2lvssgf.apps.googleusercontent.com',
+};
+
+// ============================================================
+//  ★ QUESTION DATA — 問題データをここに追加
+//   ○× 型: {no, opt, q, a:bool, exp, src, cat}
+//   選択式 型: {type:'select', no, opt, context, choices:[], answer, exp, src, cat:'選択式'}
+// ============================================================
+// ===================== 問題データ（ALL_QUESTIONS）=====================
+// 【ベーステンプレート】以下は各形式の代表サンプルのみ収録（仕様・構成の参照用）。
+// 新規科目作成（モードA）時は、この配列を科目別データで全置換する。
+// 既存科目への追記（モードB）は末尾追記のみ・並べ替え禁止（origIdx＝配列インデックスが
+// 栞・正答率・中断セッションのキーのため、順序を崩すとユーザーデータが全壊する）。
+//
+// ■ 択一式（○×）: type フィールド無し
+//   { no:"問N", opt:"A", q:"問題文", a:true/false, exp:"解説", src:"根拠条文", cat:"択一式（科目名）" }
+//   ・a は公式解答キーに準拠（○=true / ×=false）。独自判断しない。
+//   ・組合せ問題(opt:ア〜オ)・名詞肢・シナリオ型など、肢が単独で意味を成さない場合は、
+//     q 冒頭に【前提テーマ】を原文準拠で補う（下の TAC中間模試-問9＝名詞肢サンプル参照）。
+//
+// ■ 選択式（穴埋め）: type:"select"
+//   { type:"select", no:"…", opt:"空欄A", context:"…【A】…", choices:[4択], answer:"正解", exp, src, cat:"選択式（科目名）" }
+//   ・context は対象空欄のみ【X】、同一文中の他の空欄は正解の語で補完する。
+//   ・choices は出題元20択から「正解＋紛らわしい3つ」。answer は必ず choices に含める。
+//
+// ■ 数値・事例計算（肢が値のみで「正しい〔日数/額〕はどれか」型）: type:"select" に変換
+//   ・choices は原問の選択肢を全部入れる（5択なら5択）。opt は内容を表す短語。
+//   ・下の LEC第2回-問1 サンプル参照。
+//
+// ※ cat は問題画面・栞のタグ表示専用。フィルターは型ベース（select=選択式/それ以外=択一式）。
+// ※ 解説(exp)内の「…」は自動で太字＋ゴールド色強調（UI改修A）。
+// =====================================================================
+const ALL_QUESTIONS = [
+{no:"第1予想-問1",opt:"A",q:"我が国の就労条件に関する次の記述のうち、誤っているものはどれか。なお、本問は、「令和7年就労条件総合調査の概況（厚生労働省）」を参照しており、当該調査による用語及び統計等を利用している。＞令和6年1年間における労働者1人平均の年次有給休暇の取得率は、約67％となっており、昭和59年以降最も高くなっている。",a:true,exp:"設問の通り正しい。令和6年1年間に企業が付与した年次有給休暇日数（繰越日数を除く。）をみると、労働者1人平均は18.1日、このうち労働者が取得した日数は12.1日と昭和59年以降最も多くなっており、取得率は66.9％（約67％）と昭和59年以降最も高くなっている。",src:"令和7年就労条件総合調査の概況（厚労省）",cat:"択一式（労一）"},
+{no:"第1予想-問1",opt:"B",q:"変形労働時間制がある企業割合を変形労働時間制の種類（複数回答）別にみると、「1年単位の変形労働時間制」が最も高くなっており、その割合は企業規模が小さくなるほど高くなっている。",a:true,exp:"設問の通り正しい。「1年単位の変形労働時間制」が30.3％と最も高くなっており、その割合は「30〜99人規模：31.6％」「100〜299人規模：28.8％」「300〜999人規模：24.7％」「1,000人以上規模：22.3％」と、企業規模が小さくなるほど高くなっている。なお、変形労働時間制がある企業割合は60.2％で、これを企業規模別にみると、その割合は企業規模が大きくなるほど高くなっている。",src:"令和7年就労条件総合調査の概況（厚労省）",cat:"択一式（労一）"},
+{no:"第1予想-問1",opt:"C",q:"勤務間インターバル制度の導入状況別の企業割合をみると、「導入予定はなく、検討もしていない」が80％近くを占めている。",a:true,exp:"設問の通り正しい。勤務間インターバル制度の導入状況別の企業割合をみると、「導入している」が6.9％、「導入を予定又は検討している」が13.8％、「導入予定はなく、検討もしていない」が78.7％（80％近くを占めている）となっている。",src:"令和7年就労条件総合調査の概況（厚労省）",cat:"択一式（労一）"},
+{no:"第1予想-問1",opt:"D",q:"令和6年11月分の常用労働者1人平均所定内賃金に占める諸手当の割合は、20％を下回っている。",a:true,exp:"設問の通り正しい。令和6年11月分の常用労働者1人平均所定内賃金は341.8千円となっており、そのうち諸手当は54.5千円、所定内賃金に占める諸手当の割合は15.9％となっている（20％を下回っている）。",src:"令和7年就労条件総合調査の概況（厚労省）",cat:"択一式（労一）"},
+{no:"第1予想-問1",opt:"E",q:"令和6年11月分の諸手当を支給した企業において、支給企業割合を企業規模別にみると、「精皆勤手当、出勤手当など」は、規模が大きいほど支給企業割合が高く、「家族手当、扶養手当、育児支援手当など」は規模が小さいほど支給企業割合が高い。",a:false,exp:"「精皆勤手当、出勤手当など」は規模が大きいほど、「家族手当、扶養手当、育児支援手当など」は規模が小さいほど、とする記述が誤り。正しくは逆で、「家族手当、扶養手当、育児支援手当など」は規模が大きいほど支給企業割合が高く、「精皆勤手当、出勤手当など」は規模が小さいほど支給企業割合が高い。なお、諸手当の種類別（複数回答）にみると、「通勤手当など」が90.2％で最も高い。",src:"令和7年就労条件総合調査の概況（厚労省）",cat:"択一式（労一）"},
+{no:"第1予想-問2",opt:"A",q:"我が国の労働安全衛生に関する次の記述のうち、正しいものはどれか。なお、本問は、「令和6年労働安全衛生調査（実態調査）の概況（厚生労働省）」を参照しており、当該調査による用語及び統計等を利用している。＞事業所調査によれば、過去1年間（令和5年11月1日から令和6年10月31日までの期間）にメンタルヘルス不調により連続1か月以上休業した労働者又は退職した労働者がいた事業所の割合は10％を下回っている。",a:false,exp:"過去1年間にメンタルヘルス不調により連続1か月以上休業した労働者又は退職した労働者がいた事業所の割合は12.8％となっている（10％を下回ってはいない）。",src:"令和6年労働安全衛生調査（実態調査）の概況",cat:"択一式（労一）"},
+{no:"第1予想-問2",opt:"B",q:"事業所調査によれば、メンタルヘルス対策に取り組んでいる事業所の割合を事業所規模別にみると、労働者50人以上の事業所で90％を上回っている。",a:true,exp:"設問の通り正しい。メンタルヘルス対策に取り組んでいる事業所の割合は63.2％であり、事業所規模別にみると、労働者50人以上の事業所で94.3％、労働者数30〜49人の事業所で69.1％、労働者数10〜29人の事業所で55.3％となっている（労働者50人以上の事業所で90％を上回っている）。",src:"令和6年労働安全衛生調査（実態調査）の概況",cat:"択一式（労一）"},
+{no:"第1予想-問2",opt:"C",q:"事業所調査によれば、ストレスチェックを実施した事業所のうち、結果の集団（部、課など）ごとの分析を実施した事業所の割合は約50％となっている。",a:false,exp:"ストレスチェックを実施した事業所のうち、結果の集団（部、課など）ごとの分析を実施した事業所の割合は75.4％となっている（約50％ではない）。なお、このうち、分析結果を活用した事業所の割合は76.8％となっている。",src:"令和6年労働安全衛生調査（実態調査）の概況",cat:"択一式（労一）"},
+{no:"第1予想-問2",opt:"D",q:"個人調査によれば、現在の仕事や職業生活に関することで、強い不安、悩み、ストレス（「強いストレス」という。）となっていると感じる事柄がある労働者について、その内容（主なもの3つ以内）をみると、「対人関係（セクハラ・パワハラを含む。）」が「仕事の量」よりも多くなっている。",a:false,exp:"強いストレスとなっていると感じる事柄がある労働者について、その内容（主なもの3つ以内）をみると、「仕事の量」（43.2％）が最も多く、「対人関係（セクハラ・パワハラを含む。）」（26.1％）よりも多くなっている（設問は多い・少ないが逆）。",src:"令和6年労働安全衛生調査（実態調査）の概況",cat:"択一式（労一）"},
+{no:"第1予想-問2",opt:"E",q:"個人調査によれば、現在の自分の仕事や職業生活での不安、悩み、ストレス（「ストレス」という。）について相談できる人がいる労働者について、相談できる人（複数回答）をみると、「同僚」が「家族・友人」よりも多くなっている。",a:false,exp:"ストレスについて相談できる人がいる労働者について、相談できる人（複数回答）をみると、「家族・友人」（68.6％）が最も多く、「同僚」（62.8％）よりも多くなっている（設問は多い・少ないが逆）。なお、相談できる人がいる労働者の割合は94.6％となっている。",src:"令和6年労働安全衛生調査（実態調査）の概況",cat:"択一式（労一）"},
+{no:"第1予想-問3",opt:"A",q:"労働契約法に関する次の記述のうち、正しいものはどれか。＞労働契約法第5条では、「使用者は、労働契約に伴い、労働者がその生命、身体等の安全を確保しつつ労働することができるよう、必要な配慮をするものとする。」と規定されており、ここにいう「必要な配慮」とは、一律に定まるものではないが、労働者の職種、労務内容、労務提供場所等の具体的な状況に応じて、使用者に特定の措置を求めるものである。",a:false,exp:"「必要な配慮」とは、一律に定まるものではなく、また、使用者に特定の措置を求めるものではないが、労働者の職種、労務内容、労務提供場所等の具体的な状況に応じて、必要な配慮をすることが求められるものである（「特定の措置を求めるもの」ではない点が誤り）。",src:"労契法5条、平成24.8.10基発0810第2号",cat:"択一式（労一）"},
+{no:"第1予想-問3",opt:"B",q:"労働契約法第10条では、「使用者が就業規則の変更により労働条件を変更する場合において、変更後の就業規則を労働者に周知させ、かつ、就業規則の変更が、労働者の受ける不利益の程度、労働条件の変更の必要性、変更後の就業規則の内容の相当性、労働組合等との交渉の状況その他の就業規則の変更に係る事情に照らして合理的なものであるときは、労働契約の内容である労働条件は、当該変更後の就業規則に定めるところによるものとする。ただし、労働契約において、労働者及び使用者が就業規則の内容と異なる労働条件を合意していた部分については、第12条（就業規則違反の労働契約）に該当する場合を除き、この限りでない。」と規定している。",a:false,exp:"設問文中の「労働者及び使用者が就業規則の内容と異なる労働条件を合意していた部分」を「労働者及び使用者が就業規則の変更によっては変更されない労働条件として合意していた部分」と読み替えると、正しい記述となる。",src:"労契法10条",cat:"択一式（労一）"},
+{no:"第1予想-問3",opt:"C",q:"労働契約法第10条本文にいう「労働者の受ける不利益の程度」とは、就業規則の変更により当該事業場の労働者全体に生ずる不利益の程度をいい、必ずしも個々の労働者の不利益の程度をいうものではない。",a:false,exp:"「労働者の受ける不利益の程度」については、個々の労働者の不利益の程度をいう（労働者全体に生ずる不利益の程度をいうものではない）。",src:"労契法10条、平成24.8.10基発0810第2号",cat:"択一式（労一）"},
+{no:"第1予想-問3",opt:"D",q:"労働契約法第10条本文にいう「変更後の就業規則の内容の相当性」については、変更後の就業規則における個々の労働者の労働条件の内容についての相当性をいう。",a:false,exp:"「変更後の就業規則の内容の相当性」については、就業規則の変更の内容全体の相当性をいうものであり、変更後の就業規則の内容面に係る制度変更一般の状況が広く含まれる（個々の労働者の労働条件の内容についての相当性をいうものではない）。",src:"労契法10条、平成24.8.10基発0810第2号",cat:"択一式（労一）"},
+{no:"第1予想-問3",opt:"E",q:"有期契約労働者が無期転換申込権（労働契約法第18条第1項に基づき有期契約労働者が無期労働契約への転換を申し込むことができる権利をいう。以下同じ。）を行使した後に、現に締結している有期労働契約の契約期間が満了する日をもって当該有期契約労働者との契約関係を終了させようとする使用者は、無期転換申込権の行使により成立した無期労働契約を解約（解雇）する必要があり、当該解雇が同法第16条に規定する「客観的に合理的な理由を欠き社会通念上相当であると認められない場合」には、権利濫用に該当するものとして無効となる。",a:true,exp:"設問の通り正しい。なお、無期転換申込権を行使した後に、現に締結している有期労働契約の契約期間が満了する日前に当該有期契約労働者との契約関係を終了させようとする使用者については、労働契約法16条の適用に加えて、当該有期労働契約の契約期間中の解雇であり同法17条1項の適用がある。",src:"労契法16条、18条1項、平成24.8.10基発0810第2号",cat:"択一式（労一）"},
+{no:"第1予想-問4",opt:"A",q:"労働関係法規に関する次の記述のうち、誤っているものはどれか。＞最低賃金法によれば、派遣中の労働者については、その派遣先の事業の事業場の所在地を含む地域について決定された地域別最低賃金が適用される。",a:true,exp:"設問の通り正しい。なお、派遣中の労働者については、その派遣先の事業と同種の事業又はその派遣先の事業の事業場で使用される同種の労働者の職業について特定最低賃金が適用されている場合には、当該特定最低賃金が適用される。",src:"最賃法13条",cat:"択一式（労一）"},
+{no:"第1予想-問4",opt:"B",q:"パートタイム・有期雇用労働法によれば、事業主は、短時間・有期雇用労働者を雇い入れたときは、速やかに、当該短時間・有期雇用労働者に対して、特定事項を文書の交付等により明示しなければならないが、特定事項とは、昇給の有無、退職手当の有無、賞与の有無、及び短時間・有期雇用労働者の雇用管理の改善等に関する事項に係る相談窓口である。",a:true,exp:"設問の通り正しい。なお、事業主は、特定事項を明示するときは、労働条件に関する事項のうち特定事項及び労働基準法15条1項に規定する厚生労働省令で定める事項（絶対的明示事項のうち書面の交付等により明示する事項）以外のものについても、文書の交付等により明示するように努めるものとされている。",src:"パート・有期法6条1項、則2条1項",cat:"択一式（労一）"},
+{no:"第1予想-問4",opt:"C",q:"労働施策総合推進法に定める中途採用に関する情報の公表は、おおむね1年に1回以上、公表した日を明らかにして、直近の事業年度について、インターネットの利用その他の方法により、求職者等が容易に閲覧できるように行わなければならない。",a:false,exp:"設問文中の「直近の事業年度」を「直近の3事業年度」と読み替えると、正しい記述となる。なお、常時雇用する労働者の数が300人を超える事業主は、雇い入れた通常の労働者及びこれに準ずる者の数に占める中途採用により雇い入れられた者の数の割合を定期的に公表しなければならない。",src:"労働施策総合推進法27条の2、則9条の2第1項",cat:"択一式（労一）"},
+{no:"第1予想-問4",opt:"D",q:"労働者派遣法によれば、派遣先は、当該派遣先の事業所その他派遣就業の場所ごとの業務について、派遣元事業主から3年を超える期間継続して労働者派遣の役務の提供を受けてはならない。ただし、当該労働者派遣が60歳以上の者に係る労働者派遣であるときは、この限りでない。",a:true,exp:"設問の通り正しい。派遣先は、事業所その他派遣就業の場所ごとの業務について、派遣可能期間（3年）を超える期間継続して労働者派遣の役務の提供を受けてはならないが、無期雇用派遣労働者に係る労働者派遣、60歳以上の者に係る労働者派遣等の一定の場合は、この限りでない。",src:"派遣法40条の2第1項2号、2項、則32条の4",cat:"択一式（労一）"},
+{no:"第1予想-問4",opt:"E",q:"障害者雇用促進法によれば、その雇用する労働者の数が常時100人以下である事業主については、当分の間、障害者雇用納付金の徴収及び障害者雇用調整金の支給は行わない。",a:true,exp:"設問の通り正しい。なお、国及び地方公共団体並びに特殊法人については、障害者雇用納付金及び障害者雇用調整金の規定は適用されない。",src:"障害者雇用促進法附則4条1項",cat:"択一式（労一）"},
+{no:"第1予想-問5",opt:"A",q:"社会保険労務士法に関する次の記述のうち、正しいものはどれか。＞社会保険労務士法第1条では、「社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて適切な労務管理の確立及び個人の尊厳が保持された適正な労働環境の形成に寄与することにより、事業の健全な発達と労働者等の福祉の向上並びに社会保障の向上及び増進に資し、もって豊かな国民生活及び活力ある経済社会の実現に資することを使命とする。」と規定されている。",a:true,exp:"設問の通り正しい。なお、社会保険労務士は、常に品位を保持し、業務に関する法令及び実務に精通して、公正な立場で、誠実にその業務を行わなければならない。Aの「社会保険労務士の使命」に関する条文は、令和7年の法改正により、従来の目的条文から改められたものである。",src:"社労士法1条",cat:"択一式（社一）"},
+{no:"第1予想-問5",opt:"B",q:"都道府県知事の委任を受けて都道府県労働委員会が行う個別労働関係紛争に関するあっせんの手続について、紛争の当事者を代理することは、特定社会保険労務士に限り行うことができるが、当該個別労働関係紛争は、紛争の目的の価額が120万円を超える場合には、弁護士が同一の依頼者から受任しているものに限られる。",a:false,exp:"「当該個別労働関係紛争は、紛争の目的の価額が120万円を超える場合には、弁護士が同一の依頼者から受任しているものに限られる。」とする記述が誤りである。都道府県労働委員会が行うあっせんの手続に係る紛争の当事者の代理については、紛争の目的の価額にかかわらず単独で行うことができる。なお、厚生労働大臣が指定する団体が行う民間紛争解決手続について紛争の当事者を代理する場合には、目的の価額が120万円を超えるときは弁護士が同一の依頼者から受任しているものに限られる。",src:"社労士法2条1項1号の5、2項",cat:"択一式（社一）"},
+{no:"第1予想-問5",opt:"C",q:"全国社会保険労務士会連合会は、社会保険労務士の登録を受けた者が、1年以上継続して所在が不明であるときは、資格審査会の議決に基づき、当該登録を取り消すことができる。",a:false,exp:"「1年」とする記述が誤りである。全国社会保険労務士会連合会は、社会保険労務士の登録を受けた者が、「2年」以上継続して所在が不明であるときは、資格審査会の議決に基づき、当該登録を取り消すことができる。",src:"社労士法14条の9第1項3号",cat:"択一式（社一）"},
+{no:"第1予想-問5",opt:"D",q:"社会保険労務士は、不正に労働社会保険諸法令に基づく保険給付を受けること、不正に労働社会保険諸法令に基づく保険料の賦課又は徴収を免れることその他労働社会保険諸法令に違反する行為について指示をし、相談に応じ、その他これらに類する行為をしてはならないが、これに違反した者は、1年以下の拘禁刑又は100万円以下の罰金に処せられる。",a:false,exp:"「1年以下の拘禁刑又は100万円以下の罰金」を「3年以下の拘禁刑又は200万円以下の罰金」と読み替えると、正しい記述となる。なお、厚生労働大臣は、社会保険労務士が、故意に、設問の「不正行為の指示等の禁止」の規定に違反する行為をしたときは、1年以内の業務の停止又は失格処分の処分をすることができる。",src:"社労士法15条、32条",cat:"択一式（社一）"},
+{no:"第1予想-問5",opt:"E",q:"社会保険労務士は、社会保険労務士でないにもかかわらず社労士の名称を用いている者に対し、自己の名義を利用させることができる。",a:false,exp:"社会保険労務士は、名称の使用制限（社会保険労務士でない者は、社会保険労務士又は社労士その他の社会保険労務士に類似する名称を用いてはならない）の規定に違反する者に対し、自己の名義を利用させてはならない。",src:"社労士法23条の2",cat:"択一式（社一）"},
+{no:"第1予想-問6",opt:"ア",q:"次のアからオの各法の目的条文に関する記述のうち、正しいものはいくつあるか。＞国民健康保険法は、国民健康保険事業の健全な運営を確保し、もって社会保障及び国民保健の向上に寄与することを目的とする。",a:true,exp:"設問の通り正しい。なお、国は、国民健康保険事業の運営が健全に行われるよう必要な各般の措置を講ずるとともに、法1条に規定する目的の達成に資するため、保健、医療及び福祉に関する施策その他の関連施策を積極的に推進するものとする。",src:"国保法1条",cat:"択一式（社一）"},
+{no:"第1予想-問6",opt:"イ",q:"高齢者医療確保法は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",a:true,exp:"設問の通り正しい。なお、国は、国民の高齢期における医療に要する費用の適正化を図るための取組が円滑に実施され、高齢者医療制度の運営が健全に行われるよう必要な各般の措置を講ずるとともに、法1条に規定する目的の達成に資するため、医療、公衆衛生、社会福祉その他の関連施策を積極的に推進しなければならない。",src:"高医法1条",cat:"択一式（社一）"},
+{no:"第1予想-問6",opt:"ウ",q:"介護保険法は、加齢に伴って生ずる心身の変化に起因する疾病等により要介護状態となり、入浴、排せつ、食事等の介護、機能訓練並びに看護及び療養上の管理その他の医療を要する者等について、これらの者が尊厳を保持し、その有する能力に応じ自立した日常生活を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の共同連帯の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって国民の保健医療の向上及び福祉の増進を図ることを目的とする。",a:true,exp:"設問の通り正しい。なお、国は、介護保険事業の運営が健全かつ円滑に行われるよう保健医療サービス及び福祉サービスを提供する体制の確保に関する施策その他の必要な各般の措置を講じなければならない。",src:"介保法1条",cat:"択一式（社一）"},
+{no:"第1予想-問6",opt:"エ",q:"児童手当法は、子ども・子育て支援法第7条第1項に規定する子ども・子育て支援の適切な実施を図るため、父母その他の保護者が子育てについての第一義的責任を有するという基本的認識の下に、児童を養育している者に児童手当を支給することにより、家庭等における生活の安定に寄与するとともに、次代の社会を担う児童の健やかな成長に資することを目的とする。",a:true,exp:"設問の通り正しい。なお、子ども・子育て支援法7条1項に規定する「子ども・子育て支援」とは、全ての子どもの健やかな成長のために適切な環境を等しく確保するとともに、子どもを持つことを希望する者が安心して子どもを生み、育てることができる環境を整備するため、国若しくは地方公共団体又は地域における子育ての支援を行う者が実施する子ども及び子どもの保護者に対する支援をいう。",src:"児手法1条",cat:"択一式（社一）"},
+{no:"第1予想-問6",opt:"オ",q:"確定給付企業年金法は、少子高齢化の進展、産業構造の変化等の社会経済情勢の変化にかんがみ、事業主が従業員と給付の内容を約し、高齢期において従業員がその内容に基づいた給付を受けることができるようにするため、確定給付企業年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",a:true,exp:"設問の通り正しい。なお、確定拠出年金法は、少子高齢化の進展、高齢期の生活の多様化等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定めるものである（本肢の確定給付企業年金法とは別の法律である）。",src:"確給法1条",cat:"択一式（社一）"},
+{no:"第1予想-問7",opt:"A",q:"船員保険法に関する次の記述のうち、誤っているものはどれか。＞船員保険は、全国健康保険協会（以下「協会」という。）が、管掌することとされており、船員保険事業に関して船舶所有者及び被保険者（その意見を代表する者を含む。）の意見を聴き、当該事業の円滑な運営を図るため、協会に船員保険協議会が置かれている。",a:true,exp:"設問の通り正しい。なお、協会が管掌する船員保険の事業に関する業務のうち、被保険者の資格の取得及び喪失の確認、標準報酬月額及び標準賞与額の決定並びに保険料の徴収（疾病任意継続被保険者に係るものを除く。）並びにこれらに附帯する業務は、厚生労働大臣が行うこととされている。",src:"船保法4条1項、6条1項",cat:"択一式（社一）"},
+{no:"第1予想-問7",opt:"B",q:"傷病手当金は、被保険者又は被保険者であった者が被保険者の資格を喪失する前に発した職務外の事由による疾病又は負傷及びこれにより発した疾病につき療養のため職務に服することができない場合において、その職務に服することができなくなった日から起算して3日を経過した日から、支給される。",a:false,exp:"「その職務に服することができなくなった日から起算して3日を経過した日から」とする記述が誤りである。船員保険法の傷病手当金には待期期間が設けられておらず、その職務に服することができない期間（の初日から）、支給される。なお、傷病手当金の支給期間は、同一の疾病又は負傷及びこれにより発した疾病に関しては、その支給を始めた日から通算して3年間とされている。",src:"船保法69条1項",cat:"択一式（社一）"},
+{no:"第1予想-問7",opt:"C",q:"行方不明手当金は、行方不明の期間が1月未満であるときは、支給されない。",a:true,exp:"設問の通り正しい。なお、行方不明手当金の額は、1日につき、被保険者が行方不明となった当時の標準報酬日額に相当する金額とされている。",src:"船保法93条",cat:"択一式（社一）"},
+{no:"第1予想-問7",opt:"D",q:"後期高齢者医療の被保険者等である被保険者の一般保険料率は、災害保健福祉保険料率のみとされている。",a:true,exp:"設問の通り正しい。一般保険料率は、原則として、疾病保険料率と災害保健福祉保険料率とを合計して得た率とされているが、後期高齢者医療の被保険者等である被保険者及び独立行政法人等職員被保険者の一般保険料率は、災害保健福祉保険料率のみとされている。",src:"船保法120条2項",cat:"択一式（社一）"},
+{no:"第1予想-問7",opt:"E",q:"疾病保険料率は、1000分の40から1000分の130までの範囲内において、災害保健福祉保険料率は、1000分の10から1000分の35までの範囲内において、それぞれ協会が決定するものとされている。",a:true,exp:"設問の通り正しい。なお、介護保険料率は、各年度において協会が納付すべき介護納付金の額を当該年度における介護保険第2号被保険者である被保険者の標準報酬月額の総額及び標準賞与額の総額の合算額の見込額で除して得た率を基準として、協会が定めるものとされている。",src:"船保法121条1項、122条1項",cat:"択一式（社一）"},
+{no:"第1予想-問8",opt:"A",q:"介護保険法に関する次の記述のうち、正しいものはどれか。なお、本問における「市町村」とは、市町村又は特別区のことをいう。＞介護保険の第1号被保険者とは、市町村の区域内に住所を有する70歳以上の者をいう。",a:false,exp:"第1号被保険者とは、市町村の区域内に住所を有する「65歳」以上の者をいう。なお、第2号被保険者とは、市町村の区域内に住所を有する40歳以上65歳未満の医療保険加入者をいう。",src:"介保法9条1号",cat:"択一式（社一）"},
+{no:"第1予想-問8",opt:"B",q:"介護給付を受けようとする被保険者は、要介護者に該当すること及びその該当する要介護状態区分について、介護認定審査会の認定を受けなければならない。",a:false,exp:"介護給付を受けようとする被保険者は、要介護者に該当すること及びその該当する要介護状態区分について、「市町村」の認定（要介護認定）を受けなければならない。なお、要支援認定についても同様である。",src:"介保法19条1項",cat:"択一式（社一）"},
+{no:"第1予想-問8",opt:"C",q:"介護保険法による保険給付は、介護給付、予防給付及び市町村特別給付の3種類である。",a:true,exp:"設問の通り正しい。なお、介護給付とは、被保険者の要介護状態に関する保険給付をいい、予防給付とは、被保険者の要支援状態に関する保険給付をいい、また、市町村特別給付とは、要介護状態等の軽減又は悪化の防止に資する保険給付として条例で定めるものをいう。",src:"介保法18条",cat:"択一式（社一）"},
+{no:"第1予想-問8",opt:"D",q:"居宅介護サービス計画費の額は、原則として、指定居宅介護支援に要した費用の額の100分の90に相当する額とされている。",a:false,exp:"居宅介護サービス計画費の額は、指定居宅介護支援の事業を行う事業所の所在する地域等を勘案して算定される指定居宅介護支援に要する平均的な費用の額を勘案して厚生労働大臣が定める基準により算定した費用の額（その額が現に当該指定居宅介護支援に要した費用の額を超えるときは、当該現に指定居宅介護支援に要した費用の額とする。）とされている（100分の90相当額ではなく、全額（100分の100相当額）が支給される）。",src:"介保法46条2項",cat:"択一式（社一）"},
+{no:"第1予想-問8",opt:"E",q:"市町村は、厚生労働大臣が定める基本指針に即して、6年ごとに、6年を一期として、市町村介護保険事業計画を定めるものとされている。",a:false,exp:"「6年ごとに、6年を一期として」とする記述が誤りである。市町村は、厚生労働大臣が定める基本指針に即して、「3年」を一期とする市町村介護保険事業計画を定めるものとされている。",src:"介保法117条1項",cat:"択一式（社一）"},
+{no:"第1予想-問9",opt:"A",q:"高齢者医療確保法に関する次の記述のうち、誤っているものはどれか。なお、本問における「市町村」には、特別区を含むものとする。＞厚生労働大臣は、国民の高齢期における適切な医療の確保を図る観点から、医療費適正化を総合的かつ計画的に推進するため、医療費適正化基本方針を定めるとともに、6年ごとに、6年を一期として、全国医療費適正化計画を定めるものとされており、医療費適正化基本方針及び全国医療費適正化計画を定め、又はこれを変更したときは、遅滞なく、これを公表するものとされている。",a:true,exp:"設問の通り正しい。なお、医療費適正化基本方針は、医療法に規定する基本方針、介護保険法に規定する基本指針及び健康増進法に規定する基本方針と調和が保たれたものでなければならない。",src:"高医法8条1項、7項",cat:"択一式（社一）"},
+{no:"第1予想-問9",opt:"B",q:"保険者は、厚生労働大臣が定める特定健康診査等基本指針に即して、6年ごとに、6年を一期として、特定健康診査等実施計画を定めるものとされているが、ここにいう「保険者」は、国民健康保険法の定めるところにより都道府県が当該都道府県内の市町村とともに行う国民健康保険にあっては、市町村のことをいう。",a:true,exp:"設問の通り正しい。なお、保険者は、特定健康診査等実施計画に基づき、原則として、40歳以上の加入者に対し、特定健康診査等（特定健康診査及び特定保健指導）を行うものとされている。「特定健康診査」とは、糖尿病その他の政令で定める生活習慣病に関する健康診査をいう。",src:"高医法19条1項",cat:"択一式（社一）"},
+{no:"第1予想-問9",opt:"C",q:"後期高齢者医療広域連合は、被保険者の死亡に関しては、条例の定めるところにより、葬祭費の支給又は葬祭の給付を行うものとされているが、特別の理由があるときは、その全部又は一部を行わないことができる。",a:true,exp:"設問の通り正しい。なお、後期高齢者医療広域連合は、設問の給付のほか、後期高齢者医療広域連合の条例の定めるところにより、傷病手当金の支給その他の後期高齢者医療給付を行うことができる。",src:"高医法86条1項",cat:"択一式（社一）"},
+{no:"第1予想-問9",opt:"D",q:"後期高齢者医療広域連合は、後期高齢者医療に要する費用（財政安定化基金拠出金、特別高額医療費共同事業に要する費用に充てるための拠出金及び出産育児支援金、流行初期医療確保拠出金等並びに子ども・子育て支援納付金の納付に要する費用を含む。）に充てるため、保険料を徴収しなければならない。",a:false,exp:"「後期高齢者医療広域連合」を「市町村」と読み替えると、正しい記述となる。後期高齢者医療の保険料を徴収するのは、後期高齢者医療広域連合ではなく、市町村である。なお、市町村は、後期高齢者医療広域連合が行う後期高齢者医療に要する費用に充てるため、後期高齢者医療広域連合に対し、徴収した保険料を納付するものとされている。",src:"高医法104条1項",cat:"択一式（社一）"},
+{no:"第1予想-問9",opt:"E",q:"国は、後期高齢者医療の財政を調整するため、政令で定めるところにより、後期高齢者医療広域連合に対して調整交付金を交付するものとされており、調整交付金の総額は、負担対象総額の見込額の総額の12分の1に相当する額及び子ども・子育て支援納付金の額の見込額の120分の1に相当する額の合計額とされている。",a:true,exp:"設問の通り正しい。なお、国は、負担対象総額の12分の3に相当する額を負担するものとされている。",src:"高医法95条",cat:"択一式（社一）"},
+{no:"第1予想-問10",opt:"A",q:"確定給付企業年金法に関する次の記述のうち、誤っているものはどれか。＞確定給付企業年金法における「厚生年金保険の被保険者」には、第2号厚生年金被保険者及び第3号厚生年金被保険者は含まれない。",a:true,exp:"設問の通り正しい。確定給付企業年金法において「厚生年金保険の被保険者」とは、厚生年金保険の被保険者（第1号厚生年金被保険者又は第4号厚生年金被保険者に限る。）をいう。",src:"確給法2条3項",cat:"択一式（社一）"},
+{no:"第1予想-問10",opt:"B",q:"確定給付企業年金を実施する事業主等は、老齢給付金及び脱退一時金の給付を行うものとされているが、規約で定めるところにより、これらの給付に加え、障害給付金又は遺族給付金の給付を行うことができる。",a:true,exp:"設問の通り正しい。なお、給付を受ける権利（受給権）は、その権利を有する者（受給権者）の請求に基づいて、事業主等が裁定する。",src:"確給法29条",cat:"択一式（社一）"},
+{no:"第1予想-問10",opt:"C",q:"年金給付の支給期間及び支払期月は、政令で定める基準に従い規約で定めるところによるものとされているが、終身又は5年以上にわたり、毎年1回以上定期的に支給するものでなければならない。",a:true,exp:"設問の通り正しい。",src:"確給法33条",cat:"択一式（社一）"},
+{no:"第1予想-問10",opt:"D",q:"老齢給付金は、加入者又は加入者であった者が、規約で定める老齢給付金を受けるための要件を満たすこととなったときに、その者に支給するものとされているが、規約において、10年を超える加入者期間を老齢給付金の給付を受けるための要件として定めてはならない。",a:false,exp:"「10年」を「20年」と読み替えると、正しい記述となる。なお、規約で定める老齢給付金を受けるための要件は、次の①及び②に掲げる要件（老齢給付金支給開始要件）を満たすものでなければならない。①60歳以上70歳以下の規約で定める年齢に達したときに支給するものであること。②50歳以上①の規約で定める年齢未満の規約で定める年齢に達した日以後に実施事業所に使用されなくなったときに支給するものであること（規約において当該状態に至ったときに老齢給付金を支給する旨が定められている場合に限る）。",src:"確給法36条1項、4項",cat:"択一式（社一）"},
+{no:"第1予想-問10",opt:"E",q:"加入者は、政令で定める基準に従い規約で定めるところにより、事業主が拠出する掛金の一部を負担することができるものとされているが、加入者が負担する掛金の額は、当該加入者に係る事業主が拠出する掛金の額の2分の1を超えてはならない。",a:true,exp:"設問の通り正しい。加入者は、政令で定める基準に従い規約で定めるところにより、事業主が拠出する掛金の一部を負担することができるものとされており、ここにいう「政令で定める基準」の一つとして、加入者が負担する掛金の額が当該加入者に係る事業主が拠出する掛金の額の2分の1を超えないことが定められている。",src:"確給法55条2項、令35条1号",cat:"択一式（社一）"},
+{type:"select",no:"第1予想-労一問4",opt:"空欄A",context:"最高裁判所の判例（目黒電報電話局事件）では、職場内における従業員の政治活動について、次のように判示している。「一般私企業においては、元来、職場は業務遂行のための場であって政治活動その他従業員の私的活動のための場所ではないから、従業員は職場内において当然には政治活動をする権利を有するというわけのものでないばかりでなく、職場内における従業員の政治活動は、従業員相互間の政治的対立ないし抗争を生じさせるおそれがあり、また、それが使用者の管理する企業施設を利用して行われるものである以上その管理を妨げるおそれがあり、しかも、それを就業時間中に行う従業員がある場合にはその労務提供義務に違反するにとどまらず他の従業員の業務遂行をも妨げるおそれがあり、また、就業時間外であっても休憩時間中に行われる場合には他の従業員の休憩時間の自由利用を妨げ、ひいてはその後における作業能率を低下させるおそれのあることがあるなど、企業秩序の維持に支障をきたすおそれが強いものといわなければならない。したがって、一般私企業の使用者が、【A】の見地から、就業規則により職場内における政治活動を禁止することは、合理的な定めとして許されるべきである。」",choices:["企業秩序維持", "企業施設管理", "業務遂行等の確保", "就業時間等の確保"],answer:"企業秩序維持",exp:"目黒電報電話局事件（最三小昭和52.12.13）の判例。空欄の直前の「企業秩序の維持に支障をきたすおそれが強い」という内容から正答を導き出す。なお、懲戒は、使用者が「企業秩序」を維持し、企業の円滑な運営を図るために行われるものである。",src:"最三小昭和52.12.13目黒電報電話局事件",cat:"選択式（労一）"},
+{type:"select",no:"第1予想-労一問4",opt:"空欄B",context:"事業主は、毎年、【B】現在における定年、継続雇用制度、65歳以上継続雇用制度及び創業支援等措置の状況その他高年齢者の就業の機会の確保に関する状況を翌月15日までに、高年齢者雇用状況等報告書により、管轄公共職業安定所の長を経由して厚生労働大臣に報告しなければならない。",choices:["6月1日", "1月1日", "4月1日", "9月1日"],answer:"6月1日",exp:"高年齢者雇用状況等報告書に関する問題（基礎知識）。事業主は、毎年「6月1日」現在における状況を「翌月15日」までに、管轄公共職業安定所の長を経由して厚生労働大臣に報告しなければならない。",src:"高年齢者雇用安定法52条1項、同則33条1項",cat:"選択式（労一）"},
+{type:"select",no:"第1予想-労一問4",opt:"空欄C",context:"事業主は、毎年、6月1日現在における定年、継続雇用制度、65歳以上継続雇用制度及び創業支援等措置の状況その他高年齢者の就業の機会の確保に関する状況を【C】までに、高年齢者雇用状況等報告書により、管轄公共職業安定所の長を経由して厚生労働大臣に報告しなければならない。",choices:["翌月15日", "同月末日", "翌月初日", "翌月末日"],answer:"翌月15日",exp:"高年齢者雇用状況等報告書の報告期限。事業主は、毎年6月1日現在における状況を「翌月15日」までに報告しなければならない。",src:"高年齢者雇用安定法則33条1項",cat:"選択式（労一）"},
+{type:"select",no:"第1予想-労一問4",opt:"空欄D",context:"近年、パートタイム労働者、有期雇用労働者、派遣労働者といった非正規雇用労働者は全体として増加傾向にあり、雇用者の約【D】を占める状況にある。これは、高齢者が増える中、高齢層での継続雇用により非正規雇用が増加していることや、女性を中心にパートなどで働き始める労働者が増加していることなどの要因が大きい。",choices:["4割", "3割", "5割", "6割"],answer:"4割",exp:"令和7年版厚生労働白書に関する問題。非正規雇用労働者は全体として増加傾向にあり、雇用者の約「4割」を占める状況にある。",src:"令和7年版厚生労働白書（厚労省）",cat:"選択式（労一）"},
+{type:"select",no:"第1予想-労一問4",opt:"空欄E",context:"非正規雇用労働者は、雇用が不安定、賃金が低い、能力開発機会が乏しいなどの課題があり、正規雇用を希望しながらそれがかなわず、非正規雇用で働く者（不本意非正規雇用労働者）が8.7％（2024年）存在し、年齢階級別では【E】で12.7％（2024年）と高くなっている。",choices:["25〜34歳の若年層", "35〜44歳の壮年層", "45〜54歳の中年層", "55〜64歳の高齢層"],answer:"25〜34歳の若年層",exp:"令和7年版厚生労働白書に関する問題。不本意非正規雇用労働者は全体では8.7％（2024年）だが、年齢階級別では「25〜34歳の若年層」で12.7％（2024年）と高くなっている。",src:"令和7年版厚生労働白書（厚労省）",cat:"選択式（労一）"},
+{type:"select",no:"第1予想-社一問5",opt:"空欄A",context:"国民健康保険法第4条第3項では、「【A】は、被保険者の資格の取得及び喪失に関する事項、国民健康保険の保険料（地方税法の規定による国民健康保険税を含む。）の徴収、保健事業の実施その他の国民健康保険事業を適切に実施するものとする。」と規定されている。",choices:["市町村", "市町村及び都道府県", "都道府県", "保険者"],answer:"市町村",exp:"国民健康保険における「市町村」の責務に関する問題。なお、都道府県は、安定的な財政運営、市町村の国民健康保険事業の効率的な実施の確保その他の都道府県及び当該都道府県内の市町村の国民健康保険事業の健全な運営について中心的な役割を果たすものとされている。",src:"国保法4条3項",cat:"選択式（社一）"},
+{type:"select",no:"第1予想-社一問5",opt:"空欄B",context:"高齢者の医療の確保に関する法律第5条では、「【B】は、加入者の高齢期における健康の保持のために必要な事業を積極的に推進するよう努めるとともに、高齢者医療制度の運営が健全かつ円滑に実施されるよう協力しなければならない。」と規定されており、また、同法第7条第2項では、「この法律において「【B】」とは、医療保険各法の規定により医療に関する給付を行う全国健康保険協会、健康保険組合、都道府県及び市町村、国民健康保険組合、共済組合又は日本私立学校振興・共済事業団をいう。」と規定されている。",choices:["保険者", "被用者保険等保険者", "後期高齢者医療広域連合", "実施機関"],answer:"保険者",exp:"高齢者医療確保法における「保険者」の責務及び定義に関する問題。1つ目の空欄で分からなくても、2つ目の空欄である程度選択肢を絞り込める。なお、「医療保険各法」とは、健康保険法、船員保険法、国民健康保険法、国家公務員共済組合法、地方公務員等共済組合法及び私立学校教職員共済法をいう。",src:"高医法5条、7条2項",cat:"選択式（社一）"},
+{type:"select",no:"第1予想-社一問5",opt:"空欄C",context:"高齢者の医療の確保に関する法律第7条第2項では、「この法律において「保険者」とは、医療保険各法の規定により医療に関する給付を行う全国健康保険協会、健康保険組合、都道府県及び市町村、国民健康保険組合、【C】をいう。」と規定されている。",choices:["共済組合又は日本私立学校振興・共済事業団", "実施機関たる共済組合等", "後期高齢者医療広域連合", "船員保険協議会"],answer:"共済組合又は日本私立学校振興・共済事業団",exp:"高医法7条2項の「保険者」の定義。医療保険各法の規定により医療に関する給付を行う全国健康保険協会、健康保険組合、都道府県及び市町村、国民健康保険組合、「共済組合又は日本私立学校振興・共済事業団」をいう。",src:"高医法7条2項",cat:"選択式（社一）"},
+{type:"select",no:"第1予想-社一問5",opt:"空欄D",context:"児童手当の個人受給資格者であって、19歳、16歳、11歳の3人の子を監護し、かつ、これらの子と生計を同じくしている日本国内に住所を有する母に支給する児童手当の総額は、1か月につき【D】である。",choices:["40,000円", "20,000円", "30,000円", "50,000円"],answer:"40,000円",exp:"児童手当の額に関する問題。1人当たりの月額は、3歳以上18歳に達する日以後の最初の3月31日までの子について、第1子・第2子が「10,000円」、第3子以降が「30,000円」とされている。多子加算のカウントは22歳に達する日以後の最初の3月31日までの子を算入する。したがって、19歳（第1子・カウント対象だが支給対象外）、16歳（第2子・10,000円）、11歳（第3子・30,000円）となり、総額は「40,000円」である。",src:"児手法6条1項、3項",cat:"選択式（社一）"},
+{type:"select",no:"第1予想-社一問5",opt:"空欄E",context:"確定拠出年金における個人型年金の給付を受ける権利は、その権利を有する者の請求に基づいて、【E】が裁定する。",choices:["個人型記録関連運営管理機関", "国民年金基金連合会", "資産管理機関", "厚生労働大臣"],answer:"個人型記録関連運営管理機関",exp:"確定拠出年金における個人型年金の給付を受ける権利は、その権利を有する者の請求に基づいて、「個人型記録関連運営管理機関」が裁定する。",src:"確拠法73条、同令37条",cat:"選択式（社一）"},
+{no:"第2予想-問1",opt:"A",q:"我が国の就業形態の多様化に関する次の記述のうち、正しいものはどれか。なお、本問は、「令和6年就業形態の多様化に関する総合実態調査の概況（厚生労働省）」を参照しており、当該調査による用語及び統計等を利用している。＞事業所調査によれば、正社員以外の労働者がいる事業所について、正社員以外の労働者を活用する理由（複数回答）をみると、「1日、週の中の仕事の繁閑に対応するため」とする事業所割合が約40％と最も高くなっている。",a:false,exp:"正社員以外の労働者を活用する理由（複数回答）をみると、「正社員を確保できないため」とする事業所割合が41.0％と最も高く、次いで「即戦力・能力のある人材を確保するため」の31.6％、「1日、週の中の仕事の繁閑に対応するため」の29.1％、「高年齢者の再雇用対策のため」の28.9％となっている（最も高いのは繁閑対応ではない）。",src:"令和6年就業形態の多様化に関する総合実態調査の概況",cat:"択一式（労一）"},
+{no:"第2予想-問1",opt:"B",q:"事業所調査によれば、正社員以外の労働者がいる事業所について、正社員以外の労働者を活用する上での問題点（複数回答）をみると、「正社員との人間関係」とする事業所割合が約50％と最も高くなっている。",a:false,exp:"正社員以外の労働者を活用する上での問題点（複数回答）をみると、「良質な人材の確保」とする事業所割合が53.6％と最も高く、次いで「定着性」の51.5％、「仕事に対する責任感」の46.1％となっている（「正社員との人間関係」ではない）。",src:"令和6年就業形態の多様化に関する総合実態調査の概況",cat:"択一式（労一）"},
+{no:"第2予想-問1",opt:"C",q:"個人調査によれば、「正社員」と「正社員以外の労働者」それぞれの職種別割合をみると、「正社員」では「事務的な仕事」が最も高く、「正社員以外の労働者」では「サービスの仕事」が最も高くなっている。",a:false,exp:"「正社員」では「事務的な仕事」が42.2％と最も高く、「正社員以外の労働者」でも「事務的な仕事」が25.1％と最も高くなっている（正社員以外もサービスの仕事ではなく事務的な仕事が最も高い）。",src:"令和6年就業形態の多様化に関する総合実態調査の概況",cat:"択一式（労一）"},
+{no:"第2予想-問1",opt:"D",q:"個人調査によれば、令和6年9月の平均的な1週間の実労働時間数階級別労働者割合をみると、「正社員」では「40〜45時間未満」が最も高く、「正社員以外の労働者」では「20時間未満」が最も高くなっている。",a:true,exp:"設問の通り正しい。「正社員」では「40〜45時間未満」が36.8％と最も高く、「正社員以外の労働者」では「20時間未満」が24.0％と最も高くなっている。なお、令和6年9月の1か月間に支払われた賃金総額（税込）の賃金階級別労働者割合は、「正社員」は「20〜30万円未満」が29.0％、「正社員以外の労働者」では「10〜20万円未満」が42.8％と最も高い。",src:"令和6年就業形態の多様化に関する総合実態調査の概況",cat:"択一式（労一）"},
+{no:"第2予想-問1",opt:"E",q:"個人調査によれば、正社員以外の労働者（出向社員を除く）について、現在の就業形態を選んだ理由（複数回答3つまで）をみると、「家計の補助、学費等を得たいから」とする労働者割合が最も高くなっている。",a:false,exp:"現在の就業形態を選んだ理由（複数回答3つまで）をみると、「自分の都合のよい時間に働けるから」とする労働者割合が40.1％と最も高く、次いで「家庭の事情（家事・育児・介護等）と両立しやすいから」の26.4％、「家計の補助、学費等を得たいから」の24.9％などとなっている（最も高いのは家計補助ではない）。",src:"令和6年就業形態の多様化に関する総合実態調査の概況",cat:"択一式（労一）"},
+{no:"第2予想-問2",opt:"A",q:"我が国の女性雇用等に関する次の記述のうち、誤っているものはどれか。なお、本問は、「令和6年度雇用均等基本調査（厚生労働省）」を参照しており、当該調査による用語及び統計等を利用している。＞企業調査によれば、課長相当職以上の管理職に占める女性の割合を産業別にみると、医療，福祉が突出して高くなっており、50％を上回っている。",a:true,exp:"設問の通り正しい。医療，福祉（50.4％／50％を上回っている）が突出して高く、生活関連サービス業，娯楽業（26.0％）、宿泊業，飲食サービス（21.0％）、教育，学習支援業（21.0％）と続いている。なお、課長相当職以上の管理職に占める女性の割合は13.1％、係長相当職以上の管理職等に占める女性の割合は15.8％となっている。",src:"令和6年度雇用均等基本調査",cat:"択一式（労一）"},
+{no:"第2予想-問2",opt:"B",q:"企業調査によれば、カスタマーハラスメント対策の取組について「一定の取組をしている」企業割合は約30％となっている。",a:true,exp:"設問の通り正しい。「一定の取組をしている」企業割合は30.1％（約30％）、「今後取組を検討している」企業割合は36.2％、「取り組んでいない」企業割合は33.7％となっている。",src:"令和6年度雇用均等基本調査",cat:"択一式（労一）"},
+{no:"第2予想-問2",opt:"C",q:"事業所調査によれば、令和4年10月1日から令和5年9月30日までの1年間に配偶者が出産した男性のうち、令和6年10月1日までに育児休業（産後パパ育休を含む。）を開始した者（育児休業の申出をしている者を含む。）の割合は約40％と、令和5年度調査よりおよそ10ポイント上昇した。",a:true,exp:"設問の通り正しい。男性の育児休業者割合（育児休業取得率）は40.5％（約40％）と、前回調査（令和5年度30.1％）より10.4ポイント（およそ10ポイント）上昇した。なお、女性の育児休業者割合（育児休業取得率）は86.6％と、前回調査（令和5年度84.1％）より2.5ポイント上昇した。",src:"令和6年度雇用均等基本調査",cat:"択一式（労一）"},
+{no:"第2予想-問2",opt:"D",q:"事業所調査によれば、育児のための所定労働時間の短縮措置等の制度がある事業所の割合は約60％となっており、育児のための所定労働時間の短縮措置等の各種制度の導入状況（複数回答）をみると、「テレワーク(在宅勤務等)」が最も多くなっている。",a:false,exp:"育児のための所定労働時間の短縮措置等の制度がある事業所の割合は74.5％（約60％ではない）となっており、各種制度の導入状況（複数回答）をみると、「短時間勤務制度」が最も多く70.0％、次いで「所定外労働の制限」64.0％、「始業・終業時刻の繰上げ・繰下げ」38.4％の順となっている（「テレワーク」が最も多いのではない）。",src:"令和6年度雇用均等基本調査",cat:"択一式（労一）"},
+{no:"第2予想-問2",opt:"E",q:"事業所調査によれば、常用労働者（介護に直面していない労働者を含む）に占める介護休業利用者割合は、0.10％であり、また、介護休業者の男女比は、女性約70％、男性約30％となっている。",a:true,exp:"設問の通り正しい。常用労働者に占める介護休業利用者割合は0.10％であり、介護休業者の男女比は、女性69.7％（約70％）、男性30.3％（約30％）となっている。",src:"令和6年度雇用均等基本調査",cat:"択一式（労一）"},
+{no:"第2予想-問3",opt:"A",q:"労働組合法等に関する次の記述のうち、誤っているものはどれか。＞労働組合の正当な同盟罷業は刑罰の対象とならないとされており、また、その同盟罷業によって使用者が損害を受けた場合であっても、労働組合に対して損害賠償を請求することはできない。",a:true,exp:"設問の通り正しい。刑法35条の規定は、労働組合の団体交渉その他の行為であって労働組合法の目的を達成するためにした正当なものについて適用がある（刑事免責・法1条2項）。使用者は、同盟罷業その他の争議行為であって正当なものによって損害を受けたことの故をもって、労働組合又はその組合員に対し賠償を請求することができない（民事免責・法8条）。",src:"労組法1条2項、8条",cat:"択一式（労一）"},
+{no:"第2予想-問3",opt:"B",q:"一の工場事業場に常時使用される同種の労働者の2分の1で組織する甲労働組合と3分の1で組織する乙労働組合がそれぞれ同一の内容の労働協約を締結し、当該同種の労働者の6分の5の数の労働者が同一の内容の労働協約の適用を受けることとなった場合には、当該工場事業場に使用される他の同種の労働者に関しても、当該労働協約が拡張適用される。",a:false,exp:"法17条の「一の労働協約」は厳格に解すべきであり、設問のように甲労働組合及び乙労働組合とそれぞれ同一の内容の労働協約を締結した場合であっても、この2つの労働協約をあわせて一の労働協約と解することはできない（したがって拡張適用されない）。",src:"労組法17条",cat:"択一式（労一）"},
+{no:"第2予想-問3",opt:"C",q:"一の工場事業場に常時使用される同種の労働者の4分の3以上の数の労働者が一の労働協約の適用を受けるに至り、当該工場事業場に使用される他の同種の労働者に関して当該労働協約が拡張適用された場合であっても、その後に当該一の労働協約の適用を受ける労働者が同種の労働者の4分の3未満となったときは、他の同種の労働者に関して当該労働協約は拡張適用されなくなる。",a:true,exp:"設問の通り正しい。「4分の3以上の数の労働者が一の労働協約の適用を受ける」ことは、労働協約の一般的拘束力の発生要件であるとともに存続要件であり、4分の3未満となったときは他の同種の労働者に関して拡張適用されなくなる。",src:"労組法17条、昭和24.5.28労収2829号",cat:"択一式（労一）"},
+{no:"第2予想-問3",opt:"D",q:"最高裁判所の判例では、「書面に作成され、かつ、両当事者がこれに署名し又は記名押印しない限り、仮に、労働組合と使用者との間に労働条件その他に関する合意が成立したとしても、これに労働協約としての規範的効力を付与することはできないと解すべきである。」としている。",a:true,exp:"設問の通り正しい（労組法14条、最三小平成13.3.13都南自動車教習所事件）。労働組合と使用者又はその団体との間の労働条件その他に関する労働協約は、書面に作成し、両当事者が署名し、又は記名押印することによってその効力を生ずる。",src:"労組法14条、最三小平成13.3.13都南自動車教習所事件",cat:"択一式（労一）"},
+{no:"第2予想-問3",opt:"E",q:"最高裁判所の判例では、「使用者は、必要に応じてその主張の論拠を説明し、その裏付けとなる資料を提示するなどして、誠実に団体交渉に応ずべき義務（「誠実交渉義務」という。）を負い、この義務に違反することは、労働組合法7条2号の不当労働行為に該当するものと解される。」としている。",a:true,exp:"設問の通り正しい（労組法7条2号、最二小令和4.3.18山形大学事件）。なお、判例は、使用者が誠実交渉義務に違反する不当労働行為をした場合には、合意の成立する見込みがないときであっても、労働委員会は誠実交渉命令を発することができるとしている。",src:"労組法7条2号、最二小令和4.3.18山形大学事件",cat:"択一式（労一）"},
+{no:"第2予想-問4",opt:"A",q:"労働関係法規に関する次の記述のうち、正しいものはどれか。＞育児介護休業法によれば、労働者からその養育する子について出生時育児休業申出がなされた後に、当該労働者から当該出生時育児休業申出をした日に養育していた子について新たに出生時育児休業申出がなされた場合は、事業主は、当該出生時育児休業申出を拒んでも差し支えない。",a:true,exp:"設問の通り正しい。出生時育児休業は、2回に分けて取得することができるが、この場合には、2回分を1度にまとめて申し出る必要がある。設問のように、出生時育児休業申出がなされた後に、新たに出生時育児休業申出がなされた場合には、事業主はその申出を拒むことが可能である。",src:"育介法9条の3第1項",cat:"択一式（労一）"},
+{no:"第2予想-問4",opt:"B",q:"育児介護休業法によれば、子の看護等休暇は、小学校第3学年修了前の子の教育若しくは保育に係る行事のうち厚生労働省令で定めるものへの参加をするために取得が可能であり、当該子の授業参観日や運動会の行事への参加のために取得することができる。",a:false,exp:"「教育若しくは保育に係る行事のうち厚生労働省令で定めるもの」とは、入園、卒園又は入学の式典その他これに準ずる式典をいい、「その他これに準ずる式典」とは、「入園」「卒園」「入学」という名称ではないものの同性質の式典を想定しており、授業参観日や運動会等の行事は含まれない。",src:"育介法16条の2第1項、則33条の2、令和7.2.5職発0205第4号他",cat:"択一式（労一）"},
+{no:"第2予想-問4",opt:"C",q:"男女雇用機会均等法の規制の対象となる職場におけるセクシュアルハラスメントには、被害を受けた者の性的指向又は性自認にかかわらず、当該者に対する職場におけるセクシュアルハラスメントも含まれるが、同性に対するものは含まれない。",a:false,exp:"職場におけるセクシュアルハラスメントには、同性に対するものも含まれる（その他の記述は正しい）。",src:"均等法11条1項、令和2.1.15厚労告6号",cat:"択一式（労一）"},
+{no:"第2予想-問4",opt:"D",q:"男女雇用機会均等法第7条では、間接差別の禁止を規定しているが、労働者の昇進又は職種の変更に関する措置であって、労働者が勤務する事業場と異なる事業場に配置転換された経験があることを要件とするものは、同法の間接差別の対象となる。",a:false,exp:"「職種の変更」の記述が誤りである。労働者の「昇進」に関する措置であって、労働者が勤務する事業場と異なる事業場に配置転換された経験があることを要件とするものが、均等法における間接差別の対象となる。",src:"均等法7条、則2条",cat:"択一式（労一）"},
+{no:"第2予想-問4",opt:"E",q:"女性活躍推進法第20条の規定に基づき、「その雇用する労働者の男女の賃金の額の差異」及び「その雇用する管理的地位にある労働者に占める女性労働者の割合」を定期的に公表しなければならないのは、一般事業主のうち常時雇用する労働者の数が300人を超えるものに限られる。",a:false,exp:"「その雇用する労働者の男女の賃金の額の差異」及び「その雇用する管理的地位にある労働者に占める女性労働者の割合」を定期的に公表しなければならないのは、一般事業主のうち常時雇用する労働者の数が「100人」を超えるものである（300人超ではない）。",src:"女性活躍推進法20条1項、2項",cat:"択一式（労一）"},
+{no:"第2予想-問5",opt:"A",q:"社会保険労務士法に関する次の記述のうち、誤っているものはどれか。＞社会保険労務士の業務には、事業における労務管理その他の労働に関する事項及び労働社会保険諸法令に基づく社会保険に関する事項に係る法令並びに労働協約、就業規則及び労働契約の遵守の状況を監査することが含まれる。",a:true,exp:"設問の通り正しい。設問の業務はいわゆる3号業務であり、業務の制限の規定は適用されないので、社会保険労務士又は社会保険労務士法人でない者であっても、他人の求めに応じ報酬を得て、設問の業務を行うことが可能である。",src:"社労士法2条1項3号",cat:"択一式（社一）"},
+{no:"第2予想-問5",opt:"B",q:"事業における労務管理その他の労働に関する事項及び労働社会保険諸法令に基づく社会保険に関する事項について、裁判所において、補佐人として、弁護士である代理人とともに出頭し、陳述をすることができる社会保険労務士は、特定社会保険労務士に限られていない。",a:true,exp:"設問の通り正しい。なお、設問の社会保険労務士の陳述は、当事者又は代理人が自らしたものとみなすこととされているが、当事者又は代理人が設問の社会保険労務士の陳述を直ちに取り消し、又は更正したときは、この限りでないとされている。",src:"社労士法2条の2第1項",cat:"択一式（社一）"},
+{no:"第2予想-問5",opt:"C",q:"社会保険労務士に対する懲戒処分は、①戒告、②1年以内の開業社会保険労務士若しくは開業社会保険労務士の使用人である社会保険労務士又は社会保険労務士法人の社員若しくは使用人である社会保険労務士の業務の停止、③失格処分の3種類である。",a:true,exp:"設問の通り正しい。なお、厚生労働大臣は、社会保険労務士に対する懲戒処分をしたときは、遅滞なく、その旨を、その理由を付記した書面により当該社会保険労務士に通知するとともに、官報をもって公告しなければならない。",src:"社労士法25条",cat:"択一式（社一）"},
+{no:"第2予想-問5",opt:"D",q:"社会保険労務士法人は、定款で定めるところにより、事業所の労働者に係る賃金の計算に関する事務（その事務を行うことが他の法律において制限されているものを除く。）を業として行う業務を行うことができる。",a:true,exp:"設問の通り正しい。なお、社会保険労務士法人は、定款で定めるところにより、労働者派遣事業（労働者派遣法の許可を受けて行うものであって、当該社会保険労務士法人の使用人である社会保険労務士が労働者派遣の対象となり、かつ、派遣先が開業社会保険労務士又は社会保険労務士法人（一定のものを除く。）であるものに限る。）を行うことができる。",src:"社労士法25条の9第1項1号、則17条の3第1号",cat:"択一式（社一）"},
+{no:"第2予想-問5",opt:"E",q:"厚生労働大臣は、社会保険労務士法人が社会保険労務士法に違反したときは、その社会保険労務士法人に対し、1年以内の期間を定めて業務の全部若しくは一部の停止を命ずることができるが、この場合においては、その社会保険労務士法人の社員等である社会保険労務士に対し、懲戒処分を併せて行うことはできない。",a:false,exp:"「懲戒処分を併せて行うことはできない」とする記述が誤りである。社会保険労務士法人を処分する場合において、当該社会保険労務士法人の社員等につき法25条の2（不正行為の指示等を行った場合の懲戒）又は法25条の3（一般の懲戒）に該当する事実があるときは、その社員等である社会保険労務士に対し、懲戒処分を併せて行うこともできる。",src:"社労士法25条の24第1項、4項",cat:"択一式（社一）"},
+{no:"第2予想-問6",opt:"A",q:"国民健康保険法に関する次の記述のうち、誤っているものはどれか。なお、本問における「市町村」には、特別区を含むものとする。＞国民健康保険組合（以下「組合」という。）を設立しようとするときは、主たる事務所の所在地の都道府県知事の認可を受けなければならないが、当該認可の申請は、15人以上の発起人が規約を作成し、組合員となるべき者300人以上の同意を得て行うものとされている。",a:true,exp:"設問の通り正しい。なお、都道府県知事は、組合の設立の認可の申請があった場合においては、あらかじめ、一定の者の意見を聴き、当該認可の申請に係る組合の設立により、当該組合の地区をその区域に含む都道府県及び当該都道府県内の市町村の国民健康保険事業の運営に支障を及ぼさないと認めるときでなければ、認可をしてはならない。",src:"国保法17条1項、2項",cat:"択一式（社一）"},
+{no:"第2予想-問6",opt:"B",q:"市町村及び組合は、特別療養費を支給するときは、あらかじめ、保険料滞納世帯主等に対し、その世帯に属する被保険者（原爆一般疾病医療費の支給等を受けることができる者及び18歳に達する日以後の最初の3月31日までの間にある者を除く。）が保険医療機関等から療養を受けたとき、又は指定訪問看護事業者から指定訪問看護を受けたときは、特別療養費を支給する旨を通知するものとされている。",a:true,exp:"設問の通り正しい。なお、被保険者のうち、原爆一般疾病医療費の支給等を受けることができる者及び18歳に達する日以後の最初の3月31日までの間にある者については、特別療養費の対象とならず、療養の給付等の対象となる。",src:"国保法54条の3第3項",cat:"択一式（社一）"},
+{no:"第2予想-問6",opt:"C",q:"国は、政令の定めるところにより、市町村及び組合に対して国民健康保険の事務（前期高齢者納付金等及び後期高齢者支援金等、介護納付金、流行初期医療確保拠出金並びに子ども・子育て支援納付金の納付に関する事務を含む。）の執行に要する費用を負担することとされている。",a:false,exp:"設問の事務の執行に要する費用については、市町村に対する国の負担は行われない。国は、政令の定めるところにより、「組合」に対して国民健康保険の事務（設問の事務を含む。）の執行に要する費用を負担することとされている（市町村及び組合ではなく組合に対してである）。",src:"国保法69条1項",cat:"択一式（社一）"},
+{no:"第2予想-問6",opt:"D",q:"市町村が徴収する国民健康保険の保険料の賦課額は、基礎賦課額、後期高齢者支援金等賦課額、介護保険第2号被保険者に係る介護納付金賦課額及び子ども・子育て支援納付金賦課額の合算額とされており、子ども・子育て支援納付金賦課額の上限は3万円とされている。",a:true,exp:"設問の通り正しい。子ども・子育て支援納付金の納付に要する費用に充てるため、市町村が徴収する保険料に子ども・子育て支援納付金賦課額が設けられており、その上限額は3万円とされている。なお、高齢者医療確保法の後期高齢者医療制度の保険料に係る子ども・子育て支援納付金賦課額の上限額は、2万1千円とされている。",src:"国保法76条1項、令29条の7第1項、5項10号",cat:"択一式（社一）"},
+{no:"第2予想-問6",opt:"E",q:"保険給付に関する処分（資格確認書等の交付又は当該事項の電磁的方法による提供の求めに対する処分を含む。）又は保険料その他国民健康保険法の規定による徴収金に関する処分に不服がある者は、各都道府県に置かれる国民健康保険審査会に審査請求をすることができる。",a:true,exp:"設問の通り正しい。なお、審査請求は、処分があったことを知った日の翌日から起算して3月以内に、文書又は口頭でしなければならない。ただし、正当な理由により、この期間内に審査請求をすることができなかったことを疎明したときは、この限りでない。",src:"国保法91条1項、92条",cat:"択一式（社一）"},
+{no:"第2予想-問7",opt:"A",q:"介護保険法に関する次の記述のうち、正しいものはどれか。なお、本問における「市町村」とは、市町村又は特別区のことをいう。＞要介護認定の申請に対する処分は、原則として、当該申請のあった日から30日以内にしなければならないとされているが、要介護認定があったときは、その要介護認定は、当該申請のあった日にさかのぼってその効力を生ずることとなる。",a:true,exp:"設問の通り正しい。なお、要介護認定は、要介護状態区分に応じて厚生労働省令で定める期間（要介護認定有効期間）内に限り、その効力を有するものとされている。",src:"介保法27条8項、11項",cat:"択一式（社一）"},
+{no:"第2予想-問7",opt:"B",q:"介護認定審査会の委員は、被保険者を代表する者、市町村を代表する者及び公益を代表する者のうちから、市町村長（特別区にあっては、区長）が任命することとされている。",a:false,exp:"介護認定審査会の委員は、「要介護者等の保健、医療又は福祉に関する学識経験を有する者」のうちから、市町村長（特別区にあっては、区長）が任命する。なお、委員の任期は、2年（委員の任期を2年を超え3年以下の期間で市町村が条例で定める場合にあっては、当該条例で定める期間）とされている。",src:"介保法15条2項",cat:"択一式（社一）"},
+{no:"第2予想-問7",opt:"C",q:"指定地域密着型サービス事業者の指定は、地域密着型サービス事業を行う者の申請により、地域密着型サービスの種類及び当該地域密着型サービスの種類に係る地域密着型サービス事業を行う事業所ごとに、都道府県知事が行うこととされている。",a:false,exp:"指定地域密着型サービス事業者の指定は、市町村長が行う（都道府県知事ではない。その他の記述は正しい）。",src:"介保法42条の2第1項、78条の2第1項、2項",cat:"択一式（社一）"},
+{no:"第2予想-問7",opt:"D",q:"第1号被保険者の保険料率は、市町村介護保険事業計画に定める介護給付等対象サービスの見込量等に基づいて算定した保険給付に要する費用の予想額、財政安定化基金拠出金の納付に要する費用の予想額、都道府県からの借入金の償還に要する費用の予定額並びに地域支援事業及び保健福祉事業に要する費用の予定額、第1号被保険者の所得の分布状況及びその見通し並びに国庫負担等の額等に照らし、おおむね5年を通じ財政の均衡を保つことができるものでなければならない。",a:false,exp:"「5年」を「3年」と読み替えると、正しい記述となる。なお、市町村は、第2号被保険者からは保険料を徴収しない。",src:"介保法129条3項",cat:"択一式（社一）"},
+{no:"第2予想-問7",opt:"E",q:"都道府県は、市町村に対し、介護給付（介護保険施設及び特定施設入居者生活介護に係るものを除く。）及び予防給付（介護予防特定施設入居者生活介護に係るものを除く。）に要する費用の額の100分の17.5に相当する額を負担することとされている。",a:false,exp:"「100分の17.5」を「100分の12.5」と読み替えると、正しい記述となる。なお、都道府県は、市町村に対し、介護給付（介護保険施設及び特定施設入居者生活介護に係るものに限る。）及び予防給付（介護予防特定施設入居者生活介護に係るものに限る。）に要する費用の額の100分の17.5に相当する額を負担する。",src:"介保法123条1項1号",cat:"択一式（社一）"},
+{no:"第2予想-問8",opt:"A",q:"児童手当法に関する次の記述のうち、誤っているものはどれか。＞児童手当の支給を受けている者につき、子が出生したために児童手当の額が増額することとなった場合には、当該子が出生した日の属する月の翌月から、児童手当の額が改定される。",a:false,exp:"児童手当の支給を受けている者につき、児童手当の額が増額することとなるに至った場合における児童手当の額の改定は、その者がその改定後の額につき認定の請求をした日の属する月の翌月から行う（子が出生した日の属する月の翌月からではない）。",src:"児手法9条1項",cat:"択一式（社一）"},
+{no:"第2予想-問8",opt:"B",q:"児童手当は、毎年2月、4月、6月、8月、10月及び12月の6期に、それぞれの前月までの分が支払われるが、前支払期月に支払うべきであった児童手当又は支給すべき事由が消滅した場合におけるその期の児童手当は、その支払期月でない月であっても、支払われる。",a:true,exp:"設問の通り正しい。なお、児童手当の一般受給資格者が死亡した場合において、その死亡した者に支払うべき児童手当（その者が監護していた児童であった者に係る部分に限る。）で、まだその者に支払っていなかったものがあるときは、当該児童であった者にその未支払の児童手当を支払うことができる。",src:"児手法8条4項",cat:"択一式（社一）"},
+{no:"第2予想-問8",opt:"C",q:"児童手当の支給を受けている一般受給資格者（個人である場合に限る。）は、市町村長（特別区の区長を含む。以下同じ。）に対し、前年の所得の状況及びその年の6月1日における被用者又は被用者等でない者の別を届け出なければならないが、その届書は、毎年6月1日から同月30日までの間に、市町村長に提出しなければならない。",a:true,exp:"設問の通り正しい。なお、児童手当の支給を受けている者が、正当な理由がなくて、設問の届出（現況の届出）をしないときは、児童手当の支払を一時差しとめることができる。",src:"児手法26条1項、則4条1項",cat:"択一式（社一）"},
+{no:"第2予想-問8",opt:"D",q:"偽りその他不正の手段により児童手当の支給を受けた者は、3年以下の拘禁刑又は30万円以下の罰金に処せられる。ただし、刑法に正条があるときは、刑法による。",a:true,exp:"設問の通り正しい。なお、偽りその他不正の手段により児童手当の支給を受けた者があるときは、市町村長は、地方税の滞納処分の例により、受給額に相当する金額の全部又は一部をその者から徴収することができる。",src:"児手法31条",cat:"択一式（社一）"},
+{no:"第2予想-問8",opt:"E",q:"被用者に対する3歳未満児童手当の支給に要する費用は、その全額につき国からの交付金をもって充てることとされているが、当該交付金のうち、その5分の2に相当する額は子ども・子育て支援法第69条第1項に規定する拠出金を、その5分の3に相当する額は子ども・子育て支援納付金を原資とする。",a:true,exp:"設問の通り正しい。なお、設問の子ども・子育て支援法69条1項に規定する拠出金は、いわゆる子ども・子育て拠出金のことであり、拠出金率は1000分の3.6とされている。",src:"児手法18条1項、19条1項",cat:"択一式（社一）"},
+{no:"第2予想-問9",opt:"A",q:"確定拠出年金法に関する次の記述のうち、誤っているものはどれか。＞「企業型年金」とは、厚生年金適用事業所の事業主が、単独で又は共同して、確定拠出年金法第2章の規定に基づいて実施する年金制度をいい、「個人型年金」とは、国民年金基金連合会（以下「連合会」という。）が、同法第3章の規定に基づいて実施する年金制度をいう。",a:true,exp:"設問の通り正しい。確定拠出年金とは、企業型年金及び個人型年金をいい、企業型年金、個人型年金の定義は、設問の記述のとおりである。",src:"確拠法2条2項、3項",cat:"択一式（社一）"},
+{no:"第2予想-問9",opt:"B",q:"企業型年金加入者は、政令で定める基準に従い企業型年金規約で定めるところにより、年1回以上、定期的に自ら掛金を拠出することができるが、当該掛金の額は、当該掛金の額と事業主掛金の額との合計額が拠出限度額以下であれば、事業主掛金の額を上回ってもよい。",a:true,exp:"設問の通り正しい。なお、事業主掛金の額は、企業型年金規約で定めるものとされており、企業型年金加入者掛金の額は、企業型年金規約で定めるところにより、企業型年金加入者が決定し、又は変更するものとされている。",src:"確拠法19条3項、20条",cat:"択一式（社一）"},
+{no:"第2予想-問9",opt:"C",q:"障害基礎年金の受給権者であって、国民年金法第89条第1項の規定により国民年金の保険料を納付することを要しないものとされているものは、連合会に申し出て、個人型年金加入者となることができる。",a:true,exp:"設問の通り正しい。国民年金の第1号被保険者は、保険料免除者を除き、個人型年金加入者となることができるとされているが、この「保険料免除者」には、「①障害基礎年金の受給権者であること」又は「②厚生労働省令で定める施設に入所していること」により法定免除を受けている者は含まれない。",src:"確拠法62条1項1号",cat:"択一式（社一）"},
+{no:"第2予想-問9",opt:"D",q:"個人型年金加入者は、繰上げ支給の老齢基礎年金の受給権者となったときは、その日に、個人型年金加入者の資格を喪失する。",a:true,exp:"設問の通り正しい。なお、個人型年金加入者の資格を取得した月にその資格を喪失した者は、その資格を取得した日に遡って、個人型年金加入者でなかったものとみなされる。",src:"確拠法62条4項8号、令34条の3第1号",cat:"択一式（社一）"},
+{no:"第2予想-問9",opt:"E",q:"企業型運用関連運営管理機関等は、対象運用方法を、3以上30以下で選定し、企業型年金規約で定めるところにより、企業型年金加入者等に提示しなければならないが、当該提示する運用の方法のほか、対象運用方法のうちから一の運用の方法を選定し、企業型年金加入者に提示しなければならない。",a:false,exp:"企業型運用関連運営管理機関等は、対象運用方法を、3以上「35以下」で選定し、企業型年金規約で定めるところにより、企業型年金加入者等に提示しなければならないが、当該提示する運用の方法のほか、対象運用方法のうちから一の運用の方法を選定し、企業型年金加入者に提示することが「できる」（提示しなければならない、ではない）。",src:"確拠法23条1項、23条の2第1項、令15条の2",cat:"択一式（社一）"},
+{no:"第2予想-問10",opt:"A",q:"社会保険審査官及び社会保険審査会法に関する次の記述のうち、正しいものはどれか。＞社会保険審査官は、厚生労働省の職員のうちから、厚生労働大臣が命ずるものとされており、各都道府県に置かれている。",a:false,exp:"社会保険審査官は、厚生労働省の職員のうちから、厚生労働大臣が命ずるものとされており、「各地方厚生局（地方厚生支局を含む。）」に置かれている（各都道府県ではない）。",src:"社審法1条1項、2条",cat:"択一式（社一）"},
+{no:"第2予想-問10",opt:"B",q:"社会保険審査会は、委員長及び委員5人をもって組織され、委員長及び委員は、人格が高潔であって、社会保障に関する識見を有し、かつ、法律又は社会保険に関する学識経験を有する者のうちから、両議院の同意を得て、厚生労働大臣が任命する。",a:true,exp:"設問の通り正しい。なお、委員長及び委員の任期は、3年（補欠の委員長又は委員の任期は、前任者の残任期間）とされている。",src:"社審法21条、22条1項",cat:"択一式（社一）"},
+{no:"第2予想-問10",opt:"C",q:"審査請求は、文書又は口頭ですることができるが、再審査請求は、文書でしなければならない。",a:false,exp:"再審査請求は、文書又は口頭ですることができる（文書でしなければならない、ではない）。なお、「審査請求は、文書又は口頭ですることができる」とする記述は正しい。",src:"社審法5条1項、32条4項",cat:"択一式（社一）"},
+{no:"第2予想-問10",opt:"D",q:"被保険者又は標準報酬に関する処分に対する審査請求は、原処分があった日の翌日から起算して1年を経過したときは、することができない。",a:false,exp:"被保険者又は標準報酬に関する処分に対する審査請求は、原処分があった日の翌日から起算して「2年」を経過したときは、することができない（1年ではない）。なお、審査請求は、処分があったことを知った日の翌日から起算して3月を経過したときは、正当な事由によりこの期間内に審査請求をすることができなかったことを疎明したときを除き、することができない。",src:"社審法4条2項",cat:"択一式（社一）"},
+{no:"第2予想-問10",opt:"E",q:"再審査請求は、社会保険審査官の決定書の謄本が送付された日の翌日から起算して3月を経過したときは、することができない。",a:false,exp:"再審査請求は、社会保険審査官の決定書の謄本が送付された日の翌日から起算して「2月」を経過したときは、することができない（3月ではない）。",src:"社審法32条1項",cat:"択一式（社一）"},
+{type:"select",no:"第2予想-労一問4",opt:"空欄A",context:"最高裁判所の判例（三井倉庫港運事件）では、ユニオン・ショップ協定に基づく解雇の効力について、次のように判示している。「ユニオン・ショップ協定は、労働者が労働組合の組合員たる資格を取得せず又はこれを失った場合に、使用者をして当該労働者との雇用関係を終了させることにより間接的に労働組合の組織の拡大強化を図ろうとするものであるが、他方、労働者には、自らの団結権を行使するため労働組合を選択する自由があり、また、ユニオン・ショップ協定を締結している労働組合（以下「締結組合」という。）の団結権と同様、同協定を締結していない他の労働組合の団結権も等しく尊重されるべきであるから、ユニオン・ショップ協定によって、労働者に対し、解雇の威嚇の下に特定の労働組合への加入を強制することは、それが労働者の【A】及び他の労働組合の団結権を侵害する場合には許されないものというべきである。したがって、ユニオン・ショップ協定のうち、締結組合以外の他の労働組合に加入している者及び締結組合から脱退し又は除名されたが、他の労働組合に加入し又は新たな労働組合を結成した者について使用者の解雇義務を定める部分は、右の観点からして、民法90条の規定により、これを無効と解すべきである（憲法28条参照）。」",choices:["組合選択の自由", "就労請求権", "職業選択の自由", "生存権"],answer:"組合選択の自由",exp:"三井倉庫港運事件（最一小平成元.12.14）の判例。設問の「労働組合を選択する自由があり」と、空欄前後の「労働者の【A】及び他の労働組合の団結権を侵害する場合には許されない」の関係から、正答は「組合選択の自由」。締結組合以外の労働組合に加入している者等について使用者の解雇義務を定める部分は、民法90条により無効と解される。",src:"最一小平成元.12.14三井倉庫港運事件",cat:"選択式（労一）"},
+{type:"select",no:"第2予想-労一問4",opt:"空欄B",context:"育児介護休業法によれば、常時雇用する労働者の数が【B】人を超える事業主は、厚生労働省令で定めるところにより、毎年少なくとも1回、その雇用する労働者の育児休業の取得の状況として厚生労働省令で定めるものを公表しなければならない。",choices:["300", "100", "500", "1,000"],answer:"300",exp:"育児介護休業法によれば、常時雇用する労働者の数が「300」人を超える事業主は、毎年少なくとも1回、その雇用する労働者の育児休業の取得の状況を公表しなければならない。",src:"育児介護休業法22条の2",cat:"選択式（労一）"},
+{type:"select",no:"第2予想-労一問4",opt:"空欄C",context:"労働者派遣法によれば、派遣元事業主は、関係派遣先に労働者派遣をするときは、関係派遣先への派遣割合が【C】以下となるようにしなければならない。",choices:["100分の80", "100分の60", "100分の70", "100分の75"],answer:"100分の80",exp:"労働者派遣法によれば、派遣元事業主は、関係派遣先に労働者派遣をするときは、関係派遣先への派遣割合が「100分の80」以下となるようにしなければならない（いわゆるグループ企業内派遣の8割規制）。",src:"労働者派遣法23条の2",cat:"選択式（労一）"},
+{type:"select",no:"第2予想-労一問4",opt:"空欄D",context:"業務における過重な負荷による脳血管疾患又は虚血性心疾患等（以下「脳・心臓疾患」という。）の労災支給決定（認定）件数は、令和4年度以降増加傾向にあり、令和6年度は241件と、令和5年度より25件増加した。令和6年度の脳・心臓疾患の労災支給決定（認定）件数のうち、男性の割合は【D】％であった。",choices:["95.0", "35.0", "55.0", "75.0"],answer:"95.0",exp:"令和6年度過労死等防止対策白書。令和6年度の脳・心臓疾患の労災支給決定（認定）件数のうち、男性の割合は「95.0」％であった。",src:"令和6年度過労死等防止対策白書（厚労省）",cat:"選択式（労一）"},
+{type:"select",no:"第2予想-労一問4",opt:"空欄E",context:"業種別（大分類）の令和6年度の脳・心臓疾患の労災支給決定（認定）件数は、「その他の事業」を除くと、死亡事案、死亡以外の事案のいずれについても、「【E】」が最も多くなっている。",choices:["運輸業、郵便業", "医療、福祉", "建設業", "製造業"],answer:"運輸業、郵便業",exp:"令和6年度過労死等防止対策白書。業種別（大分類）の脳・心臓疾患の労災支給決定（認定）件数は、「その他の事業」を除くと、死亡事案・死亡以外の事案のいずれについても「運輸業、郵便業」が最も多い。",src:"令和6年度過労死等防止対策白書（厚労省）",cat:"選択式（労一）"},
+{type:"select",no:"第2予想-社一問5",opt:"空欄A",context:"船員保険の行方不明手当金の支給を受ける期間は、被保険者が行方不明となった日の翌日から起算して【A】を限度とする。",choices:["3月", "1月", "2月", "6月"],answer:"3月",exp:"船員保険の行方不明手当金の支給を受ける期間は、被保険者が行方不明となった日の翌日から起算して「3月」を限度とする。",src:"船保法95条",cat:"選択式（社一）"},
+{type:"select",no:"第2予想-社一問5",opt:"空欄B",context:"高齢者の医療の確保に関する法律によれば、都道府県は、都道府県医療費適正化計画を定め、又はこれを変更しようとするときは、あらかじめ、関係市町村及び【B】に協議しなければならない。",choices:["保険者協議会", "関係行政機関の長", "社会保険医療協議会", "社会保障審議会"],answer:"保険者協議会",exp:"高齢者医療確保法によれば、都道府県は、都道府県医療費適正化計画を定め、又は変更しようとするときは、あらかじめ、関係市町村及び「保険者協議会」に協議しなければならない。",src:"高医法9条7項",cat:"選択式（社一）"},
+{type:"select",no:"第2予想-社一問5",opt:"空欄C",context:"介護保険法第5条第4項では、「【C】は、被保険者が、可能な限り、住み慣れた地域でその有する能力に応じ自立した日常生活を営むことができるよう、保険給付に係る保健医療サービス及び福祉サービスに関する施策、要介護状態等となることの予防又は要介護状態等の軽減若しくは悪化の防止のための施策並びに地域における自立した日常生活の支援のための施策を、医療及び居住に関する施策との有機的な連携を図りつつ包括的に推進するよう努めなければならない。」と規定されている。",choices:["国及び地方公共団体", "市町村", "政府", "都道府県"],answer:"国及び地方公共団体",exp:"介護保険法5条4項。「国及び地方公共団体」は、被保険者が可能な限り住み慣れた地域でその有する能力に応じ自立した日常生活を営むことができるよう、保険給付に係る施策等を包括的に推進するよう努めなければならない。",src:"介保法5条4項",cat:"選択式（社一）"},
+{type:"select",no:"第2予想-社一問5",opt:"空欄D",context:"介護保険法第5条第4項では、「国及び地方公共団体は、被保険者が、可能な限り、住み慣れた地域でその有する能力に応じ【D】を営むことができるよう、保険給付に係る保健医療サービス及び福祉サービスに関する施策、要介護状態等となることの予防又は要介護状態等の軽減若しくは悪化の防止のための施策並びに地域における【D】の支援のための施策を、医療及び居住に関する施策との有機的な連携を図りつつ包括的に推進するよう努めなければならない。」と規定されている。",choices:["自立した日常生活", "円滑な職業生活", "健康で充実した生活", "充実した社会生活"],answer:"自立した日常生活",exp:"介護保険法5条4項。被保険者が可能な限り住み慣れた地域でその有する能力に応じ「自立した日常生活」を営むことができるよう、地域における「自立した日常生活」の支援のための施策等を推進する。",src:"介保法5条4項",cat:"選択式（社一）"},
+{type:"select",no:"第2予想-社一問5",opt:"空欄E",context:"確定給付企業年金法第34条第1項では、「確定給付企業年金における給付を受ける権利は、譲り渡し、担保に供し、又は差し押さえることができない。ただし、【E】を受ける権利を国税滞納処分（その例による処分を含む。）により差し押さえる場合は、この限りでない。」旨が規定されている。",choices:["老齢給付金、脱退一時金及び遺族給付金", "老齢給付金及び脱退一時金", "老齢給付金、障害給付金及び遺族給付金", "老齢給付金、脱退一時金及び障害給付金"],answer:"老齢給付金、脱退一時金及び遺族給付金",exp:"確定給付企業年金法34条1項。給付を受ける権利は譲渡・担保供与・差押えができないが、ただし「老齢給付金、脱退一時金及び遺族給付金」を受ける権利を国税滞納処分（その例による処分を含む。）により差し押さえる場合は、この限りでない。",src:"確給法34条1項",cat:"選択式（社一）"},
+{no:"LEC第1回-問1",opt:"A",q:"我が国の就業形態の多様化に関する次の記述のうち、正しいものはどれか。なお、本問は「令和6年就業形態の多様化に関する総合実態調査の概況（厚生労働省）」を参照しており、当該調査による用語及び統計等を利用している。＞正社員以外の労働者がいる事業所について、正社員以外の労働者を活用する理由（複数回答）をみると、「賃金の節約のため」とする事業所割合が41.0％と最も高くなっており、次いで「臨時・季節的業務量の変化に対応するため」の31.6％、「正社員を重要業務に特化させるため」の29.1％の順となっている。",a:false,exp:"正社員以外の労働者を活用する理由（複数回答）をみると、「正社員を確保できないため」とする事業所割合が41.0％と最も高く、次いで「即戦力・能力のある人材を確保するため」の31.6％の順となっている（「賃金の節約のため」が最も高いのではない）。",src:"令和6年就業形態の多様化に関する総合実態調査の概況",cat:"択一式（労一）"},
+{no:"LEC第1回-問1",opt:"B",q:"令和6年10月1日現在で、就業形態別に当該就業形態の労働者がいる事業所の割合（複数回答）を就業形態別にみると、「正社員がいる事業所」は94.4％、「正社員以外の労働者がいる事業所」は82.3％となっている。",a:true,exp:"本肢のとおり正しい（令和6年就業形態の多様化に関する総合実態調査の概況）。",src:"令和6年就業形態の多様化に関する総合実態調査の概況",cat:"択一式（労一）"},
+{no:"LEC第1回-問1",opt:"C",q:"3年前（令和3年とする。以下本問において同じ。）と比べて正社員以外の労働者比率が上昇した事業所における正社員以外の就業形態（複数回答）をみると、「嘱託社員（再雇用者）」とする事業所割合が36.1％と最も高く、次いで「パートタイム労働者」が34.5％、「派遣労働者（受け入れ）」が21.2％の順となっている。",a:false,exp:"「パートタイム労働者」とする事業所割合が66.2％と最も高く、次いで「嘱託社員（再雇用者）」が22.4％、「派遣労働者（受け入れ）」が12.2％の順となっている。",src:"令和6年就業形態の多様化に関する総合実態調査の概況",cat:"択一式（労一）"},
+{no:"LEC第1回-問1",opt:"D",q:"現在の実労働時間数についての意識をみると、「正社員」では「減らしたい」とする労働者割合が66.6％と最も高くなっている一方で、「正社員以外の労働者」では「今のままでよい」とする労働者割合が72.9％と最も高くなっている。",a:false,exp:"現在の実労働時間数についての意識をみると、「正社員」及び「正社員以外の労働者」ともに「今のままでよい」とする労働者割合がそれぞれ66.6％、72.9％と最も高くなっている（正社員は「減らしたい」が最も高いのではない）。",src:"令和6年就業形態の多様化に関する総合実態調査の概況",cat:"択一式（労一）"},
+{no:"LEC第1回-問1",opt:"E",q:"3年前と比べた正社員数の変化を事業所規模別にみると、すべての事業所規模で、正社員数が「増えた」とする割合が「減った」とする割合を下回っている。",a:false,exp:"3年前と比べた正社員数の変化を事業所規模別にみると、「1,000人以上」及び「300〜999人」においては正社員数が「増えた」とする割合が「減った」とする割合を上回っている（すべての規模で下回っているのではない）。",src:"令和6年就業形態の多様化に関する総合実態調査の概況",cat:"択一式（労一）"},
+{no:"LEC第1回-問2",opt:"A",q:"我が国の男女の雇用均等に関する次の記述のうち、正しいものはどれか。なお、本問は「令和6年度雇用均等基本調査（厚生労働省）」を参照しており、当該調査による用語及び統計等を利用している。＞男性のみ採用した採用区分があった企業について、男性のみ採用した理由（複数回答）をみると、「女性の応募はあったが、採用前に辞退された」とする企業割合が71.2％と最も高くなっており、次いで「女性の応募はあったが、試験の成績等が採用基準に達していなかった」が13.2％、「女性の応募がなかった」が7.7％の順となっている。",a:false,exp:"男性のみ採用した理由（複数回答）をみると、「女性の応募がなかった」とする企業割合が71.2％と最も高く、次いで「女性の応募はあったが、採用前に辞退された」が13.2％、「女性の応募はあったが、試験の成績等が採用基準に達していなかった」が7.7％の順となっている。",src:"令和6年度雇用均等基本調査",cat:"択一式（労一）"},
+{no:"LEC第1回-問2",opt:"B",q:"令和6年春卒業の新規学卒者を採用した企業割合は52.9％と、前回調査（令和5年度）に比べ減少しており、当該新規学卒者を採用した企業を採用区分ごとにみると、総合職については「男女とも採用」した企業の割合が42.7％と最も高くなっている。",a:false,exp:"令和6年春卒業の新規学卒者を採用した企業割合は「20.6％」となっている。その他の記述は正しい。",src:"令和6年度雇用均等基本調査",cat:"択一式（労一）"},
+{no:"LEC第1回-問2",opt:"C",q:"課長相当職以上（役員を含む。）の管理職に占める女性の割合は13.1％となっており、当該割合を産業別にみると、「医療，福祉」が50.4％と突出して高くなっている。",a:true,exp:"本肢のとおり正しい（令和6年度雇用均等基本調査）。",src:"令和6年度雇用均等基本調査",cat:"択一式（労一）"},
+{no:"LEC第1回-問2",opt:"D",q:"セクシュアルハラスメントを防止するための対策に「取り組んでいる」企業割合及び妊娠・出産・育児休業等に関するハラスメントを防止するための対策に「取り組んでいる」企業割合はともに8割を超えている一方で、パワーハラスメントを防止するための対策に「取り組んでいる」企業割合は約5割となっている。",a:false,exp:"パワーハラスメントを防止するための対策に「取り組んでいる」企業割合についても、「8割を超えている」。その他の記述は正しい。",src:"令和6年度雇用均等基本調査",cat:"択一式（労一）"},
+{no:"LEC第1回-問2",opt:"E",q:"令和4年10月1日から令和5年9月30日までの1年間に在職中に出産した女性のうち、令和6年10月1日までに育児休業を開始した者（育児休業の申出をしている者を含む。）の割合は86.6％となっており、同期間内に出産した有期契約労働者の育児休業取得率は92.4％となっている。",a:false,exp:"令和4年10月1日から令和5年9月30日までの1年間に在職中に出産した有期契約労働者である女性のうち、育児休業を開始した者の割合（育児休業取得率）は「73.2％」となっている。その他の記述は正しい。",src:"令和6年度雇用均等基本調査",cat:"択一式（労一）"},
+{no:"LEC第1回-問3",opt:"A",q:"労働契約法等に関する次の記述のうち、誤っているのはどれか。＞「就業規則に定められた賃金や退職金に関する労働条件の変更に対する労働者の同意の有無については、当該変更を受け入れる旨の労働者の行為の有無だけでなく、当該変更により労働者にもたらされる不利益の内容及び程度、労働者により当該行為がされるに至った経緯及びその態様、当該行為に先立つ労働者への情報提供又は説明の内容等に照らして、当該行為が労働者の自由な意思に基づいてされたものと認めるに足りる合理的な理由が客観的に存在するか否かという観点からも、判断されるべきものと解するのが相当である。」とするのが、最高裁判所の判例である。",a:true,exp:"本肢のとおり正しい（最高裁第二小法廷判決 平28.2.19 山梨県民信用組合事件ほか）。",src:"最二小平成28.2.19山梨県民信用組合事件ほか",cat:"択一式（労一）"},
+{no:"LEC第1回-問3",opt:"B",q:"労働契約法第3条第5項において「労働者及び使用者は、労働契約に基づく権利の行使に当たっては、それを濫用することがあってはならない。」と規定されており、同法第3章（労働契約の継続及び終了）において、出向、懲戒及び解雇に関する権利濫用を禁止する旨を規定しているが、同章で規定していない場面においても、同法第3条第5項の「権利濫用の禁止の原則」が適用される。",a:true,exp:"本肢のとおり正しい（法3条5項、平24.8.10基発0810第2号）。なお、使用者が労働者に出向を命ずることができる場合において、当該出向の命令が、その必要性、対象労働者の選定に係る事情その他の事情に照らして、その権利を濫用したものと認められる場合には、当該命令は、無効とする（法14条）。",src:"労契法3条5項、平24.8.10基発0810第2号",cat:"択一式（労一）"},
+{no:"LEC第1回-問3",opt:"C",q:"労働契約法第12条において、「就業規則で定める基準に達しない労働条件を定める労働契約は、その部分については、無効とする。この場合において、無効となった部分は、就業規則で定める基準による。」と規定されており、当該「その部分については、無効とする」とは、就業規則で定める基準に達しない部分のみを無効とする趣旨であり、労働契約中のその他の部分は有効であるものとされている。",a:true,exp:"本肢のとおり正しい（法12条、平24.8.10基発0810第2号）。「無効となった部分は、就業規則で定める基準による」とは、労働契約の無効となった部分については、就業規則の規定に従い、労働者と使用者との間の権利義務関係が定まるということである。",src:"労契法12条、平24.8.10基発0810第2号",cat:"択一式（労一）"},
+{no:"LEC第1回-問3",opt:"D",q:"民法第632条の「請負」、同法第643条の「委任」又は非典型契約で労務を提供する者であっても、契約形式にとらわれず実態として使用従属関係が認められる場合には、労働契約法第2条第1項の「労働者」に該当する。",a:true,exp:"本肢のとおり正しい（法2条1項、平24.8.10基発0810第2号）。労働契約法における「労働者」とは、使用者に使用されて労働し、賃金を支払われる者をいう。",src:"労契法2条1項、平24.8.10基発0810第2号",cat:"択一式（労一）"},
+{no:"LEC第1回-問3",opt:"E",q:"労働契約法第19条（有期労働契約の更新等）は、有期労働契約が反復して更新されたことにより、雇止めをすることが解雇と社会通念上同視できると認められる場合又は労働者が有期労働契約の契約期間の満了時にその有期労働契約が更新されるものと期待することについて合理的な理由が認められる場合に、使用者が雇止めをすることが、客観的に合理的な理由を欠き、社会通念上相当であると認められないときは、雇止めが認められず、使用者は、従前の有期労働契約の労働条件を上回る労働条件で有期労働契約の更新又は締結の申込みを承諾したものとみなさる。",a:false,exp:"本肢の場合、使用者は、「従前の有期労働契約と同一の労働条件」で労働者による有期労働契約の更新又は締結の申込みを承諾したものとみなされ、「有期労働契約が同一の労働条件」（当該有期労働契約の期間を含む）で成立する（従前の労働条件を上回る労働条件ではない）（法19条、平24.8.10基発0810第2号）。",src:"労契法19条、平24.8.10基発0810第2号",cat:"択一式（労一）"},
+{no:"LEC第1回-問4",opt:"A",q:"労働関係法規に関する次の記述のうち、正しいものはどれか。＞労働施策総合推進法第27条の2（中途採用に関する情報の公表を促進するための措置等）において、常時雇用する労働者が301人以上の企業においては、各事業年度に1度、「正規雇用労働者の採用者数に占める正規雇用労働者の中途採用者数の割合」を公表することが義務付けられており、日本国外にある日本企業の支店・出張所等や日本企業の日本国外の現地法人の事業所であっても、常時雇用する労働者が301人以上である場合は、同条が適用される。",a:false,exp:"労働施策総合推進法は、日本国内にある事業所のみに適用される（属地主義である）ことから、日本国外にある日本企業の支店・出張所等や、日本企業の日本国外の現地法人の事業所には、同法の適用はされない。したがって、日本国外にある事業所等で雇用される労働者は、本肢の常時雇用する労働者に含まれない。",src:"労働施策総合推進法27条の2、中途採用比率公表Q&A",cat:"択一式（労一）"},
+{no:"LEC第1回-問4",opt:"B",q:"事業主が障害者雇用促進法第36条の2から第36条の4までの規定に基づき事業主が講ずべき措置（いわゆる合理的配慮）を講じた結果として、障害者である者に対して障害者でない者と異なる取扱いをしたときは、原則として、同法に違反する。",a:false,exp:"事業主が合理的配慮を講じた結果として、障害者である者に対して障害者でない者と異なる取扱いをしたときは、障害者雇用促進法に「違反しない」（平27.3.25厚労告116号ほか）。",src:"障害者雇用促進法36条の2〜36条の4、平27.3.25厚労告116号",cat:"択一式（労一）"},
+{no:"LEC第1回-問4",opt:"C",q:"育児介護休業法によると、事業主は、労働者からの同法第11条第1項に規定する介護休業の申出があったときは、原則として、当該介護休業申出を拒むことができないが、経営困難又は事業繁忙その他の特別な理由がある場合は、当該介護休業の申出を拒むことができる。",a:false,exp:"事業主は、経営困難、事業繁忙その他どのような理由があっても、適法な労働者の育児介護休業法11条1項に規定する介護休業申出を拒むことは「できない」（育児介護休業法12条1項、令7.1.20職発0120第2号・雇均発0120第1号ほか）。",src:"育介法12条1項、令7.1.20職発0120第2号ほか",cat:"択一式（労一）"},
+{no:"LEC第1回-問4",opt:"D",q:"事業主が高年齢者雇用安定法第10条の2第1項に規定する創業支援等措置を講ずる場合において、同項に基づき、事業主が創業支援等措置の内容等を記載した計画について過半数労働組合等の同意を得たうえで、当該計画に示した内容通りの措置を講じていたとしても、個々の労働者と事業主の間で就業条件等についての合意が得られず、当該労働者が当該措置を拒否したときは、同項における努力義務を果たしていないものとされている。",a:false,exp:"事業主が創業支援等措置の内容等を記載した計画について過半数労働組合等の同意を得たうえで、当該計画に示した内容通りの措置を講じていれば、個々の労働者と事業主の間で就業条件等についての合意が得られず、結果的に当該労働者が当該措置を拒否したとしても、同項における努力義務を満たしていないものとは「ならない」（高年齢者雇用安定法Q&A）。",src:"高年齢者雇用安定法10条の2第1項",cat:"択一式（労一）"},
+{no:"LEC第1回-問4",opt:"E",q:"最低賃金法第4条第1項において、「使用者は、最低賃金の適用を受ける労働者に対し、その最低賃金額以上の賃金を支払わなければならない。」と規定されているが、当該規定は、労働者がその都合により所定労働時間若しくは所定労働日の労働をしなかった場合又は使用者が正当な理由により労働者に所定労働時間若しくは所定労働日の労働をさせなかった場合において、労働しなかった時間又は日に対応する限度で賃金を支払わないことを妨げるものではないものとされている。",a:true,exp:"本肢のとおり正しい（最低賃金法4条1項・4項）。最低賃金の適用を受ける労働者と使用者との間の労働契約で最低賃金額に達しない賃金を定めるものは、その部分については無効とし、無効となった部分は、最低賃金と同様の定をしたものとみなす。",src:"最賃法4条1項・4項",cat:"択一式（労一）"},
+{no:"LEC第1回-問5",opt:"A",q:"社会保険労務士法令に関する次の記述のうち、正しいものはどれか。なお、本問において「改正法」とは、社会保険労務士法の一部を改正する法律（令和7年法律第77号）のことをいう。＞改正法により、社会保険労務士法第2条第1項第3号に規定する社会保険労務士の業務に、事業における労務管理その他の労働に関する事項及び労働社会保険諸法令に基づく社会保険に関する事項に係る「法令並びに労働協約、就業規則及び労働契約の遵守の状況を監査すること」が明記されたことに伴い、いわゆる「労務監査」が社会保険労務士の行う相談・指導業務に新たに追加されたことで、当該業務の範囲が拡大した。",a:false,exp:"改正法により、法2条1項3号に規定する社会保険労務士の業務（いわゆる3号業務）に、いわゆる「労務監査」が含まれることが明記されたが、これは社会保険労務士が従前から行っている「労務監査」に関する業務が同号に規定する相談・指導業務に含まれることを明記したものであり、相談・指導業務の範囲について「拡大又は縮小したものではない」（法2条1項3号、令7.6.25基発0625第6号）。",src:"社労士法2条1項3号、令7.6.25基発0625第6号",cat:"択一式（社一）"},
+{no:"LEC第1回-問5",opt:"B",q:"社会保険労務士法第25条の19第2項において、「紛争解決手続代理業務を行うことを目的とする社会保険労務士法人は、特定社会保険労務士である社員以外の者に紛争解決手続代理業務を行わせてはならない。」と規定されている。",a:false,exp:"紛争解決手続代理業務を行うことを目的とする社会保険労務士法人は、「特定社会保険労務士でない者」に紛争解決手続代理業務を行わせてはならないとされており、社会保険労務士法人の「使用人である特定社会保険労務士に紛争解決手続代理業務を行わせることもできる」（法25条の19第2項）。",src:"社労士法25条の19第2項",cat:"択一式（社一）"},
+{no:"LEC第1回-問5",opt:"C",q:"社会保険労務士法第2条第1項第1号の3に規定する事務代理は、民法に規定する代理とは異なり、代理人がその代理した案件についての処分権を有しないものとされており、当該事務代理の内容は、労働社会保険諸法令に基づく申請等及びこれらに係る行政機関の調査、処分に対してする主張、陳述等の事実行為にとどまることから、代理人の判断で法律行為を行う余地はなく、代理人には、行政機関の許可、決定等の受領、申請等の撤回、委任の範囲外の申請等の内容の変更等を行う権限はないと解される。",a:true,exp:"本肢のとおり正しい（法2条1項1号の3ほか）。",src:"社労士法2条1項1号の3ほか",cat:"択一式（社一）"},
+{no:"LEC第1回-問5",opt:"D",q:"労働社会保険諸法令の規定により罰金以上の刑の執行猶予を受けた者について、当該執行猶予期間満了の日から3年を経過しなければ、当該者に係る社会保険労務士法第5条第4号に規定する欠格事由が消滅することはない。",a:false,exp:"労働社会保険諸法令の規定により罰金以上の刑の執行猶予を受けた者は、当該執行猶予期間満了の日で当該刑の言渡しの効力が消滅し、当該刑に処せられなかったと同一の状態に復することになるから、当該「期間満了と同時に」法5条4号に規定する欠格事由は「消滅する」（3年を経過しなければ消滅しないのではない）。",src:"社労士法5条4号ほか",cat:"択一式（社一）"},
+{no:"LEC第1回-問5",opt:"E",q:"厚生労働大臣は、社会保険労務士が、相当の注意を怠り、真正の事実に反して申請書等の作成、事務代理若しくは紛争解決手続代理業務を行ったとき、又は社会保険労務士法第15条（不正行為の指示等の禁止）の規定に違反する行為をしたときは、戒告又は3年以内の開業社会保険労務士若しくは開業社会保険労務士の使用人である社会保険労務士若しくは社会保険労務士法人の社員若しくは使用人である社会保険労務士の業務の停止の処分をすることができる。",a:false,exp:"厚生労働大臣は、本肢の場合、戒告又は「1年」以内の開業社会保険労務士若しくは開業社会保険労務士の使用人である社会保険労務士若しくは社会保険労務士法人の社員若しくは使用人である社会保険労務士の業務の停止の処分をすることができる（3年以内ではない）（法25条の2第2項）。",src:"社労士法25条の2第2項",cat:"択一式（社一）"},
+{no:"LEC第1回-問6",opt:"ア",q:"【国民健康保険法に関する記述として正しいか。本問における「市町村」には特別区を含む】国民健康保険組合は、国民健康保険法第32条第2項の規定による組合会の議決を理由とした解散の認可を受けようとするときは、申請書に、所定の書類を添えて、厚生労働大臣に提出しなければならず、当該所定の書類の1つとして、「当該認可申請前1箇月以内に作成した財産目録」がある。",a:false,exp:"国民健康保険組合は、組合会の議決を理由とした解散の認可を受けようとするときは、申請書に、所定の書類を添えて、「都道府県知事」に提出しなければならない（厚生労働大臣ではない）。その他の記述は正しい（法32条、国民健康保険法施行規則24条）。",src:"国保法32条、国保則24条",cat:"択一式（社一）"},
+{no:"LEC第1回-問6",opt:"イ",q:"【国民健康保険法に関する記述として正しいか。本問における「市町村」には特別区を含む】市町村は、特別徴収の方法による保険料の徴収の事務については、収入の確保及び被保険者の便益の増進に寄与すると認める場合に限り、地方自治法第243条の2第1項の規定により指定する者に委託することができるものとされている。",a:false,exp:"市町村は、「普通徴収」の方法による保険料の徴収の事務について、収入の確保及び被保険者の便益の増進に寄与すると認める場合に限り、地方自治法243条の2第1項の規定により指定する者に委託することができる（特別徴収ではない）（法80条の2）。",src:"国保法80条の2",cat:"択一式（社一）"},
+{no:"LEC第1回-問6",opt:"ウ",q:"【国民健康保険法に関する記述として正しいか。本問における「市町村」には特別区を含む】国民健康保険法第116条において、「修学のため一の市町村の区域内に住所を有する被保険者であって、修学していないとすれば他の市町村の区域内に住所を有する他人と同一の世帯に属するものと認められるものは、国民健康保険法の適用については、当該他の市町村の区域内に住所を有するものとみなし、かつ、当該世帯に属するものとみなす。」と規定されているが、当該修学のため一の市町村の区域内に住所を有する被保険者が所得を有しており、かつ、当該所得によって生活を維持している場合、同条の規定を適用することなく、当然にその住所地の市町村の被保険者とすべきものとされている。",a:true,exp:"本肢のとおり正しい（法116条、昭34.1.27保発第4号）。",src:"国保法116条、昭34.1.27保発第4号",cat:"択一式（社一）"},
+{no:"LEC第1回-問6",opt:"エ",q:"【国民健康保険法に関する記述として正しいか。本問における「市町村」には特別区を含む】国民健康保険法第4条第2項において、「都道府県は、安定的な財政運営、市町村の国民健康保険事業の効率的な実施の確保その他の都道府県及び当該都道府県内の市町村の国民健康保険事業の健全な運営について中心的な役割を果たすものとする。」と規定されている。",a:true,exp:"本肢のとおり正しい（法4条2項）。なお、国は、国民健康保険事業の運営が健全に行われるよう必要な各般の措置を講ずるとともに、法1条に規定する目的の達成に資するため、保健、医療及び福祉に関する施策その他の関連施策を積極的に推進するものとする。",src:"国保法4条2項",cat:"択一式（社一）"},
+{no:"LEC第1回-問6",opt:"オ",q:"【国民健康保険法に関する記述として正しいか。本問における「市町村」には特別区を含む】市町村及び国民健康保険組合は、政令で定めるところにより、条例又は規約で、国民健康保険法第42条第1項に規定する療養の給付に係る一部負担金の割合を減ずることができるものとされており、当該一部負担金の割合が減ぜられたときは、市町村又は国民健康保険組合が開設者の同意を得て定める保険医療機関等について療養の給付を受ける被保険者は、同項の規定にかかわらず、その減ぜられた割合による一部負担金を当該保険医療機関等に支払うことで足りるものとされている。",a:true,exp:"本肢のとおり正しい（法43条1項・2項）。",src:"国保法43条1項・2項",cat:"択一式（社一）"},
+{no:"LEC第1回-問7",opt:"A",q:"高齢者医療確保法に関する次の記述のうち、誤っているものはどれか。なお、本問における「市町村」には、特別区を含むものとする。＞高齢者医療確保法第5条において、「保険者は、加入者の高齢期における健康の保持のために必要な事業を積極的に推進するよう努めるとともに、高齢者医療制度の運営が健全かつ円滑に実施されるよう協力しなければならない。」と規定されている。",a:true,exp:"本肢のとおり正しい（法5条）。なお、地方公共団体は、高齢者医療確保法の趣旨を尊重し、住民の高齢期における医療に要する費用の適正化を図るための取組及び高齢者医療制度の運営が適切かつ円滑に行われるよう所要の施策を実施しなければならない（法4条1項）。",src:"高医法5条",cat:"択一式（社一）"},
+{no:"LEC第1回-問7",opt:"B",q:"厚生労働大臣は、国民の高齢期における適切な医療の確保を図る観点から、医療に要する費用の適正化（以下本問において「医療費適正化」とする。）を総合的かつ計画的に推進するため、医療費適正化に関する施策についての基本的な方針を定めるとともに、6年ごとに、6年を1期として、医療費適正化を推進するための計画を定めるものとする。",a:true,exp:"本肢のとおり正しい（法8条1項）。厚生労働大臣は、医療費適正化基本方針及び全国医療費適正化計画を定め、又はこれを変更しようとするときは、あらかじめ、関係行政機関の長に協議するものとする。",src:"高医法8条1項",cat:"択一式（社一）"},
+{no:"LEC第1回-問7",opt:"C",q:"保険医療機関等は療養の給付に関し、保険医等は後期高齢者医療の診療又は調剤に関し、厚生労働大臣又は都道府県知事の指導を受けなければならない。",a:true,exp:"本肢のとおり正しい（法66条1項）。",src:"高医法66条1項",cat:"択一式（社一）"},
+{no:"LEC第1回-問7",opt:"D",q:"都道府県は、後期高齢者医療の事務（保険料の徴収の事務及び被保険者の便益の増進に寄与するものとして政令で定める事務を除く。）を処理するため、都道府県の区域ごとに当該区域内のすべての市町村が加入する広域連合を設けるものとする。",a:false,exp:"「市町村」は、後期高齢者医療の事務（保険料の徴収の事務及び被保険者の便益の増進に寄与するものとして政令で定める事務を除く）を処理するため、都道府県の区域ごとに当該区域内のすべての市町村が加入する広域連合（後期高齢者医療広域連合）を設けるものとする（都道府県ではない）（法48条）。",src:"高医法48条",cat:"択一式（社一）"},
+{no:"LEC第1回-問7",opt:"E",q:"後期高齢者医療審査会は、各都道府県に置くものとされている。",a:true,exp:"本肢のとおり正しい（法129条）。",src:"高医法129条",cat:"択一式（社一）"},
+{no:"LEC第1回-問8",opt:"A",q:"介護保険法に関する次の記述のうち、誤っているものはどれか。なお、本問における「市町村」には、特別区を含むものとする。＞介護保険法第2条第1項の保険給付は、被保険者の心身の状況、その置かれている環境等に応じて、被保険者の選択に基づき、適切な保健医療サービス及び福祉サービスが、多様な事業者又は施設から、総合的かつ効率的に提供されるよう配慮して行われなければならない。",a:true,exp:"本肢のとおり正しい（法2条3項）。なお、介護保険は、被保険者の要介護状態又は要支援状態（要介護状態等）に関し、必要な保険給付を行うものとする（法2条1項）。",src:"介保法2条3項",cat:"択一式（社一）"},
+{no:"LEC第1回-問8",opt:"B",q:"介護保険法第11条第2項において、「第2号被保険者は、医療保険加入者でなくなった日から、その資格を喪失する。」と規定されている。",a:true,exp:"本肢のとおり正しい（法11条2項）。",src:"介保法11条2項",cat:"択一式（社一）"},
+{no:"LEC第1回-問8",opt:"C",q:"地域支援事業は、当該市町村における介護予防に関する事業の実施状況、介護保険の運営の状況、75歳以上の被保険者の数その他の状況を勘案して政令で定める額の範囲内で行うものとされている。",a:true,exp:"本肢のとおり正しい（法115条の45第4項）。なお、市町村は、地域支援事業の利用者に対し、厚生労働省令で定めるところにより、利用料を請求することができる。",src:"介保法115条の45第4項",cat:"択一式（社一）"},
+{no:"LEC第1回-問8",opt:"D",q:"X県Y市において要介護認定を受けている者がX県Z市の行う介護保険の被保険者となった場合において、X県Z市は、当該被保険者が当該要介護認定に係る有効期間（要介護状態区分に応じて厚生労働省令で定める期間をいう。）内に、X県Y市から交付された当該要介護認定に係る事項を証明する書面を添えて、要介護認定の申請をしたときは、介護認定審査会の審査及び判定を経ることなく、当該書面に記載されている事項に即して、要介護認定をすることができる。",a:false,exp:"本肢の場合において、X県Z市は、「当該被保険者がその資格を取得した日から14日以内に」、X県Y市から交付された当該要介護認定に係る事項を証明する書面を添えて、要介護認定の申請をしたときは、介護認定審査会の審査及び判定を経ることなく、当該書面に記載されている事項に即して、要介護認定をすることができる（有効期間内ではない）（法36条）。",src:"介保法36条",cat:"択一式（社一）"},
+{no:"LEC第1回-問8",opt:"E",q:"国は、介護保険の財政の調整を行うため、第1号被保険者の年齢階級別の分布状況、第1号被保険者の所得の分布状況等を考慮して、政令で定めるところにより、市町村に対して調整交付金を交付するものとされており、当該調整交付金の総額は、各市町村の介護保険法第121条第1項に規定する介護給付及び予防給付に要する費用の額（同条第2項の規定の適用がある場合にあっては、同項の規定を適用して算定した額。）の総額の100分の5に相当する額とされている。",a:true,exp:"本肢のとおり正しい（法122条1項・2項）。",src:"介保法122条1項・2項",cat:"択一式（社一）"},
+{no:"LEC第1回-問9",opt:"A",q:"児童手当法に関する次の記述のうち、正しいものはどれか。なお、本問における「市町村」には、特別区を含むものとする。＞児童手当法第19条の規定により政府が市町村に交付する交付金は、毎年度、4月、7月及び11月に児童手当法施行令第2条各号に定める支払期月の分をそれぞれ交付するものとされている。",a:true,exp:"本肢のとおり正しい（児童手当法施行令2条）。",src:"児手法施行令2条",cat:"択一式（社一）"},
+{no:"LEC第1回-問9",opt:"B",q:"児童手当法における「第3子以降算定額算定対象者」とは、22歳に達する日以後の最初の3月31日までの間にある者（児童及び延長者等（児童福祉法第31条第4項に規定する延長者及びこれに類する者として内閣府令で定めるものをいい、18歳に達する日以後の最初の3月31日を経過した者に限る。）を除く。）のうち、個人受給資格者によって監護に相当する日常生活上の世話及び必要な保護並びにその生計費の相当部分の負担が行われている者として内閣府令で定めるものであって、日本国内に住所を有するもの又は留学その他の内閣府令で定める理由により日本国内に住所を有しないものをいい、当該内閣府令で定める理由とは、留学のうち、その期間が当該日本国内に住所を有しなくなった日から3年以内のものとされている。",a:false,exp:"本肢の内閣府令で定める理由とは、留学のうち、その期間が当該日本国内に住所を有しなくなった日から「4年以内」のものをいう（3年以内ではない）。その他の記述は正しい（法6条2項2号、則1条の3の2第3項）。",src:"児手法6条2項2号、則1条の3の2第3項",cat:"択一式（社一）"},
+{no:"LEC第1回-問9",opt:"C",q:"児童手当の支給を受けている者につき、児童手当の額が減額することとなるに至った場合における児童手当の額の改定は、その事由が生じた日の属する月から行うものとされている。",a:false,exp:"児童手当の支給を受けている者につき、児童手当の額が減額することとなるに至った場合における児童手当の額の改定は、その事由が生じた日の属する「月の翌月」から行う（法9条3項）。",src:"児手法9条3項",cat:"択一式（社一）"},
+{no:"LEC第1回-問9",opt:"D",q:"児童手当法によると、満19歳（第3子以降算定額算定対象者に該当するものとする。）、満16歳及び満8歳である3人の子を有する受給資格者に支給される児童手当の額は、1月につき50,000円である。",a:false,exp:"本肢の児童手当の額は「月額40,000円」となる（法6条）。満19歳の子は支給対象児童ではないが第3子以降算定額算定対象者であることから第1子として児童の数に含まれる。満16歳の子は第2子でありかつ3歳以上支給対象児童に該当するため月額10,000円が支給される。満8歳の子は第3子でありかつ3歳以上支給対象児童に該当するため月額30,000円が支給される。したがって月額40,000円（10,000円＋30,000円）となる。",src:"児手法6条",cat:"択一式（社一）"},
+{no:"LEC第1回-問9",opt:"E",q:"一般受給者は、支給要件児童が18歳に達する日以後の最初の3月31日を経過したことにより、児童手当の支給を受けるべき事由が消滅したときは、速やかに、所定の届書を市町村長に提出しなければならない。",a:false,exp:"一般受給者は、支給要件児童が18歳に達する日以後の最初の3月31日を経過したことにより、児童手当の支給を受けるべき事由が消滅したときは、本肢の届書を市町村長に提出することを「要しない」（則7条1項）。",src:"児手法則7条1項",cat:"択一式（社一）"},
+{no:"LEC第1回-問10",opt:"A",q:"確定給付企業年金法に関する次の記述のうち、正しいものはどれか。＞老齢給付金は、規約でその一部を一時金として支給することができることを定めた場合には、政令で定める基準に従い規約で定めるところにより、一時金として支給することができるが、老齢給付金の全部を一時金として支給することはできない。",a:false,exp:"老齢給付金は、規約でその「全部」又は一部を一時金として支給することができることを定めた場合には、政令で定める基準に従い規約で定めるところにより、一時金として支給することが「できる」（全部を一時金として支給することもできる）（法38条2項）。",src:"確給法38条2項",cat:"択一式（社一）"},
+{no:"LEC第1回-問10",opt:"B",q:"移換元確定給付企業年金の中途脱退者（当該確定給付企業年金の加入者の資格を喪失した者（規約で定める脱退一時金を受けるための要件を満たす場合に限る。）をいう。）は、移換先確定給付企業年金の加入者の資格を取得した場合であって、移換先確定給付企業年金の規約において、あらかじめ、移換元確定給付企業年金の資産管理運用機関等から脱退一時金の額に相当する額（以下本問において「脱退一時金相当額」とする。）の移換を受けることができる旨が定められているときは、移換元確定給付企業年金の事業主等に脱退一時金相当額の移換を申し出ることができる。",a:true,exp:"本肢のとおり正しい（法81条の2第1項）。移換元確定給付企業年金の資産管理運用機関等は、本肢の申出があったときは、移換先確定給付企業年金の資産管理運用機関等に当該申出に係る脱退一時金相当額を移換するものとする。",src:"確給法81条の2第1項",cat:"択一式（社一）"},
+{no:"LEC第1回-問10",opt:"C",q:"事業主等は、毎事業年度終了後6月以内に、厚生労働省令で定めるところにより、確定給付企業年金の事業及び決算に関する報告書を作成し、厚生労働大臣に提出しなければならない。",a:false,exp:"事業主等は、毎事業年度終了後「4月以内」に、厚生労働省令で定めるところにより、確定給付企業年金の事業及び決算に関する報告書を作成し、厚生労働大臣に提出しなければならない（6月以内ではない）（法100条1項）。",src:"確給法100条1項",cat:"択一式（社一）"},
+{no:"LEC第1回-問10",opt:"D",q:"確定給付企業年金法第55条第1項において、「事業主は、給付に関する事業に要する費用に充てるため、毎月1回以上、一定の期日を定めて掛金を拠出しなければならない。」と規定されている。",a:false,exp:"法55条1項において、「事業主は、給付に関する事業に要する費用に充てるため、規約で定めるところにより、『年1回以上、定期的に』掛金を拠出しなければならない」と規定されている（毎月1回以上ではない）（法55条1項）。",src:"確給法55条1項",cat:"択一式（社一）"},
+{no:"LEC第1回-問10",opt:"E",q:"確定給付企業年金法第34条第1項において、「受給権は、譲り渡し、担保に供し、又は差し押さえることができない。ただし、障害給付金を受ける権利を国税滞納処分（その例による処分を含む。）により差し押さえる場合は、この限りでない。」と規定されている。",a:false,exp:"法34条1項において、「受給権は、譲り渡し、担保に供し、又は差し押さえることができない。ただし、『老齢給付金、脱退一時金及び遺族給付金』を受ける権利を国税滞納処分（その例による処分を含む）により差し押さえる場合は、この限りでない」と規定されている（障害給付金ではない）（法34条1項）。",src:"確給法34条1項",cat:"択一式（社一）"},
+{type:"select",no:"LEC第1回-労一選択4",opt:"空欄A",context:"厚生労働省「令和6年度能力開発基本調査結果の概要」によると、職業能力開発推進者（以下「推進者」とする。）の選任状況をみると、「いずれの事業所においても選任していない」企業は、【A】％となっている。",choices:["83.2", "8.2", "28.2", "53.2"],answer:"83.2",exp:"令和6年度能力開発基本調査結果の概要（厚労省）。職業能力開発推進者の選任状況をみると、「いずれの事業所においても選任していない」企業は「83.2」％となっている。",src:"令和6年度能力開発基本調査結果の概要（厚労省）",cat:"選択式（労一）"},
+{type:"select",no:"LEC第1回-労一選択4",opt:"空欄B",context:"推進者の選任状況を産業別にみると、推進者選任企業（推進者の選任状況について、「すべての事業所において選任している」とする企業と「一部の事業所においては選任している」とする企業を合わせたものをいう。）の割合が最も高いのは、「【B】」である。",choices:["情報通信業", "医療,福祉", "金融業,保険業", "製造業"],answer:"情報通信業",exp:"推進者選任企業（すべて又は一部の事業所において選任している企業を合わせたもの）の割合が最も高いのは「情報通信業」（33.7％）であり、唯一3割を超えている。",src:"令和6年度能力開発基本調査結果の概要（厚労省）",cat:"選択式（労一）"},
+{type:"select",no:"LEC第1回-労一選択4",opt:"空欄C",context:"次世代育成支援対策推進法によると、厚生労働大臣は、一般事業主行動計画の届出をした一般事業主からの申請に基づき、行動計画策定指針に照らし適切な一般事業主行動計画を策定・実施し目標を達成したことその他の基準に適合するものである旨の認定を行うことができる。当該認定を受けた企業は、厚生労働大臣が定める認定マーク（【C】）等を商品などに付すことができる。",choices:["くるみん", "えるぼし", "トモニン", "もにす"],answer:"くるみん",exp:"次世代育成支援対策推進法13条・14条1項。当該認定を受けた企業は、厚生労働大臣が定める認定マーク「くるみん」等を商品などに付すことができる。",src:"次世代法13条、14条1項",cat:"選択式（労一）"},
+{type:"select",no:"LEC第1回-労一選択4",opt:"空欄D",context:"最高裁判所（国鉄札幌運転区事件）は、労働組合及びその組合員の企業の物的施設の利用が問題となった事件において、次のように判示した。「労働組合又はその組合員が使用者の所有し管理する物的施設であって定立された【D】のもとに事業の運営の用に供されているものを使用者の許諾を得ることなく組合活動のために利用することは許されないものというべきであるから、労働組合又はその組合員が使用者の許諾を得ないで叙上のような企業の物的施設を利用して組合活動を行うことは、これらの者に対しその利用を許さないことが当該物的施設につき使用者が有する権利の濫用であると認められるような特段の事情がある場合を除いては、職場環境を適正良好に保持し規律のある業務の運営態勢を確保しうるように当該物的施設を管理利用する使用者の権限を侵し、【D】を乱すものであって、正当な組合活動として許容されるところであるということはできない。」",choices:["企業秩序", "安全衛生の保全", "経済活動の自由", "公序良俗"],answer:"企業秩序",exp:"国鉄札幌運転区事件（最三小昭和54.10.30）。定立された「企業秩序」のもとに事業の運営の用に供されている物的施設を、使用者の許諾を得ることなく組合活動のために利用することは許されない。",src:"最三小昭和54.10.30国鉄札幌運転区事件",cat:"選択式（労一）"},
+{type:"select",no:"LEC第1回-労一選択4",opt:"空欄E",context:"最高裁判所（国鉄札幌運転区事件）は、労働組合及びその組合員の企業の物的施設の利用が問題となった事件において、次のように判示した。「労働組合又はその組合員が使用者の所有し管理する物的施設であって定立された企業秩序のもとに事業の運営の用に供されているものを【E】を得ることなく組合活動のために利用することは許されないものというべきであるから、労働組合又はその組合員が【E】を得ないで叙上のような企業の物的施設を利用して組合活動を行うことは、これらの者に対しその利用を許さないことが当該物的施設につき使用者が有する権利の濫用であると認められるような特段の事情がある場合を除いては、職場環境を適正良好に保持し規律のある業務の運営態勢を確保しうるように当該物的施設を管理利用する使用者の権限を侵し、企業秩序を乱すものであって、正当な組合活動として許容されるところであるということはできない。」",choices:["使用者の許諾", "行政官庁への確認", "他の労働者の同意", "当該物的施設を利用する者の意見"],answer:"使用者の許諾",exp:"国鉄札幌運転区事件（最三小昭和54.10.30）。物的施設を「使用者の許諾」を得ることなく組合活動のために利用することは、特段の事情がある場合を除き、正当な組合活動として許容されない。",src:"最三小昭和54.10.30国鉄札幌運転区事件",cat:"選択式（労一）"},
+{type:"select",no:"LEC第1回-社一選択5",opt:"空欄A",context:"「令和5年国民年金被保険者実態調査の概要（厚生労働省）」によると、1号期間滞納者（令和3年度及び令和4年度の納付対象月の保険料を1月も納付していない者（令和4年度末に保険料の申請全額免除を受けていた者、令和4年度末に保険料の学生納付特例を受けていた者及び令和4年度末に保険料の納付猶予を受けていた者を除く。））の割合を年齢階級別にみると、【A】と最も高くなっている。",choices:["25〜29歳が16.1%", "20〜24歳が19.5%", "50〜54歳が19.5%", "55〜59歳が16.1%"],answer:"25〜29歳が16.1%",exp:"令和5年国民年金被保険者実態調査の概要（厚労省）。1号期間滞納者の割合を年齢階級別にみると「25〜29歳が16.1%」と最も高くなっている。",src:"令和5年国民年金被保険者実態調査の概要（厚労省）",cat:"選択式（社一）"},
+{type:"select",no:"LEC第1回-社一選択5",opt:"空欄B",context:"国民健康保険法第82条の2第6項によると、都道府県は、【B】ごとに、同条第2項各号に掲げる都道府県国民健康保険運営方針で定める事項（同条第3項の規定により同項各号に掲げる事項を定めた場合にあっては、当該事項を含む。）について分析及び評価を行うよう努めるとともに、都道府県等が行う国民健康保険の安定的な財政運営の確保及び当該都道府県の保険料の水準の平準化の推進その他国民健康保険事業の円滑かつ確実な実施を図るため必要があると認めるときは、当該都道府県の都道府県国民健康保険運営方針を変更するものとされている。",choices:["おおむね3年", "おおむね6年", "少なくとも2年", "少なくとも5年"],answer:"おおむね3年",exp:"国保法82条の2第6項。都道府県は「おおむね3年」ごとに、都道府県国民健康保険運営方針で定める事項について分析及び評価を行うよう努める。",src:"国保法82条の2第6項",cat:"選択式（社一）"},
+{type:"select",no:"LEC第1回-社一選択5",opt:"空欄C",context:"国民健康保険法第82条の2第6項によると、都道府県は、おおむね3年ごとに、同条第2項各号に掲げる都道府県国民健康保険運営方針で定める事項について分析及び評価を行うよう努めるとともに、都道府県等が行う国民健康保険の安定的な財政運営の確保及び当該都道府県の【C】の推進その他国民健康保険事業の円滑かつ確実な実施を図るため必要があると認めるときは、当該都道府県の都道府県国民健康保険運営方針を変更するものとされている。",choices:["保険料の水準の平準化", "保険給付の水準の均一化", "保険給付の水準の標準化", "保険料の水準の固定化"],answer:"保険料の水準の平準化",exp:"国保法82条の2第6項。都道府県等が行う国民健康保険の安定的な財政運営の確保及び当該都道府県の「保険料の水準の平準化」の推進その他のため必要があると認めるときは、運営方針を変更する。",src:"国保法82条の2第6項",cat:"選択式（社一）"},
+{type:"select",no:"LEC第1回-社一選択5",opt:"空欄D",context:"介護保険法第3条第1項において、「【D】、この法律の定めるところにより、介護保険を行うものとする。」と規定されている。",choices:["市町村及び特別区は", "国は", "都道府県は", "都道府県は、当該都道府県内の市町村（特別区を含む。）とともに"],answer:"市町村及び特別区は",exp:"介護保険法3条1項。「市町村及び特別区は」、この法律の定めるところにより、介護保険を行うものとする（市町村及び特別区が介護保険の保険者）。",src:"介保法3条1項",cat:"選択式（社一）"},
+{type:"select",no:"LEC第1回-社一選択5",opt:"空欄E",context:"確定拠出年金法第16条第1項において、「事業主は、厚生労働省令で定めるところにより、その実施する企業型年金の企業型年金加入者の氏名及び住所その他の事項を当該企業型年金の企業型年金加入者等に係る記録関連業務を行う確定拠出年金運営管理機関（以下「企業型記録関連運営管理機関」という。）に通知しなければならない。ただし、当該【E】場合にあっては、この限りでない。」と規定されている。",choices:["事業主が記録関連業務の全部を行う", "事業主が企業型記録関連運営管理機関の承認を得た", "事項のうち、通知すべき事実を公簿等によって確認することができる", "事項のうち、軽微なものと認められる"],answer:"事業主が記録関連業務の全部を行う",exp:"確拠法16条1項。事業主は企業型年金加入者の氏名・住所等を企業型記録関連運営管理機関に通知しなければならないが、ただし「事業主が記録関連業務の全部を行う」場合にあっては、この限りでない。",src:"確拠法16条1項",cat:"選択式（社一）"},
+{no:"TAC社06労一-問15",opt:"A",q:"労働組合法で「労働組合」とは、労働者が主体となって自主的に労働条件の維持改善その他経済的地位の向上を図ることを主たる目的として組織する団体又はその連合団体をいい、共済事業その他福利事業を行うものは、労働組合とは認められない。",a:false,exp:"共済事業その他福利事業を行っていても、主たる目的が「労働者が主体となって自主的に労働条件の維持改善その他経済的地位の向上を図ること」にあれば労働組合と認められる。共済事業その他福利事業「のみ」を目的とするものが労働組合と認められない。",src:"労組法2条3号",cat:"択一式（労一）"},
+{no:"TAC社06労一-問15",opt:"B",q:"労働協約には、３年をこえる有効期間の定をすることができず、有効期間の定がない労働協約は、３年の有効期間の定をした労働協約とみなされる。",a:false,exp:"前半（３年をこえる有効期間の定をすることができない）は正しいが、「有効期間の定がない労働協約は、３年の有効期間の定をした労働協約とみなされる」とする規定はない。なお３年をこえる有効期間の定をした労働協約は、３年の有効期間の定をした労働協約とみなされる。",src:"労組法15条1項・2項",cat:"択一式（労一）"},
+{no:"TAC社06労一-問15",opt:"C",q:"ある企業の全工場事業場に常時使用される同種の労働者の４分の３以上の数の労働者が一の労働協約の適用を受けるに至った場合には、その企業のある工場事業場において、当該労働協約の適用を受ける労働者の数が当該工場事業場に常時使用される同種の労働者の数の４分の３未満であったとしても、当該工場事業場に使用される他の同種の労働者に関しては、当該労働協約が拡張適用されることとなる。",a:false,exp:"労組法17条にいう「一の工場事業場」とは個々の工場事業場を指す。当該工場事業場で４分の３未満であれば、その工場事業場では拡張適用されない。",src:"労組法17条・昭29.4.7労発111号",cat:"択一式（労一）"},
+{no:"TAC社06労一-問15",opt:"D",q:"一の工場事業場に常時使用される同種の労働者の４分の２で組織する甲労働組合と４分の１で組織する乙労働組合が、それぞれ使用者と同一の内容の労働協約を締結し、当該同種の労働者の４分の３の数の労働者が同一の内容の労働協約の適用を受けることとなった場合には、当該工場事業場に使用される他の同種の労働者に関しても、当該労働協約が拡張適用されることとなる。",a:false,exp:"労組法17条の「一の労働協約」は厳格に解すべきであり、甲・乙がそれぞれ締結した同一内容の２つの労働協約をあわせて「一の労働協約」と解することはできない。したがって拡張適用されない。",src:"労組法17条",cat:"択一式（労一）"},
+{no:"TAC社06労一-問15",opt:"E",q:"一の工場事業場に常時使用される同種の労働者の４分の３以上の数の労働者が一の労働協約の適用を受けるに至り、当該工場事業場に使用される他の同種の労働者に関して当該労働協約が拡張適用された場合であっても、その後に当該一の労働協約の適用を受ける労働者が同種の労働者の４分の３未満となったときは、他の同種の労働者に関して当該労働協約は拡張適用されなくなる。",a:true,exp:"設問の通り正しい。「４分の３以上の数の労働者が一の労働協約の適用を受ける」ことは、一般的拘束力の発生要件であるとともに存続要件であり、４分の３未満となったときは拡張適用されなくなる。",src:"労組法17条・昭24.5.28労収2829号",cat:"択一式（労一）"},
+{no:"TAC社06労一-問16",opt:"A",q:"最高裁判所の判例では、「職場外でされた職務遂行に関係のない労働者の行為は、企業の円滑な運営に支障を来すおそれがあるなどの企業秩序に関係を有するものではないから、使用者は、企業秩序の維持確保の名目のために、そのような行為を規制の対象とし、これを理由として労働者に懲戒を課することは許されない」としている。",a:false,exp:"関西電力事件。判例は、職場外の職務遂行に関係のない労働者の行為であっても、企業の円滑な運営に支障を来すおそれがあるなど「企業秩序に関係を有するものもある」から、使用者は企業秩序の維持確保のためにそのような行為をも規制の対象とし、これを理由として懲戒を課すことも「許される」としている。",src:"最一小昭58.9.8関西電力事件",cat:"択一式（労一）"},
+{no:"TAC社06労一-問16",opt:"B",q:"最高裁判所の判例では、「懲戒当時に使用者が認識していなかった非違行為は、特段の事情のない限り、当該懲戒の理由とされたものでないことが明らかであるから、その存在をもって当該懲戒の有効性を根拠付けることはできないものというべきである」としている。",a:true,exp:"山口観光事件。設問の通り正しい。具体的な懲戒の適否は、その理由とされた非違行為との関係において判断されるべきものである。",src:"最一小平8.9.26山口観光事件",cat:"択一式（労一）"},
+{no:"TAC社06労一-問16",opt:"C",q:"新規採用に当たり、企業において試用期間中に採用した者が管理職要員として不適格であると認めたときは解約できる旨の特約上の解約権が留保されている労働契約を締結した場合、最高裁判所の判例では、「右の留保解約権に基づく解雇は、これを通常の解雇と全く同一に論ずることはできず、前者については、後者の場合よりも広い範囲における解雇の自由が認められてしかるべきものといわなければならない」としている。",a:true,exp:"三菱樹脂事件。設問の通り正しい。留保解約権の行使は、解約権留保の趣旨・目的に照らして客観的に合理的な理由が存し社会通念上相当として是認されうる場合にのみ許される。",src:"最大判昭48.12.12三菱樹脂事件",cat:"択一式（労一）"},
+{no:"TAC社06労一-問16",opt:"D",q:"新規採用の内定が解約権留保付き労働契約と認められる場合、最高裁判所の判例では、「従業員としての適格性の有無を判断することができたのに、不適格と思いながら採用を内定し、その後右不適格性を打ち消す材料が出なかったので内定を取り消すということは、解約権留保の趣旨、目的に照らして社会通念上相当として是認することができず、解約権の濫用というべきである」としている。",a:true,exp:"大日本印刷事件。設問の通り正しい。採用内定の取消事由は、採用内定当時知ることができず、また知ることが期待できないような事実であって、社会通念上相当として是認できるものに限られる。",src:"最二小昭54.7.20大日本印刷事件",cat:"択一式（労一）"},
+{no:"TAC社06労一-問16",opt:"E",q:"最高裁判所の判例では、「安全配慮義務は、ある法律関係に基づいて特別な社会的接触の関係に入った当事者間において、当該法律関係の付随義務として当事者の一方又は双方が相手方に対して信義則上負う義務として一般的に認められるべきものであって、国と公務員との間においても別異に解すべき論拠はなく、公務員が職務に専念すべき義務並びに法令及び上司の命令に従うべき義務を安んじて誠実に履行するためには、国が、公務員に対し安全配慮義務を負い、これを尽くすことが必要不可欠である」としている。",a:true,exp:"陸上自衛隊事件。設問の通り正しい。安全配慮義務は特別な社会的接触の関係に入った当事者間で信義則上負う付随義務として一般的に認められる。",src:"最三小昭50.2.25陸上自衛隊事件",cat:"択一式（労一）"},
+{no:"TAC社06労一-問17",opt:"ア",q:"地域別最低賃金は、地域における労働者の生計費及び賃金並びに通常の事業の賃金支払能力を考慮して定められなければならないが、労働者の生計費を考慮するに当たっては、労働者が健康で文化的な最低限度の生活を営むことができるよう、生活保護に係る施策との整合性に配慮するものとされている。",a:true,exp:"最低賃金法9条2項・3項。設問の通り正しい。地域別最低賃金は、あまねく全国各地域について決定されなければならない。",src:"最賃法9条2項・3項",cat:"択一式（労一）"},
+{no:"TAC社06労一-問17",opt:"イ",q:"未払賃金の立替払事業の対象となるのは、未払賃金総額の100分の80に相当する額であるが、基準退職日において30歳未満である者の未払賃金総額の上限額は、220万円とされている。",a:false,exp:"基準退職日において30歳未満である者の未払賃金総額の上限額は「110万円」とされている（220万円ではない）。なお未払賃金総額が２万円未満であるときは、立替払は行われない。",src:"賃確法7条・令4条1項1号",cat:"択一式（労一）"},
+{no:"TAC社06労一-問17",opt:"ウ",q:"労働時間等設定改善委員会でその委員の５分の４以上の多数による議決により、労働基準法第39条第９項（年次有給休暇中の賃金）の規定に定める事項について決議が行われたときは、当該決議を同項の規定に係る労使協定に代えることができる。",a:false,exp:"労働基準法39条9項（年次有給休暇中の賃金）の規定に係る労使協定については、労働時間等設定改善委員会の決議をもってこれに代えることは「できない」。",src:"労働時間等設定改善法7条",cat:"択一式（労一）"},
+{no:"TAC社06労一-問17",opt:"エ",q:"事業主は、通常の労働者への転換を推進するため、その雇用する短時間・有期雇用労働者について、一定の措置を講じなければならないが、短時間・有期雇用労働者を雇い入れたときは、速やかに、当該講ずることとしている一定の措置の内容について、当該短時間・有期雇用労働者に説明しなければならない。",a:true,exp:"パートタイム・有期雇用労働法13条1項、14条1項。設問の通り正しい。",src:"パート有期法13条1項・14条1項",cat:"択一式（労一）"},
+{no:"TAC社06労一-問17",opt:"オ",q:"中小企業退職金共済法に規定する退職金共済契約に係る掛金月額は、被共済者１人につき、5,000円（短時間労働被共済者にあっては、2,000円）以上25,000円以下でなければならない。",a:false,exp:"掛金月額は、被共済者１人につき、5,000円（短時間労働被共済者にあっては、2,000円）以上「30,000円」以下でなければならない（25,000円ではない）。",src:"中退共法4条2項",cat:"択一式（労一）"},
+{no:"TAC社06労一-問18",opt:"A",q:"事業主は、住宅資金の貸付けその他これに準ずる福利厚生の措置であって厚生労働省令で定めるものについて、労働者の性別を理由として、差別的取扱いをしてはならず、独身者に対する住宅の貸与が女性のみに限られている場合には、均等法に違反する。",a:true,exp:"均等法6条2号、則1条4号。設問の通り正しい。なお住宅手当の支給は住宅の貸与の措置には当たらず、その代替措置としても認められない。",src:"均等法6条2号・則1条4号",cat:"択一式（労一）"},
+{no:"TAC社06労一-問18",opt:"B",q:"事業主が、雇用の分野における男女の均等な機会及び待遇の確保の支障となっている事情を改善することを目的として、女性又は男性の一方の性別の労働者のみを対象とした措置を行うことや、女性又は男性の一方の性別の労働者を有利に取り扱う措置を行うことは、均等法の「性別を理由とする差別の禁止」の規定に違反しない。",a:false,exp:"ポジティブ・アクションの対象となるのは「女性労働者」に関して行う措置であり、「男性（労働者）」に関してはポジティブ・アクションの対象とされていない。設問は男性の一方を対象とする措置も含めている点が誤り。",src:"均等法8条",cat:"択一式（労一）"},
+{no:"TAC社06労一-問18",opt:"C",q:"事業主には、職場におけるセクシュアルハラスメントを防止するための雇用管理上の措置を講じる義務が課せられているが、職場におけるセクシュアルハラスメントの行為者には、事業主（法人である場合には、その役員）、上司、同僚に限らず、取引先等の他の事業主（法人である場合には、その役員）又はその雇用する労働者、顧客、患者又はその家族、学校における生徒等もなり得るものであり、また、女性労働者が女性労働者に対して行う場合や、男性労働者が男性労働者に対して行う場合についても含まれる。",a:true,exp:"均等法11条1項。設問の通り正しい。被害を受けた者の性的指向又は性自認にかかわらず、当該者に対するセクシュアルハラスメントも雇用管理上の措置の対象となる。",src:"均等法11条1項",cat:"択一式（労一）"},
+{no:"TAC社06労一-問18",opt:"D",q:"事業主には、職場におけるセクシュアルハラスメントを防止するための雇用管理上の措置を講じる義務が課せられているが、当該事業主が雇用する労働者が、他の事業主が雇用する労働者、就職活動中の学生等の求職者及び労働者以外の者に対して行う性的な言動に関しては、当該事業主が講じるべき雇用管理上の措置の対象とならない。",a:true,exp:"均等法11条1項。設問の通り正しい。雇用管理上の措置の対象となるのは「事業主が雇用する労働者に対する性的な言動」であり、他の事業主が雇用する労働者・求職者・労働者以外の者に対して行う性的な言動は対象とならない（指針では一定の取組が望ましいとされる）。",src:"均等法11条1項",cat:"択一式（労一）"},
+{no:"TAC社06労一-問18",opt:"E",q:"事業主には、その雇用する女性労働者が母子保健法の規定による保健指導又は健康診査に基づく指導事項を守ることができるようにするため、勤務時間の変更、勤務の軽減等必要な措置を講じる義務が課せられているが、派遣中の労働者については、派遣元事業主及び派遣先の双方が当該義務を負う。",a:true,exp:"均等法13条1項、派遣法47条の2。設問の通り正しい。",src:"均等法13条1項・派遣法47条の2",cat:"択一式（労一）"},
+{no:"TAC社06労一-問19",opt:"A",q:"【職業安定法に関する記述として正しいか】何人も、公共の福祉に反しない限り、職業を自由に選択することができる。",a:true,exp:"職業安定法2条。設問の通り正しい。なお何人も、人種・国籍・信条・性別・社会的身分・門地・従前の職業・労働組合の組合員であること等を理由として、職業紹介・職業指導等について差別的取扱を受けることがない（労働協約に別段の定めがある場合を除く）。",src:"職安法2条",cat:"択一式（労一）"},
+{no:"TAC社06労一-問19",opt:"B",q:"【職業安定法に関する記述として正しいか】公共職業安定所、特定地方公共団体及び職業紹介事業者は、職業紹介に当たり、求職者に対し、その者が従事すべき業務の内容及び賃金、労働時間その他の労働条件を明示しなければならないが、当該明示は、試みの使用期間中の従事すべき業務の内容等と当該期間が終了した後の従事すべき業務の内容等とが異なる場合には、それぞれの従事すべき業務の内容等を示すことにより行わなければならない。",a:true,exp:"職業安定法5条の3第1項、則4条の2第6項。設問の通り正しい。",src:"職安法5条の3・則4条の2",cat:"択一式（労一）"},
+{no:"TAC社06労一-問19",opt:"C",q:"【職業安定法に関する記述として正しいか】労働委員会が公共職業安定所に対し、事業所において、同盟罷業又は作業所閉鎖に至る虞の多い争議が発生していること及び求職者を無制限に紹介することによって、当該争議の解決が妨げられることを通報した場合においては、公共職業安定所は当該事業所に対し、求職者を紹介してはならないが、当該争議の発生前、通常使用されていた労働者の員数を維持するため必要な限度まで労働者を紹介する場合は、この限りでない。",a:true,exp:"職業安定法20条2項。設問の通り正しい。公共職業安定所は、労働争議に対する中立の立場を維持するため、同盟罷業又は作業所閉鎖の行われている事業所に求職者を紹介してはならない。",src:"職安法20条2項",cat:"択一式（労一）"},
+{no:"TAC社06労一-問19",opt:"D",q:"【職業安定法に関する記述として正しいか】学校（小学校及び幼稚園を除く。）の長は、厚生労働大臣に届け出て、当該学校の学生生徒等について、無料の職業紹介事業を行うことができるが、この場合であっても、職業紹介責任者を選任する必要はない。",a:true,exp:"職業安定法33条の2第1項1号・7項。設問の通り正しい。",src:"職安法33条の2",cat:"択一式（労一）"},
+{no:"TAC社06労一-問19",opt:"E",q:"【職業安定法に関する記述として正しいか】特定募集情報等提供事業者は、その行った募集情報等提供に係る労働者の募集に応じた労働者から、当該募集情報等提供に関し、報酬を受けようとするときは、あらかじめ、当該報酬の額について、厚生労働大臣の認可を受けなければならない。",a:false,exp:"設問のような規定はない。特定募集情報等提供事業者は、その行った募集情報等提供に係る労働者の募集に応じた労働者から、当該募集情報等提供に関し、「いかなる名義でも、報酬を受けてはならない」。",src:"職安法43条の3",cat:"択一式（労一）"},
+{no:"TAC社06労一-問20",opt:"ア",q:"【高年齢者雇用安定法に関する記述として正しいか】事業主は、同一の事業所において、１月以内の期間に、再就職援助対象高年齢者等のうち10人以上の者が解雇（自己の責めに帰すべき理由によるものを除く。）その他の厚生労働省令で定める理由により離職する場合には、多数離職届を当該届出に係る離職が生ずる日（当該届出に係る離職の全部が同一の日に生じない場合にあっては、当該届出に係る最初の離職が生ずる日）の１月前までに当該事業所の所在地を管轄する公共職業安定所の長に提出しなければならない。",a:false,exp:"多数離職届の提出対象は、再就職援助対象高年齢者等のうち「５人」以上の者が離職する場合である（10人以上ではない）。また離職の全部が同一の日に生じない場合は、当該届出に係る「最後」の離職が生ずる日の１月前まで（最初ではない）。",src:"高年法16条1項・則6条の2",cat:"択一式（労一）"},
+{no:"TAC社06労一-問20",opt:"イ",q:"【高年齢者雇用安定法に関する記述として正しいか】継続雇用制度の導入により高年齢者雇用確保措置を実施する場合には、現に雇用している高年齢者の希望者全員を対象とした制度とする必要がある。",a:true,exp:"高年齢者雇用安定法9条1項2号。設問の通り正しい。なお心身の故障のため業務に堪えられないと認められること等、就業規則に定める解雇事由又は退職事由（年齢に係るものを除く。）に該当する場合には、継続雇用しないことができる。",src:"高年法9条1項2号",cat:"択一式（労一）"},
+{no:"TAC社06労一-問20",opt:"ウ",q:"【障害者雇用促進法に関する記述として正しいか】事業主は、労働者の募集及び採用について、障害者と障害者でない者との均等な機会の確保の支障となっている事情を改善するため、労働者の募集及び採用に当たり障害者からの申出により当該障害者の障害の特性に配慮した必要な措置を講じなければならないが、事業主に対して過重な負担を及ぼすこととなるときは、この限りでない。",a:true,exp:"障害者雇用促進法36条の2。設問の通り正しい。",src:"障害者雇用促進法36条の2",cat:"択一式（労一）"},
+{no:"TAC社06労一-問20",opt:"エ",q:"【障害者雇用促進法に関する記述として正しいか】事業主は、障害者である労働者を解雇した場合（労働者の責めに帰すべき理由により解雇した場合その他天災事変その他やむを得ない理由のために事業の継続が不可能となったことにより障害者である労働者を解雇した場合を除く。）には、当該事実があった日の翌日から起算して10日以内に、その旨を公共職業安定所長に届け出なければならない。",a:false,exp:"障害者である労働者を解雇した場合（一定の場合を除く。）には、「速やか」に、その旨を公共職業安定所長に届け出なければならない（翌日から起算して10日以内ではない）。",src:"障害者雇用促進法81条1項・則41条・則42条1項",cat:"択一式（労一）"},
+{no:"TAC社06労一-問20",opt:"オ",q:"【障害者雇用促進法に関する記述として正しいか】令和８年４月１日において、常時雇用する労働者（短時間労働者はいないものとする。）の数が300人である一般事業主（特殊法人を除く。）は、当該雇用する労働者のうち、対象障害者である労働者の数が８人以上でなければ、法定雇用率を達成していることとはならない。",a:false,exp:"令和８年４月１日における一般事業主（特殊法人を除く。）の障害者雇用率は2.5%であるから、法定雇用障害者数は300人×2.5%≒「７人」（１人未満切捨て）となり、対象障害者である労働者の数が「７人以上」であれば法定雇用率を達成していることとなる（８人以上ではない）。",src:"障害者雇用促進法43条・令9条",cat:"択一式（労一）"},
+{no:"TAC社06社一-問11",opt:"A",q:"行政機関等は、社会保険労務士が提出代行者となっている提出書類に関する質問、確認又は補正等を、当該社会保険労務士に対して行うが、提出書類の内容又は当該提出代行者の説明内容等から必要と認められるときは、直接事業主等に質問又は確認をし、若しくは補正をさせることとなる。",a:true,exp:"社労士法2条1項1号の2、昭53.8.8庁文発2084号。設問の通り正しい。",src:"社労士法2条1項1号の2",cat:"択一式（社一）"},
+{no:"TAC社06社一-問11",opt:"B",q:"社会保険労務士が事務代理として行う「労働社会保険諸法令に基づく申請、届出、報告、審査請求、再審査請求その他の事項（厚生労働省令で定めるものに限る。）に係る行政機関等の調査若しくは処分に関し当該行政機関等に対してする主張若しくは陳述（厚生労働省令で定めるものを除く。）」とは、行政機関等に対して意見を述べ、あるいは事実関係の説明を行うことをいう。",a:true,exp:"社労士法2条1項1号の3、昭61.10.1庁保発40号。設問の通り正しい。事務代理は「提出代行」と異なり、本人に代わって申請等を行うものであり、委任の範囲内で内容の変更等のみならず責任をもって処理できるよう主張・陳述を行い得る。",src:"社労士法2条1項1号の3",cat:"択一式（社一）"},
+{no:"TAC社06社一-問11",opt:"C",q:"個別労働関係紛争の解決の促進に関する法律第６条第１項の紛争調整委員会における同法第５条第１項のあっせんの手続について相談に応ずることは、特定社会保険労務士でない社会保険労務士も行うことができる。",a:false,exp:"設問の業務は「紛争解決手続代理業務」に含まれるため、特定社会保険労務士でない社会保険労務士は行うことができない。",src:"社労士法2条1項1号の4・2項・3項1号",cat:"択一式（社一）"},
+{no:"TAC社06社一-問11",opt:"D",q:"社会保険労務士法人は、定款で定めるところにより、労働者派遣事業の適正な運営の確保及び派遣労働者の保護等に関する法律第２条第３号に規定する労働者派遣事業（その事業を行おうとする社会保険労務士法人が同法第５条第１項に規定する許可を受けて行うものであって、当該社会保険労務士法人の使用人である社会保険労務士が労働者派遣の対象となり、かつ、派遣先が開業社会保険労務士又は社会保険労務士法人（一定のものを除く。）であるものに限る。）を行うことができる。",a:true,exp:"社労士法25条の9第1項1号、則17条の3第2号。設問の通り正しい。",src:"社労士法25条の9第1項1号",cat:"択一式（社一）"},
+{no:"TAC社06社一-問11",opt:"E",q:"紛争解決手続代理業務を行うことを目的とする社会保険労務士法人は、受任している事件の依頼者が同意した場合を除き、紛争解決手続代理業務に関するものとして受任している事件の相手方からの依頼による他の事件については、紛争解決手続代理業務を行ってはならない。",a:true,exp:"社労士法25条の17第3号。設問の通り正しい。",src:"社労士法25条の17第3号",cat:"択一式（社一）"},
+{no:"TAC社06社一-問12",opt:"ア",q:"国民年金法の保険料その他同法の規定による徴収金に関する処分の取消しの訴えは、当該処分についての審査請求に対する社会保険審査官の決定を経た後でなければ、提起することができない。",a:false,exp:"国民年金法の保険料その他同法の規定による徴収金に関する処分の取消しの訴えは、審査請求に対する決定を経ずに提起することができる（審査請求前置主義の対象外）。",src:"国年法101条の2・行訴法8条1項",cat:"択一式（社一）"},
+{no:"TAC社06社一-問12",opt:"イ",q:"国民健康保険法の保険料その他同法の規定による徴収金に関する処分の取消しの訴えは、当該処分についての審査請求に対する国民健康保険審査会の裁決を経た後でなければ、提起することができない。",a:true,exp:"国保法91条1項、法103条。設問の通り正しい。",src:"国保法91条1項・103条",cat:"択一式（社一）"},
+{no:"TAC社06社一-問12",opt:"ウ",q:"健康保険法の保険給付に関する処分に対する審査請求は、処分があったことを知った日の翌日から起算して２月を経過したときは、することができない。ただし、正当な事由によりこの期間内に審査請求をすることができなかったことを疎明したときは、この限りでない。",a:false,exp:"設問の審査請求は、処分があったことを知った日の翌日から起算して「２月」ではなく「３月」を経過したときは、することができない（ただし書は正しい）。",src:"社審法4条1項",cat:"択一式（社一）"},
+{no:"TAC社06社一-問12",opt:"エ",q:"船員保険法の被保険者の資格又は標準報酬に関する処分に対する審査請求は、原処分があった日の翌日から起算して２年を経過したときは、することができない。",a:true,exp:"社審法4条2項。設問の通り正しい。",src:"社審法4条2項",cat:"択一式（社一）"},
+{no:"TAC社06社一-問12",opt:"オ",q:"社会保険審査会に対する再審査請求は、政令の定めるところにより、文書又は口頭ですることができる。また、再審査請求人は、社会保険審査会の裁決があるまでは、いつでも再審査請求を取り下げることができるが、再審査請求の取下げも、文書又は口頭ですることができる。",a:false,exp:"設問文後半が誤り。再審査請求の取下げは「文書」でしなければならない（口頭ですることはできない）。",src:"社審法12条の2・32条4項・44条",cat:"択一式（社一）"},
+{no:"TAC社06社一-問13",opt:"ア",q:"【国民健康保険法及び船員保険法に関する記述として正しいか（本問において「市町村」には特別区を含む）】都道府県は、安定的な財政運営、市町村の国民健康保険事業の効率的な実施の確保その他の都道府県及び当該都道府県内の市町村の国民健康保険事業の健全な運営について中心的な役割を果たすものとされている。",a:true,exp:"国保法4条2項。設問の通り正しい。",src:"国保法4条2項",cat:"択一式（社一）"},
+{no:"TAC社06社一-問13",opt:"イ",q:"【国民健康保険法及び船員保険法に関する記述として正しいか（本問において「市町村」には特別区を含む）】国民健康保険組合の地区は、原則として、１又は２以上の市町村の区域によるものとされている。",a:true,exp:"国保法13条2項。設問の通り正しい。",src:"国保法13条2項",cat:"択一式（社一）"},
+{no:"TAC社06社一-問13",opt:"ウ",q:"【国民健康保険法及び船員保険法に関する記述として正しいか（本問において「市町村」には特別区を含む）】国民健康保険法によると、被保険者又は被保険者であった者が、少年院その他これに準ずる施設に収容された場合には、その期間に係る療養の給付等は、その全部又は一部を行わないことができるとされている。",a:false,exp:"設問の場合には、その期間に係る療養の給付等は、「その全部又は一部を行わないことができる」のではなく「行わない」とされている。",src:"国保法59条1号",cat:"択一式（社一）"},
+{no:"TAC社06社一-問13",opt:"エ",q:"【国民健康保険法及び船員保険法に関する記述として正しいか（本問において「市町村」には特別区を含む）】船員保険は、健康保険法による全国健康保険協会が、管掌する。",a:true,exp:"船保法4条1項。設問の通り正しい。",src:"船保法4条1項",cat:"択一式（社一）"},
+{no:"TAC社06社一-問13",opt:"オ",q:"【国民健康保険法及び船員保険法に関する記述として正しいか（本問において「市町村」には特別区を含む）】船員保険法によると、被保険者又は被保険者であった者（後期高齢者医療の被保険者等である者を除く。）が出産したときは、出産の日（出産の日が出産の予定日後であるときは、出産の予定日）以前42日（多胎妊娠の場合においては、98日）から出産の日後56日までの間において職務に服さなかった期間、出産手当金を支給するとされている。",a:false,exp:"船員保険では健康保険とは異なり、「妊娠の判明した日」から出産手当金が支給される。設問は健康保険と同様の期間としている点が誤り。具体的には、出産の日以前において船員法87条の規定（妊産婦の就業制限）により職務に服さなかった期間及び出産の日後56日以内において職務に服さなかった期間、出産手当金が支給される。",src:"船保法74条1項",cat:"択一式（社一）"},
+{no:"TAC社06社一-問14",opt:"A",q:"【本問において「市町村」には特別区を含む】高齢者の医療の確保に関する法律によると、都道府県は、厚生労働省令で定めるところにより、都道府県医療費適正化計画の期間の終了の日の属する年度の翌々年度において、当該計画の目標の達成状況及び施策の実施状況の調査及び分析を行い、保険者協議会の意見を聴いて、当該計画の実績に関する評価を行うものとされている。",a:false,exp:"都道府県医療費適正化計画の実績に関する評価は、当該計画の期間の終了の日の属する年度の「翌々年度」ではなく「翌年度」において行うものとされている。また都道府県は、評価を行った結果を公表するよう努めるとともに、厚生労働大臣に報告するものとされている。",src:"高齢者医療確保法12条1項",cat:"択一式（社一）"},
+{no:"TAC社06社一-問14",opt:"B",q:"【本問において「市町村」には特別区を含む】高齢者の医療の確保に関する法律によると、保険者（国民健康保険法の定めるところにより都道府県が当該都道府県内の市町村とともに行う国民健康保険にあっては、市町村）は、特定健康診査等実施計画に基づき、厚生労働省令で定めるところにより、40歳以上の加入者に対し、特定健康診査を行うものとされている。ただし、加入者が特定健康診査に相当する健康診査を受け、その結果を証明する書面の提出を受けたとき、又は同法第26条第２項の規定（他の保険者の加入者への特定健康診査等）により特定健康診査に関する記録の送付を受けたときは、この限りでない。",a:true,exp:"高齢者医療確保法20条。設問の通り正しい。",src:"高齢者医療確保法20条",cat:"択一式（社一）"},
+{no:"TAC社06社一-問14",opt:"C",q:"【本問において「市町村」には特別区を含む】後期高齢者医療制度において、配偶者の一方は、市町村が被保険者たる他方の保険料を普通徴収の方法によって徴収しようとする場合において、当該保険料を連帯して納付する義務を負う。",a:true,exp:"高齢者医療確保法108条3項。設問の通り正しい。また世帯主も、市町村が当該世帯に属する被保険者の保険料を普通徴収の方法によって徴収しようとする場合において、当該保険料を連帯して納付する義務を負う。",src:"高齢者医療確保法108条3項",cat:"択一式（社一）"},
+{no:"TAC社06社一-問14",opt:"D",q:"【本問において「市町村」には特別区を含む】介護保険法によると、都道府県は、介護認定審査会について地方自治法の規定による共同設置をしようとする市町村の求めに応じ、市町村相互間における必要な調整を行うことができるとされている。",a:true,exp:"介保法16条1項。設問の通り正しい。",src:"介保法16条1項",cat:"択一式（社一）"},
+{no:"TAC社06社一-問14",opt:"E",q:"【本問において「市町村」には特別区を含む】介護保険法によると、要介護認定は、要介護状態区分に応じて厚生労働省令で定める期間内に限り、その効力を有するとされている。",a:true,exp:"介保法28条1項。設問の通り正しい。",src:"介保法28条1項",cat:"択一式（社一）"},
+{no:"TAC社06社一-問15",opt:"A",q:"確定拠出年金法によると、企業型年金加入者が掛金を拠出することができることを定める場合にあっては、各企業型年金加入者に係る企業型年金加入者掛金の額が当該企業型年金加入者に係る事業主掛金の額を超えないように企業型年金加入者掛金の額の決定又は変更の方法が定められていることが必要とされている。",a:false,exp:"企業型年金加入者掛金の額が事業主掛金の額を超えてはならないとする上限規制は、令和８年４月に撤廃されたため、拠出限度額の範囲内であれば、事業主掛金を超える額の企業型年金加入者掛金の拠出が可能となった。",src:"確拠法4条1項",cat:"択一式（社一）"},
+{no:"TAC社06社一-問15",opt:"B",q:"確定拠出年金法によると、中小事業主（企業型年金及び確定給付企業年金を実施していない厚生年金適用事業所の事業主であって、その使用する第１号厚生年金被保険者の数が300人以下のものをいう。）は、中小事業主掛金を拠出するときは、個人型年金規約で定めるところにより、資産管理機関に納付するものとする。",a:false,exp:"中小事業主は、中小事業主掛金を拠出するときは、個人型年金規約で定めるところにより、「資産管理機関」ではなく「国民年金基金連合会」に納付するものとされている。",src:"確拠法55条2項4号の2・70条の2第1項",cat:"択一式（社一）"},
+{no:"TAC社06社一-問15",opt:"C",q:"確定拠出年金法によれば、当分の間、企業型記録関連運営管理機関等に、脱退一時金の支給を請求することができるのは、企業型年金加入者であった者であって、当該請求した日における個人別管理資産の額として政令で定めるところにより計算した額が15,000円以下であるもの（企業型年金加入者、企業型年金運用指図者、個人型年金加入者又は個人型年金運用指図者でないものとする。）が最後に当該企業型年金加入者の資格を喪失した日が属する月の翌月から起算して２年を経過していない場合とされている。",a:false,exp:"設問の者は、最後に当該企業型年金加入者の資格を喪失した日が属する月の翌月から起算して「２年」ではなく「６月」を経過していない場合に、脱退一時金の支給を請求することができる。",src:"確拠法附則2条の2第1項",cat:"択一式（社一）"},
+{no:"TAC社06社一-問15",opt:"D",q:"確定給付企業年金法によると、事業主（基金型企業年金を実施する場合にあっては、企業年金基金）は、老齢給付金及び死亡一時金の給付を行うものとされている。",a:false,exp:"事業主（基金型企業年金を実施する場合にあっては、企業年金基金）は、老齢給付金及び「脱退一時金」の給付を行うものとされている。そのほか、規約で定めるところにより、障害給付金又は遺族給付金の給付を行うことができる。なお死亡一時金は、確定拠出年金の給付である。",src:"確給法29条",cat:"択一式（社一）"},
+{no:"TAC社06社一-問15",opt:"E",q:"確定給付企業年金法によると、事業主は、給付に関する事業に要する費用に充てるため、規約で定めるところにより、年１回以上、定期的に掛金を拠出しなければならないとされている。加入者は、政令で定める基準に従い規約で定めるところにより、当該掛金の一部を負担することができるが、加入者が負担する掛金の額は当該加入者に係る事業主掛金の額の２分の１を超えないこととされている。",a:true,exp:"確給法55条1項・2項、令35条1号。設問の通り正しい。",src:"確給法55条1項・2項・令35条1号",cat:"択一式（社一）"},
+{no:"TAC社06労白-問16",opt:"A",q:"【2025年（令和7年）労働力調査（総務省）に関する記述として正しいか】労働力調査において、就業者や完全失業者などといった「就業状態」は、15歳以上人口について、「月末１週間（ただし12月は20〜26日）に仕事をしたかどうかの別」によって分類される。",a:true,exp:"労働力調査（総務省）。設問の通り正しい。このように調査週間を１週間という短い期間に限定してその期間に仕事をしたか否かによって就業状態を分類する方法を「アクチュアル方式」（労働力方式）という。",src:"労働力調査",cat:"択一式（労一）"},
+{no:"TAC社06労白-問16",opt:"B",q:"【2025年（令和7年）労働力調査（総務省）に関する記述として正しいか】労働力人口のうち、就業者は、前年に比べ47万人増加し、５年連続の増加となった。",a:true,exp:"2025年（令和7年）労働力調査。設問の通り正しい。就業者は6,828万人となり、前年に比べ47万人の増加（５年連続の増加）となった。",src:"労働力調査",cat:"択一式（労一）"},
+{no:"TAC社06労白-問16",opt:"C",q:"【2025年（令和7年）労働力調査（総務省）に関する記述として正しいか】就業者のうち、雇用者は前年に比べ増加し、自営業主・家族従業者は前年に比べ減少した。",a:true,exp:"2025年（令和7年）労働力調査。設問の通り正しい。雇用者は6,185万人となり前年に比べ62万人の増加、自営業主・家族従業者は614万人となり前年に比べ10万人の減少となった。",src:"労働力調査",cat:"択一式（労一）"},
+{no:"TAC社06労白-問16",opt:"D",q:"【2025年（令和7年）労働力調査（総務省）に関する記述として正しいか】就業率（15歳以上の人口に占める就業者の割合）は、70%を超えている。",a:false,exp:"就業率は「62.2%」であり、70%を超えていない。",src:"労働力調査",cat:"択一式（労一）"},
+{no:"TAC社06労白-問16",opt:"E",q:"【2025年（令和7年）労働力調査（総務省）に関する記述として正しいか】完全失業率は、2.5%となっており、これを男女別にみると、男性は2.7%、女性は2.3%となっている。",a:true,exp:"2025年（令和7年）労働力調査。設問の通り正しい。",src:"労働力調査",cat:"択一式（労一）"},
+{no:"TAC社06労白-問17",opt:"A",q:"【令和7年就労条件総合調査（厚生労働省）に関する記述として正しいか】完全週休２日制の適用を受ける労働者割合は、70%を超えている。",a:true,exp:"令和7年就労条件総合調査。設問の通り正しい。完全週休２日制の適用を受ける労働者割合は「73.3%」となっている。なお完全週休２日制を採用している企業割合は65.5%となっている。",src:"就労条件総合調査",cat:"択一式（労一）"},
+{no:"TAC社06労白-問17",opt:"B",q:"【令和7年就労条件総合調査（厚生労働省）に関する記述として正しいか】１か月単位の変形労働時間制を採用している企業割合は、企業規模が小さいほど高くなっている。",a:false,exp:"１か月単位の変形労働時間制を採用している企業割合は、企業規模が「大きい」ほど高くなっている。１か月単位の変形労働時間制及びフレックスタイム制は、企業規模が大きいほど採用割合が高い。",src:"就労条件総合調査",cat:"択一式（労一）"},
+{no:"TAC社06労白-問17",opt:"C",q:"【令和7年就労条件総合調査（厚生労働省）に関する記述として正しいか】みなし労働時間制の企画業務型裁量労働制を採用している企業割合は、10%を超えている。",a:false,exp:"企画業務型裁量労働制を採用している企業割合は「1.0%」となっている。なお「事業場外みなし労働時間制」は13.8%、「専門業務型裁量労働制」は2.1%となっている。",src:"就労条件総合調査",cat:"択一式（労一）"},
+{no:"TAC社06労白-問17",opt:"D",q:"【令和7年就労条件総合調査（厚生労働省）に関する記述として正しいか】年次有給休暇の取得率は、昭和59年以降過去最高となり、初めて70%を超えた。",a:false,exp:"年次有給休暇の取得率は、昭和59年以降過去最高となったが、「66.9%」であり、70%を超えていない。",src:"就労条件総合調査",cat:"択一式（労一）"},
+{no:"TAC社06労白-問17",opt:"E",q:"【令和7年就労条件総合調査（厚生労働省）に関する記述として正しいか】勤務間インターバル制度を「導入予定はなく、検討もしていない」企業割合は78.7%となっており、その理由（複数回答）別の企業割合をみると、「当該制度を知らなかったため」が最も高くなっている。",a:false,exp:"勤務間インターバル制度を「導入予定はなく、検討もしていない」企業割合は78.7%であるが、その理由（複数回答）別では「超過勤務の機会が少なく、当該制度を導入する必要性を感じないため」が57.3%と最も高い。「当該制度を知らなかったため」の全企業に対する企業割合は15.7%である。",src:"就労条件総合調査",cat:"択一式（労一）"},
+{no:"TAC社06労白-問18",opt:"A",q:"【令和6年度雇用均等基本調査（厚生労働省）に関する記述として正しいか】正社員・正職員に占める各職種の割合を男女別にみると、男女ともに、一般職が最も高く、次いで総合職、限定総合職の順となっている。",a:false,exp:"女性については設問の通り（一般職40.0%、総合職37.5%、限定総合職14.6%）であるが、男性の正社員・正職員に占める各職種の割合は「総合職」が50.9%と最も高く、次いで「一般職」31.5%、限定総合職9.2%の順となっている。",src:"令和6年度雇用均等基本調査（企業調査）",cat:"択一式（労一）"},
+{no:"TAC社06労白-問18",opt:"B",q:"【令和6年度雇用均等基本調査（厚生労働省）に関する記述として正しいか】係長相当職以上の管理職等に占める女性の割合を企業規模別にみると、いずれの管理職等の割合においても「5,000人以上」規模が最も高くなっている。",a:false,exp:"係長相当職以上の管理職等に占める女性の割合を企業規模別にみると、いずれの管理職等の割合においても「10〜29人」規模が最も高くなっている。",src:"令和6年度雇用均等基本調査（企業調査）",cat:"択一式（労一）"},
+{no:"TAC社06労白-問18",opt:"C",q:"【令和6年度雇用均等基本調査（厚生労働省）に関する記述として正しいか】カスタマーハラスメント対策の取組について「一定の取組をしている」企業割合は60.1%、「今後取組を検討している」企業割合は36.2%、「取り組んでいない」企業割合は3.7%であった。",a:false,exp:"カスタマーハラスメント対策の取組について「一定の取組をしている」企業割合は「30.1%」、「今後取組を検討している」企業割合は36.2%、「取り組んでいない」企業割合は「33.7%」であった。なお規模別にみると、企業規模が大きいほど取り組んでいる割合が高い。",src:"令和6年度雇用均等基本調査（企業調査）",cat:"択一式（労一）"},
+{no:"TAC社06労白-問18",opt:"D",q:"【令和6年度雇用均等基本調査（厚生労働省）に関する記述として正しいか】男性の育児休業取得率（令和４年10月１日から令和５年９月30日までの１年間に配偶者が出産した男性のうち、令和６年10月１日までに育児休業（産後パパ育休を含む。）を開始した者（育児休業の申出をしている者を含む。）の割合）は、前回調査（令和５年度 30.1%）より大幅に上昇したが、40%を下回っている。",a:false,exp:"男性の育児休業取得率は、前回調査（令和５年度30.1%）より大幅に上昇し、「40.5%」となった（40%を下回っていない）。なお女性の育児休業取得率は86.6%（令和５年度84.1%）である。",src:"令和6年度雇用均等基本調査（事業所調査）",cat:"択一式（労一）"},
+{no:"TAC社06労白-問18",opt:"E",q:"【令和6年度雇用均等基本調査（厚生労働省）に関する記述として正しいか】育児に関する目的のために利用することができる休暇制度の規定がある事業所の割合は約７割となっており、当該事業所において、子が何歳になるまで休暇を取得できるかについてみると、「１歳を超え３歳未満」が最も高く、次いで「１歳以下」、「３歳〜小学校就学の始期に達するまで」、「小学校入学以降も利用可能」の順となっている。",a:true,exp:"令和6年度雇用均等基本調査（事業所調査）。設問の通り正しい。",src:"令和6年度雇用均等基本調査（事業所調査）",cat:"択一式（労一）"},
+{no:"TAC社06労白-問19",opt:"A",q:"【令和6年就業形態の多様化に関する総合実態調査（厚生労働省）に関する記述として正しいか】正社員以外の労働者がいる事業所について、正社員以外の労働者を活用する理由（複数回答）をみると、「正社員を確保できないため」とする事業所割合が最も高く、次いで「即戦力・能力のある人材を確保するため」、「１日、週の中の仕事の繁閑に対応するため」、「高年齢者の再雇用対策のため」となっている。",a:true,exp:"令和6年就業形態の多様化に関する総合実態調査（事業所調査）。設問の通り正しい。",src:"就業形態の多様化に関する総合実態調査（事業所調査）",cat:"択一式（労一）"},
+{no:"TAC社06労白-問19",opt:"B",q:"【令和6年就業形態の多様化に関する総合実態調査（厚生労働省）に関する記述として正しいか】正社員以外の労働者がいる事業所について、正社員以外の労働者を活用する上での問題点（複数回答）をみると、「良質な人材の確保」とする事業所割合が最も高く、次いで「定着性」、「仕事に対する責任感」となっている。",a:true,exp:"令和6年就業形態の多様化に関する総合実態調査（事業所調査）。設問の通り正しい。",src:"就業形態の多様化に関する総合実態調査（事業所調査）",cat:"択一式（労一）"},
+{no:"TAC社06労白-問19",opt:"C",q:"【令和6年就業形態の多様化に関する総合実態調査（厚生労働省）に関する記述として正しいか】正社員以外の労働者（出向社員を除く）について、現在の就業形態を選んだ理由（複数回答３つまで）をみると、「正社員として働ける会社がなかったから」とする労働者割合が最も高く、次いで「家庭の事情（家事・育児・介護等）と両立しやすいから」、「家計の補助、学費等を得たいから」、「自分の都合のよい時間に働けるから」などとなっている。",a:false,exp:"現在の就業形態を選んだ理由（複数回答３つまで）をみると、「自分の都合のよい時間に働けるから」とする労働者割合が40.1%と最も高い。なお次いで「家庭の事情（家事・育児・介護等）と両立しやすいから」26.4%、「家計の補助、学費等を得たいから」24.9%、「通勤時間が短いから」24.8%などとなっている。",src:"就業形態の多様化に関する総合実態調査（個人調査）",cat:"択一式（労一）"},
+{no:"TAC社06労白-問19",opt:"D",q:"【令和6年就業形態の多様化に関する総合実態調査（厚生労働省）に関する記述として正しいか】正社員以外の労働者について、正社員への転換制度の適用状況（複数回答）をみると、「いわゆる正社員への転換制度の適用がある」とする労働者割合が10.7%、「多様な正社員への転換制度の適用がある」が3.8%となっている。",a:true,exp:"令和6年就業形態の多様化に関する総合実態調査（個人調査）。設問の通り正しい。",src:"就業形態の多様化に関する総合実態調査（個人調査）",cat:"択一式（労一）"},
+{no:"TAC社06労白-問19",opt:"E",q:"【令和6年就業形態の多様化に関する総合実態調査（厚生労働省）に関する記述として正しいか】仕事の内容・やりがいや賃金など11の項目と職業生活全体について、満足度D.I.（「満足」又は「やや満足」とする労働者割合から「不満」又は「やや不満」とする労働者割合を差し引いたもの）をみると、「正社員」では「雇用の安定性」66.3ポイント、「仕事の内容・やりがい」60.0ポイントなどが高くなっており、「正社員以外の労働者」では「仕事の内容・やりがい」63.3ポイント、「正社員以外の労働者との人間関係、コミュニケーション」56.9ポイントなどが高くなっている。",a:true,exp:"令和6年就業形態の多様化に関する総合実態調査（個人調査）。設問の通り正しい。",src:"就業形態の多様化に関する総合実態調査（個人調査）",cat:"択一式（労一）"},
+{no:"TAC社06労白-問20",opt:"A",q:"【厚生労働白書に関する記述として正しいか。なお「第２号被保険者等」とは厚生年金被保険者をいう（国民年金第２号被保険者のほか、65歳以上の厚生年金被保険者を含む。）】「令和7年版厚生労働白書（厚生労働省）」では、直近の公的年金制度の被保険者数の増減についてみると、第２号被保険者等は近年減少傾向にある一方、第１号被保険者や第３号被保険者は近年増加傾向にある、としている。",a:false,exp:"公的年金制度の被保険者数の増減についてみると、第２号被保険者等は近年「増加」傾向にある一方、第１号被保険者や第３号被保険者は近年「減少」傾向にある。要因として、被用者保険の適用拡大や加入促進策の実施、高齢者等の就労促進などが考えられる。",src:"令和7年版厚生労働白書",cat:"択一式（労一）"},
+{no:"TAC社06労白-問20",opt:"B",q:"「令和6年度健康保険・船員保険被保険者実態調査報告」によれば、年齢階級総数の扶養率（被保険者１人当たり被扶養者数）は増加傾向にあり、令和６年には協会（一般）で1.549、組合健保で1.648である。法３条２項被保険者においても増加傾向にあり、令和６年は1.423である。",a:false,exp:"年齢階級総数の扶養率は「減少」傾向にあり、令和６年には協会（一般）で「0.549」、組合健保で「0.648」である。法３条２項被保険者においても「減少」傾向にあり、令和６年は「0.423」である。",src:"令和6年度健康保険・船員保険被保険者実態調査報告",cat:"択一式（労一）"},
+{no:"TAC社06労白-問20",opt:"C",q:"「令和5年度国民医療費の概況」によると、令和５年度の国民医療費は48兆915億円である。年齢階級別国民医療費の構成割合についてみると、「65歳以上」の構成割合は60.1%となっている。",a:true,exp:"令和5年度国民医療費の概況。設問の通り正しい。",src:"令和5年度国民医療費の概況",cat:"択一式（労一）"},
+{no:"TAC社06労白-問20",opt:"D",q:"「令和5年度社会保障費用統計（国立社会保障・人口問題研究所）」によると、令和５年度の社会保障財源の総額は198兆77億円である。部門別にみると、額が最も大きいのは「公費負担」であり、総額に占める割合は40.5%となっている。",a:false,exp:"設問後段が誤り。部門別にみると、額が最も大きいのは「社会保険料」（総額に占める割合は40.5%）である。なお公費負担が29.3%、資産収入その他が30.3%となっている。",src:"令和5年度社会保障費用統計",cat:"択一式（労一）"},
+{no:"TAC社06労白-問20",opt:"E",q:"「令和7年版高齢社会白書（内閣府）」では、日本の高齢化率（総人口に占める65歳以上人口の割合）は、昭和25年には５%に満たなかったが、昭和45年に７%を超え、さらに、平成６年には14%を超えた。高齢化率はその後も上昇を続け、令和６年10月１日現在、19.3%に達している、としている。",a:false,exp:"設問後段が誤り。高齢化率はその後も上昇を続け、令和６年10月１日現在、「29.3%」に達している。",src:"令和7年版高齢社会白書",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問1",opt:"A",q:"【令和7年版厚生労働白書（厚生労働省）に関する記述として正しいか】高年齢者の就業意向をみると、約6割が65歳を超えて就業すること（「働けるうちはいつまでも」という回答を含む。）を希望しており、高年齢者の就業意欲の高さがうかがわれる。また、実際の高年齢者の就業率をみると、上昇傾向にあり、2024（令和6）年においては、60〜64歳男性で84.0%、65〜69歳男性で62.8%、60〜64歳女性で65.0%、65〜69歳女性で44.7%となっている。",a:true,exp:"令和7年版厚生労働白書。設問の通り正しい。",src:"令和7年版厚生労働白書",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問1",opt:"B",q:"【令和7年版厚生労働白書（厚生労働省）に関する記述として正しいか】配偶者がいる女性のパートタイム労働者の状況をみると、21.8%が就業調整をしており、就業調整をしている理由について、「一定額（原則として130万円）を超えると配偶者の健康保険、厚生年金保険の被扶養者からはずれ、自分で加入しなければならなくなるから」と回答した割合は57.3%、「一定の労働時間を超えると雇用保険、健康保険、厚生年金保険の保険料を払わなければならないから」と回答した割合は21.4%となっている。",a:true,exp:"令和7年版厚生労働白書。設問の通り正しい。",src:"令和7年版厚生労働白書",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問1",opt:"C",q:"【令和7年版厚生労働白書（厚生労働省）に関する記述として正しいか】企業におけるテレワークの導入状況をみると、2020（令和2）年に急激に5割近くまで増加しており、新型コロナウイルス感染症の感染拡大の影響がうかがわれる。また、テレワークの経験有無をみると、過去1年間に「テレワークをしたことがある」人は約3割となっている。",a:true,exp:"令和7年版厚生労働白書。設問の通り正しい。",src:"令和7年版厚生労働白書",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問1",opt:"D",q:"【令和7年版厚生労働白書（厚生労働省）に関する記述として正しいか】介護をしている者のうち、有業の者についてみると、2022（令和4）年には、15歳以上の人で介護をしている人は約629万人いるが、そのうち58.0%が有業となっており、近年、介護をしている者に占める有業者の割合は増加傾向にある。",a:true,exp:"令和7年版厚生労働白書。設問の通り正しい。介護をしている者に占める有業者の割合を男女別にみると、男性67.0%、女性52.7%でともに上昇している（令和4年就業構造基本調査）。",src:"令和7年版厚生労働白書",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問1",opt:"E",q:"【令和7年版厚生労働白書（厚生労働省）に関する記述として正しいか】女性の就業率は30代後半を底として再び上昇していくいわゆるM字カーブの状況にあるが、当該M字カーブの底は近年では浅くなっている一方、女性の管理職比率は、20代後半をピークに減少していく、いわゆるL字カーブがみられる。",a:false,exp:"L字カーブがみられるのは女性の「正規雇用比率」についてであり、20代後半をピークに減少していく。その他の記述は正しい。",src:"令和7年版厚生労働白書",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問2",opt:"A",q:"【令和5年若年者雇用実態調査（厚生労働省）に関する記述として正しいか】若年労働者（令和5年10月1日現在で満15〜34歳の労働者をいう。以下本問において同じ。）が就業している事業所の割合は87.1%となっており、事業所規模別にみると、すべての事業所規模において「若年労働者がいる」事業所割合が8割を超えている。",a:false,exp:"若年労働者が就業している事業所の割合は「73.6%」であり、事業所規模別にみると、30人以上の各事業所規模では9割を超えるのに対して、「5〜29人」規模では69.5%と7割弱となっている。",src:"令和5年若年者雇用実態調査",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問2",opt:"B",q:"【令和5年若年者雇用実態調査（厚生労働省）に関する記述として正しいか】若年正社員の採用選考をした事業所のうち、採用選考にあたり重視した点（複数回答）について採用区分別にみると、「新規学卒者」及び「中途採用者」ともに「職業意識・勤労意欲・チャレンジ精神」が最も高く、次いで「コミュニケーション能力」、「マナー・社会常識」の順となっており、積極性や他者との関わり合いの中で円滑に業務を遂行することができる能力、スキルが重視されている。",a:true,exp:"令和5年若年者雇用実態調査。設問の通り正しい。なお「新規学卒者」に比べ「中途採用者」は「業務に役立つ職業経験・訓練経験」が重視されている。",src:"令和5年若年者雇用実態調査",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問2",opt:"C",q:"【令和5年若年者雇用実態調査（厚生労働省）に関する記述として正しいか】若年労働者の定着のために実施している対策（複数回答）をみると、若年正社員では「労働時間の短縮・有給休暇の積極的な取得奨励」が最も高くなっているのに対して、正社員以外の若年労働者では「職場での意思疎通の向上」が最も高くなっている。",a:false,exp:"若年労働者の定着のために実施している対策は、若年正社員、正社員以外の若年労働者ともに「職場での意思疎通の向上」が最も高くなっている。",src:"令和5年若年者雇用実態調査",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問2",opt:"D",q:"【令和5年若年者雇用実態調査（厚生労働省）に関する記述として正しいか】正社員以外の労働者を正社員へ転換させる制度についてみると、「制度がある」事業所の割合は59.9%となっており、当該割合を産業別にみると、「製造業」が87.8%と最も高くなっている。",a:false,exp:"正社員以外の労働者を正社員へ転換させる制度がある事業所の割合を産業別にみると、「複合サービス事業」が87.8%と最も高くなっている（製造業ではない）。",src:"令和5年若年者雇用実態調査",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問2",opt:"E",q:"【令和5年若年者雇用実態調査（厚生労働省）に関する記述として正しいか】最終学校卒業から1年間に、正社員以外の労働者として勤務した主な理由についてみると、「自分の希望する会社で正社員の募集がなかった」が19.6%と最も高く、次いで「自分の希望する条件に合わなかったので正社員として勤務しなかった」が18.2%、「正社員として働くことが、体力的・精神的に難しかったから」が12.9%の順となっている。",a:false,exp:"当該主な理由は「元々、正社員を希望していなかった」が19.6%と最も高く、次いで「正社員求人に応募したが採用されなかった」が18.2%、「自分の希望する条件に合わなかったので正社員として勤務しなかった」が12.9%の順となっている。",src:"令和5年若年者雇用実態調査",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問3",opt:"A",q:"厚生労働省「令和7（2025）年労働組合基礎調査の概況」において、令和7（2025）年6月30日現在の労働組合員数（単位労働組合）を産業別にみると、「建設業」が261万4千人と最も多くなっており、全体の26.5%を占めている。",a:false,exp:"労働組合員数（単位労働組合）を産業別にみると、「製造業」が261万4千人と最も多く、全体の26.5%を占めている（建設業ではない）。",src:"令和7年労働組合基礎調査",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問3",opt:"B",q:"厚生労働省「令和7（2025）年労働組合基礎調査の概況」において、令和7（2025）年6月30日現在における単一労働組合の女性の労働組合員数は、354万5千人となっており、推定組織率（女性雇用者数に占める女性の労働組合員数の割合）は30.1%となっている。",a:false,exp:"女性の推定組織率（女性雇用者数に占める女性の労働組合員数の割合）は「12.3%」となっている（30.1%ではない）。その他の記述は正しい。",src:"令和7年労働組合基礎調査",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問3",opt:"C",q:"厚生労働省「令和6年労使コミュニケーション調査結果の概況」において、「労使協議機関（事業所又は企業における生産、経営などに関する諸問題につき労働者ないし労働組合の意思を反映させるため、それらに対して使用者と労働者の代表とが協議する常設的機関（通常、労使協議会、経営協議会等の名称で呼ばれているもの等をいう。）以下本問において同じ。）がある」事業所（企業全体にある場合を含む。以下本問において同じ。）の割合は36.4%となっており、当該「労使協議機関がある」事業所の割合を企業規模別にみると、すべての企業規模で5割を下回っている。",a:false,exp:"「労使協議機関がある」事業所の割合を企業規模別にみると、300人未満では2割程度であるが、企業規模が大きくなるにつれてその割合は大きくなり、「5,000人以上では80.5%となっている」（すべての企業規模で5割を下回っているわけではない）。その他の記述は正しい。",src:"令和6年労使コミュニケーション調査",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問3",opt:"D",q:"厚生労働省「令和6年労使コミュニケーション調査結果の概況」において、事業所が労働者とどのような面での労使コミュニケーションを重視するか（複数回答）についてみると、「日常業務改善」が76.1%と最も高くなっており、次いで「作業環境改善」が71.7%、「職場の人間関係」が68.6%の順などとなっている。",a:true,exp:"令和6年労使コミュニケーション調査。設問の通り正しい。",src:"令和6年労使コミュニケーション調査",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問3",opt:"E",q:"厚生労働省「令和6年度個別労働紛争解決制度の施行状況」において、民事上の個別労働紛争における相談の内容をみると、「解雇」が54,987件と13年連続で最も多くなっている。",a:false,exp:"民事上の個別労働紛争における相談の内容をみると、「いじめ・嫌がらせ」が54,987件と13年連続で最も多くなっている（解雇ではない）。なお紛争調整委員会によるあっせんの申請内容では「解雇」が792件と最も多い。",src:"令和6年度個別労働紛争解決制度の施行状況",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問4",opt:"A",q:"労働契約法第21条第2項において、「この法律は、使用者が同居の親族のみを使用する場合の労働契約については、適用しない。」と規定されており、当該「親族」とは、民法第725条にいう6親等内の血族、配偶者及び3親等内の姻族をいい、その要件については、民法の定めるところによるものとされている。",a:true,exp:"労働契約法21条2項、平24.8.10基発0810第2号。設問の通り正しい。なお「同居」とは、世帯を同じくして常時生活を共にしていることをいう。",src:"労契法21条2項",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問4",opt:"B",q:"「使用者は業務上の必要に応じ、その裁量により労働者の勤務場所を決定することができるものというべきであるが、転勤、特に転居を伴う転勤は、一般に、労働者の生活関係に少なからぬ影響を与えずにはおかないから、使用者の転勤命令権は無制約に行使することができるものではなく、これを濫用することの許されないことはいうまでもないところ、当該転勤命令につき業務上の必要性が存しない場合又は業務上の必要性が存する場合であっても、当該転勤命令が他の不当な動機・目的をもってなされたものであるとき若しくは労働者に対し通常甘受すべき程度を著しく超える不利益を負わせるものであるとき等、特段の事情の存する場合でない限りは、当該転勤命令は権利の濫用になるものではないというべきである。」とするのが、最高裁判所の判例である。",a:true,exp:"最高裁第二小法廷判決 昭61.7.14 東亜ペイント事件。設問の通り正しい。",src:"東亜ペイント事件",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問4",opt:"C",q:"有期契約労働者が労働契約法第18条に規定する無期転換申込権を行使した場合において、現に締結している有期労働契約の契約期間が満了する日の翌日から労務が提供される無期労働契約は、当該有期労働契約の契約期間の満了後に成立することから、現に締結している有期労働契約の契約期間が満了する日をもって当該有期契約労働者との契約関係を終了させようとする使用者は、当該無期労働契約を解約（解雇）する必要はない。",a:false,exp:"無期転換申込権を行使することにより、契約期間が満了する日の翌日から労務が提供される「無期労働契約がその行使の時点で成立している」ことから、契約期間が満了する日をもって契約関係を終了させようとする使用者は、「無期転換申込権の行使により成立した無期労働契約を解約（解雇）する必要がある」。",src:"労契法18条1項",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問4",opt:"D",q:"労働契約法第17条第2項において、「使用者は、有期労働契約について、その有期労働契約により労働者を使用する目的に照らして、必要以上に短い期間を定めることにより、その有期労働契約を反復して更新することのないよう配慮しなければならない。」と規定されており、当該「その労働契約により労働者を使用する目的に照らして、必要以上に短い期間」に該当するか否かは、個別具体的な事案に応じて判断されるものであり、同項は、契約期間を特定の長さ以上の期間とすることまでを求めているものではない。",a:true,exp:"労契法17条2項、平24.8.10基発0810第2号。設問の通り正しい。なお使用者は、有期労働契約について、やむを得ない事由がある場合でなければ、その契約期間が満了するまでの間において、労働者を解雇することができない（同条1項）。",src:"労契法17条2項",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問4",opt:"E",q:"労働契約法第5条において、「使用者は、労働契約に伴い、労働者がその生命、身体等の安全を確保しつつ労働することができるよう、必要な配慮をするものとする。」と規定されており、当該規定は、使用者が労働契約に基づいてその本来の債務として賃金支払義務を負うほか、労働契約に特段の根拠規定がなくとも、労働契約上の付随的義務として当然に安全配慮義務を負うことを規定したものである。",a:true,exp:"労契法5条、平24.8.10基発0810第2号。設問の通り正しい。",src:"労契法5条",cat:"択一式（労一）"},
+{no:"LEC第2回-労一般問5",opt:"A",q:"【社会保険労務士法令に関する記述として正しいか。なお「改正法」とは社会保険労務士法の一部を改正する法律（令和7年法律第77号）をいう】社会保険労務士が社会保険労務士法第2条第1項第1号の3に規定するいわゆる事務代理又は紛争解決手続代理業務（以下本問において「事務代理等」とする。）をする場合であって、行政機関等から当該事務代理等に係る事務に関し指導等が当該社会保険労務士に対して行われたときであっても、当該社会保険労務士は、当該指導等に係る内容を当該社会保険労務士に対して事務代理等の権限を与えた者に通知することを要しない。",a:false,exp:"この場合、社会保険労務士は、行政機関等から指導等が行われたときは、その内容を事務代理等の権限を与えた者に「通知しなければならない」（社会保険労務士法施行規則16条の4）。",src:"社労士法施行規則16条の4",cat:"択一式（社一）"},
+{no:"LEC第2回-労一般問5",opt:"B",q:"【社会保険労務士法令に関する記述として正しいか。なお「改正法」とは社会保険労務士法の一部を改正する法律（令和7年法律第77号）をいう】改正法により、社会保険労務士が裁判所にともに出頭し陳述をすることができることとされている弁護士の地位について、「訴訟代理人」を「代理人」に改めたことにより、社会保険労務士が非訟事件手続においても、裁判所において、補佐人として、弁護士である代理人とともに出頭し、陳述できることとなっただけでなく、その業務の範囲は「事業における労務管理その他の労働に関する事項及び労働社会保険諸法令に基づく社会保険に関する事項」に限定されなくなった。",a:false,exp:"裁判所への出頭及び陳述に係る業務の範囲は「事業における労務管理その他の労働に関する事項及び労働社会保険諸法令に基づく社会保険に関する事項」に「限定されることに変更はない」（法2条の2第1項、令7.6.25基発0625第6号）。なお従来の弁護士とともに出頭するという従来の形式に変更が加えられるものでもない。",src:"社労士法2条の2第1項",cat:"択一式（社一）"},
+{no:"LEC第2回-労一般問5",opt:"C",q:"【社会保険労務士法令に関する記述として正しいか。なお「改正法」とは社会保険労務士法の一部を改正する法律（令和7年法律第77号）をいう】社会保険労務士第15条において、「社会保険労務士は、不正に労働社会保険諸法令に基づく保険給付を受けること、不正に労働社会保険諸法令に基づく保険料の賦課又は徴収を免れることその他労働社会保険諸法令に違反する行為について指示をし、相談に応じ、その他これらに類する行為をしてはならない。」と規定されており、当該規定に違反した者は、1年以上10年以下の拘禁刑又は20万円以上300万円以下の罰金に処せられる。",a:false,exp:"法15条の規定（不正行為の指示等の禁止）に違反した者は、「3年以下の拘禁刑又は200万円以下の罰金」に処せられる（1年以上10年以下・20万円以上300万円以下ではない）。その他の記述は正しい（法15条、法32条）。",src:"社労士法15条・32条",cat:"択一式（社一）"},
+{no:"LEC第2回-労一般問5",opt:"D",q:"【社会保険労務士法令に関する記述として正しいか。なお「改正法」とは社会保険労務士法の一部を改正する法律（令和7年法律第77号）をいう】社会保険労務士の登録が抹消されたときは、その者、その法定代理人又はその相続人は、遅滞なく、社会保険労務士証票又は特定社会保険労務士証票を全国社会保険労務士会連合会に返還しなければならず、社会保険労務士が社会保険労務士法第25条の2第2項又は同法第25条の3の規定による戒告の処分を受けた場合に、社会保険労務士証票又は特定社会保険労務士証票を全国社会保険労務士会連合会に返還しなければならない。",a:false,exp:"社会保険労務士が法25条の2第2項（相当の注意を怠り不正行為の指示等を行った場合の懲戒）又は法25条の3（一般の懲戒）の規定による「戒告」の処分を受けた場合は、証票を全国社会保険労務士会連合会に返還することを「要しない」。その他の記述は正しい（法14条の12第1項）。",src:"社労士法14条の12第1項",cat:"択一式（社一）"},
+{no:"LEC第2回-労一般問5",opt:"E",q:"【社会保険労務士法令に関する記述として正しいか。なお「改正法」とは社会保険労務士法の一部を改正する法律（令和7年法律第77号）をいう】社会保険労務士法第25条（懲戒の種類）に規定する懲戒処分は、刑罰たる行政罰とはその目的が異なり、仮に一個の行為が当該懲戒処分及び行政罰の双方の要件に該当する場合には、当該懲戒処分と行政罰が併科され得ることから、例えば、懲戒に付せられるべき事件について、刑事事件として裁判が継続中であっても、それとは別に懲戒処分を行なうことは差し支えないものとされている。",a:true,exp:"社労士法25条ほか。設問の通り正しい。",src:"社労士法25条",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問6",opt:"A",q:"【本問において「市町村」には特別区を含む】市町村は、介護保険法第27条第1項に規定する要介護認定に係る申請があったときは、当該申請に係る被保険者の主治の医師に対し、当該被保険者の身体上又は精神上の障害の原因である疾病又は負傷の状況等につき意見を求めるものとされているが、当該被保険者に係る主治の医師がないときその他当該意見を求めることが困難なときは、当該市町村は、当該被保険者に係る要介護認定の申請を却下しなければならない。",a:false,exp:"主治の医師がないときその他意見を求めることが困難なときは、市町村は、「当該被保険者に対して、その指定する医師又は当該職員で医師であるものの診断を受けるべきことを命ずることができる」とされている（申請を却下しなければならないのではない）。その他の記述は正しい（法27条3項）。",src:"介保法27条3項",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問6",opt:"B",q:"【本問において「市町村」には特別区を含む】国及び地方公共団体は、被保険者が、可能な限り、住み慣れた地域でその有する能力に応じ自立した日常生活を営むことができるよう、保険給付に係る保健医療サービス及び福祉サービスに関する施策、要介護状態等となることの予防又は要介護状態等の軽減若しくは悪化の防止のための施策並びに地域における自立した日常生活の支援のための施策を、医療及び居住に関する施策との有機的な連携を図りつつ包括的に推進するよう努めなければならない。",a:true,exp:"介保法5条4項。設問の通り正しい。",src:"介保法5条4項",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問6",opt:"C",q:"【本問において「市町村」には特別区を含む】介護保険法第129条第2項の保険料率は、市町村介護保険事業計画に定める介護給付等対象サービスの見込量等に基づいて算定した保険給付に要する費用の予想額、財政安定化基金拠出金の納付に要する費用の予想額、同法第147条第1項第2号の規定による都道府県からの借入金の償還に要する費用の予定額並びに地域支援事業及び保健福祉事業に要する費用の予定額、第1号被保険者の所得の分布状況及びその見通し並びに国庫負担等の額等に照らし、おおむね3年を通じ財政の均衡を保つことができるものでなければならない。",a:true,exp:"介保法129条3項。設問の通り正しい。なお介護保険の保険料は、第1号被保険者に対し、政令で定める基準に従い条例で定めるところにより算定された保険料率により算定された保険料額によって課する（同条2項）。",src:"介保法129条3項",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問6",opt:"D",q:"【本問において「市町村」には特別区を含む】地方自治法第252条の14第1項の規定により市町村の委託を受けて審査判定業務（介護保険法第27条から第35条まで及び第37条の規定により介護認定審査会が行う業務をいう。）を行う都道府県に、当該審査判定業務を行わせるため、都道府県介護認定審査会を置くものとされている。",a:true,exp:"介保法38条2項。設問の通り正しい。",src:"介保法38条2項",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問6",opt:"E",q:"【本問において「市町村」には特別区を含む】居宅介護サービス計画費の額は、指定居宅介護支援の事業を行う事業所の所在する地域等を勘案して算定される指定居宅介護支援に要する平均的な費用の額を勘案して厚生労働大臣が定める基準により算定した費用の額（その額が現に当該指定居宅介護支援に要した費用の額を超えるときは、当該現に指定居宅介護支援に要した費用の額とする。）とするものとされており、厚生労働大臣は、当該基準を定めようとするときは、あらかじめ社会保障審議会の意見を聴かなければならないものとされている。",a:true,exp:"介保法46条2項・3項。設問の通り正しい。",src:"介保法46条2項・3項",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問7",opt:"A",q:"【本問において「市町村」には特別区を含む】市町村及び国民健康保険組合は、保険医療機関等が偽りその他不正の行為によって療養の給付に関する費用の支払を受けたときは、当該保険医療機関等に対し、その支払った額につき返還させるほか、その返還させる額に100分の40を乗じて得た額を支払わせることができる。",a:true,exp:"国保法65条3項。設問の通り正しい。",src:"国保法65条3項",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問7",opt:"B",q:"【本問において「市町村」には特別区を含む】国民健康保険法第2条において、「国民健康保険は、被保険者又はその被扶養者の疾病、負傷、出産又は死亡に関して必要な保険給付を行うものとする。」と規定されている。",a:false,exp:"法2条は、「国民健康保険は、『被保険者』の疾病、負傷、出産又は死亡に関して必要な保険給付を行うものとする」と規定されており、健康保険法のような「被扶養者に関する規定はない」（法2条）。",src:"国保法2条",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問7",opt:"C",q:"【本問において「市町村」には特別区を含む】国民健康保険組合の組合会は、組合会議員をもって組織するものとし、組合会議員の定数は、原則として、組合員の総数の30分の1を下らない範囲内において、規約で定めるものとされているが、組合員の総数が600人をこえる国民健康保険組合にあっては、20人以上であることをもって足りるものとされている。",a:false,exp:"組合会議員の定数は、原則として、組合員の総数の「20分の1」を下らない範囲内において規約で定めるが、組合員の総数が600人をこえる国民健康保険組合にあっては、「30人」以上であることをもって足りる（法26条2項）。",src:"国保法26条2項",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問7",opt:"D",q:"【本問において「市町村」には特別区を含む】国民健康保険組合の理事は、特定の行為の代理を他人に委任することができるものとされており、規約又は組合会の決議によって当該委任を禁止することができないものとされている。",a:false,exp:"国民健康保険組合の理事は、規約又は組合会の決議によって「禁止されていないときに限り」、特定の行為の代理を他人に委任することができる（法24条の3）。",src:"国保法24条の3",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問7",opt:"E",q:"【本問において「市町村」には特別区を含む】国民健康保険法第91条第1項に規定する審査請求は、当該処分をした市町村又は国民健康保険組合（国民健康保険法第80条第3項の規定による国民健康保険組合の請求による市町村による滞納処分については、当該滞納処分をした市町村。）の所在地の都道府県の国民健康保険審査会に対してしなければならず、当該審査請求が管轄違であるときは、当該国民健康保険審査会は、当該審査請求を却下しなければならない。この場合において、当該審査請求に係る審査請求人は、改めて当該所在地の都道府県の国民健康保険審査会に対して審査請求をしなければならない。",a:false,exp:"審査請求が管轄違であるときは、国民健康保険審査会は「すみやかに、事件を所轄の国民健康保険審査会に移送し、かつ、その旨を審査請求人に通知しなければならず」、当該事件が移送されたときは「はじめから、移送を受けた国民健康保険審査会に審査請求があったものとみなす」（法98条）。審査請求を却下し請求人が改めて審査請求をするのではない。",src:"国保法98条",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問8",opt:"ア",q:"【高齢者医療確保法に関する記述として正しいか（本問において「市町村」には特別区を含む）】高齢者医療確保法第83条第1項に規定する移送費は、厚生労働省令で定めるところにより、保険者が必要であると認める場合に限り、支給するものとされている。",a:false,exp:"移送費は、厚生労働省令で定めるところにより、「後期高齢者医療広域連合」が必要であると認める場合に限り、支給する（保険者ではない）（法83条2項）。",src:"高齢者医療確保法83条",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問8",opt:"イ",q:"【高齢者医療確保法に関する記述として正しいか（本問において「市町村」には特別区を含む）】高齢者医療確保法第160条第1項において、「保険料その他この法律の規定による徴収金を徴収し、又はその還付を受ける権利及び後期高齢者医療給付を受ける権利は、これらを行使することができる時から2年を経過したときは、時効によって消滅する。」と規定されている。",a:true,exp:"高齢者医療確保法160条1項。設問の通り正しい。なお保険料その他徴収金の徴収の告知又は督促は、時効の更新の効力を生ずる（同条2項）。",src:"高齢者医療確保法160条1項",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問8",opt:"ウ",q:"【高齢者医療確保法に関する記述として正しいか（本問において「市町村」には特別区を含む）】保険者は、特定健康診査等実施計画に基づき、厚生労働省令で定めるところにより、35歳以上の加入者に対し、特定健康診査を行うものとする。ただし、加入者が特定健康診査に相当する健康診査を受け、その結果を証明する書面の提出を受けたとき、又は高齢者医療確保法第26条第2項の規定により他の保険者から特定健康診査に関する記録の送付を受けたときは、この限りでないとされている。",a:false,exp:"保険者は、特定健康診査等実施計画に基づき、「40歳」以上の加入者に対し特定健康診査を行う（35歳ではない）（法20条）。",src:"高齢者医療確保法20条",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問8",opt:"エ",q:"【高齢者医療確保法に関する記述として正しいか（本問において「市町村」には特別区を含む）】国は、後期高齢者医療の財政を調整するため、政令で定めるところにより、後期高齢者医療広域連合に対して調整交付金を交付するものとされており、当該調整交付金の総額は、負担対象総額の見込額の総額の12分の1に相当する額及び子ども・子育て支援法の規定による子ども・子育て支援納付金の額の見込額の120分の1に相当する額の合計額とされている。",a:true,exp:"高齢者医療確保法95条。設問の通り正しい。",src:"高齢者医療確保法95条",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問8",opt:"オ",q:"【高齢者医療確保法に関する記述として正しいか（本問において「市町村」には特別区を含む）】高齢者医療確保法第70条第4項の規定による委託を受けて診療報酬請求書の審査を行うため、中央社会保険医療協議会に後期高齢者医療診療報酬審査委員会を置くものとされている。",a:false,exp:"法70条4項の規定による委託を受けて診療報酬請求書の審査を行うため、「国民健康保険団体連合会」に後期高齢者医療診療報酬審査委員会を置く（中央社会保険医療協議会ではない）（法126条1項）。",src:"高齢者医療確保法126条1項",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問9",opt:"A",q:"船員保険法第4条第1項の規定により全国健康保険協会が管掌する船員保険の事業に関する業務のうち、被保険者の資格の取得及び喪失の確認、標準報酬月額及び標準賞与額の決定並びに保険料の徴収（疾病任意継続被保険者に係るものを除く。）並びにこれらに附帯する業務は、厚生労働大臣が行うものとされている。",a:true,exp:"船保法4条2項。設問の通り正しい。なお船員保険は、全国健康保険協会が管掌する（同条1項）。",src:"船保法4条2項",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問9",opt:"B",q:"子ども・子育て支援金率は、各年度において全国健康保険協会が納付すべき子ども・子育て支援納付金の額を当該年度における被保険者の標準報酬月額の総額及び標準賞与額の総額の合算額の見込額で除して得た率を基準として、厚生労働大臣が決定するものとする。",a:false,exp:"子ども・子育て支援金率は、当該率を基準として、「全国健康保険協会」が決定するものとする（厚生労働大臣ではない）（法122条の2第1項）。",src:"船保法122条の2第1項",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問9",opt:"C",q:"全国健康保険協会は、船員保険法第29条第1項各号に掲げる職務外の事由（通勤を除く。）による疾病、負傷若しくは死亡又は出産に関する保険給付に併せて、政令で定めるところにより、保険給付としてその他の給付を行うことができる。",a:true,exp:"船保法30条。設問の通り正しい。",src:"船保法30条",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問9",opt:"D",q:"船員保険法第69条第5項において、「傷病手当金の支給期間は、同一の疾病又は負傷及びこれにより発した疾病に関しては、その支給を始めた日から通算して3年間とする。」と規定されている。",a:true,exp:"船保法69条5項。設問の通り正しい。",src:"船保法69条5項",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問9",opt:"E",q:"全国健康保険協会は、偽りその他不正の行為により保険給付を受け、又は受けようとした者に対して、6月以内の期間を定め、その者に支給すべき傷病手当金、出産手当金又は休業手当金の全部又は一部を支給しない旨の決定をすることができる。ただし、偽りその他の不正の行為があった日から1年を経過したときは、この限りでない。",a:true,exp:"船保法108条。設問の通り正しい。",src:"船保法108条",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問10",opt:"ア",q:"【確定拠出年金法に関する記述として正しいか】個人型年金加入者は、個人型年金規約で定めるところにより、個人型年金加入者掛金を国民年金基金連合会に納付するものとされており、第2号加入者は、厚生労働省令で定めるところにより、当該納付をその使用される厚生年金適用事業所の事業主を介して行うことができるものとされている。",a:true,exp:"確拠法70条1項・2項。設問の通り正しい。",src:"確拠法70条1項・2項",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問10",opt:"イ",q:"【確定拠出年金法に関する記述として正しいか】厚生労働大臣は、確定拠出年金法第3条第1項に規定する企業型年金の実施に係る規約の承認の申請があった場合において、当該申請に係る規約が同法第4条第1項各号に掲げる要件に適合すると認めるときは、当該承認をするものとされており、当該要件の1つとして、「企業型年金加入者掛金の額の決定又は変更の方法その他その拠出に関する事項を定めた場合にあっては、各企業型年金加入者に係る企業型年金加入者掛金の額が当該企業型年金加入者に係る事業主掛金の額を超えないように企業型年金加入者掛金の額の決定又は変更の方法が定められていること。」が含まれている。",a:false,exp:"従来はこの要件が承認要件の1つとして含まれていたが、令和7年法律第74号（社会経済の変化を踏まえた年金制度の機能強化のための国民年金法等の一部を改正する等の法律）により「この要件は削除された」（法4条1項）。",src:"確拠法4条1項",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問10",opt:"ウ",q:"【確定拠出年金法に関する記述として正しいか】確定拠出年金法における「第1号等厚生年金被保険者」とは、厚生年金保険の被保険者のうち、60歳未満の厚生年金保険法第2条の5第1項第1号に規定する第1号厚生年金被保険者又は同項第4号に規定する第4号厚生年金被保険者に限られている。",a:false,exp:"「第1号等厚生年金被保険者」とは、「年齢制限はなく」、厚生年金保険の被保険者のうち、厚生年金保険法2条の5第1項1号に規定する第1号厚生年金被保険者又は同項4号に規定する第4号厚生年金被保険者をいう（60歳未満に限られない）（法2条6項）。",src:"確拠法2条6項",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問10",opt:"エ",q:"【確定拠出年金法に関する記述として正しいか】企業型年金の給付を受ける権利は、その権利を有する者の請求に基づいて、企業型運用関連運営管理機関等が裁定するものとされており、企業型運用関連運営管理機関等は、当該裁定をしたときは、遅滞なく、その内容を資産管理機関に通知しなければならない。",a:false,exp:"企業型年金の給付を受ける権利は、「企業型記録関連運営管理機関等」が裁定するものとされており、「企業型記録関連運営管理機関等」は、当該裁定をしたときは、遅滞なく、その内容を資産管理機関に通知しなければならない（企業型運用関連運営管理機関等ではない）（法29条）。",src:"確拠法29条",cat:"択一式（社一）"},
+{no:"LEC第2回-社一般問10",opt:"オ",q:"【確定拠出年金法に関する記述として正しいか】国立保養所に入所したことを事由として国民年金法第89条に規定するいわゆる法定免除の適用を受けている者は、確定拠出年金法における個人型年金加入者となることができない。",a:false,exp:"国立保養所に入所したことを事由として国民年金法89条の法定免除の適用を受けている者は、所定の要件を満たす場合において、個人型年金加入者となることが「できる」（法62条1項1号、国民年金法89条1項）。",src:"確拠法62条1項1号",cat:"択一式（社一）"},
+{type:"select",no:"LEC第2回-労一選択1",opt:"空欄A",context:"厚生労働省「今後の人材開発政策の在り方に関する研究会報告書（令和7年7月7日）」によると、企業が個人に対するキャリア形成の伴走型支援を行うにあたっては、職場の上司の役割が重要であり、そのための施策として「上司による【A】」が広がりを見せている。また、企業が従業員の主体的なキャリア形成を促進・支援する総合的な取組であるセルフ・キャリアドックについて、周知を図り導入を促進することが重要である。",choices:["1on1ミーティング", "人事評価面談", "メンター制度", "ワークエンゲージメント"],answer:"1on1ミーティング",exp:"厚生労働省「今後の人材開発政策の在り方に関する研究会報告書（令和7年7月7日）」。キャリア形成の伴走型支援の施策として「上司による1on1ミーティング」が広がりを見せている。",src:"今後の人材開発政策の在り方に関する研究会報告書",cat:"選択式（労一）"},
+{type:"select",no:"LEC第2回-労一選択2",opt:"空欄B",context:"厚生労働省「今後の人材開発政策の在り方に関する研究会報告書（令和7年7月7日）」によると、キャリア形成の伴走型支援の施策として「上司による1on1ミーティング」が広がりを見せている。また、企業が従業員の主体的なキャリア形成を促進・支援する総合的な取組である【B】について、周知を図り導入を促進することが重要である。",choices:["セルフ・キャリアドック", "アップスキリング", "リ・スキリング", "メンター制度"],answer:"セルフ・キャリアドック",exp:"企業が従業員の主体的なキャリア形成を促進・支援する総合的な取組である「セルフ・キャリアドック」について、周知を図り導入を促進することが重要である。",src:"今後の人材開発政策の在り方に関する研究会報告書",cat:"選択式（労一）"},
+{type:"select",no:"LEC第2回-労一選択3",opt:"空欄C",context:"高年齢者雇用安定法第8条において、「事業主がその雇用する労働者の定年（以下単に「定年」という。）の定めをする場合には、【C】。ただし、当該事業主が雇用する労働者のうち、高年齢者が従事することが困難であると認められる業務として厚生労働省令で定める業務に従事している労働者については、この限りでない。」と規定されている。",choices:["当該定年は、60歳を下回ることができない", "当該定年は、65歳を下回ることができない", "当該定年後における安定した雇用を確保しなければならない", "当該定年後における安定した雇用を確保するように努めなければならない"],answer:"当該定年は、60歳を下回ることができない",exp:"高年齢者雇用安定法8条。定年の定めをする場合には、当該定年は、「60歳を下回ることができない」。",src:"高年法8条",cat:"選択式（労一）"},
+{type:"select",no:"LEC第2回-労一選択4",opt:"空欄D",context:"最高裁判所は、使用者が誠実に団体交渉に応ずべき義務に違反する不当労働行為をした場合に労働委員会が使用者に対して誠実に団体交渉に応ずべき旨を命ずることを内容とする救済命令を発することの可否が問題となった事件（国立山形大学事件）において、次のように判示した。「団体交渉に係る事項に関して【D】と認められる場合には、誠実交渉命令を発しても、労働組合が労働条件等の獲得の機会を現実に回復することは期待できないものともいえる。しかしながら、このような場合であっても、使用者が労働組合に対する誠実交渉義務を尽くしていないときは、その後誠実に団体交渉に応ずるに至れば、労働組合は当該団体交渉に関して使用者から十分な説明や資料の提示を受けることができるようになるとともに、組合活動一般についても労働組合の交渉力の回復や労使間のコミュニケーションの正常化が図られるから、誠実交渉命令を発することは、不当労働行為によって発生した侵害状態を除去、是正し、正常な集団的労使関係秩序の迅速な回復、確保を図ることに資するものというべきである。そうすると、【D】ことをもって、誠実交渉命令を発することが直ちに救済命令制度の本来の趣旨、目的に由来する限界を逸脱するということはできない。」",choices:["合意の成立する見込みがない", "合意の成立が確実でない", "合意の成立に係る手続きの透明性が確保されていない", "合意の成立に相当な期間を有する"],answer:"合意の成立する見込みがない",exp:"最高裁第二小法廷判決 令4.3.18 国立山形大学事件。団体交渉に係る事項に関して「合意の成立する見込みがない」と認められる場合であっても、誠実交渉命令を発することが直ちに救済命令制度の本来の趣旨・目的に由来する限界を逸脱するとはいえない。",src:"国立山形大学事件",cat:"選択式（労一）"},
+{type:"select",no:"LEC第2回-労一選択5",opt:"空欄E",context:"最高裁判所は、使用者が誠実に団体交渉に応ずべき義務に違反する不当労働行為をした場合に労働委員会が使用者に対して誠実に団体交渉に応ずべき旨を命ずることを内容とする救済命令を発することの可否が問題となった事件（国立山形大学事件）において、次のように判示した。「団体交渉に係る事項に関して合意の成立する見込みがないと認められる場合には、誠実交渉命令を発しても、労働組合が労働条件等の獲得の機会を現実に回復することは期待できないものともいえる。しかしながら、このような場合であっても、使用者が労働組合に対する誠実交渉義務を尽くしていないときは、その後誠実に団体交渉に応ずるに至れば、労働組合は当該団体交渉に関して使用者から十分な説明や資料の提示を受けることができるようになるとともに、組合活動一般についても労働組合の交渉力の回復や労使間のコミュニケーションの正常化が図られるから、誠実交渉命令を発することは、不当労働行為によって発生した侵害状態を除去、是正し、【E】を図ることに資するものというべきである。そうすると、合意の成立する見込みがないことをもって、誠実交渉命令を発することが直ちに救済命令制度の本来の趣旨、目的に由来する限界を逸脱するということはできない。」",choices:["正常な集団的労使関係秩序の迅速な回復、確保", "組合員の総意による民主的な意思決定の保障", "使用者からの拘束を受けない自主的な組合活動の保障", "労働者側の争議行為に対する正当な対抗防衛手段の確保"],answer:"正常な集団的労使関係秩序の迅速な回復、確保",exp:"国立山形大学事件。誠実交渉命令を発することは、不当労働行為によって発生した侵害状態を除去・是正し、「正常な集団的労使関係秩序の迅速な回復、確保」を図ることに資する。",src:"国立山形大学事件",cat:"選択式（労一）"},
+{type:"select",no:"LEC第2回-社一選択1",opt:"空欄A",context:"厚生労働省「令和5年所得再分配調査報告書」によると、所得などの分布の均等度を示す指標の1つであるジニ係数の変化を時系列でみると、当初所得（雇用者所得、事業所得、農耕・畜産所得、財産所得、家内労働所得及び雑収入並びに私的給付（仕送り、企業年金、生命保険金等の合計額）の合計額をいう。）では概ね上昇傾向であるが、社会保障を中心とした所得再分配機能により、再分配所得では平成11年以降【A】前後と横ばいで推移している。",choices:["0.38", "0.29", "0.51", "0.60"],answer:"0.38",exp:"厚生労働省「令和5年所得再分配調査報告書」。社会保障を中心とした所得再分配機能により、再分配所得のジニ係数は平成11年以降「0.38」前後と横ばいで推移している。",src:"令和5年所得再分配調査報告書",cat:"選択式（社一）"},
+{type:"select",no:"LEC第2回-社一選択2",opt:"空欄B",context:"高齢者医療確保法第8条第5項によると、厚生労働大臣は、同条第4項第1号から第3号までに掲げる全国医療費適正化計画に定める事項を定めるに当たっては、病床の機能の分化及び連携の推進、医療法第6条の3第1項に規定する【B】並びに地域における医療及び介護の総合的な確保の促進に関する法律第2条第1項に規定する地域包括ケアシステムの構築に向けた取組並びに国民の加齢に伴う身体的、精神的及び社会的な特性を踏まえた医療及び介護の効果的かつ効率的な提供の重要性に留意するものとされている。",choices:["かかりつけ医機能の確保", "緩和ケアの提供体制の整備", "新興感染症に係る調査研究事業の推進", "デジタルトランスフォーメーションを通じた保健医療サービスの効率化及び質の向上"],answer:"かかりつけ医機能の確保",exp:"高齢者医療確保法8条5項。全国医療費適正化計画に定める事項を定めるに当たっては、医療法6条の3第1項に規定する「かかりつけ医機能の確保」等に留意するものとされている。",src:"高齢者医療確保法8条5項",cat:"選択式（社一）"},
+{type:"select",no:"LEC第2回-社一選択3",opt:"空欄C",context:"児童手当法第27条第1項において、「市町村長は、必要があると認めるときは、受給資格者に対して、受給資格の有無、児童手当の額及び【C】に係る事項に関する書類を提出すべきことを命じ、又は当該職員をしてこれらの事項に関し受給資格者その他の関係者に質問させることができる。」と規定されている。",choices:["被用者又は被用者等でない者の区分", "児童手当の支給開始時期", "受給資格者の賃金その他の収入の額", "受給資格者の年齢、性別及び世帯構成"],answer:"被用者又は被用者等でない者の区分",exp:"児童手当法27条1項。市町村長は、受給資格の有無、児童手当の額及び「被用者又は被用者等でない者の区分」に係る事項に関する書類の提出等を命じ、又は質問させることができる。",src:"児童手当法27条1項",cat:"選択式（社一）"},
+{type:"select",no:"LEC第2回-社一選択4",opt:"空欄D",context:"確定給付企業年金法第33条において、「年金給付の支給期間及び支払期月は、政令で定める基準に従い規約で定めるところによる。ただし、【D】にわたり、毎年1回以上定期的に支給するものでなければならない。」と規定されている。",choices:["終身又は5年以上", "3年以上", "10年以上", "終身又は20年以上"],answer:"終身又は5年以上",exp:"確定給付企業年金法33条。年金給付は、「終身又は5年以上」にわたり、毎年1回以上定期的に支給するものでなければならない。",src:"確給法33条",cat:"選択式（社一）"},
+{type:"select",no:"LEC第2回-社一選択5",opt:"空欄E",context:"海外在留邦人等が日本と外国の年金制度等に加入し保険料を二重に負担することを防ぎ、また、両国での年金制度の加入期間を通算できるようにすることを目的として、外国との間で社会保障協定の締結を進めているが、【E】との社会保障協定においては、当該「両国での年金制度の加入期間を通算できるようにする」規定は設けられていない。",choices:["英国、韓国、中国及びイタリア", "アイルランド、スイス及びフィンランド", "オランダ、スペイン、インド及びフィリピン", "チェコ、ハンガリー及びスロバキア"],answer:"英国、韓国、中国及びイタリア",exp:"「英国、韓国、中国及びイタリア」との社会保障協定においては、当該「両国での年金制度の加入期間を通算できるようにする」規定（期間通算）は設けられていない。",src:"社会保障協定",cat:"選択式（社一）"}
+];
+
+// ============================================================
+//  GOOGLE DRIVE SYNC
+// ============================================================
+const CLIENT_ID    = APP_CONFIG.clientId;
+const SCOPES       = 'https://www.googleapis.com/auth/drive.appdata';
+const DRIVE_FILE_NAME = APP_CONFIG.driveFileName;
+let tokenClient = null, gapiInited = false, gisInited = false;
+let accessToken = null, driveFileId = null, isSyncing = false;
+let autoSaveTimer = null;
+let tokenRefreshTimer = null; // トークン自動更新タイマー
+
+window.addEventListener('load', () => {
+  // ログイン済みの場合は「再接続中」表示
+  if (getSavedAuth()) {
+    const dot = document.getElementById('syncDot');
+    const txt = document.getElementById('syncStatusText');
+    if (dot) dot.className = 'sync-dot syncing';
+    if (txt) txt.textContent = '再接続中…';
+  }
+  gapi.load('client', async () => {
+    await gapi.client.init({});
+    gapiInited = true;
+    maybeEnableSync();
+  });
+  const s = document.createElement('script');
+  s.src = 'https://accounts.google.com/gsi/client';
+  s.onload = () => {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID, scope: SCOPES,
+      callback: async (resp) => {
+        if (resp.error) {
+          if (getSavedAuth()) {
+            updateSyncUI(false);
+            showToast('再接続できませんでした。再度ログインしてください', 'warn');
+          }
+          return;
+        }
+        accessToken = resp.access_token;
+        gapi.client.setToken({ access_token: accessToken });
+        onSignedIn();
+        // 55分後にトークンを自動更新（アクセストークンは1時間で失効）
+        if (tokenRefreshTimer) clearTimeout(tokenRefreshTimer);
+        tokenRefreshTimer = setTimeout(() => {
+          if (getSavedAuth()) tokenClient.requestAccessToken({ prompt: '' });
+        }, 55 * 60 * 1000);
+      }
+    });
+    gisInited = true;
+    maybeEnableSync();
+  };
+  document.head.appendChild(s);
+});
+
+function maybeEnableSync() {
+  if (gapiInited && gisInited && getSavedAuth()) {
+    tokenClient.requestAccessToken({ prompt: '' });
+  }
+}
+function signIn() {
+  if (!gapiInited || !gisInited) { showToast('初期化中です、少々お待ちください', 'error'); return; }
+  tokenClient.requestAccessToken({ prompt: 'consent' });
+}
+function signOut() {
+  if (accessToken) google.accounts.oauth2.revoke(accessToken);
+  accessToken = null; driveFileId = null;
+  if (tokenRefreshTimer) { clearTimeout(tokenRefreshTimer); tokenRefreshTimer = null; }
+  clearSavedAuth(); updateSyncUI(false);
+  showToast('ログアウトしました');
+}
+function onSignedIn() {
+  updateSyncUI(true); saveAuthHint();
+  showToast('ログイン成功、データを読み込んでいます…', 'success');
+  loadFromDrive();
+}
+function updateSyncUI(loggedIn) {
+  document.getElementById('syncDot').className = 'sync-dot' + (loggedIn ? ' connected' : '');
+  document.getElementById('syncStatusText').textContent = loggedIn ? 'Googleドライブに同期中' : 'Googleアカウントで同期';
+  document.getElementById('syncUser').style.display = 'none';
+  document.getElementById('btnSignIn').style.display    = loggedIn ? 'none'  : 'flex';
+  document.getElementById('btnManualSync').style.display = loggedIn ? 'block' : 'none';
+  document.getElementById('btnManualSync').disabled = !loggedIn;
+  document.getElementById('btnSignOut').style.display   = loggedIn ? 'block' : 'none';
+}
+function setSyncing(v) {
+  isSyncing = v;
+  const dot = document.getElementById('syncDot');
+  const btn = document.getElementById('btnManualSync');
+  if (v) { dot.className = 'sync-dot syncing'; if (btn) { btn.disabled = true; btn.textContent = '同期中…'; } }
+  else   { dot.className = 'sync-dot connected'; if (btn) { btn.disabled = false; btn.textContent = '↑↓ 同期'; } }
+}
+async function loadFromDrive() {
+  if (!accessToken) return;
+  setSyncing(true);
+  try {
+    // トークン有効性チェック
+    const tokenInfo = await fetch(
+      'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=' + accessToken
+    );
+    if (!tokenInfo.ok) {
+      accessToken = null;
+      clearSavedAuth();
+      updateSyncUI(false);
+      showToast('セッション切れ：再度ログインしてください', 'warn');
+      setSyncing(false);
+      return;
+    }
+
+    // Drive ファイル一覧取得
+    const params = new URLSearchParams({
+      spaces: 'appDataFolder',
+      q: `name='${DRIVE_FILE_NAME}'`,
+      fields: 'files(id,name)'
+    });
+    const listRes = await fetch(
+      `https://www.googleapis.com/drive/v3/files?${params}`,
+      { headers: { 'Authorization': 'Bearer ' + accessToken } }
+    );
+    if (!listRes.ok) {
+      const errBody = await listRes.text();
+      throw new Error(`list:${listRes.status} ${errBody.substring(0, 100)}`);
+    }
+    const listData = await listRes.json();
+    const files = listData.files || [];
+    if (files.length > 0) {
+      driveFileId = files[0].id;
+      const fileRes = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`,
+        { headers: { 'Authorization': 'Bearer ' + accessToken } }
+      );
+      if (!fileRes.ok) {
+        const errBody = await fileRes.text();
+        throw new Error(`read:${fileRes.status} ${errBody.substring(0, 100)}`);
+      }
+      const data = await fileRes.json();
+      mergeCloudData(data);
+      showToast('クラウドから読み込みました', 'success');
+    } else {
+      showToast('クラウドにデータがありません（初回）');
+      await saveToDrive();
+    }
+  } catch (e) {
+    console.error('Drive load error:', e);
+    let msg = '通信エラー';
+    if (e instanceof Error && e.message) msg = e.message;
+    else if (e && typeof e === 'object') msg = JSON.stringify(e).substring(0, 100);
+    else if (e) msg = String(e);
+    showToast('読み込み失敗: ' + msg, 'error');
+  }
+  setSyncing(false);
+}
+async function saveToDrive() {
+  if (!accessToken) return;
+  setSyncing(true);
+  try {
+    const body = JSON.stringify(buildSavePayload());
+    if (driveFileId) {
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+        body
+      });
+    } else {
+      const meta = JSON.stringify({ name: DRIVE_FILE_NAME, parents: ['appDataFolder'] });
+      const form = new FormData();
+      form.append('metadata', new Blob([meta], { type: 'application/json' }));
+      form.append('file', new Blob([body], { type: 'application/json' }));
+      const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&spaces=appDataFolder', {
+        method: 'POST', headers: { 'Authorization': 'Bearer ' + accessToken }, body: form
+      });
+      driveFileId = (await res.json()).id;
+    }
+    showToast('クラウドに保存しました', 'success');
+  } catch (e) {
+    console.error(e);
+    showToast('保存失敗: ' + (e?.message || '通信エラー'), 'error');
+  }
+  setSyncing(false);
+}
+async function manualSync() {
+  if (!accessToken) { showToast('先にログインしてください', 'error'); return; }
+  await loadFromDrive();
+}
+function scheduleAutoSave() {
+  if (!accessToken) return;
+  if (autoSaveTimer) clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => saveToDrive(), 3000);
+}
+// ページが非表示になる瞬間（タブ切替・閉じる直前）に即時保存
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && accessToken) {
+    if (autoSaveTimer) { clearTimeout(autoSaveTimer); autoSaveTimer = null; }
+    saveToDrive();
+  }
+});
+
+// ============================================================
+//  SAVE / LOAD PAYLOAD
+//  ★ v2: stats（正答率）と session（中断データ）を両方保存
+// ============================================================
+function buildSavePayload() {
+  // 現在進行中のセッション or 中断済みの pendingResume を保存
+  let sessionData = null;
+  if (currentSession && questions.length > 0) {
+    sessionData = {
+      questionIndices: questions.map(q => getOrigIdx(q)),
+      current,
+      answers: [...answers]
+    };
+  } else if (pendingResume) {
+    sessionData = pendingResume;
+  }
+  return {
+    version: 2,
+    bookmarks: [...bookmarks],          // ★ 栞 → Drive同期で他デバイスにも反映
+    stats: JSON.parse(JSON.stringify(questionStats)), // ★ 正答率データ
+    session: sessionData,               // ★ 中断セーブ
+    savedAt: new Date().toISOString()
+  };
+}
+function mergeCloudData(data) {
+  if (!data) return;
+  // 栞
+  if (data.bookmarks) bookmarks = new Set(data.bookmarks);
+  // ★ 正答率データを復元
+  if (data.stats) {
+    Object.entries(data.stats).forEach(([k, v]) => { questionStats[k] = v; });
+  }
+  // ★ 中断セッションを復元（1問以上回答済みの場合のみ）
+  if (data.session && data.session.questionIndices && data.session.answers) {
+    const answered = data.session.answers.filter(a => a !== null).length;
+    if (answered > 0) pendingResume = data.session;
+  }
+  localSave();
+  updateBmBadge();
+  updateWeakBtn();
+  updateLeastTriedBtn();
+  updateResumeBtn();
+  if (pendingResume) offerResume();
+}
+
+// ============================================================
+//  LOCAL STORAGE
+// ============================================================
+const LS_KEY  = 'sharoushi_' + DRIVE_FILE_NAME;
+const LS_AUTH = 'sharoushi_auth_hint';
+
+function localSave() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      bookmarks: [...bookmarks], stats: questionStats, session: pendingResume
+    }));
+  } catch {}
+}
+function localLoad() {
+  try {
+    const data = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
+    if (data.bookmarks) bookmarks = new Set(data.bookmarks);
+    if (data.stats) questionStats = data.stats;
+    if (data.session) pendingResume = data.session;
+  } catch {}
+}
+function saveAuthHint()  { try { localStorage.setItem(LS_AUTH, '1'); } catch {} }
+function getSavedAuth()  { try { return localStorage.getItem(LS_AUTH) === '1'; } catch { return false; } }
+function clearSavedAuth() { try { localStorage.removeItem(LS_AUTH); } catch {} }
+
+// ============================================================
+//  BOOKMARK
+// ============================================================
+let bookmarks = new Set();
+function toggleBookmark() {
+  const idx = getOrigIdx(questions[current]);
+  if (bookmarks.has(idx)) bookmarks.delete(idx);
+  else bookmarks.add(idx);
+  localSave(); updateQuestion(); updateBmBadge();
+  if (accessToken) saveToDrive(); else scheduleAutoSave();
+}
+function updateBmBadge() {
+  const badge = document.getElementById('bmBadge');
+  if (bookmarks.size > 0) {
+    badge.textContent = bookmarks.size;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+// ============================================================
+//  STATS
+// ============================================================
+let questionStats = {}; // { origIdx: {correct:N, total:N} }
+
+function recordStat(origIdx, isCorrect) {
+  if (!questionStats[origIdx]) questionStats[origIdx] = {correct:0, total:0};
+  questionStats[origIdx].total++;
+  if (isCorrect) questionStats[origIdx].correct++;
+  localSave(); scheduleAutoSave(); updateWeakBtn(); updateLeastTriedBtn();
+}
+function getAccuracyInfo(origIdx) {
+  const s = questionStats[origIdx];
+  if (!s || s.total === 0) return null;
+  const pct = Math.round((s.correct / s.total) * 100);
+  return {
+    total: s.total, pct,
+    cls: pct >= 80 ? 'high' : (pct >= 50 ? 'mid' : 'low')
+  };
+}
+
+// ============================================================
+//  WEAK QUESTIONS
+// ============================================================
+function updateWeakBtn() {
+  const pool = ALL_QUESTIONS.filter((q,i) => {
+    const s = questionStats[i];
+    return s && s.total > 0 && (s.correct / s.total) <= 0.5;
+  });
+  const btn = document.getElementById('btnWeakStart');
+  btn.style.display = pool.length > 0 ? 'block' : 'none';
+  if (pool.length === 0) btn.textContent = 'まだ回答データがありません';
+  else btn.textContent = `正答率50%以下の問題を出題（${pool.length}問）`;
+}
+function startWeak() {
+  const s = { useWeak: true };
+  startSession(s);
+}
+function updateLeastTriedBtn() {
+  const pool = ALL_QUESTIONS.filter((q,i) => {
+    const s = questionStats[i];
+    return !s || s.total === 0 || s.total < 3; // 3回未満
+  });
+  const btn = document.getElementById('btnLeastTried');
+  if (!btn) return;
+  if (pool.length > 0) {
+    btn.style.display = 'block';
+    btn.textContent = `挑戦回数が少ない問題を出題（${pool.length}問）`;
+  } else {
+    btn.style.display = 'none';
+  }
+}
+function startLeastTried() {
+  // 挑戦回数でソート（少ない順）→上位20問を出題
+  const indexed = ALL_QUESTIONS.map((q,i) => ({q, i, tries: (questionStats[i]||{total:0}).total}));
+  indexed.sort((a,b) => a.tries - b.tries);
+  const maxTries = indexed[Math.min(19, indexed.length-1)].tries;
+  const pool = indexed.filter(x => x.tries <= maxTries).map(x => ({...x.q, _origIdx: x.i}));
+  if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
+  const take = pool.slice(0, 20);
+  questions = take; answers = Array(take.length).fill(null); current = 0;
+  currentSession = { questionIndices: take.map(q => q._origIdx), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`挑戦回数の少ない${take.length}問を出題`, 'success');
+}
+
+// ============================================================
+//  RESUME SESSION
+// ============================================================
+let pendingResume = null;
+
+function offerResume() {
+  // モーダル廃止：スタート画面の「続きから開始」ボタンを表示
+  updateResumeBtn();
+}
+function updateResumeBtn() {
+  const btn = document.getElementById('btnResumeStart');
+  if (!btn) return;
+  if (pendingResume) {
+    const done = pendingResume.answers.filter(a => a !== null).length;
+    const total = pendingResume.questionIndices.length;
+    btn.textContent = `▶ 続きから開始（${done}/${total}問 回答済み）`;
+    btn.style.display = 'block';
+  } else {
+    btn.style.display = 'none';
+  }
+}
+function resumeSession() {
+  if (!pendingResume) return;
+  const pool = pendingResume.questionIndices.map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
+  if (pool.length === 0) { clearResume(); return; }
+  questions = pool; answers = [...pendingResume.answers]; current = pendingResume.current || 0;
+  currentSession = { ...pendingResume }; pendingResume = null;
+  localSave(); showQuestionScreen(); updateQuestion();
+  showToast('前回の続きから再開しました', 'success');
+}
+function clearResume() {
+  pendingResume = null; localSave();
+  updateResumeBtn();
+  scheduleAutoSave();
+}
+
+// ============================================================
+//  MAIN LOGIC
+// ============================================================
+let questions = [], answers = [], current = 0, currentSession = null;
+
+// フィルターは科目×形式の4種（労基/安衛 × 択一/選択）。判定は cat による
+const FILTERS = [
+  { key: '択一式（労一）', label: '労一 択一' },
+  { key: '選択式（労一）', label: '労一 選択' },
+  { key: '択一式（社一）', label: '社一 択一' },
+  { key: '選択式（社一）', label: '社一 選択' },
+];
+const ALL_CATS = FILTERS.map(f => f.key);
+let selectedCats = new Set(ALL_CATS); // 複数選択（初期は全カテゴリ選択）
+
+// ============================================================
+//  FILTER（4カテゴリ複数選択トグル：労一/社一 × 択一/選択）
+// ============================================================
+function initFilters() {
+  const btns = document.getElementById('filterBtns');
+  const allBtn = btns.querySelector('[data-cat="all"]');
+  if (allBtn) allBtn.onclick = () => toggleFilter('all', allBtn);
+  FILTERS.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-filter active'; btn.textContent = f.label; btn.dataset.cat = f.key;
+    btn.onclick = () => toggleFilter(f.key, btn);
+    btns.appendChild(btn);
+  });
+  refreshFilterUI();
+}
+function toggleFilter(cat, btn) {
+  if (cat === 'all') {
+    selectedCats = new Set(ALL_CATS);          // 「すべて」→全選択に戻す
+  } else if (selectedCats.has(cat)) {
+    if (selectedCats.size > 1) selectedCats.delete(cat);  // 最後の1つは残す
+  } else {
+    selectedCats.add(cat);
+  }
+  refreshFilterUI();
+}
+function refreshFilterUI() {
+  const allSelected = selectedCats.size === ALL_CATS.length;
+  document.querySelectorAll('.btn-filter').forEach(b => {
+    const c = b.dataset.cat;
+    if (c === 'all') b.classList.toggle('active', allSelected);
+    else b.classList.toggle('active', selectedCats.has(c));
+  });
+  const p = ALL_QUESTIONS.filter(q => selectedCats.has(q.cat));
+  document.getElementById('startCount').textContent = p.length;
+  const input = document.getElementById('randomInput');
+  input.max = p.length;
+  if (parseInt(input.value) > p.length) input.value = p.length;
+  updateRandomBtn();
+}
+function getFilteredPool() {
+  return ALL_QUESTIONS.filter(q => selectedCats.has(q.cat));
+}
+
+// ============================================================
+//  RANDOM MODE
+// ============================================================
+function updateRandomBtn() {
+  const input = document.getElementById('randomInput');
+  const btn = document.getElementById('btnRandomStart');
+  btn.textContent = `${input.value}問ランダムで出題`;
+}
+function startRandom() {
+  const num = parseInt(document.getElementById('randomInput').value) || 10;
+  let pool = getFilteredPool().map(q => ({ ...q, _origIdx: ALL_QUESTIONS.indexOf(q) }));
+  if (num >= pool.length) pool = pool;
+  else {
+    pool = pool.sort(() => Math.random() - 0.5).slice(0, num);
+  }
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => q._origIdx), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`${pool.length}問をランダム出題開始`, 'success');
+}
+
+// 栞ランダムモード
+function updateBookmarkRandomBtn() {
+  const input = document.getElementById('bookmarkRandomInput');
+  const btn = document.getElementById('btnBookmarkRandomStart');
+  btn.textContent = `栞から${input.value}問ランダムで出題`;
+}
+function startBookmarkRandom() {
+  if (bookmarks.size === 0) { showToast('栞がありません', 'warn'); return; }
+  const num = parseInt(document.getElementById('bookmarkRandomInput').value) || 10;
+  let pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(q => q.no);
+  if (num < pool.length) {
+    pool = pool.sort(() => Math.random() - 0.5).slice(0, num);
+  }
+  if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => q._origIdx), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`栞から${pool.length}問をランダム出題開始`, 'success');
+}
+
+// ============================================================
+//  SHUFFLE
+// ============================================================
+function shuffle() {
+  const pool = getFilteredPool();
+  const indices = Array.from({length: pool.length}, (_, i) => i);
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  ALL_QUESTIONS.length = 0;
+  indices.forEach(i => ALL_QUESTIONS.push(pool[i]));
+  showToast('問題をシャッフルしました', 'success');
+}
+
+// ============================================================
+//  START MODES
+// ============================================================
+function start() {
+  const s = {};
+  startSession(s);
+}
+function startBookmarks() {
+  if (bookmarks.size === 0) { showToast('栞がありません', 'warn'); return; }
+  const s = { useBookmarks: true };
+  startSession(s);
+}
+function startSession(s) {
+  let pool = [];
+  
+  if (s.useBookmarks) {
+    pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
+  } else if (s.useWeak) {
+    let p = ALL_QUESTIONS.map((q, i) => ({ ...q, _origIdx: i }));
+    pool = p.filter(q => {
+      const stat = questionStats[q._origIdx];
+      return stat && stat.total > 0 && (stat.correct / stat.total) <= 0.5;
+    });
+  } else {
+    pool = getFilteredPool().map(q => ({ ...q, _origIdx: ALL_QUESTIONS.indexOf(q) }));
+  }
+
+  if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
+  
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => q._origIdx), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+}
+
+function getOrigIdx(q) { return q._origIdx !== undefined ? q._origIdx : ALL_QUESTIONS.indexOf(q); }
+
+// ============================================================
+//  SCREENS
+// ============================================================
+function showMain() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('show'));
+  document.getElementById('screenMain').classList.add('show');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tabMain').classList.add('active');
+  
+  // メイン画面表示時に進行中セッションがあれば questionScreen に、なければ startScreen に
+  if (questions.length > 0 && current < questions.length) {
+    showQuestionScreen(); updateQuestion();
+  } else {
+    document.getElementById('startScreen').style.display = 'block';
+    document.getElementById('questionScreen').style.display = 'none';
+    document.getElementById('resultScreen').style.display = 'none';
+    document.getElementById('progressWrap').style.display = 'none';
+  }
+}
+function showBookmarks() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('show'));
+  document.getElementById('screenBookmarks').classList.add('show');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tabBookmarks').classList.add('active');
+  document.querySelector('.bookmark-list').classList.add('show');
+  renderBookmarks();
+}
+
+function showQuestionScreen() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('questionScreen').style.display = 'block';
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'block';
+}
+function showResultScreen() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('questionScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'block';
+  document.getElementById('progressWrap').style.display = 'none';
+  renderResults();
+}
+
+// ============================================================
+//  UPDATE QUESTION
+// ============================================================
+function updateQuestion() {
+  if (questions.length === 0 || current >= questions.length) return;
+  
+  const q = questions[current];
+  const currentQIndex = getOrigIdx(q);
+  
+  // プログレスバー
+  const progressInfo = `${current + 1} / ${questions.length}`;
+  const correctCount = answers.filter(a => a && a.correct).length;
+  document.getElementById('progressNum').textContent = progressInfo;
+  document.getElementById('progressScore').textContent = `正解: ${correctCount}問`;
+  document.getElementById('progressFill').style.width = `${((current + 1) / questions.length) * 100}%`;
+  
+  // 問題カード
+  document.getElementById('qTag').textContent = q.cat;
+  document.getElementById('qNum').textContent = q.no + (q.opt ? '-' + q.opt : '');
+  if (q.type === 'select') {
+    document.getElementById('qText').innerHTML = q.context;
+    // 空欄を強調
+    const regex = /【[A-Z]】/g;
+    document.getElementById('qText').innerHTML = document.getElementById('qText').innerHTML.replace(
+      regex, '<span class="q-blank">$&</span>'
+    );
+  } else {
+    document.getElementById('qText').textContent = q.q;
+  }
+  
+  // タイプバッジ
+  const typeBadge = document.getElementById('qTypeBadge');
+  if (q.type === 'select') {
+    typeBadge.textContent = '選択式';
+    typeBadge.className = 'q-type-badge sel';
+    typeBadge.style.display = 'inline-block';
+  } else {
+    typeBadge.textContent = '○×';
+    typeBadge.className = 'q-type-badge ox';
+    typeBadge.style.display = 'inline-block';
+  }
+
+  // ★ 正答率バッジ・挑戦回数バッジ・栞ボタン（回答後のみ表示）
+  const accEl  = document.getElementById('qAcc');
+  const triesEl = document.getElementById('qTries');
+  const bBtn = document.getElementById('btnBookmark');
+
+  const ans    = answers[current];
+  const panel  = document.getElementById('resultPanel');
+  const nextBtn = document.getElementById('btnNext');
+  const isSelect = (q.type === 'select');
+
+  if (ans) {
+    // 回答後：バッジ・栞を表示
+    const accInfo = getAccuracyInfo(currentQIndex);
+    if (accInfo) {
+      accEl.textContent = `過去${accInfo.total}回: ${accInfo.pct}%正解`;
+      accEl.className   = `q-acc ${accInfo.cls}`;
+      accEl.style.display = 'inline-block';
+    } else {
+      accEl.style.display = 'none';
+    }
+    const s = questionStats[currentQIndex];
+    const tries = s ? s.total : 0;
+    triesEl.textContent = `挑戦${tries}回`;
+    triesEl.style.display = 'inline-block';
+    bBtn.textContent = bookmarks.has(currentQIndex) ? '★' : '☆';
+    bBtn.classList.toggle('active', bookmarks.has(currentQIndex));
+    bBtn.style.visibility = 'visible';
+  } else {
+    // 回答前：バッジ・栞を非表示
+    accEl.style.display = 'none';
+    triesEl.style.display = 'none';
+    bBtn.textContent = '☆';
+    bBtn.classList.remove('active');
+    bBtn.style.visibility = 'hidden';
+  }
+
+  // ボタン群の表示切替
+  document.getElementById('oxRow').style.display       = isSelect ? 'none' : 'grid';
+  document.getElementById('choicesGrid').style.display = isSelect ? 'grid' : 'none';
+  if (ans) {
+    if (isSelect) renderChoices(q, ans.userChoice, true);
+    else          renderOxButtons(q, ans.userChoice, true);
+    showResultPanel(q, ans.correct);
+    nextBtn.style.display = 'block';
+  } else {
+    if (isSelect) renderChoices(q, null, false);
+    else          renderOxButtons(q, null, false);
+    panel.style.display = 'none'; panel.className = 'result-panel';
+    nextBtn.style.display = 'none';
+  }
+  document.getElementById('btnBack').disabled = (current === 0);
+  document.getElementById('btnSkip').style.display = ans ? 'none' : 'block';
+}
+
+function renderOxButtons(q, userChoice, isAnswered) {
+  const bm = document.getElementById('btnMaru');
+  const bb = document.getElementById('btnBatsu');
+  // ラベルをリセット
+  bm.innerHTML = '<div>○</div><div class="btn-label">正しい</div>';
+  bb.innerHTML = '<div>×</div><div class="btn-label">誤り</div>';
+  bm.className = 'btn-answer btn-maru'; bb.className = 'btn-answer btn-batsu';
+  bm.disabled = false; bb.disabled = false;
+  if (isAnswered) {
+    bm.disabled = true; bb.disabled = true;
+    if (userChoice === true) {
+      bm.className = q.a === true  ? 'btn-answer correct-chosen' : 'btn-answer wrong-chosen';
+      if (q.a !== true)  bb.className = 'btn-answer reveal-correct';
+      // あなたの選択ラベル
+      bm.innerHTML += '<div class="your-choice-label">▶ あなたの選択</div>';
+    } else {
+      bb.className = q.a === false ? 'btn-answer correct-chosen' : 'btn-answer wrong-chosen';
+      if (q.a !== false) bm.className = 'btn-answer reveal-correct';
+      // あなたの選択ラベル
+      bb.innerHTML += '<div class="your-choice-label">▶ あなたの選択</div>';
+    }
+  }
+}
+
+// 選択式問題の描画（選択式を含む科目でオーバーライドして使用）
+function renderChoices(q, userChoice, isAnswered) {
+  const grid = document.getElementById('choicesGrid');
+  grid.innerHTML = '';
+  // 選択肢を問題ごとに1回だけシャッフルしてキャッシュ（回答後の再描画でも順序を固定）
+  if (!q._shuffledChoices) {
+    const arr = [...q.choices];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const jj = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[jj]] = [arr[jj], arr[i]];
+    }
+    q._shuffledChoices = arr;
+  }
+  q._shuffledChoices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-choice'; btn.textContent = c;
+    if (isAnswered) {
+      btn.disabled = true;
+      if (c === q.answer)   btn.className = c === userChoice ? 'btn-choice correct-chosen' : 'btn-choice reveal-correct';
+      if (c === userChoice && c !== q.answer) btn.className = 'btn-choice wrong-chosen';
+      if (c === userChoice) btn.innerHTML += '<div class="your-choice-label">▶ あなたの選択</div>';
+    } else {
+      btn.onclick = () => answerSelect(c);
+    }
+    grid.appendChild(btn);
+  });
+}
+
+function showResultPanel(q, isCorrect) {
+  const panel = document.getElementById('resultPanel');
+  panel.style.display = 'block';
+  panel.className     = isCorrect ? 'result-panel correct' : 'result-panel wrong';
+  document.getElementById('resultHeader').textContent = isCorrect ? '✓ 正解！' : '✗ 不正解';
+  document.getElementById('resultExp').innerHTML = (q.exp || '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/「([^」]*)」/g, '「<b>$1</b>」');
+  document.getElementById('resultSource').textContent = '根拠：' + q.src;
+}
+
+// ============================================================
+//  ANSWER
+// ============================================================
+function answerOx(userAnswer) {
+  if (answers[current]) return;
+  const q         = questions[current];
+  const isCorrect = userAnswer === q.a;
+  answers[current] = { correct: isCorrect, userChoice: userAnswer };
+  recordStat(getOrigIdx(q), isCorrect);
+  localSave(); updateQuestion(); scheduleAutoSave();
+}
+function answerSelect(userChoice) {
+  if (answers[current]) return;
+  const q         = questions[current];
+  const isCorrect = userChoice === q.answer;
+  answers[current] = { correct: isCorrect, userChoice };
+  recordStat(getOrigIdx(q), isCorrect);
+  localSave(); updateQuestion(); scheduleAutoSave();
+}
+
+// ============================================================
+//  NAVIGATION
+// ============================================================
+function nextQuestion() {
+  if (current < questions.length - 1) { current++; updateQuestion(); }
+  else { finishSession(); }
+  currentSession.current = current; localSave();
+}
+function prevQuestion() {
+  if (current > 0) { current--; updateQuestion(); }
+  currentSession.current = current; localSave();
+}
+function skip() {
+  if (current < questions.length - 1) { current++; updateQuestion(); }
+  else { finishSession(); }
+  currentSession.current = current; localSave();
+}
+function suspend() {
+  // 中断時にセッションデータをpendingResumeに移す
+  if (currentSession) {
+    pendingResume = {
+      questionIndices: questions.map(q => getOrigIdx(q)),
+      current,
+      answers: [...answers]
+    };
+    currentSession = null;
+    localSave(); scheduleAutoSave();
+  }
+  
+  questions = []; answers = []; current = 0;
+  document.getElementById('startScreen').style.display = 'block';
+  document.getElementById('questionScreen').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  updateResumeBtn();
+  showToast('セッションを中断しました', 'warn');
+}
+
+// ============================================================
+//  FINISH & RESULTS
+// ============================================================
+function finishSession() {
+  // 完了時にセッションデータをクリア
+  currentSession = null; pendingResume = null;
+  localSave(); scheduleAutoSave();
+  showResultScreen();
+}
+function renderResults() {
+  const correct = answers.filter(a => a && a.correct).length;
+  const wrong   = answers.filter(a => a && !a.correct).length;
+  const skipped = answers.filter(a => !a).length;
+  const total   = questions.length;
+  const rate    = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+  document.getElementById('resultScoreText').textContent = `${correct} / ${total}`;
+  document.getElementById('correctCount').textContent   = correct;
+  document.getElementById('wrongCount').textContent     = wrong;
+  document.getElementById('skippedCount').textContent   = skipped;
+  
+  let msg = `正解率: ${rate}%\n`;
+  if (rate >= 80) msg += '素晴らしい結果です！';
+  else if (rate >= 60) msg += '良い成績です！';
+  else if (rate >= 40) msg += 'もう少し頑張りましょう。';
+  else msg += '復習をお勧めします。';
+  
+  document.getElementById('resultMessage').textContent = msg;
+  
+  // 再挑戦ボタンの表示制御
+  document.getElementById('btnRetryWrong').style.display = wrong > 0 ? 'inline-block' : 'none';
+  document.getElementById('btnRetrySkipped').style.display = skipped > 0 ? 'inline-block' : 'none';
+}
+
+// ============================================================
+//  RETRY
+// ============================================================
+function retryWrong() {
+  const wrongIndices = [];
+  answers.forEach((a, i) => { if (a && !a.correct) wrongIndices.push(i); });
+  if (wrongIndices.length === 0) return;
+  
+  const pool = wrongIndices.map(i => questions[i]);
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => getOrigIdx(q)), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`${pool.length}問の復習を開始`, 'success');
+}
+function retrySkipped() {
+  const skippedIndices = [];
+  answers.forEach((a, i) => { if (!a) skippedIndices.push(i); });
+  if (skippedIndices.length === 0) return;
+  
+  const pool = skippedIndices.map(i => questions[i]);
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { questionIndices: pool.map(q => getOrigIdx(q)), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`${pool.length}問の復習を開始`, 'success');
+}
+function restart() {
+  questions = []; answers = []; current = 0;
+  currentSession = null; pendingResume = null;
+  localSave();
+  document.getElementById('startScreen').style.display = 'block';
+  document.getElementById('questionScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+}
+
+// ============================================================
+//  BOOKMARKS
+// ============================================================
+function renderBookmarks() {
+  const container = document.getElementById('bookmarkItems');
+  const empty = document.getElementById('emptyBookmarks');
+  
+  if (bookmarks.size === 0) {
+    container.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  
+  empty.style.display = 'none';
+  container.innerHTML = '';
+  
+  [...bookmarks].sort((a, b) => a - b).forEach(idx => {
+    const q = ALL_QUESTIONS[idx];
+    if (!q) return;
+    
+    const item = document.createElement('div');
+    item.className = 'bm-item';
+    item.onclick = () => startFromBookmark(idx);
+    
+    const star = document.createElement('div');
+    star.className = 'bm-star'; star.textContent = '★';
+    
+    const tag = document.createElement('div');
+    tag.className = 'bm-tag'; tag.textContent = q.cat;
+    
+    const acc = document.createElement('div');
+    const accInfo = getAccuracyInfo(idx);
+    if (accInfo) {
+      acc.className = `bm-acc ${accInfo.cls}`;
+      acc.textContent = `${accInfo.pct}%`;
+    }
+    
+    const text = document.createElement('div');
+    text.className = 'bm-text';
+    if (q.type === 'select') {
+      text.textContent = `【${q.opt}】${q.context.slice(0, 80)}...`;
+    } else {
+      text.textContent = `${q.no}-${q.opt}: ${q.q.slice(0, 80)}...`;
+    }
+    
+    item.appendChild(star);
+    item.appendChild(tag);
+    if (accInfo) item.appendChild(acc);
+    item.appendChild(text);
+    container.appendChild(item);
+  });
+}
+
+function startFromBookmark(startIdx) {
+  const pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i }))
+    .filter(Boolean).sort((a, b) => a._origIdx - b._origIdx);
+  const startPos = pool.findIndex(q => q._origIdx === startIdx);
+  
+  questions = pool; answers = Array(pool.length).fill(null); 
+  current = Math.max(0, startPos);
+  currentSession = { questionIndices: pool.map(q => q._origIdx), current, answers: [...answers] };
+  showMain(); showQuestionScreen(); updateQuestion();
+}
+
+// ============================================================
+//  TOAST
+// ============================================================
+function showToast(message, type = 'info') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = `toast${type ? ' ' + type : ''}`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  localLoad();
+  initFilters();
+  updateBmBadge();
+  updateWeakBtn();
+  updateLeastTriedBtn();
+  updateResumeBtn();
+  if (pendingResume) offerResume();
+});
+
+// アプリ情報の表示
+document.getElementById('appTitle').textContent    = APP_CONFIG.title;
+document.getElementById('appSubtitle').textContent = APP_CONFIG.subtitle;
+
+// 栞ボタンの表示制御
+function checkBookmarkButton() {
+  const btn = document.getElementById('btnBookmarkStart');
+  btn.style.display = bookmarks.size > 0 ? 'block' : 'none';
+  // 栞ランダムモードの表示制御
+  const bmRandom = document.getElementById('bookmarkRandomMode');
+  if (bmRandom) {
+    bmRandom.style.display = bookmarks.size > 0 ? 'block' : 'none';
+    const input = document.getElementById('bookmarkRandomInput');
+    if (input) {
+      input.max = bookmarks.size;
+      if (parseInt(input.value) > bookmarks.size) input.value = bookmarks.size;
+      updateBookmarkRandomBtn();
+    }
+  }
+}
+
+// 初期化時に栞ボタンをチェック
+document.addEventListener('DOMContentLoaded', () => {
+  checkBookmarkButton();
+});
+
+// 栞の更新時に栞ボタンもチェック
+function updateBmBadge() {
+  const badge = document.getElementById('bmBadge');
+  if (bookmarks.size > 0) {
+    badge.textContent = bookmarks.size;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+  checkBookmarkButton(); // 栞ボタンの表示も更新
+}
+</script>
+</body>
+</html>
