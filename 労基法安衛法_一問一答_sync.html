@@ -1134,17 +1134,15 @@ function clearResume() {
 // ============================================================
 let questions = [], answers = [], current = 0, currentSession = null;
 
-// フィルターは科目×形式の4種（労基/安衛 × 択一/選択）。判定は cat による
+// フィルターは科目×形式の4カテゴリ（労基/安衛 × 択一/選択）。cat依存の複数選択（トグル）
 const FILTERS = [
   { key: '択一式（労働基準法）', label: '労基 択一' },
   { key: '択一式（安全衛生法）', label: '安衛 択一' },
   { key: '選択式（労働基準法）', label: '労基 選択' },
   { key: '選択式（安全衛生法）', label: '安衛 選択' },
 ];
-function filterMatch(q, key) {
-  if (key === 'all') return true;
-  return q.cat === key;
-}
+const ALL_CATS = FILTERS.map(f => f.key);
+let selectedCats = new Set(ALL_CATS);   // 初期は全カテゴリ選択
 
 // ============================================================
 //  FILTER
@@ -1152,32 +1150,43 @@ function filterMatch(q, key) {
 function initFilters() {
   const btns = document.getElementById('filterBtns');
   const allBtn = btns.querySelector('[data-cat="all"]');
-  if (allBtn) allBtn.onclick = () => selectFilter('all', allBtn);
+  if (allBtn) allBtn.onclick = () => toggleFilter('all', allBtn);
   FILTERS.forEach(f => {
     const btn = document.createElement('button');
     btn.className = 'btn-filter'; btn.textContent = f.label; btn.dataset.cat = f.key;
-    btn.onclick = () => selectFilter(f.key, btn);
+    btn.onclick = () => toggleFilter(f.key, btn);
     btns.appendChild(btn);
   });
+  refreshFilterUI();
 }
-function selectFilter(cat, btn) {
-  document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  
-  const p = ALL_QUESTIONS.filter(q => filterMatch(q, cat));
-  
+function toggleFilter(cat, btn) {
+  if (cat === 'all') {
+    selectedCats = new Set(ALL_CATS);            // すべて→全カテゴリ選択
+  } else if (selectedCats.has(cat)) {
+    if (selectedCats.size > 1) selectedCats.delete(cat);  // 解除（最後の1つは残す）
+  } else {
+    selectedCats.add(cat);                        // 追加
+  }
+  refreshFilterUI();
+}
+function refreshFilterUI() {
+  // ボタンのactive状態を selectedCats に同期（すべて＝全カテゴリ選択時に点灯）
+  document.querySelectorAll('.btn-filter').forEach(b => {
+    const c = b.dataset.cat;
+    const on = (c === 'all') ? (selectedCats.size === ALL_CATS.length) : selectedCats.has(c);
+    b.classList.toggle('active', on);
+  });
+  // 件数表示・ランダム入力max を更新
+  const p = getFilteredPool();
   document.getElementById('startCount').textContent = p.length;
-  
-  // ランダム入力の max を更新
   const input = document.getElementById('randomInput');
-  input.max = p.length; 
+  input.max = p.length;
   if (parseInt(input.value) > p.length) input.value = p.length;
   updateRandomBtn();
 }
 function getFilteredPool() {
-  const active = document.querySelector('.btn-filter.active');
-  if (!active) return ALL_QUESTIONS;
-  return ALL_QUESTIONS.filter(q => filterMatch(q, active.dataset.cat));
+  if (selectedCats.size === 0) return ALL_QUESTIONS;
+  return ALL_QUESTIONS.filter(q => selectedCats.has(q.cat));
 }
 
 // ============================================================
