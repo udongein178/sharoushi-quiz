@@ -78,6 +78,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .your-choice-label{font-size:9px;letter-spacing:.08em;opacity:.85;margin-top:2px;font-weight:700}
 /* 挑戦回数バッジ */
 .q-tries{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;background:rgba(138,155,176,.12);border:1px solid #283848;color:#8a9bb0;display:none}
+/* 復習モード（記録非反映）バッジ */
+.q-review{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;background:rgba(232,201,122,.12);border:1px solid rgba(232,201,122,.35);color:#e8c97a;display:none}
 
 /* ===== SELECT CHOICES (選択式用) ===== */
 .choices-grid{display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
@@ -264,6 +266,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
     <button id="btnRandomStart" class="btn-start" onclick="startRandom()">10問ランダムで出題</button>
   </div>
 
+  <!-- 直近X日間に間違えた問題モード -->
+  <div id="recentWrongMode" class="random-mode" style="display:none">
+    <div class="random-input-wrap">
+      <input id="recentWrongInput" class="random-input" type="number" value="7" min="1" max="90" oninput="updateRecentWrongBtn()">
+      <span class="random-label">日以内に間違えた問題</span>
+    </div>
+    <button id="btnRecentWrongStart" class="btn-start" onclick="startRecentWrong()">直近7日間で間違えた問題を出題</button>
+  </div>
+
   <!-- 栞ランダム出題モード -->
   <div id="bookmarkRandomMode" class="random-mode" style="display:none">
     <div class="random-input-wrap">
@@ -293,6 +304,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
       <span id="qNum" class="q-num"></span>
       <span id="qAcc" class="q-acc"></span>
       <span id="qTries" class="q-tries"></span>
+      <span id="qReview" class="q-review">🔁 記録に反映されません</span>
     </div>
     <div id="qText" class="q-text"></div>
     <button id="btnBookmark" class="btn-bookmark" onclick="toggleBookmark()">☆</button>
@@ -1032,6 +1044,7 @@ function mergeCloudData(data) {
   updateBmBadge();
   updateWeakBtn();
   updateLeastTriedBtn();
+  updateRecentWrongBtn();
   updateResumeBtn();
   if (pendingResume) offerResume();
 }
@@ -1089,9 +1102,55 @@ let questionStats = {}; // { origIdx: {correct:N, total:N} }
 
 function recordStat(origIdx, isCorrect) {
   if (!questionStats[origIdx]) questionStats[origIdx] = {correct:0, total:0};
-  questionStats[origIdx].total++;
-  if (isCorrect) questionStats[origIdx].correct++;
-  localSave(); scheduleAutoSave(); updateWeakBtn(); updateLeastTriedBtn();
+  // ★ lw = last wrong（最後に間違えた時刻）。1問1個・上書き。復習モードでも必ず更新する。
+  //    （更新しないと、復習で間違え続けても日数窓から外れてしまうため）
+  if (!isCorrect) questionStats[origIdx].lw = Date.now();
+  // ★ 復習モード（noStats）では correct/total を更新しない
+  //    ＝「正答率50%以下」「挑戦回数が少ない」モードの純度を保つ
+  if (!(currentSession && currentSession.noStats)) {
+    questionStats[origIdx].total++;
+    if (isCorrect) questionStats[origIdx].correct++;
+  }
+  localSave(); scheduleAutoSave(); updateWeakBtn(); updateLeastTriedBtn(); updateRecentWrongBtn();
+}
+
+// ============================================================
+//  RECENT WRONG（直近X日間に間違えた問題）
+// ============================================================
+function getRecentWrongDays() {
+  const el = document.getElementById('recentWrongInput');
+  const v = el ? parseInt(el.value) : 7;
+  return (!v || v < 1) ? 7 : Math.min(v, 90);
+}
+function getRecentWrongPool(days) {
+  const limit = Date.now() - days * 24 * 60 * 60 * 1000;
+  return ALL_QUESTIONS.map((q, i) => ({ q, i }))
+    .filter(x => {
+      const s = questionStats[x.i];
+      return s && s.lw && s.lw >= limit;
+    })
+    .map(x => ({ ...x.q, _origIdx: x.i }));
+}
+function updateRecentWrongBtn() {
+  const wrap = document.getElementById('recentWrongMode');
+  const btn  = document.getElementById('btnRecentWrongStart');
+  if (!wrap || !btn) return;
+  // 過去90日以内に1問でも間違い記録があるときのみモード自体を表示
+  const anyLog = Object.keys(questionStats).some(k => {
+    const s = questionStats[k];
+    return s && s.lw && s.lw >= Date.now() - 90 * 24 * 60 * 60 * 1000;
+  });
+  wrap.style.display = anyLog ? 'block' : 'none';
+  if (!anyLog) return;
+  const d = getRecentWrongDays();
+  const n = getRecentWrongPool(d).length;
+  btn.textContent = `直近${d}日間で間違えた問題を出題（${n}問）`;
+  btn.disabled = (n === 0);
+  btn.style.opacity = n === 0 ? '.45' : '1';
+}
+function startRecentWrong() {
+  const d = getRecentWrongDays();
+  startSession({ useRecentWrong: true, days: d });
 }
 function getAccuracyInfo(origIdx) {
   const s = questionStats[origIdx];
@@ -1317,6 +1376,8 @@ function startSession(s) {
   
   if (s.useBookmarks) {
     pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
+  } else if (s.useRecentWrong) {
+    pool = getRecentWrongPool(s.days || 7);
   } else if (s.useWeak) {
     let p = ALL_QUESTIONS.map((q, i) => ({ ...q, _origIdx: i }));
     pool = p.filter(q => {
@@ -1330,8 +1391,10 @@ function startSession(s) {
   if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
   
   questions = pool; answers = Array(pool.length).fill(null); current = 0;
-  currentSession = { questionIndices: pool.map(q => q._origIdx), current: 0, answers: [...answers] };
+  // ★ noStats: 復習モードでは正答率・挑戦回数に反映しない
+  currentSession = { questionIndices: pool.map(q => q._origIdx), current: 0, answers: [...answers], noStats: !!s.useRecentWrong };
   showQuestionScreen(); updateQuestion();
+  if (s.useRecentWrong) showToast(`直近${s.days || 7}日間の誤答${pool.length}問を復習（記録に反映されません）`, 'success');
 }
 
 function getOrigIdx(q) { return q._origIdx !== undefined ? q._origIdx : ALL_QUESTIONS.indexOf(q); }
@@ -1424,6 +1487,10 @@ function updateQuestion() {
   const accEl  = document.getElementById('qAcc');
   const triesEl = document.getElementById('qTries');
   const bBtn = document.getElementById('btnBookmark');
+
+  // ★ 復習モード（記録非反映）バッジ
+  const revEl = document.getElementById('qReview');
+  if (revEl) revEl.style.display = (currentSession && currentSession.noStats) ? 'inline-block' : 'none';
 
   const ans    = answers[current];
   const panel  = document.getElementById('resultPanel');
@@ -1747,6 +1814,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateBmBadge();
   updateWeakBtn();
   updateLeastTriedBtn();
+  updateRecentWrongBtn();
   updateResumeBtn();
   if (pendingResume) offerResume();
 });
