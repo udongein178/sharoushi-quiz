@@ -978,14 +978,16 @@ document.addEventListener('visibilitychange', () => {
 function buildSavePayload() {
   // 現在進行中のセッション or 中断済みの pendingResume を保存
   let sessionData = null;
-  if (currentSession && questions.length > 0) {
+  // ★ 中断セッション（pendingResume）を最優先で保存。別モードを実行中でも中断点を失わない。
+  //    pendingResume が無いときのみ、進行中セッションを保存（タブを閉じた際の自動復帰用）。
+  if (pendingResume) {
+    sessionData = pendingResume;
+  } else if (currentSession && questions.length > 0) {
     sessionData = {
       questionIndices: questions.map(q => getOrigIdx(q)),
       current,
       answers: [...answers]
     };
-  } else if (pendingResume) {
-    sessionData = pendingResume;
   }
   return {
     version: 2,
@@ -1373,6 +1375,7 @@ function showMain() {
     document.getElementById('questionScreen').style.display = 'none';
     document.getElementById('resultScreen').style.display = 'none';
     document.getElementById('progressWrap').style.display = 'none';
+    updateResumeBtn();   // ★ 中断セッションがあれば「続きから開始」を表示
   }
 }
 function showBookmarks() {
@@ -1623,8 +1626,9 @@ function suspend() {
 //  FINISH & RESULTS
 // ============================================================
 function finishSession() {
-  // 完了時にセッションデータをクリア
-  currentSession = null; pendingResume = null;
+  // ★ 完了時は現在のセッションのみクリア。中断中の pendingResume は消さない
+  //    （中断→別モード実行→そのモードを完了、で中断点が消える不具合の修正）
+  currentSession = null;
   localSave(); scheduleAutoSave();
   showResultScreen();
 }
@@ -1680,12 +1684,13 @@ function retrySkipped() {
 }
 function restart() {
   questions = []; answers = []; current = 0;
-  currentSession = null; pendingResume = null;
+  currentSession = null;   // ★ pendingResume（中断セッション）は保持する
   localSave();
   document.getElementById('startScreen').style.display = 'block';
   document.getElementById('questionScreen').style.display = 'none';
   document.getElementById('resultScreen').style.display = 'none';
   document.getElementById('progressWrap').style.display = 'none';
+  updateResumeBtn();   // ★ 中断セッションがあれば「続きから開始」を再表示
 }
 
 // ============================================================
