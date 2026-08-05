@@ -1739,10 +1739,22 @@ function suspend() {
 //  FINISH & RESULTS
 // ============================================================
 function finishSession() {
+  // ★ 改修D-2補強: 復習セッション（noStats）だった場合、そのセッションで正解した問題の
+  //    lw をまとめてクリアする。1問ずつの recordStat に取りこぼしがあっても、
+  //    完了時に確実に「直近X日間に間違えた問題」プールから除外する。
+  if (currentSession && currentSession.noStats) {
+    questions.forEach((q, i) => {
+      const a = answers[i];
+      if (a && a.correct) {
+        const oi = getOrigIdx(q);
+        if (questionStats[oi]) delete questionStats[oi].lw;
+      }
+    });
+  }
   // ★ 完了時は現在のセッションのみクリア。中断中の pendingResume は消さない
   //    （中断→別モード実行→そのモードを完了、で中断点が消える不具合の修正）
   currentSession = null;
-  localSave(); scheduleAutoSave();
+  localSave(); scheduleAutoSave(); updateRecentWrongBtn();
   showResultScreen();
 }
 function renderResults() {
