@@ -1070,10 +1070,18 @@ let questionStats = {}; // { origIdx: {correct:N, total:N} }
 
 function recordStat(origIdx, isCorrect) {
   if (!questionStats[origIdx]) questionStats[origIdx] = {correct:0, total:0};
-  // ★ lw = last wrong（最後に間違えた時刻）。1問1個・上書き。復習モードでも必ず更新する。
-  if (!isCorrect) questionStats[origIdx].lw = Date.now();
+  const inReview = !!(currentSession && currentSession.noStats);
+  // ★ lw = last wrong（最後に間違えた時刻）。1問1個・上書き。
+  if (!isCorrect) {
+    // 誤答時は常に lw を更新（復習モードでも間違えた問題は日数窓に残す＝間隔リセット）
+    questionStats[origIdx].lw = Date.now();
+  } else if (inReview) {
+    // ★ 改修D-2: 復習モードで正解＝記憶定着とみなし、lw をクリアして復習プールから除外する
+    //    （忘却曲線に沿った間隔反復。正解した問題は「直近X日間に間違えた問題」から外れる）
+    delete questionStats[origIdx].lw;
+  }
   // ★ 復習モード（noStats）では correct/total を更新しない（既存モードの純度を保つ）
-  if (!(currentSession && currentSession.noStats)) {
+  if (!inReview) {
     questionStats[origIdx].total++;
     if (isCorrect) questionStats[origIdx].correct++;
   }
@@ -1619,10 +1627,22 @@ function suspend() {
 //  FINISH & RESULTS
 // ============================================================
 function finishSession() {
+  // ★ 改修D-2補強: 復習セッション（noStats）だった場合、そのセッションで正解した問題の
+  //    lw をまとめてクリアする。1問ずつの recordStat に取りこぼしがあっても、
+  //    完了時に確実に「直近X日間に間違えた問題」プールから除外する。
+  if (currentSession && currentSession.noStats) {
+    questions.forEach((q, i) => {
+      const a = answers[i];
+      if (a && a.correct) {
+        const oi = getOrigIdx(q);
+        if (questionStats[oi]) delete questionStats[oi].lw;
+      }
+    });
+  }
   // ★ 完了時は現在のセッションのみクリア。中断中の pendingResume は消さない
   //    （中断→別モード実行→そのモードを完了、で中断点が消える不具合の修正）
   currentSession = null;
-  localSave(); scheduleAutoSave();
+  localSave(); scheduleAutoSave(); updateRecentWrongBtn();
   showResultScreen();
 }
 function renderResults() {
