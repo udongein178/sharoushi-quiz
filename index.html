@@ -32,8 +32,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
   font-size:20px;flex-shrink:0;
 }
 .card-body{flex:1;min-width:0}
-.card-title{font-size:15px;font-weight:700;color:#e8e0d0;margin-bottom:3px;letter-spacing:.02em}
-.card-sub{font-size:12px;color:#8a9bb0}
+.card-title{font-size:15px;font-weight:700;color:#e8e0d0;letter-spacing:.02em}
 .card-arrow{font-size:16px;color:#556070;flex-shrink:0}
 .card:hover .card-arrow{color:#c97a4a}
 
@@ -45,12 +44,8 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
 .icon-roho{background:rgba(201,170,74,.15);color:#c9aa4a}
 .icon-choushuu{background:rgba(180,74,201,.15);color:#b44ac9}
 .icon-general{background:rgba(201,74,74,.15);color:#c94a4a}
-.icon-toukei{background:rgba(74,201,176,.15);color:#4ac9b0}
-
-/* Progress dots (future use) */
-.card-meta{display:flex;gap:6px;align-items:center;margin-top:4px}
-.dot-ok{width:6px;height:6px;border-radius:50%;background:#3dbe82}
-.dot-empty{width:6px;height:6px;border-radius:50%;background:#283848}
+.icon-mokuteki{background:rgba(232,201,122,.15);color:#e8c97a}
+.icon-toukei{background:rgba(93,202,165,.15);color:#5dcaa5}
 
 /* Coming soon */
 .card.disabled{opacity:.45;cursor:default;pointer-events:none}
@@ -146,8 +141,8 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
     </a>
   </div>
 
-  <!-- 横断・一般常識 -->
-  <div class="section-label">横断・一般常識</div>
+  <!-- 一般常識・横断 -->
+  <div class="section-label">一般常識・横断</div>
   <div class="cards">
     <a class="card" href="労働社会保険一般常識_一問一答_sync.html">
       <div class="card-icon icon-general">📚</div>
@@ -156,7 +151,14 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
       </div>
       <span class="card-arrow">›</span>
     </a>
-    <a class="card" href="統計白書_一問一答_sync.html">
+    <a class="card" href="目的条文_一問一答_sync.html">
+      <div class="card-icon icon-mokuteki">📜</div>
+      <div class="card-body">
+        <div class="card-title">目的条文</div>
+      </div>
+      <span class="card-arrow">›</span>
+    </a>
+    <a class="card" href="sharoushi_quiz.html">
       <div class="card-icon icon-toukei">📈</div>
       <div class="card-body">
         <div class="card-title">統計・白書</div>
@@ -166,7 +168,7 @@ body{font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Yu Gothic',sans-ser
   </div>
 
   <div class="footer">
-    TAC 社労士講座 準拠教材 ·
+    TAC・LEC 準拠教材 ·
     <a href="https://github.com/udongein178/sharoushi-quiz" target="_blank">GitHub</a>
   </div>
 
