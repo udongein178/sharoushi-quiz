@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>目的条文 一問一答 — 社労士試験対策</title>
+<script src="https://apis.google.com/js/api.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#11161e;color:#e8e0d0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px}
+.app{width:100%;max-width:640px}
+
+/* ===== SYNC BAR ===== */
+.sync-bar{display:flex;align-items:center;justify-content:space-between;background:#1a2434;border:1px solid #283848;border-radius:10px;padding:10px 14px;margin-bottom:16px;gap:10px;flex-wrap:wrap}
+.sync-status{display:flex;align-items:center;gap:8px;font-size:12px;color:#8a9bb0}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#556070;flex-shrink:0;transition:background .3s}
+.sync-dot.connected{background:#3dbe82}
+.sync-dot.syncing{background:#c9a84c;animation:pulse 1s infinite}
+.sync-dot.error{background:#e05050}
+.sync-user{font-size:11px;color:#556070;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sync-btns{display:flex;gap:6px;align-items:center}
+.btn-gsign{display:flex;align-items:center;gap:6px;background:#fff;color:#3c4043;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap}
+.btn-gsign:hover{background:#f1f3f4}
+.btn-gsign svg{flex-shrink:0}
+.btn-sync{background:transparent;border:1px solid #283848;color:#8a9bb0;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-sync:hover{border-color:#4a9eca;color:#4a9eca}
+.btn-sync:disabled{opacity:.4;cursor:default}
+.btn-signout{background:transparent;border:1px solid #283848;color:#556070;border-radius:6px;padding:5px 8px;font-size:11px;cursor:pointer;transition:all .15s}
+.btn-signout:hover{border-color:#e05050;color:#e05050}
+
+/* ===== HEADER ===== */
+.header{text-align:center;padding:20px 0 16px}
+.header h1{font-size:12px;letter-spacing:.15em;color:#8a9bb0;text-transform:uppercase;margin-bottom:4px}
+.header .title{font-size:21px;font-weight:700;color:#e8e0d0}
+.header .subtitle{font-size:12px;color:#556070;margin-top:5px}
+.nav-tabs{display:flex;gap:4px;background:#131920;border-radius:10px;padding:4px;margin-bottom:18px}
+.nav-tab{flex:1;padding:8px;border:none;border-radius:8px;background:transparent;color:#556070;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.nav-tab.active{background:#1a2434;color:#e8e0d0}
+.bm-badge{display:inline-block;background:rgba(232,201,122,.2);color:#e8c97a;border-radius:4px;font-size:10px;padding:1px 5px;margin-left:4px;font-weight:700}
+
+/* ===== PROGRESS ===== */
+.progress-wrap{margin-bottom:18px}
+.progress-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.progress-num{font-size:12px;color:#8a9bb0}
+.progress-score{font-size:12px;color:#8a9bb0}
+.progress-bar-bg{width:100%;height:3px;background:#1a2434;border-radius:2px}
+.progress-bar-fill{height:3px;background:linear-gradient(90deg,#c97a4a,#e8a87a);border-radius:2px;transition:width .4s ease}
+
+/* ===== QUESTION CARD ===== */
+.card{background:#1a2434;border:1px solid #283848;border-radius:12px;padding:22px 20px;margin-bottom:14px;position:relative}
+.q-meta{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.q-tag{font-size:14px;letter-spacing:.1em;color:#c97a4a;background:rgba(201,122,74,.12);border:1px solid rgba(201,122,74,.25);border-radius:4px;padding:2px 8px;font-weight:600}
+.q-num{font-size:15px;color:#556070}
+/* Accuracy badge on card */
+.q-acc{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;display:none}
+.q-acc.low{background:rgba(224,80,80,.12);border:1px solid rgba(224,80,80,.3);color:#e05050}
+.q-acc.mid{background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);color:#c9a84c}
+.q-acc.high{background:rgba(61,190,130,.12);border:1px solid rgba(61,190,130,.3);color:#3dbe82}
+.q-text{font-size:18px;line-height:1.8;color:#d8d0c0;word-break:break-word;white-space:pre-wrap;padding-right:40px}
+.btn-bookmark{position:absolute;top:18px;right:14px;background:none;border:none;cursor:pointer;font-size:20px;line-height:1;padding:4px;color:#556070;transition:color .15s,transform .1s}
+.btn-bookmark:hover{color:#e8c97a;transform:scale(1.1)}
+.btn-bookmark.active{color:#e8c97a}
+
+/* ===== OX BUTTONS ===== */
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.btn-answer{border:none;border-radius:10px;padding:18px 12px;font-size:26px;font-weight:700;cursor:pointer;transition:transform .12s,background .15s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.btn-answer:active{transform:scale(.96)}
+.btn-maru{background:#1c3040;border:1.5px solid #2a4a60;color:#5bb8e0}
+.btn-maru:hover{background:#1e3a50;border-color:#5bb8e0}
+.btn-batsu{background:#301c1c;border:1.5px solid #50282a;color:#e07060}
+.btn-batsu:hover{background:#3a2020;border-color:#e07060}
+.btn-label{font-size:10px;letter-spacing:.1em;opacity:.7}
+.btn-answer.correct-chosen{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-answer.wrong-chosen{background:#331616;border-color:#e05050;color:#e05050}
+.btn-answer.reveal-correct{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-answer:disabled{cursor:default}
+/* あなたの選択ラベル */
+.your-choice-label{font-size:9px;letter-spacing:.08em;opacity:.85;margin-top:2px;font-weight:700}
+/* 挑戦回数バッジ */
+.q-tries{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;background:rgba(138,155,176,.12);border:1px solid #283848;color:#8a9bb0;display:none}
+/* 復習モード（記録非反映）バッジ */
+.q-review{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;background:rgba(232,201,122,.12);border:1px solid rgba(232,201,122,.35);color:#e8c97a;display:none}
+
+/* ===== SELECT CHOICES (選択式用) ===== */
+.choices-grid{display:none;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.btn-choice{background:#182030;border:1.5px solid #283848;border-radius:8px;padding:12px 10px;font-size:13px;color:#c8c0b0;cursor:pointer;transition:all .15s;text-align:center;line-height:1.5}
+.btn-choice:hover{border-color:#c97a4a;background:#1e2a3a}
+.btn-choice.correct-chosen{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-choice.wrong-chosen{background:#331616;border-color:#e05050;color:#e05050}
+.btn-choice.reveal-correct{background:#163328;border-color:#3dbe82;color:#3dbe82}
+.btn-choice:disabled{cursor:default}
+.q-type-badge{font-size:10px;border-radius:4px;padding:2px 7px;font-weight:600;letter-spacing:.05em}
+.q-type-badge.ox{background:rgba(91,184,224,.12);border:1px solid rgba(91,184,224,.25);color:#5bb8e0}
+.q-type-badge.sel{background:rgba(130,201,122,.12);border:1px solid rgba(130,201,122,.25);color:#82c97a}
+.q-blank{background:rgba(201,122,74,.15);border-bottom:2px solid #c97a4a;color:#e8a87a;padding:0 4px;font-weight:700;border-radius:2px}
+
+/* ===== RESULT PANEL ===== */
+.result-panel{border-radius:10px;padding:14px 16px;margin-bottom:14px;display:none;animation:fadeUp .2s ease}
+.result-panel.correct{background:#0d2a1e;border:1px solid #2a6044}
+.result-panel.wrong{background:#2a0d0d;border:1px solid #6a2020}
+.result-header{font-size:18px;font-weight:700;margin-bottom:8px}
+.result-panel.correct .result-header{color:#3dbe82}
+.result-panel.wrong .result-header{color:#e05050}
+.result-exp{font-size:17px;line-height:1.7;color:#a0b0c0}
+.result-exp b{color:#f0c987;font-weight:700}
+.result-source{font-size:15px;color:#556070;margin-top:8px}
+
+/* ===== NAV BUTTONS ===== */
+.nav-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px}
+.btn-nav{border-radius:9px;padding:11px 10px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid #283848;background:transparent;color:#8a9bb0;white-space:nowrap}
+.btn-nav:hover{background:#1a2434;color:#c8c0b0}
+.btn-nav:disabled{opacity:.3;cursor:default}
+/* ⏸ 中断ボタン */
+.btn-suspend{border-color:#4a3a10 !important;color:#e8c97a !important}
+.btn-suspend:hover{background:rgba(232,201,122,.1) !important;border-color:#e8c97a !important}
+.btn-next{border-radius:9px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;border:none;background:#c97a4a;color:#1a0800;letter-spacing:.05em;display:none;width:100%;margin-bottom:6px}
+.btn-next:hover{background:#e8a87a}
+
+/* ===== START SCREEN ===== */
+.start-screen{text-align:center;padding:24px 16px}
+.start-count{font-size:44px;font-weight:700;color:#c97a4a;display:block;margin-bottom:4px}
+.start-unit{font-size:13px;color:#8a9bb0;margin-bottom:22px;display:block}
+.start-desc{font-size:13px;color:#8a9bb0;line-height:1.7;margin-bottom:22px}
+.filters{margin-bottom:22px}
+.filter-label{font-size:12px;color:#8a9bb0;margin-bottom:8px}
+.filter-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.btn-filter{border:1.5px solid #283848;background:transparent;color:#8a9bb0;border-radius:18px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-filter.active{border-color:#c97a4a;background:rgba(201,122,74,.12);color:#c97a4a}
+.btn-filter:hover{border-color:#4a9eca;color:#4a9eca}
+.btn-filter.preset{border-style:dashed}
+.btn-filter.preset.active{border-style:solid}
+.filter-sep{flex-basis:100%;height:0}
+.random-mode{margin-bottom:18px}
+.random-input-wrap{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:10px}
+.random-input{background:#1a2434;border:1.5px solid #283848;border-radius:6px;color:#e8e0d0;padding:8px 10px;font-size:14px;width:60px;text-align:center}
+.random-input:focus{outline:none;border-color:#c97a4a}
+.random-label{font-size:13px;color:#8a9bb0}
+.start-btns{display:flex;flex-direction:column;gap:10px;align-items:center}
+.btn-start{border:1.5px solid #c97a4a;background:transparent;color:#c97a4a;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-start:hover{background:rgba(201,122,74,.12)}
+.btn-start.primary{background:#c97a4a;color:#1a0800}
+.btn-start.primary:hover{background:#e8a87a}
+
+/* ===== RESULT SCREEN ===== */
+.result-screen{text-align:center;padding:36px 16px}
+.result-title{font-size:24px;font-weight:700;color:#e8e0d0;margin-bottom:16px}
+.result-score{font-size:36px;font-weight:700;color:#c97a4a;margin-bottom:8px}
+.score-msg{font-size:13px;color:#8a9bb0;margin-bottom:22px;line-height:1.7;white-space:pre-line}
+.breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.breakdown-item{background:#1a2434;border:1px solid #283848;border-radius:10px;padding:12px;text-align:center}
+.breakdown-num{font-size:26px;font-weight:700}
+.breakdown-num.ok{color:#3dbe82}
+.breakdown-num.ng{color:#e05050}
+.breakdown-num.sk{color:#8a9bb0}
+.breakdown-label{font-size:11px;color:#8a9bb0;margin-top:3px}
+.btns-wrap{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.btn-retry{background:transparent;border:1.5px solid #c97a4a;color:#c97a4a;border-radius:10px;padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
+.btn-retry:hover{background:rgba(201,122,74,.12)}
+
+/* ===== BOOKMARK LIST ===== */
+.bookmark-list{display:none}
+.bookmark-list.show{display:block}
+.section-title{font-size:12px;color:#556070;letter-spacing:.1em;margin-bottom:12px;text-align:center;text-transform:uppercase}
+.bm-item{background:#1a2434;border:1px solid #283848;border-radius:10px;padding:12px 14px;margin-bottom:9px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:border-color .15s}
+.bm-item:hover{border-color:#c97a4a}
+.bm-star{font-size:14px;color:#e8c97a;flex-shrink:0}
+.bm-tag{font-size:10px;color:#c97a4a;background:rgba(201,122,74,.12);border:1px solid rgba(201,122,74,.25);border-radius:4px;padding:2px 6px;white-space:nowrap;flex-shrink:0;font-weight:600}
+.bm-acc{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;flex-shrink:0;align-self:flex-start;margin-top:1px}
+.bm-acc.low{background:rgba(224,80,80,.12);border:1px solid rgba(224,80,80,.3);color:#e05050}
+.bm-acc.mid{background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);color:#c9a84c}
+.bm-acc.high{background:rgba(61,190,130,.12);border:1px solid rgba(61,190,130,.3);color:#3dbe82}
+.bm-text{font-size:13px;line-height:1.55;color:#a0b0c0;flex:1;min-width:0}
+.empty-bm{text-align:center;padding:36px 20px;color:#556070;font-size:14px;line-height:1.7}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a2434;border:1px solid #283848;border-radius:8px;padding:10px 18px;font-size:13px;color:#e8e0d0;opacity:0;transition:all .3s;pointer-events:none;z-index:100;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:#3dbe82;color:#3dbe82}
+.toast.error{border-color:#e05050;color:#e05050}
+.toast.warn{border-color:#c9a84c;color:#c9a84c}
+
+/* ===== RESUME MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:999}
+.modal{background:#1a2434;border:1px solid #283848;border-radius:12px;padding:24px;max-width:400px;width:90vw}
+.modal-title{font-size:16px;font-weight:700;color:#e8e0d0;margin-bottom:12px}
+.modal-desc{font-size:14px;color:#a0b0c0;line-height:1.6;margin-bottom:20px}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end}
+.btn-modal{border:1.5px solid #283848;background:transparent;color:#8a9bb0;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-modal.primary{border-color:#c97a4a;color:#c97a4a}
+.btn-modal:hover{background:rgba(138,155,176,.1)}
+.btn-modal.primary:hover{background:rgba(201,122,74,.12)}
+
+/* ===== ANIMATIONS ===== */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.screen{display:none}
+.screen.show{display:block;animation:fadeUp .3s ease}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ===== GOOGLE DRIVE SYNC BAR ===== -->
+<div class="sync-bar">
+  <div class="sync-status">
+    <div id="syncDot" class="sync-dot"></div>
+    <span id="syncStatusText">Googleアカウントで同期</span>
+    <div id="syncUser" class="sync-user"></div>
+  </div>
+  <div class="sync-btns">
+    <button id="btnSignIn" class="btn-gsign" onclick="signIn()">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Googleでログイン
+    </button>
+    <button id="btnManualSync" class="btn-sync" onclick="manualSync()">↑↓ 同期</button>
+    <button id="btnSignOut" class="btn-signout" onclick="signOut()">ログアウト</button>
+  </div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <h1>社労士試験対策</h1>
+  <div id="appTitle" class="title">目的条文 一問一答</div>
+  <div id="appSubtitle" class="subtitle">18法令の目的条文　穴埋め（選択式）131問</div>
+</div>
+
+<!-- ===== NAV TABS ===== -->
+<div class="nav-tabs">
+  <button id="tabMain"  class="nav-tab active" onclick="showMain()">学習</button>
+  <button id="tabBookmarks" class="nav-tab" onclick="showBookmarks()">栞<span id="bmBadge" class="bm-badge" style="display:none">0</span></button>
+</div>
+
+<!-- ===== MAIN SCREEN ===== -->
+<div id="screenMain" class="screen show">
+
+<!-- ===== PROGRESS BAR ===== -->
+<div id="progressWrap" class="progress-wrap" style="display:none">
+  <div class="progress-info">
+    <div id="progressNum" class="progress-num">0 / 0</div>
+    <div id="progressScore" class="progress-score">正解: 0問</div>
+  </div>
+  <div class="progress-bar-bg">
+    <div id="progressFill" class="progress-bar-fill" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- ===== START SCREEN ===== -->
+<div id="startScreen" class="start-screen">
+  <span id="startCount" class="start-count">131</span>
+  <span class="start-unit">問</span>
+  <div class="start-desc">各法の目的条文の重要語句を穴埋めで想起しよう。<br>18法令・選択式131問を収録。</div>
+  
+  <!-- フィルター -->
+  <div class="filters">
+    <div class="filter-label">出題範囲（法令別・複数選択可）</div>
+    <div id="filterBtns" class="filter-btns">
+      <button class="btn-filter active" data-cat="all">すべて</button>
+    </div>
+  </div>
+
+  <!-- ランダム出題モード -->
+  <div class="random-mode">
+    <div class="random-input-wrap">
+      <input id="randomInput" class="random-input" type="number" value="10" min="1" max="131" oninput="updateRandomBtn()">
+      <span class="random-label">問をランダムで出題</span>
+    </div>
+    <button id="btnRandomStart" class="btn-start" onclick="startRandom()">10問ランダムで出題</button>
+  </div>
+
+  <!-- 直近X日間に間違えた問題モード -->
+  <div id="recentWrongMode" class="random-mode" style="display:none">
+    <div class="random-input-wrap">
+      <input id="recentWrongInput" class="random-input" type="number" value="7" min="1" max="90" oninput="updateRecentWrongBtn()">
+      <span class="random-label">日以内に間違えた問題</span>
+    </div>
+    <button id="btnRecentWrongStart" class="btn-start" onclick="startRecentWrong()">直近7日間で間違えた問題を出題</button>
+  </div>
+
+  <!-- 栞ランダム出題モード -->
+  <div id="bookmarkRandomMode" class="random-mode" style="display:none">
+    <div class="random-input-wrap">
+      <input id="bookmarkRandomInput" class="random-input" type="number" value="10" min="1" max="110" oninput="updateBookmarkRandomBtn()">
+      <span class="random-label">問を栞からランダムで出題</span>
+    </div>
+    <button id="btnBookmarkRandomStart" class="btn-start" onclick="startBookmarkRandom()">栞から10問ランダムで出題</button>
+  </div>
+
+  <!-- ボタン群 -->
+  <div class="start-btns">
+    <div id="resumeBtns" style="display:flex;flex-direction:column;gap:10px;align-items:center;width:100%"></div>
+    <button id="btnWeakStart" class="btn-start" onclick="startWeak()" style="display:none">正答率50%以下の問題を出題</button>
+    <button id="btnLeastTried" class="btn-start" onclick="startLeastTried()" style="display:none">挑戦回数が少ない問題を出題</button>
+    <button class="btn-start primary" onclick="start()">学習スタート</button>
+    <button id="btnBookmarkStart" class="btn-start" onclick="startBookmarks()" style="display:none">栞の問題のみ</button>
+  </div>
+</div>
+
+<!-- ===== QUESTION SCREEN ===== -->
+<div id="questionScreen" class="screen">
+  <div class="card">
+    <div class="q-meta">
+      <span id="qTag" class="q-tag">目的条文</span>
+      <span id="qTypeBadge" class="q-type-badge"></span>
+      <span id="qNum" class="q-num"></span>
+      <span id="qAcc" class="q-acc"></span>
+      <span id="qTries" class="q-tries"></span>
+      <span id="qReview" class="q-review">🔁 記録に反映されません</span>
+    </div>
+    <div id="qText" class="q-text"></div>
+    <button id="btnBookmark" class="btn-bookmark" onclick="toggleBookmark()">☆</button>
+  </div>
+
+  <!-- ○× ボタン -->
+  <div id="oxRow" class="btn-row">
+    <button id="btnMaru" class="btn-answer btn-maru" onclick="answerOx(true)">
+      <div>○</div><div class="btn-label">正しい</div>
+    </button>
+    <button id="btnBatsu" class="btn-answer btn-batsu" onclick="answerOx(false)">
+      <div>×</div><div class="btn-label">誤り</div>
+    </button>
+  </div>
+
+  <!-- 選択肢 -->
+  <div id="choicesGrid" class="choices-grid"></div>
+
+  <!-- 結果パネル -->
+  <div id="resultPanel" class="result-panel">
+    <div id="resultHeader" class="result-header"></div>
+    <div id="resultExp" class="result-exp"></div>
+    <div id="resultSource" class="result-source"></div>
+  </div>
+
+  <button id="btnNext" class="btn-next" onclick="nextQuestion()">次の問題</button>
+
+  <div class="nav-btns">
+    <button id="btnBack" class="btn-nav" onclick="prevQuestion()">← 戻る</button>
+    <button class="btn-nav btn-suspend" onclick="suspend()">⏸ 中断</button>
+    <button id="btnSkip" class="btn-nav" onclick="skip()">スキップ</button>
+  </div>
+</div>
+
+<!-- ===== RESULT SCREEN ===== -->
+<div id="resultScreen" class="screen">
+  <div class="result-screen">
+    <div class="result-title">結果</div>
+    <div id="resultScoreText" class="result-score">0 / 0</div>
+    <div id="resultMessage" class="score-msg"></div>
+    
+    <div class="breakdown">
+      <div class="breakdown-item">
+        <div id="correctCount" class="breakdown-num ok">0</div>
+        <div class="breakdown-label">正解</div>
+      </div>
+      <div class="breakdown-item">
+        <div id="wrongCount" class="breakdown-num ng">0</div>
+        <div class="breakdown-label">不正解</div>
+      </div>
+      <div class="breakdown-item">
+        <div id="skippedCount" class="breakdown-num sk">0</div>
+        <div class="breakdown-label">未回答</div>
+      </div>
+    </div>
+
+    <div class="btns-wrap">
+      <button id="btnRetryWrong" class="btn-retry" onclick="retryWrong()">間違えた問題を再挑戦</button>
+      <button id="btnRetrySkipped" class="btn-retry" onclick="retrySkipped()">未回答問題を再挑戦</button>
+      <button class="btn-retry" onclick="restart()">最初から</button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ===== BOOKMARK SCREEN ===== -->
+<div id="screenBookmarks" class="screen">
+<div class="bookmark-list">
+  <h3 class="section-title">栞をつけた問題</h3>
+  <div id="bookmarkItems"></div>
+  <div id="emptyBookmarks" class="empty-bm" style="display:none">
+    まだ栞をつけた問題がありません。<br>学習中に ★ ボタンを押すと、<br>後で見返したい問題を保存できます。
+  </div>
+</div>
+</div>
+
+<!-- モーダル廃止：続きから開始はスタート画面のボタンに統合 -->
+
+<!-- ===== TOAST ===== -->
+<div id="toast" class="toast"></div>
+
+<script>
+// ============================================================
+//  ★ CONFIG — 科目ごとにここだけ変更
+// ============================================================
+const APP_CONFIG = {
+  title:    '目的条文 一問一答',
+  subtitle: '18法令の目的条文　穴埋め（選択式）131問',
+  driveFileName: 'sharoushi_progress_mokuteki.json',
+  clientId: '194094449743-hoj6t28jfidlfhueiiv6iromc2lvssgf.apps.googleusercontent.com',
+};
+
+// ============================================================
+//  ★ QUESTION DATA — 問題データをここに追加
+//   ○× 型: {no, opt, q, a:bool, exp, src, cat}
+//   選択式 型: {type:'select', no, opt, context, choices:[], answer, exp, src, cat:'選択式'}
+// ============================================================
+// ===================== 問題データ（ALL_QUESTIONS）=====================
+// 【ベーステンプレート】以下は各形式の代表サンプルのみ収録（仕様・構成の参照用）。
+// 新規科目作成（モードA）時は、この配列を科目別データで全置換する。
+// 既存科目への追記（モードB）は末尾追記のみ・並べ替え禁止（origIdx＝配列インデックスが
+// 栞・正答率・中断セッションのキーのため、順序を崩すとユーザーデータが全壊する）。
+//
+// ■ 択一式（○×）: type フィールド無し
+//   { no:"問N", opt:"A", q:"問題文", a:true/false, exp:"解説", src:"根拠条文", cat:"択一式（科目名）" }
+//   ・a は公式解答キーに準拠（○=true / ×=false）。独自判断しない。
+//   ・組合せ問題(opt:ア〜オ)・名詞肢・シナリオ型など、肢が単独で意味を成さない場合は、
+//     q 冒頭に【前提テーマ】を原文準拠で補う（下の TAC中間模試-問9＝名詞肢サンプル参照）。
+//
+// ■ 選択式（穴埋め）: type:"select"
+//   { type:"select", no:"…", opt:"空欄A", context:"…【A】…", choices:[4択], answer:"正解", exp, src, cat:"選択式（科目名）" }
+//   ・context は対象空欄のみ【X】、同一文中の他の空欄は正解の語で補完する。
+//   ・choices は出題元20択から「正解＋紛らわしい3つ」。answer は必ず choices に含める。
+//
+// ■ 数値・事例計算（肢が値のみで「正しい〔日数/額〕はどれか」型）: type:"select" に変換
+//   ・choices は原問の選択肢を全部入れる（5択なら5択）。opt は内容を表す短語。
+//   ・下の LEC第2回-問1 サンプル参照。
+//
+// ※ cat は問題画面・栞のタグ表示専用。フィルターは型ベース（select=選択式/それ以外=択一式）。
+// ※ 解説(exp)内の「…」は自動で太字＋ゴールド色強調（UI改修A）。
+// =====================================================================
+const ALL_QUESTIONS = [
+{type:"select",no:"安衛-目的",opt:"空欄A",context:"【労働安全衛生法】この法律は、【A】と相まって、労働災害の防止のための危害防止基準の確立、責任体制の明確化及び自主的活動の促進の措置を講ずる等その防止に関する総合的計画的な対策を推進することにより職場における労働者の安全と健康を確保するとともに、快適な職場環境の形成を促進することを目的とする。",choices:["労働基準法", "労働災害防止団体法", "労働契約法", "労働者災害補償保険法"],answer:"労働基準法",exp:"正解は「労働基準法」。【完成文】【労働安全衛生法】この法律は、労働基準法と相まって、労働災害の防止のための危害防止基準の確立、責任体制の明確化及び自主的活動の促進の措置を講ずる等その防止に関する総合的計画的な対策を推進することにより職場における労働者の安全と健康を確保するとともに、快適な職場環境の形成を促進することを目的とする。",src:"安衛法1条",cat:"目的条文（労働安全衛生法）"},
+{type:"select",no:"安衛-目的",opt:"空欄B",context:"【労働安全衛生法】この法律は、労働基準法と相まって、労働災害の防止のための【B】、責任体制の明確化及び自主的活動の促進の措置を講ずる等その防止に関する総合的計画的な対策を推進することにより職場における労働者の安全と健康を確保するとともに、快適な職場環境の形成を促進することを目的とする。",choices:["危害防止基準の確立", "危害防止基準の遵守", "労働災害防止基準の確立", "安全衛生基準の確立"],answer:"危害防止基準の確立",exp:"正解は「危害防止基準の確立」。【完成文】【労働安全衛生法】この法律は、労働基準法と相まって、労働災害の防止のための危害防止基準の確立、責任体制の明確化及び自主的活動の促進の措置を講ずる等その防止に関する総合的計画的な対策を推進することにより職場における労働者の安全と健康を確保するとともに、快適な職場環境の形成を促進することを目的とする。",src:"安衛法1条",cat:"目的条文（労働安全衛生法）"},
+{type:"select",no:"安衛-目的",opt:"空欄C",context:"【労働安全衛生法】この法律は、労働基準法と相まって、労働災害の防止のための危害防止基準の確立、【C】及び自主的活動の促進の措置を講ずる等その防止に関する総合的計画的な対策を推進することにより職場における労働者の安全と健康を確保するとともに、快適な職場環境の形成を促進することを目的とする。",choices:["責任体制の明確化", "責任体制の確立", "管理体制の明確化", "安全衛生管理体制の整備"],answer:"責任体制の明確化",exp:"正解は「責任体制の明確化」。【完成文】【労働安全衛生法】この法律は、労働基準法と相まって、労働災害の防止のための危害防止基準の確立、責任体制の明確化及び自主的活動の促進の措置を講ずる等その防止に関する総合的計画的な対策を推進することにより職場における労働者の安全と健康を確保するとともに、快適な職場環境の形成を促進することを目的とする。",src:"安衛法1条",cat:"目的条文（労働安全衛生法）"},
+{type:"select",no:"安衛-目的",opt:"空欄D",context:"【労働安全衛生法】この法律は、労働基準法と相まって、労働災害の防止のための危害防止基準の確立、責任体制の明確化及び【D】を講ずる等その防止に関する総合的計画的な対策を推進することにより職場における労働者の安全と健康を確保するとともに、快適な職場環境の形成を促進することを目的とする。",choices:["自主的活動の促進の措置", "自主的活動の助成の措置", "自主的努力の促進の措置", "自主的活動の支援の措置"],answer:"自主的活動の促進の措置",exp:"正解は「自主的活動の促進の措置」。【完成文】【労働安全衛生法】この法律は、労働基準法と相まって、労働災害の防止のための危害防止基準の確立、責任体制の明確化及び自主的活動の促進の措置を講ずる等その防止に関する総合的計画的な対策を推進することにより職場における労働者の安全と健康を確保するとともに、快適な職場環境の形成を促進することを目的とする。",src:"安衛法1条",cat:"目的条文（労働安全衛生法）"},
+{type:"select",no:"安衛-目的",opt:"空欄E",context:"【労働安全衛生法】この法律は、労働基準法と相まって、労働災害の防止のための危害防止基準の確立、責任体制の明確化及び自主的活動の促進の措置を講ずる等その防止に関する総合的計画的な対策を推進することにより職場における労働者の【E】を確保するとともに、快適な職場環境の形成を促進することを目的とする。",choices:["安全と健康", "安全及び衛生", "安全と衛生", "健康と福祉"],answer:"安全と健康",exp:"正解は「安全と健康」。【完成文】【労働安全衛生法】この法律は、労働基準法と相まって、労働災害の防止のための危害防止基準の確立、責任体制の明確化及び自主的活動の促進の措置を講ずる等その防止に関する総合的計画的な対策を推進することにより職場における労働者の安全と健康を確保するとともに、快適な職場環境の形成を促進することを目的とする。",src:"安衛法1条",cat:"目的条文（労働安全衛生法）"},
+{type:"select",no:"安衛-目的",opt:"空欄F",context:"【労働安全衛生法】この法律は、労働基準法と相まって、労働災害の防止のための危害防止基準の確立、責任体制の明確化及び自主的活動の促進の措置を講ずる等その防止に関する総合的計画的な対策を推進することにより職場における労働者の安全と健康を確保するとともに、【F】を促進することを目的とする。",choices:["快適な職場環境の形成", "適正な労働環境の形成", "快適な職場環境の整備", "良好な職場環境の形成"],answer:"快適な職場環境の形成",exp:"正解は「快適な職場環境の形成」。【完成文】【労働安全衛生法】この法律は、労働基準法と相まって、労働災害の防止のための危害防止基準の確立、責任体制の明確化及び自主的活動の促進の措置を講ずる等その防止に関する総合的計画的な対策を推進することにより職場における労働者の安全と健康を確保するとともに、快適な職場環境の形成を促進することを目的とする。",src:"安衛法1条",cat:"目的条文（労働安全衛生法）"},
+{type:"select",no:"労災-目的",opt:"空欄A",context:"【労働者災害補償保険法】労働者災害補償保険は、【A】、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該労働者及びその遺族の援護、労働者の安全及び衛生の確保等を図り、もって労働者の福祉の増進に寄与することを目的とする。",choices:["業務上の事由", "業務上の災害", "業務遂行上の事由", "事業主の責めに帰すべき事由"],answer:"業務上の事由",exp:"正解は「業務上の事由」。【完成文】【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該労働者及びその遺族の援護、労働者の安全及び衛生の確保等を図り、もって労働者の福祉の増進に寄与することを目的とする。",src:"労災法1条",cat:"目的条文（労働者災害補償保険法）"},
+{type:"select",no:"労災-目的",opt:"空欄B",context:"【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「【B】」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該労働者及びその遺族の援護、労働者の安全及び衛生の確保等を図り、もって労働者の福祉の増進に寄与することを目的とする。",choices:["複数事業労働者", "複数就業者", "二以上事業労働者", "兼業労働者"],answer:"複数事業労働者",exp:"正解は「複数事業労働者」。【完成文】【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該労働者及びその遺族の援護、労働者の安全及び衛生の確保等を図り、もって労働者の福祉の増進に寄与することを目的とする。",src:"労災法1条",cat:"目的条文（労働者災害補償保険法）"},
+{type:"select",no:"労災-目的",opt:"空欄C",context:"【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は【C】による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該労働者及びその遺族の援護、労働者の安全及び衛生の確保等を図り、もって労働者の福祉の増進に寄与することを目的とする。",choices:["通勤", "通勤途上", "出張", "私傷病"],answer:"通勤",exp:"正解は「通勤」。【完成文】【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該労働者及びその遺族の援護、労働者の安全及び衛生の確保等を図り、もって労働者の福祉の増進に寄与することを目的とする。",src:"労災法1条",cat:"目的条文（労働者災害補償保険法）"},
+{type:"select",no:"労災-目的",opt:"空欄D",context:"【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の【D】に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該労働者及びその遺族の援護、労働者の安全及び衛生の確保等を図り、もって労働者の福祉の増進に寄与することを目的とする。",choices:["負傷、疾病、障害、死亡等", "負傷、疾病、障害又は死亡", "老齢、障害又は死亡", "負傷、疾病、傷病、死亡等"],answer:"負傷、疾病、障害、死亡等",exp:"正解は「負傷、疾病、障害、死亡等」。【完成文】【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該労働者及びその遺族の援護、労働者の安全及び衛生の確保等を図り、もって労働者の福祉の増進に寄与することを目的とする。",src:"労災法1条",cat:"目的条文（労働者災害補償保険法）"},
+{type:"select",no:"労災-目的",opt:"空欄E",context:"【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、【E】を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該労働者及びその遺族の援護、労働者の安全及び衛生の確保等を図り、もって労働者の福祉の増進に寄与することを目的とする。",choices:["必要な保険給付", "保険給付", "必要な給付", "適切な保険給付"],answer:"必要な保険給付",exp:"正解は「必要な保険給付」。【完成文】【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該労働者及びその遺族の援護、労働者の安全及び衛生の確保等を図り、もって労働者の福祉の増進に寄与することを目的とする。",src:"労災法1条",cat:"目的条文（労働者災害補償保険法）"},
+{type:"select",no:"労災-目的",opt:"空欄F",context:"【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の【F】、当該労働者及びその遺族の援護、労働者の安全及び衛生の確保等を図り、もって労働者の福祉の増進に寄与することを目的とする。",choices:["社会復帰の促進", "社会復帰の援護", "職業復帰の促進", "円滑な社会復帰の支援"],answer:"社会復帰の促進",exp:"正解は「社会復帰の促進」。【完成文】【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該労働者及びその遺族の援護、労働者の安全及び衛生の確保等を図り、もって労働者の福祉の増進に寄与することを目的とする。",src:"労災法1条",cat:"目的条文（労働者災害補償保険法）"},
+{type:"select",no:"労災-目的",opt:"空欄G",context:"【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該【G】、労働者の安全及び衛生の確保等を図り、もって労働者の福祉の増進に寄与することを目的とする。",choices:["労働者及びその遺族の援護", "労働者及びその遺族の保護", "労働者及びその家族の援護", "労働者の遺族の生活の安定"],answer:"労働者及びその遺族の援護",exp:"正解は「労働者及びその遺族の援護」。【完成文】【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該労働者及びその遺族の援護、労働者の安全及び衛生の確保等を図り、もって労働者の福祉の増進に寄与することを目的とする。",src:"労災法1条",cat:"目的条文（労働者災害補償保険法）"},
+{type:"select",no:"労災-目的",opt:"空欄H",context:"【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該労働者及びその遺族の援護、【H】等を図り、もって労働者の福祉の増進に寄与することを目的とする。",choices:["労働者の安全及び衛生の確保", "労働者の安全と健康の確保", "労働者の健康の保持増進", "労働者の適正な労働条件の確保"],answer:"労働者の安全及び衛生の確保",exp:"正解は「労働者の安全及び衛生の確保」。【完成文】【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該労働者及びその遺族の援護、労働者の安全及び衛生の確保等を図り、もって労働者の福祉の増進に寄与することを目的とする。",src:"労災法1条",cat:"目的条文（労働者災害補償保険法）"},
+{type:"select",no:"労災-目的",opt:"空欄I",context:"【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該労働者及びその遺族の援護、労働者の安全及び衛生の確保等を図り、もって労働者の【I】に寄与することを目的とする。",choices:["福祉の増進", "福祉の向上", "生活の安定", "福祉の充実"],answer:"福祉の増進",exp:"正解は「福祉の増進」。【完成文】【労働者災害補償保険法】労働者災害補償保険は、業務上の事由、事業主が同一人でない２以上の事業に使用される労働者（以下「複数事業労働者」という。）の２以上の事業の業務を要因とする事由又は通勤による労働者の負傷、疾病、障害、死亡等に対して迅速かつ公正な保護をするため、必要な保険給付を行い、あわせて、業務上の事由、複数事業労働者の２以上の事業の業務を要因とする事由又は通勤により負傷し、又は疾病にかかった労働者の社会復帰の促進、当該労働者及びその遺族の援護、労働者の安全及び衛生の確保等を図り、もって労働者の福祉の増進に寄与することを目的とする。",src:"労災法1条",cat:"目的条文（労働者災害補償保険法）"},
+{type:"select",no:"労施策-目的",opt:"空欄A",context:"【労働施策総合推進法】この法律は、国が、【A】等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",choices:["少子高齢化による人口構造の変化", "少子高齢化の進展", "人口減少による労働力人口の減少", "少子高齢化による就業構造の変化"],answer:"少子高齢化による人口構造の変化",exp:"正解は「少子高齢化による人口構造の変化」。【完成文】【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",src:"労働施策総合推進法1条",cat:"目的条文（労働施策総合推進法）"},
+{type:"select",no:"労施策-目的",opt:"空欄B",context:"【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の【B】に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",choices:["経済社会情勢の変化", "社会経済情勢の変化", "産業構造の変化", "経済情勢の変動"],answer:"経済社会情勢の変化",exp:"正解は「経済社会情勢の変化」。【完成文】【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",src:"労働施策総合推進法1条",cat:"目的条文（労働施策総合推進法）"},
+{type:"select",no:"労施策-目的",opt:"空欄C",context:"【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の【C】に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",choices:["多様な事情", "多様な働き方", "個々の事情", "多様な就業形態"],answer:"多様な事情",exp:"正解は「多様な事情」。【完成文】【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",src:"労働施策総合推進法1条",cat:"目的条文（労働施策総合推進法）"},
+{type:"select",no:"労施策-目的",opt:"空欄D",context:"【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた【D】及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",choices:["雇用の安定", "職業の安定", "雇用の確保", "雇用の継続"],answer:"雇用の安定",exp:"正解は「雇用の安定」。【完成文】【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",src:"労働施策総合推進法1条",cat:"目的条文（労働施策総合推進法）"},
+{type:"select",no:"労施策-目的",opt:"空欄E",context:"【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び【E】並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",choices:["職業生活の充実", "職業生活の安定", "職業生活と家庭生活との両立", "職業能力の開発及び向上"],answer:"職業生活の充実",exp:"正解は「職業生活の充実」。【完成文】【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",src:"労働施策総合推進法1条",cat:"目的条文（労働施策総合推進法）"},
+{type:"select",no:"労施策-目的",opt:"空欄F",context:"【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに【F】を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",choices:["労働生産性の向上", "労働条件の向上", "経済的社会的地位の向上", "職業能力の向上"],answer:"労働生産性の向上",exp:"正解は「労働生産性の向上」。【完成文】【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",src:"労働施策総合推進法1条",cat:"目的条文（労働施策総合推進法）"},
+{type:"select",no:"労施策-目的",opt:"空欄G",context:"【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の【G】と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",choices:["職業の安定", "雇用の安定", "生活の安定", "就業の安定"],answer:"職業の安定",exp:"正解は「職業の安定」。【完成文】【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",src:"労働施策総合推進法1条",cat:"目的条文（労働施策総合推進法）"},
+{type:"select",no:"労施策-目的",opt:"空欄H",context:"【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と【H】とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",choices:["経済的社会的地位の向上", "社会的経済的地位の向上", "経済的地位の向上", "福祉の向上"],answer:"経済的社会的地位の向上",exp:"正解は「経済的社会的地位の向上」。【完成文】【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",src:"労働施策総合推進法1条",cat:"目的条文（労働施策総合推進法）"},
+{type:"select",no:"労施策-目的",opt:"空欄I",context:"【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、【I】並びに完全雇用の達成に資することを目的とする。",choices:["経済及び社会の発展", "経済社会の発展", "社会及び経済の発展", "国民経済の健全な発展"],answer:"経済及び社会の発展",exp:"正解は「経済及び社会の発展」。【完成文】【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",src:"労働施策総合推進法1条",cat:"目的条文（労働施策総合推進法）"},
+{type:"select",no:"労施策-目的",opt:"空欄J",context:"【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに【J】に資することを目的とする。",choices:["完全雇用の達成", "完全雇用の実現", "雇用の安定の確保", "労働力の需給の均衡"],answer:"完全雇用の達成",exp:"正解は「完全雇用の達成」。【完成文】【労働施策総合推進法】この法律は、国が、少子高齢化による人口構造の変化等の経済社会情勢の変化に対応して、労働に関し、その政策全般にわたり、必要な施策を総合的に講ずることにより、労働市場の機能が適切に発揮され、労働者の多様な事情に応じた雇用の安定及び職業生活の充実並びに労働生産性の向上を促進して、労働者がその有する能力を有効に発揮することができるようにし、これを通じて、労働者の職業の安定と経済的社会的地位の向上とを図るとともに、経済及び社会の発展並びに完全雇用の達成に資することを目的とする。",src:"労働施策総合推進法1条",cat:"目的条文（労働施策総合推進法）"},
+{type:"select",no:"派遣-目的",opt:"空欄A",context:"【労働者派遣法】この法律は、【A】と相まって労働力の需給の適正な調整を図るため労働者派遣事業の適正な運営の確保に関する措置を講ずるとともに、派遣労働者の保護等を図り、もって派遣労働者の雇用の安定その他福祉の増進に資することを目的とする。",choices:["職業安定法", "労働基準法", "労働契約法", "雇用対策法"],answer:"職業安定法",exp:"正解は「職業安定法」。【完成文】【労働者派遣法】この法律は、職業安定法と相まって労働力の需給の適正な調整を図るため労働者派遣事業の適正な運営の確保に関する措置を講ずるとともに、派遣労働者の保護等を図り、もって派遣労働者の雇用の安定その他福祉の増進に資することを目的とする。",src:"労働者派遣法1条",cat:"目的条文（労働者派遣法）"},
+{type:"select",no:"派遣-目的",opt:"空欄B",context:"【労働者派遣法】この法律は、職業安定法と相まって労働力の需給の適正な調整を図るため【B】の適正な運営の確保に関する措置を講ずるとともに、派遣労働者の保護等を図り、もって派遣労働者の雇用の安定その他福祉の増進に資することを目的とする。",choices:["労働者派遣事業", "有料職業紹介事業", "労働者供給事業", "派遣元事業"],answer:"労働者派遣事業",exp:"正解は「労働者派遣事業」。【完成文】【労働者派遣法】この法律は、職業安定法と相まって労働力の需給の適正な調整を図るため労働者派遣事業の適正な運営の確保に関する措置を講ずるとともに、派遣労働者の保護等を図り、もって派遣労働者の雇用の安定その他福祉の増進に資することを目的とする。",src:"労働者派遣法1条",cat:"目的条文（労働者派遣法）"},
+{type:"select",no:"派遣-目的",opt:"空欄C",context:"【労働者派遣法】この法律は、職業安定法と相まって労働力の需給の適正な調整を図るため労働者派遣事業の適正な運営の確保に関する措置を講ずるとともに、【C】等を図り、もって派遣労働者の雇用の安定その他福祉の増進に資することを目的とする。",choices:["派遣労働者の保護", "派遣労働者の福祉の増進", "派遣労働者の待遇の確保", "派遣労働者の雇用管理の改善"],answer:"派遣労働者の保護",exp:"正解は「派遣労働者の保護」。【完成文】【労働者派遣法】この法律は、職業安定法と相まって労働力の需給の適正な調整を図るため労働者派遣事業の適正な運営の確保に関する措置を講ずるとともに、派遣労働者の保護等を図り、もって派遣労働者の雇用の安定その他福祉の増進に資することを目的とする。",src:"労働者派遣法1条",cat:"目的条文（労働者派遣法）"},
+{type:"select",no:"派遣-目的",opt:"空欄D",context:"【労働者派遣法】この法律は、職業安定法と相まって労働力の需給の適正な調整を図るため労働者派遣事業の適正な運営の確保に関する措置を講ずるとともに、派遣労働者の保護等を図り、もって派遣労働者の【D】その他福祉の増進に資することを目的とする。",choices:["雇用の安定", "職業の安定", "雇用の継続", "労働条件の向上"],answer:"雇用の安定",exp:"正解は「雇用の安定」。【完成文】【労働者派遣法】この法律は、職業安定法と相まって労働力の需給の適正な調整を図るため労働者派遣事業の適正な運営の確保に関する措置を講ずるとともに、派遣労働者の保護等を図り、もって派遣労働者の雇用の安定その他福祉の増進に資することを目的とする。",src:"労働者派遣法1条",cat:"目的条文（労働者派遣法）"},
+{type:"select",no:"派遣-目的",opt:"空欄E",context:"【労働者派遣法】この法律は、職業安定法と相まって労働力の需給の適正な調整を図るため労働者派遣事業の適正な運営の確保に関する措置を講ずるとともに、派遣労働者の保護等を図り、もって派遣労働者の雇用の安定その他【E】に資することを目的とする。",choices:["福祉の増進", "福祉の向上", "生活の安定", "地位の向上"],answer:"福祉の増進",exp:"正解は「福祉の増進」。【完成文】【労働者派遣法】この法律は、職業安定法と相まって労働力の需給の適正な調整を図るため労働者派遣事業の適正な運営の確保に関する措置を講ずるとともに、派遣労働者の保護等を図り、もって派遣労働者の雇用の安定その他福祉の増進に資することを目的とする。",src:"労働者派遣法1条",cat:"目的条文（労働者派遣法）"},
+{type:"select",no:"高年-目的",opt:"空欄A",context:"【高年齢者雇用安定法】この法律は、【A】、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",choices:["定年の引上げ", "定年の廃止", "定年年齢の統一", "継続雇用の義務付け"],answer:"定年の引上げ",exp:"正解は「定年の引上げ」。【完成文】【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",src:"高年齢者雇用安定法1条",cat:"目的条文（高年齢者雇用安定法）"},
+{type:"select",no:"高年-目的",opt:"空欄B",context:"【高年齢者雇用安定法】この法律は、定年の引上げ、【B】等による高年齢者の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",choices:["継続雇用制度の導入", "再雇用制度の導入", "勤務延長制度の導入", "継続雇用制度の周知"],answer:"継続雇用制度の導入",exp:"正解は「継続雇用制度の導入」。【完成文】【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",src:"高年齢者雇用安定法1条",cat:"目的条文（高年齢者雇用安定法）"},
+{type:"select",no:"高年-目的",opt:"空欄C",context:"【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による【C】の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",choices:["高年齢者", "高年齢者等", "中高年齢者", "高年齢退職者"],answer:"高年齢者",exp:"正解は「高年齢者」。【完成文】【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",src:"高年齢者雇用安定法1条",cat:"目的条文（高年齢者雇用安定法）"},
+{type:"select",no:"高年-目的",opt:"空欄D",context:"【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した【D】、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",choices:["雇用の確保の促進", "雇用の安定の促進", "雇用の継続の確保", "就業の機会の確保"],answer:"雇用の確保の促進",exp:"正解は「雇用の確保の促進」。【完成文】【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",src:"高年齢者雇用安定法1条",cat:"目的条文（高年齢者雇用安定法）"},
+{type:"select",no:"高年-目的",opt:"空欄E",context:"【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、【E】の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",choices:["高年齢者等", "高年齢者", "高年齢退職者", "中高年齢失業者等"],answer:"高年齢者等",exp:"正解は「高年齢者等」。【完成文】【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",src:"高年齢者雇用安定法1条",cat:"目的条文（高年齢者雇用安定法）"},
+{type:"select",no:"高年-目的",opt:"空欄F",context:"【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、高年齢者等の【F】、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",choices:["再就職の促進", "就業の促進", "再就職の援助", "職業能力の開発"],answer:"再就職の促進",exp:"正解は「再就職の促進」。【完成文】【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",src:"高年齢者雇用安定法1条",cat:"目的条文（高年齢者雇用安定法）"},
+{type:"select",no:"高年-目的",opt:"空欄G",context:"【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する【G】等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",choices:["就業の機会の確保", "就業の機会の提供", "多様な就業の機会の創出", "雇用の機会の確保"],answer:"就業の機会の確保",exp:"正解は「就業の機会の確保」。【完成文】【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",src:"高年齢者雇用安定法1条",cat:"目的条文（高年齢者雇用安定法）"},
+{type:"select",no:"高年-目的",opt:"空欄H",context:"【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の【H】その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",choices:["職業の安定", "雇用の安定", "生活の安定", "就業の安定"],answer:"職業の安定",exp:"正解は「職業の安定」。【完成文】【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",src:"高年齢者雇用安定法1条",cat:"目的条文（高年齢者雇用安定法）"},
+{type:"select",no:"高年-目的",opt:"空欄I",context:"【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他【I】を図るとともに、経済及び社会の発展に寄与することを目的とする。",choices:["福祉の増進", "福祉の向上", "生活の安定", "福祉の充実"],answer:"福祉の増進",exp:"正解は「福祉の増進」。【完成文】【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",src:"高年齢者雇用安定法1条",cat:"目的条文（高年齢者雇用安定法）"},
+{type:"select",no:"高年-目的",opt:"空欄J",context:"【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、【J】に寄与することを目的とする。",choices:["経済及び社会の発展", "社会及び経済の発展", "経済社会の発展", "国民経済の健全な発展"],answer:"経済及び社会の発展",exp:"正解は「経済及び社会の発展」。【完成文】【高年齢者雇用安定法】この法律は、定年の引上げ、継続雇用制度の導入等による高年齢者の安定した雇用の確保の促進、高年齢者等の再就職の促進、定年退職者その他の高年齢退職者に対する就業の機会の確保等の措置を総合的に講じ、もって高年齢者等の職業の安定その他福祉の増進を図るとともに、経済及び社会の発展に寄与することを目的とする。",src:"高年齢者雇用安定法1条",cat:"目的条文（高年齢者雇用安定法）"},
+{type:"select",no:"障害者-目的",opt:"空欄A",context:"【障害者雇用促進法】この法律は、障害者の雇用義務等に基づく雇用の促進等のための措置、雇用の分野における障害者と障害者でない者との【A】並びに障害者がその有する能力を有効に発揮することができるようにするための措置、職業リハビリテーションの措置その他障害者がその能力に適合する職業に就くこと等を通じてその職業生活において自立することを促進するための措置を総合的に講じ、もって障害者の職業の安定を図ることを目的とする。",choices:["均等な機会及び待遇の確保", "均衡のとれた待遇の確保", "均等な機会の付与", "適正な労働条件の確保"],answer:"均等な機会及び待遇の確保",exp:"正解は「均等な機会及び待遇の確保」。【完成文】【障害者雇用促進法】この法律は、障害者の雇用義務等に基づく雇用の促進等のための措置、雇用の分野における障害者と障害者でない者との均等な機会及び待遇の確保並びに障害者がその有する能力を有効に発揮することができるようにするための措置、職業リハビリテーションの措置その他障害者がその能力に適合する職業に就くこと等を通じてその職業生活において自立することを促進するための措置を総合的に講じ、もって障害者の職業の安定を図ることを目的とする。",src:"障害者雇用促進法1条",cat:"目的条文（障害者雇用促進法）"},
+{type:"select",no:"障害者-目的",opt:"空欄B",context:"【障害者雇用促進法】この法律は、障害者の雇用義務等に基づく雇用の促進等のための措置、雇用の分野における障害者と障害者でない者との均等な機会及び待遇の確保並びに障害者がその【B】することができるようにするための措置、職業リハビリテーションの措置その他障害者がその能力に適合する職業に就くこと等を通じてその職業生活において自立することを促進するための措置を総合的に講じ、もって障害者の職業の安定を図ることを目的とする。",choices:["有する能力を有効に発揮", "有する能力を十分に発揮", "能力に適合する職業に就くことを希望", "職業能力の開発及び向上を図る"],answer:"有する能力を有効に発揮",exp:"正解は「有する能力を有効に発揮」。【完成文】【障害者雇用促進法】この法律は、障害者の雇用義務等に基づく雇用の促進等のための措置、雇用の分野における障害者と障害者でない者との均等な機会及び待遇の確保並びに障害者がその有する能力を有効に発揮することができるようにするための措置、職業リハビリテーションの措置その他障害者がその能力に適合する職業に就くこと等を通じてその職業生活において自立することを促進するための措置を総合的に講じ、もって障害者の職業の安定を図ることを目的とする。",src:"障害者雇用促進法1条",cat:"目的条文（障害者雇用促進法）"},
+{type:"select",no:"障害者-目的",opt:"空欄C",context:"【障害者雇用促進法】この法律は、障害者の雇用義務等に基づく雇用の促進等のための措置、雇用の分野における障害者と障害者でない者との均等な機会及び待遇の確保並びに障害者がその有する能力を有効に発揮することができるようにするための措置、【C】の措置その他障害者がその能力に適合する職業に就くこと等を通じてその職業生活において自立することを促進するための措置を総合的に講じ、もって障害者の職業の安定を図ることを目的とする。",choices:["職業リハビリテーション", "職業能力開発", "職業指導", "職業訓練"],answer:"職業リハビリテーション",exp:"正解は「職業リハビリテーション」。【完成文】【障害者雇用促進法】この法律は、障害者の雇用義務等に基づく雇用の促進等のための措置、雇用の分野における障害者と障害者でない者との均等な機会及び待遇の確保並びに障害者がその有する能力を有効に発揮することができるようにするための措置、職業リハビリテーションの措置その他障害者がその能力に適合する職業に就くこと等を通じてその職業生活において自立することを促進するための措置を総合的に講じ、もって障害者の職業の安定を図ることを目的とする。",src:"障害者雇用促進法1条",cat:"目的条文（障害者雇用促進法）"},
+{type:"select",no:"障害者-目的",opt:"空欄D",context:"【障害者雇用促進法】この法律は、障害者の雇用義務等に基づく雇用の促進等のための措置、雇用の分野における障害者と障害者でない者との均等な機会及び待遇の確保並びに障害者がその有する能力を有効に発揮することができるようにするための措置、職業リハビリテーションの措置その他障害者がその能力に適合する職業に就くこと等を通じてその【D】において自立することを促進するための措置を総合的に講じ、もって障害者の職業の安定を図ることを目的とする。",choices:["職業生活", "日常生活", "社会生活", "職業生活及び家庭生活"],answer:"職業生活",exp:"正解は「職業生活」。【完成文】【障害者雇用促進法】この法律は、障害者の雇用義務等に基づく雇用の促進等のための措置、雇用の分野における障害者と障害者でない者との均等な機会及び待遇の確保並びに障害者がその有する能力を有効に発揮することができるようにするための措置、職業リハビリテーションの措置その他障害者がその能力に適合する職業に就くこと等を通じてその職業生活において自立することを促進するための措置を総合的に講じ、もって障害者の職業の安定を図ることを目的とする。",src:"障害者雇用促進法1条",cat:"目的条文（障害者雇用促進法）"},
+{type:"select",no:"障害者-目的",opt:"空欄E",context:"【障害者雇用促進法】この法律は、障害者の雇用義務等に基づく雇用の促進等のための措置、雇用の分野における障害者と障害者でない者との均等な機会及び待遇の確保並びに障害者がその有する能力を有効に発揮することができるようにするための措置、職業リハビリテーションの措置その他障害者がその能力に適合する職業に就くこと等を通じてその職業生活において自立することを促進するための措置を総合的に講じ、もって障害者の【E】を図ることを目的とする。",choices:["職業の安定", "雇用の安定", "福祉の増進", "自立の促進"],answer:"職業の安定",exp:"正解は「職業の安定」。【完成文】【障害者雇用促進法】この法律は、障害者の雇用義務等に基づく雇用の促進等のための措置、雇用の分野における障害者と障害者でない者との均等な機会及び待遇の確保並びに障害者がその有する能力を有効に発揮することができるようにするための措置、職業リハビリテーションの措置その他障害者がその能力に適合する職業に就くこと等を通じてその職業生活において自立することを促進するための措置を総合的に講じ、もって障害者の職業の安定を図ることを目的とする。",src:"障害者雇用促進法1条",cat:"目的条文（障害者雇用促進法）"},
+{type:"select",no:"労契-目的",opt:"空欄A",context:"【労働契約法】この法律は、労働者及び使用者の【A】の下で、労働契約が合意により成立し、又は変更されるという合意の原則その他労働契約に関する基本的事項を定めることにより、合理的な労働条件の決定又は変更が円滑に行われるようにすることを通じて、労働者の保護を図りつつ、個別の労働関係の安定に資することを目的とする。",choices:["自主的な交渉", "自主的な合意", "対等の立場での交渉", "団体交渉"],answer:"自主的な交渉",exp:"正解は「自主的な交渉」。【完成文】【労働契約法】この法律は、労働者及び使用者の自主的な交渉の下で、労働契約が合意により成立し、又は変更されるという合意の原則その他労働契約に関する基本的事項を定めることにより、合理的な労働条件の決定又は変更が円滑に行われるようにすることを通じて、労働者の保護を図りつつ、個別の労働関係の安定に資することを目的とする。",src:"労働契約法1条",cat:"目的条文（労働契約法）"},
+{type:"select",no:"労契-目的",opt:"空欄B",context:"【労働契約法】この法律は、労働者及び使用者の自主的な交渉の下で、労働契約が【B】により成立し、又は変更されるという合意の原則その他労働契約に関する基本的事項を定めることにより、合理的な労働条件の決定又は変更が円滑に行われるようにすることを通じて、労働者の保護を図りつつ、個別の労働関係の安定に資することを目的とする。",choices:["合意", "契約", "就業規則", "労使協定"],answer:"合意",exp:"正解は「合意」。【完成文】【労働契約法】この法律は、労働者及び使用者の自主的な交渉の下で、労働契約が合意により成立し、又は変更されるという合意の原則その他労働契約に関する基本的事項を定めることにより、合理的な労働条件の決定又は変更が円滑に行われるようにすることを通じて、労働者の保護を図りつつ、個別の労働関係の安定に資することを目的とする。",src:"労働契約法1条",cat:"目的条文（労働契約法）"},
+{type:"select",no:"労契-目的",opt:"空欄C",context:"【労働契約法】この法律は、労働者及び使用者の自主的な交渉の下で、労働契約が合意により成立し、又は変更されるという合意の原則その他労働契約に関する【C】を定めることにより、合理的な労働条件の決定又は変更が円滑に行われるようにすることを通じて、労働者の保護を図りつつ、個別の労働関係の安定に資することを目的とする。",choices:["基本的事項", "基本的な原則", "必要な事項", "基本理念"],answer:"基本的事項",exp:"正解は「基本的事項」。【完成文】【労働契約法】この法律は、労働者及び使用者の自主的な交渉の下で、労働契約が合意により成立し、又は変更されるという合意の原則その他労働契約に関する基本的事項を定めることにより、合理的な労働条件の決定又は変更が円滑に行われるようにすることを通じて、労働者の保護を図りつつ、個別の労働関係の安定に資することを目的とする。",src:"労働契約法1条",cat:"目的条文（労働契約法）"},
+{type:"select",no:"労契-目的",opt:"空欄D",context:"【労働契約法】この法律は、労働者及び使用者の自主的な交渉の下で、労働契約が合意により成立し、又は変更されるという合意の原則その他労働契約に関する基本的事項を定めることにより、【D】な労働条件の決定又は変更が円滑に行われるようにすることを通じて、労働者の保護を図りつつ、個別の労働関係の安定に資することを目的とする。",choices:["合理的", "適正", "円滑", "公正"],answer:"合理的",exp:"正解は「合理的」。【完成文】【労働契約法】この法律は、労働者及び使用者の自主的な交渉の下で、労働契約が合意により成立し、又は変更されるという合意の原則その他労働契約に関する基本的事項を定めることにより、合理的な労働条件の決定又は変更が円滑に行われるようにすることを通じて、労働者の保護を図りつつ、個別の労働関係の安定に資することを目的とする。",src:"労働契約法1条",cat:"目的条文（労働契約法）"},
+{type:"select",no:"労契-目的",opt:"空欄E",context:"【労働契約法】この法律は、労働者及び使用者の自主的な交渉の下で、労働契約が合意により成立し、又は変更されるという合意の原則その他労働契約に関する基本的事項を定めることにより、合理的な労働条件の決定又は変更が円滑に行われるようにすることを通じて、【E】を図りつつ、個別の労働関係の安定に資することを目的とする。",choices:["労働者の保護", "労働者の福祉の増進", "労働条件の維持改善", "労働者の地位の向上"],answer:"労働者の保護",exp:"正解は「労働者の保護」。【完成文】【労働契約法】この法律は、労働者及び使用者の自主的な交渉の下で、労働契約が合意により成立し、又は変更されるという合意の原則その他労働契約に関する基本的事項を定めることにより、合理的な労働条件の決定又は変更が円滑に行われるようにすることを通じて、労働者の保護を図りつつ、個別の労働関係の安定に資することを目的とする。",src:"労働契約法1条",cat:"目的条文（労働契約法）"},
+{type:"select",no:"労契-目的",opt:"空欄F",context:"【労働契約法】この法律は、労働者及び使用者の自主的な交渉の下で、労働契約が合意により成立し、又は変更されるという合意の原則その他労働契約に関する基本的事項を定めることにより、合理的な労働条件の決定又は変更が円滑に行われるようにすることを通じて、労働者の保護を図りつつ、【F】に資することを目的とする。",choices:["個別の労働関係の安定", "集団的労働関係の安定", "労使関係の安定", "個別の労働関係の適正化"],answer:"個別の労働関係の安定",exp:"正解は「個別の労働関係の安定」。【完成文】【労働契約法】この法律は、労働者及び使用者の自主的な交渉の下で、労働契約が合意により成立し、又は変更されるという合意の原則その他労働契約に関する基本的事項を定めることにより、合理的な労働条件の決定又は変更が円滑に行われるようにすることを通じて、労働者の保護を図りつつ、個別の労働関係の安定に資することを目的とする。",src:"労働契約法1条",cat:"目的条文（労働契約法）"},
+{type:"select",no:"労組-目的",opt:"空欄A",context:"【労働組合法】この法律は、労働者が使用者との交渉において【A】に立つことを促進することにより労働者の地位を向上させること、労働者がその労働条件について交渉するために自ら代表者を選出することその他の団体行動を行うために自主的に労働組合を組織し、団結することを擁護すること並びに使用者と労働者との関係を規制する労働協約を締結するための団体交渉をすること及びその手続を助成することを目的とする。",choices:["対等の立場", "平等の立場", "同等の地位", "自主的な立場"],answer:"対等の立場",exp:"正解は「対等の立場」。【完成文】【労働組合法】この法律は、労働者が使用者との交渉において対等の立場に立つことを促進することにより労働者の地位を向上させること、労働者がその労働条件について交渉するために自ら代表者を選出することその他の団体行動を行うために自主的に労働組合を組織し、団結することを擁護すること並びに使用者と労働者との関係を規制する労働協約を締結するための団体交渉をすること及びその手続を助成することを目的とする。",src:"労働組合法1条1項",cat:"目的条文（労働組合法）"},
+{type:"select",no:"労組-目的",opt:"空欄B",context:"【労働組合法】この法律は、労働者が使用者との交渉において対等の立場に立つことを促進することにより労働者の地位を向上させること、労働者がその労働条件について交渉するために自ら代表者を選出することその他の団体行動を行うために【B】に労働組合を組織し、団結することを擁護すること並びに使用者と労働者との関係を規制する労働協約を締結するための団体交渉をすること及びその手続を助成することを目的とする。",choices:["自主的", "民主的", "組織的", "自発的"],answer:"自主的",exp:"正解は「自主的」。【完成文】【労働組合法】この法律は、労働者が使用者との交渉において対等の立場に立つことを促進することにより労働者の地位を向上させること、労働者がその労働条件について交渉するために自ら代表者を選出することその他の団体行動を行うために自主的に労働組合を組織し、団結することを擁護すること並びに使用者と労働者との関係を規制する労働協約を締結するための団体交渉をすること及びその手続を助成することを目的とする。",src:"労働組合法1条1項",cat:"目的条文（労働組合法）"},
+{type:"select",no:"労組-目的",opt:"空欄C",context:"【労働組合法】この法律は、労働者が使用者との交渉において対等の立場に立つことを促進することにより労働者の地位を向上させること、労働者がその労働条件について交渉するために自ら代表者を選出することその他の団体行動を行うために自主的に労働組合を組織し、【C】することを擁護すること並びに使用者と労働者との関係を規制する労働協約を締結するための団体交渉をすること及びその手続を助成することを目的とする。",choices:["団結", "団体交渉", "協議", "連合"],answer:"団結",exp:"正解は「団結」。【完成文】【労働組合法】この法律は、労働者が使用者との交渉において対等の立場に立つことを促進することにより労働者の地位を向上させること、労働者がその労働条件について交渉するために自ら代表者を選出することその他の団体行動を行うために自主的に労働組合を組織し、団結することを擁護すること並びに使用者と労働者との関係を規制する労働協約を締結するための団体交渉をすること及びその手続を助成することを目的とする。",src:"労働組合法1条1項",cat:"目的条文（労働組合法）"},
+{type:"select",no:"労組-目的",opt:"空欄D",context:"【労働組合法】この法律は、労働者が使用者との交渉において対等の立場に立つことを促進することにより労働者の地位を向上させること、労働者がその労働条件について交渉するために自ら代表者を選出することその他の団体行動を行うために自主的に労働組合を組織し、団結することを【D】すること並びに使用者と労働者との関係を規制する労働協約を締結するための団体交渉をすること及びその手続を助成することを目的とする。",choices:["擁護", "助成", "保護", "促進"],answer:"擁護",exp:"正解は「擁護」。【完成文】【労働組合法】この法律は、労働者が使用者との交渉において対等の立場に立つことを促進することにより労働者の地位を向上させること、労働者がその労働条件について交渉するために自ら代表者を選出することその他の団体行動を行うために自主的に労働組合を組織し、団結することを擁護すること並びに使用者と労働者との関係を規制する労働協約を締結するための団体交渉をすること及びその手続を助成することを目的とする。",src:"労働組合法1条1項",cat:"目的条文（労働組合法）"},
+{type:"select",no:"労組-目的",opt:"空欄E",context:"【労働組合法】この法律は、労働者が使用者との交渉において対等の立場に立つことを促進することにより労働者の地位を向上させること、労働者がその労働条件について交渉するために自ら代表者を選出することその他の団体行動を行うために自主的に労働組合を組織し、団結することを擁護すること並びに使用者と労働者との関係を規制する【E】を締結するための団体交渉をすること及びその手続を助成することを目的とする。",choices:["労働協約", "労使協定", "就業規則", "労働契約"],answer:"労働協約",exp:"正解は「労働協約」。【完成文】【労働組合法】この法律は、労働者が使用者との交渉において対等の立場に立つことを促進することにより労働者の地位を向上させること、労働者がその労働条件について交渉するために自ら代表者を選出することその他の団体行動を行うために自主的に労働組合を組織し、団結することを擁護すること並びに使用者と労働者との関係を規制する労働協約を締結するための団体交渉をすること及びその手続を助成することを目的とする。",src:"労働組合法1条1項",cat:"目的条文（労働組合法）"},
+{type:"select",no:"労組-目的",opt:"空欄F",context:"【労働組合法】この法律は、労働者が使用者との交渉において対等の立場に立つことを促進することにより労働者の地位を向上させること、労働者がその労働条件について交渉するために自ら代表者を選出することその他の団体行動を行うために自主的に労働組合を組織し、団結することを擁護すること並びに使用者と労働者との関係を規制する労働協約を締結するための【F】をすること及びその手続を助成することを目的とする。",choices:["団体交渉", "団体行動", "労使協議", "団結"],answer:"団体交渉",exp:"正解は「団体交渉」。【完成文】【労働組合法】この法律は、労働者が使用者との交渉において対等の立場に立つことを促進することにより労働者の地位を向上させること、労働者がその労働条件について交渉するために自ら代表者を選出することその他の団体行動を行うために自主的に労働組合を組織し、団結することを擁護すること並びに使用者と労働者との関係を規制する労働協約を締結するための団体交渉をすること及びその手続を助成することを目的とする。",src:"労働組合法1条1項",cat:"目的条文（労働組合法）"},
+{type:"select",no:"労組-目的",opt:"空欄G",context:"【労働組合法】この法律は、労働者が使用者との交渉において対等の立場に立つことを促進することにより労働者の地位を向上させること、労働者がその労働条件について交渉するために自ら代表者を選出することその他の団体行動を行うために自主的に労働組合を組織し、団結することを擁護すること並びに使用者と労働者との関係を規制する労働協約を締結するための団体交渉をすること及びその手続を【G】することを目的とする。",choices:["助成", "擁護", "促進", "整備"],answer:"助成",exp:"正解は「助成」。【完成文】【労働組合法】この法律は、労働者が使用者との交渉において対等の立場に立つことを促進することにより労働者の地位を向上させること、労働者がその労働条件について交渉するために自ら代表者を選出することその他の団体行動を行うために自主的に労働組合を組織し、団結することを擁護すること並びに使用者と労働者との関係を規制する労働協約を締結するための団体交渉をすること及びその手続を助成することを目的とする。",src:"労働組合法1条1項",cat:"目的条文（労働組合法）"},
+{type:"select",no:"育介-目的",opt:"空欄A",context:"【育児・介護休業法】この法律は、【A】に関する制度並びに子の看護等休暇及び介護休暇に関する制度を設けるとともに、子の養育及び家族の介護を容易にするため所定労働時間等に関し事業主が講ずべき措置を定めるほか、子の養育又は家族の介護を行う労働者等に対する支援措置を講ずること等により、子の養育又は家族の介護を行う労働者等の雇用の継続及び再就職の促進を図り、もってこれらの者の職業生活と家庭生活との両立に寄与することを通じて、これらの者の福祉の増進を図り、あわせて経済及び社会の発展に資することを目的とする。",choices:["育児休業及び介護休業", "育児休業及び子の看護等休暇", "産前産後休業及び育児休業", "育児休業及び介護休暇"],answer:"育児休業及び介護休業",exp:"正解は「育児休業及び介護休業」。【完成文】【育児・介護休業法】この法律は、育児休業及び介護休業に関する制度並びに子の看護等休暇及び介護休暇に関する制度を設けるとともに、子の養育及び家族の介護を容易にするため所定労働時間等に関し事業主が講ずべき措置を定めるほか、子の養育又は家族の介護を行う労働者等に対する支援措置を講ずること等により、子の養育又は家族の介護を行う労働者等の雇用の継続及び再就職の促進を図り、もってこれらの者の職業生活と家庭生活との両立に寄与することを通じて、これらの者の福祉の増進を図り、あわせて経済及び社会の発展に資することを目的とする。",src:"育児介護休業法1条",cat:"目的条文（育児・介護休業法）"},
+{type:"select",no:"育介-目的",opt:"空欄B",context:"【育児・介護休業法】この法律は、育児休業及び介護休業に関する制度並びに【B】に関する制度を設けるとともに、子の養育及び家族の介護を容易にするため所定労働時間等に関し事業主が講ずべき措置を定めるほか、子の養育又は家族の介護を行う労働者等に対する支援措置を講ずること等により、子の養育又は家族の介護を行う労働者等の雇用の継続及び再就職の促進を図り、もってこれらの者の職業生活と家庭生活との両立に寄与することを通じて、これらの者の福祉の増進を図り、あわせて経済及び社会の発展に資することを目的とする。",choices:["子の看護等休暇及び介護休暇", "子の看護等休暇及び介護休業", "育児休暇及び介護休暇", "子の養育休暇及び家族介護休暇"],answer:"子の看護等休暇及び介護休暇",exp:"正解は「子の看護等休暇及び介護休暇」。【完成文】【育児・介護休業法】この法律は、育児休業及び介護休業に関する制度並びに子の看護等休暇及び介護休暇に関する制度を設けるとともに、子の養育及び家族の介護を容易にするため所定労働時間等に関し事業主が講ずべき措置を定めるほか、子の養育又は家族の介護を行う労働者等に対する支援措置を講ずること等により、子の養育又は家族の介護を行う労働者等の雇用の継続及び再就職の促進を図り、もってこれらの者の職業生活と家庭生活との両立に寄与することを通じて、これらの者の福祉の増進を図り、あわせて経済及び社会の発展に資することを目的とする。",src:"育児介護休業法1条",cat:"目的条文（育児・介護休業法）"},
+{type:"select",no:"育介-目的",opt:"空欄C",context:"【育児・介護休業法】この法律は、育児休業及び介護休業に関する制度並びに子の看護等休暇及び介護休暇に関する制度を設けるとともに、子の養育及び家族の介護を容易にするため【C】に関し事業主が講ずべき措置を定めるほか、子の養育又は家族の介護を行う労働者等に対する支援措置を講ずること等により、子の養育又は家族の介護を行う労働者等の雇用の継続及び再就職の促進を図り、もってこれらの者の職業生活と家庭生活との両立に寄与することを通じて、これらの者の福祉の増進を図り、あわせて経済及び社会の発展に資することを目的とする。",choices:["所定労働時間等", "所定外労働時間等", "労働時間及び深夜業", "始業及び終業の時刻"],answer:"所定労働時間等",exp:"正解は「所定労働時間等」。【完成文】【育児・介護休業法】この法律は、育児休業及び介護休業に関する制度並びに子の看護等休暇及び介護休暇に関する制度を設けるとともに、子の養育及び家族の介護を容易にするため所定労働時間等に関し事業主が講ずべき措置を定めるほか、子の養育又は家族の介護を行う労働者等に対する支援措置を講ずること等により、子の養育又は家族の介護を行う労働者等の雇用の継続及び再就職の促進を図り、もってこれらの者の職業生活と家庭生活との両立に寄与することを通じて、これらの者の福祉の増進を図り、あわせて経済及び社会の発展に資することを目的とする。",src:"育児介護休業法1条",cat:"目的条文（育児・介護休業法）"},
+{type:"select",no:"育介-目的",opt:"空欄D",context:"【育児・介護休業法】この法律は、育児休業及び介護休業に関する制度並びに子の看護等休暇及び介護休暇に関する制度を設けるとともに、子の養育及び家族の介護を容易にするため所定労働時間等に関し事業主が講ずべき措置を定めるほか、子の養育又は家族の介護を行う労働者等に対する支援措置を講ずること等により、子の養育又は家族の介護を行う労働者等の【D】及び再就職の促進を図り、もってこれらの者の職業生活と家庭生活との両立に寄与することを通じて、これらの者の福祉の増進を図り、あわせて経済及び社会の発展に資することを目的とする。",choices:["雇用の継続", "雇用の安定", "雇用の確保", "職業生活の充実"],answer:"雇用の継続",exp:"正解は「雇用の継続」。【完成文】【育児・介護休業法】この法律は、育児休業及び介護休業に関する制度並びに子の看護等休暇及び介護休暇に関する制度を設けるとともに、子の養育及び家族の介護を容易にするため所定労働時間等に関し事業主が講ずべき措置を定めるほか、子の養育又は家族の介護を行う労働者等に対する支援措置を講ずること等により、子の養育又は家族の介護を行う労働者等の雇用の継続及び再就職の促進を図り、もってこれらの者の職業生活と家庭生活との両立に寄与することを通じて、これらの者の福祉の増進を図り、あわせて経済及び社会の発展に資することを目的とする。",src:"育児介護休業法1条",cat:"目的条文（育児・介護休業法）"},
+{type:"select",no:"育介-目的",opt:"空欄E",context:"【育児・介護休業法】この法律は、育児休業及び介護休業に関する制度並びに子の看護等休暇及び介護休暇に関する制度を設けるとともに、子の養育及び家族の介護を容易にするため所定労働時間等に関し事業主が講ずべき措置を定めるほか、子の養育又は家族の介護を行う労働者等に対する支援措置を講ずること等により、子の養育又は家族の介護を行う労働者等の雇用の継続及び【E】を図り、もってこれらの者の職業生活と家庭生活との両立に寄与することを通じて、これらの者の福祉の増進を図り、あわせて経済及び社会の発展に資することを目的とする。",choices:["再就職の促進", "再就職の援助", "就業の機会の確保", "職業能力の開発"],answer:"再就職の促進",exp:"正解は「再就職の促進」。【完成文】【育児・介護休業法】この法律は、育児休業及び介護休業に関する制度並びに子の看護等休暇及び介護休暇に関する制度を設けるとともに、子の養育及び家族の介護を容易にするため所定労働時間等に関し事業主が講ずべき措置を定めるほか、子の養育又は家族の介護を行う労働者等に対する支援措置を講ずること等により、子の養育又は家族の介護を行う労働者等の雇用の継続及び再就職の促進を図り、もってこれらの者の職業生活と家庭生活との両立に寄与することを通じて、これらの者の福祉の増進を図り、あわせて経済及び社会の発展に資することを目的とする。",src:"育児介護休業法1条",cat:"目的条文（育児・介護休業法）"},
+{type:"select",no:"育介-目的",opt:"空欄F",context:"【育児・介護休業法】この法律は、育児休業及び介護休業に関する制度並びに子の看護等休暇及び介護休暇に関する制度を設けるとともに、子の養育及び家族の介護を容易にするため所定労働時間等に関し事業主が講ずべき措置を定めるほか、子の養育又は家族の介護を行う労働者等に対する支援措置を講ずること等により、子の養育又は家族の介護を行う労働者等の雇用の継続及び再就職の促進を図り、もってこれらの者の【F】に寄与することを通じて、これらの者の福祉の増進を図り、あわせて経済及び社会の発展に資することを目的とする。",choices:["職業生活と家庭生活との両立", "職業生活と家庭生活との調和", "仕事と生活の調和", "職業生活の充実と家庭の安定"],answer:"職業生活と家庭生活との両立",exp:"正解は「職業生活と家庭生活との両立」。【完成文】【育児・介護休業法】この法律は、育児休業及び介護休業に関する制度並びに子の看護等休暇及び介護休暇に関する制度を設けるとともに、子の養育及び家族の介護を容易にするため所定労働時間等に関し事業主が講ずべき措置を定めるほか、子の養育又は家族の介護を行う労働者等に対する支援措置を講ずること等により、子の養育又は家族の介護を行う労働者等の雇用の継続及び再就職の促進を図り、もってこれらの者の職業生活と家庭生活との両立に寄与することを通じて、これらの者の福祉の増進を図り、あわせて経済及び社会の発展に資することを目的とする。",src:"育児介護休業法1条",cat:"目的条文（育児・介護休業法）"},
+{type:"select",no:"育介-目的",opt:"空欄G",context:"【育児・介護休業法】この法律は、育児休業及び介護休業に関する制度並びに子の看護等休暇及び介護休暇に関する制度を設けるとともに、子の養育及び家族の介護を容易にするため所定労働時間等に関し事業主が講ずべき措置を定めるほか、子の養育又は家族の介護を行う労働者等に対する支援措置を講ずること等により、子の養育又は家族の介護を行う労働者等の雇用の継続及び再就職の促進を図り、もってこれらの者の職業生活と家庭生活との両立に寄与することを通じて、これらの者の【G】を図り、あわせて経済及び社会の発展に資することを目的とする。",choices:["福祉の増進", "福祉の向上", "生活の安定", "地位の向上"],answer:"福祉の増進",exp:"正解は「福祉の増進」。【完成文】【育児・介護休業法】この法律は、育児休業及び介護休業に関する制度並びに子の看護等休暇及び介護休暇に関する制度を設けるとともに、子の養育及び家族の介護を容易にするため所定労働時間等に関し事業主が講ずべき措置を定めるほか、子の養育又は家族の介護を行う労働者等に対する支援措置を講ずること等により、子の養育又は家族の介護を行う労働者等の雇用の継続及び再就職の促進を図り、もってこれらの者の職業生活と家庭生活との両立に寄与することを通じて、これらの者の福祉の増進を図り、あわせて経済及び社会の発展に資することを目的とする。",src:"育児介護休業法1条",cat:"目的条文（育児・介護休業法）"},
+{type:"select",no:"育介-目的",opt:"空欄H",context:"【育児・介護休業法】この法律は、育児休業及び介護休業に関する制度並びに子の看護等休暇及び介護休暇に関する制度を設けるとともに、子の養育及び家族の介護を容易にするため所定労働時間等に関し事業主が講ずべき措置を定めるほか、子の養育又は家族の介護を行う労働者等に対する支援措置を講ずること等により、子の養育又は家族の介護を行う労働者等の雇用の継続及び再就職の促進を図り、もってこれらの者の職業生活と家庭生活との両立に寄与することを通じて、これらの者の福祉の増進を図り、あわせて【H】に資することを目的とする。",choices:["経済及び社会の発展", "社会及び経済の発展", "経済社会の発展", "国民生活の維持及び向上"],answer:"経済及び社会の発展",exp:"正解は「経済及び社会の発展」。【完成文】【育児・介護休業法】この法律は、育児休業及び介護休業に関する制度並びに子の看護等休暇及び介護休暇に関する制度を設けるとともに、子の養育及び家族の介護を容易にするため所定労働時間等に関し事業主が講ずべき措置を定めるほか、子の養育又は家族の介護を行う労働者等に対する支援措置を講ずること等により、子の養育又は家族の介護を行う労働者等の雇用の継続及び再就職の促進を図り、もってこれらの者の職業生活と家庭生活との両立に寄与することを通じて、これらの者の福祉の増進を図り、あわせて経済及び社会の発展に資することを目的とする。",src:"育児介護休業法1条",cat:"目的条文（育児・介護休業法）"},
+{type:"select",no:"パート有期-目的",opt:"空欄A",context:"【パートタイム・有期雇用労働法】この法律は、我が国における【A】、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、雇用管理の改善、通常の労働者への転換の推進、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて経済及び社会の発展に寄与することを目的とする。",choices:["少子高齢化の進展", "少子高齢化による人口構造の変化", "高齢期の生活の多様化", "人口減少の進行"],answer:"少子高齢化の進展",exp:"正解は「少子高齢化の進展」。【完成文】【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、雇用管理の改善、通常の労働者への転換の推進、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて経済及び社会の発展に寄与することを目的とする。",src:"パート・有期雇用労働法1条",cat:"目的条文（パートタイム・有期雇用労働法）"},
+{type:"select",no:"パート有期-目的",opt:"空欄B",context:"【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、【B】等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、雇用管理の改善、通常の労働者への転換の推進、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて経済及び社会の発展に寄与することを目的とする。",choices:["就業構造の変化", "産業構造の変化", "経済社会情勢の変化", "雇用形態の多様化"],answer:"就業構造の変化",exp:"正解は「就業構造の変化」。【完成文】【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、雇用管理の改善、通常の労働者への転換の推進、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて経済及び社会の発展に寄与することを目的とする。",src:"パート・有期雇用労働法1条",cat:"目的条文（パートタイム・有期雇用労働法）"},
+{type:"select",no:"パート有期-目的",opt:"空欄C",context:"【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その【C】、雇用管理の改善、通常の労働者への転換の推進、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて経済及び社会の発展に寄与することを目的とする。",choices:["適正な労働条件の確保", "均衡のとれた待遇の確保", "適正な労働環境の形成", "労働条件の維持改善"],answer:"適正な労働条件の確保",exp:"正解は「適正な労働条件の確保」。【完成文】【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、雇用管理の改善、通常の労働者への転換の推進、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて経済及び社会の発展に寄与することを目的とする。",src:"パート・有期雇用労働法1条",cat:"目的条文（パートタイム・有期雇用労働法）"},
+{type:"select",no:"パート有期-目的",opt:"空欄D",context:"【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、【D】、通常の労働者への転換の推進、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて経済及び社会の発展に寄与することを目的とする。",choices:["雇用管理の改善", "雇用の安定", "労務管理の確立", "雇用の継続"],answer:"雇用管理の改善",exp:"正解は「雇用管理の改善」。【完成文】【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、雇用管理の改善、通常の労働者への転換の推進、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて経済及び社会の発展に寄与することを目的とする。",src:"パート・有期雇用労働法1条",cat:"目的条文（パートタイム・有期雇用労働法）"},
+{type:"select",no:"パート有期-目的",opt:"空欄E",context:"【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、雇用管理の改善、【E】、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて経済及び社会の発展に寄与することを目的とする。",choices:["通常の労働者への転換の推進", "通常の労働者との待遇の均等", "正規雇用への転換の義務付け", "通常の労働者への転換の援助"],answer:"通常の労働者への転換の推進",exp:"正解は「通常の労働者への転換の推進」。【完成文】【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、雇用管理の改善、通常の労働者への転換の推進、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて経済及び社会の発展に寄与することを目的とする。",src:"パート・有期雇用労働法1条",cat:"目的条文（パートタイム・有期雇用労働法）"},
+{type:"select",no:"パート有期-目的",opt:"空欄F",context:"【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、雇用管理の改善、通常の労働者への転換の推進、【F】等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて経済及び社会の発展に寄与することを目的とする。",choices:["職業能力の開発及び向上", "職業能力の開発及び促進", "職業訓練の実施", "能力の有効な発揮"],answer:"職業能力の開発及び向上",exp:"正解は「職業能力の開発及び向上」。【完成文】【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、雇用管理の改善、通常の労働者への転換の推進、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて経済及び社会の発展に寄与することを目的とする。",src:"パート・有期雇用労働法1条",cat:"目的条文（パートタイム・有期雇用労働法）"},
+{type:"select",no:"パート有期-目的",opt:"空欄G",context:"【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、雇用管理の改善、通常の労働者への転換の推進、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との【G】のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて経済及び社会の発展に寄与することを目的とする。",choices:["均衡", "均等", "同一", "調和"],answer:"均衡",exp:"正解は「均衡」。【完成文】【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、雇用管理の改善、通常の労働者への転換の推進、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて経済及び社会の発展に寄与することを目的とする。",src:"パート・有期雇用労働法1条",cat:"目的条文（パートタイム・有期雇用労働法）"},
+{type:"select",no:"パート有期-目的",opt:"空欄H",context:"【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、雇用管理の改善、通常の労働者への転換の推進、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその【H】を図り、あわせて経済及び社会の発展に寄与することを目的とする。",choices:["福祉の増進", "福祉の向上", "生活の安定", "地位の向上"],answer:"福祉の増進",exp:"正解は「福祉の増進」。【完成文】【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、雇用管理の改善、通常の労働者への転換の推進、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて経済及び社会の発展に寄与することを目的とする。",src:"パート・有期雇用労働法1条",cat:"目的条文（パートタイム・有期雇用労働法）"},
+{type:"select",no:"パート有期-目的",opt:"空欄I",context:"【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、雇用管理の改善、通常の労働者への転換の推進、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて【I】に寄与することを目的とする。",choices:["経済及び社会の発展", "社会及び経済の発展", "経済社会の発展", "国民経済の発展"],answer:"経済及び社会の発展",exp:"正解は「経済及び社会の発展」。【完成文】【パートタイム・有期雇用労働法】この法律は、我が国における少子高齢化の進展、就業構造の変化等の社会経済情勢の変化に伴い、短時間・有期雇用労働者の果たす役割の重要性が増大していることに鑑み、短時間・有期雇用労働者について、その適正な労働条件の確保、雇用管理の改善、通常の労働者への転換の推進、職業能力の開発及び向上等に関する措置等を講ずることにより、通常の労働者との均衡のとれた待遇の確保等を図ることを通じて短時間・有期雇用労働者がその有する能力を有効に発揮することができるようにし、もってその福祉の増進を図り、あわせて経済及び社会の発展に寄与することを目的とする。",src:"パート・有期雇用労働法1条",cat:"目的条文（パートタイム・有期雇用労働法）"},
+{type:"select",no:"高確-目的",opt:"空欄A",context:"【高齢者医療確保法】この法律は、国民の【A】における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",choices:["高齢期", "老齢期", "後期高齢期", "高年齢期"],answer:"高齢期",exp:"正解は「高齢期」。【完成文】【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",src:"高齢者医療確保法1条",cat:"目的条文（高齢者医療確保法）"},
+{type:"select",no:"高確-目的",opt:"空欄B",context:"【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、【B】を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",choices:["医療費の適正化", "医療費の抑制", "医療の効率化", "医療費の負担の公平化"],answer:"医療費の適正化",exp:"正解は「医療費の適正化」。【完成文】【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",src:"高齢者医療確保法1条",cat:"目的条文（高齢者医療確保法）"},
+{type:"select",no:"高確-目的",opt:"空欄C",context:"【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の【C】の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",choices:["共同連帯", "社会連帯", "相互扶助", "自助努力"],answer:"共同連帯",exp:"正解は「共同連帯」。【完成文】【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",src:"高齢者医療確保法1条",cat:"目的条文（高齢者医療確保法）"},
+{type:"select",no:"高確-目的",opt:"空欄D",context:"【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、【D】に係る保険者間の費用負担の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",choices:["前期高齢者", "後期高齢者", "特定高齢者", "高年齢被保険者"],answer:"前期高齢者",exp:"正解は「前期高齢者」。【完成文】【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",src:"高齢者医療確保法1条",cat:"目的条文（高齢者医療確保法）"},
+{type:"select",no:"高確-目的",opt:"空欄E",context:"【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る【E】、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",choices:["保険者間の費用負担の調整", "保険者間の財政の調整", "保険料の負担の調整", "国庫負担の調整"],answer:"保険者間の費用負担の調整",exp:"正解は「保険者間の費用負担の調整」。【完成文】【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",src:"高齢者医療確保法1条",cat:"目的条文（高齢者医療確保法）"},
+{type:"select",no:"高確-目的",opt:"空欄F",context:"【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、【F】に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",choices:["後期高齢者", "前期高齢者", "高齢者等", "特定被保険者"],answer:"後期高齢者",exp:"正解は「後期高齢者」。【完成文】【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",src:"高齢者医療確保法1条",cat:"目的条文（高齢者医療確保法）"},
+{type:"select",no:"高確-目的",opt:"空欄G",context:"【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、後期高齢者に対する【G】等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",choices:["適切な医療の給付", "必要な医療の給付", "適切な医療の確保", "医療給付の実施"],answer:"適切な医療の給付",exp:"正解は「適切な医療の給付」。【完成文】【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",src:"高齢者医療確保法1条",cat:"目的条文（高齢者医療確保法）"},
+{type:"select",no:"高確-目的",opt:"空欄H",context:"【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって【H】及び高齢者の福祉の増進を図ることを目的とする。",choices:["国民保健の向上", "国民の保健医療の向上", "国民保健の増進", "国民の健康の保持"],answer:"国民保健の向上",exp:"正解は「国民保健の向上」。【完成文】【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",src:"高齢者医療確保法1条",cat:"目的条文（高齢者医療確保法）"},
+{type:"select",no:"高確-目的",opt:"空欄I",context:"【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の【I】を図ることを目的とする。",choices:["福祉の増進", "福祉の向上", "生活の安定", "保健の向上"],answer:"福祉の増進",exp:"正解は「福祉の増進」。【完成文】【高齢者医療確保法】この法律は、国民の高齢期における適切な医療の確保を図るため、医療費の適正化を推進するための計画の作成及び保険者による健康診査等の実施に関する措置を講ずるとともに、高齢者の医療について、国民の共同連帯の理念等に基づき、前期高齢者に係る保険者間の費用負担の調整、後期高齢者に対する適切な医療の給付等を行うために必要な制度を設け、もって国民保健の向上及び高齢者の福祉の増進を図ることを目的とする。",src:"高齢者医療確保法1条",cat:"目的条文（高齢者医療確保法）"},
+{type:"select",no:"介保-目的",opt:"空欄A",context:"【介護保険法】この法律は、【A】に伴って生ずる心身の変化に起因する疾病等により要介護状態となり、入浴、排せつ、食事等の介護、機能訓練並びに看護及び療養上の管理その他の医療を要する者等について、これらの者が尊厳を保持し、その有する能力に応じ自立した日常生活を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の共同連帯の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって国民の保健医療の向上及び福祉の増進を図ることを目的とする。",choices:["加齢", "老化", "傷病", "高齢"],answer:"加齢",exp:"正解は「加齢」。【完成文】【介護保険法】この法律は、加齢に伴って生ずる心身の変化に起因する疾病等により要介護状態となり、入浴、排せつ、食事等の介護、機能訓練並びに看護及び療養上の管理その他の医療を要する者等について、これらの者が尊厳を保持し、その有する能力に応じ自立した日常生活を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の共同連帯の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって国民の保健医療の向上及び福祉の増進を図ることを目的とする。",src:"介護保険法1条",cat:"目的条文（介護保険法）"},
+{type:"select",no:"介保-目的",opt:"空欄B",context:"【介護保険法】この法律は、加齢に伴って生ずる心身の変化に起因する疾病等により【B】となり、入浴、排せつ、食事等の介護、機能訓練並びに看護及び療養上の管理その他の医療を要する者等について、これらの者が尊厳を保持し、その有する能力に応じ自立した日常生活を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の共同連帯の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって国民の保健医療の向上及び福祉の増進を図ることを目的とする。",choices:["要介護状態", "要支援状態", "要介護状態等", "介護を要する状態"],answer:"要介護状態",exp:"正解は「要介護状態」。【完成文】【介護保険法】この法律は、加齢に伴って生ずる心身の変化に起因する疾病等により要介護状態となり、入浴、排せつ、食事等の介護、機能訓練並びに看護及び療養上の管理その他の医療を要する者等について、これらの者が尊厳を保持し、その有する能力に応じ自立した日常生活を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の共同連帯の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって国民の保健医療の向上及び福祉の増進を図ることを目的とする。",src:"介護保険法1条",cat:"目的条文（介護保険法）"},
+{type:"select",no:"介保-目的",opt:"空欄C",context:"【介護保険法】この法律は、加齢に伴って生ずる心身の変化に起因する疾病等により要介護状態となり、入浴、排せつ、食事等の【C】その他の医療を要する者等について、これらの者が尊厳を保持し、その有する能力に応じ自立した日常生活を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の共同連帯の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって国民の保健医療の向上及び福祉の増進を図ることを目的とする。",choices:["介護、機能訓練並びに看護及び療養上の管理", "介護、機能訓練並びに看護及び医学的管理", "介護、リハビリテーション並びに看護及び療養上の管理", "介護、機能訓練並びに看護及び療養上の世話"],answer:"介護、機能訓練並びに看護及び療養上の管理",exp:"正解は「介護、機能訓練並びに看護及び療養上の管理」。【完成文】【介護保険法】この法律は、加齢に伴って生ずる心身の変化に起因する疾病等により要介護状態となり、入浴、排せつ、食事等の介護、機能訓練並びに看護及び療養上の管理その他の医療を要する者等について、これらの者が尊厳を保持し、その有する能力に応じ自立した日常生活を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の共同連帯の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって国民の保健医療の向上及び福祉の増進を図ることを目的とする。",src:"介護保険法1条",cat:"目的条文（介護保険法）"},
+{type:"select",no:"介保-目的",opt:"空欄D",context:"【介護保険法】この法律は、加齢に伴って生ずる心身の変化に起因する疾病等により要介護状態となり、入浴、排せつ、食事等の介護、機能訓練並びに看護及び療養上の管理その他の医療を要する者等について、これらの者が【D】し、その有する能力に応じ自立した日常生活を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の共同連帯の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって国民の保健医療の向上及び福祉の増進を図ることを目的とする。",choices:["尊厳を保持", "人格を尊重", "自立を維持", "健康を保持"],answer:"尊厳を保持",exp:"正解は「尊厳を保持」。【完成文】【介護保険法】この法律は、加齢に伴って生ずる心身の変化に起因する疾病等により要介護状態となり、入浴、排せつ、食事等の介護、機能訓練並びに看護及び療養上の管理その他の医療を要する者等について、これらの者が尊厳を保持し、その有する能力に応じ自立した日常生活を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の共同連帯の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって国民の保健医療の向上及び福祉の増進を図ることを目的とする。",src:"介護保険法1条",cat:"目的条文（介護保険法）"},
+{type:"select",no:"介保-目的",opt:"空欄E",context:"【介護保険法】この法律は、加齢に伴って生ずる心身の変化に起因する疾病等により要介護状態となり、入浴、排せつ、食事等の介護、機能訓練並びに看護及び療養上の管理その他の医療を要する者等について、これらの者が尊厳を保持し、その有する能力に応じ【E】を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の共同連帯の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって国民の保健医療の向上及び福祉の増進を図ることを目的とする。",choices:["自立した日常生活", "自立した社会生活", "健全な日常生活", "自立した職業生活"],answer:"自立した日常生活",exp:"正解は「自立した日常生活」。【完成文】【介護保険法】この法律は、加齢に伴って生ずる心身の変化に起因する疾病等により要介護状態となり、入浴、排せつ、食事等の介護、機能訓練並びに看護及び療養上の管理その他の医療を要する者等について、これらの者が尊厳を保持し、その有する能力に応じ自立した日常生活を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の共同連帯の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって国民の保健医療の向上及び福祉の増進を図ることを目的とする。",src:"介護保険法1条",cat:"目的条文（介護保険法）"},
+{type:"select",no:"介保-目的",opt:"空欄F",context:"【介護保険法】この法律は、加齢に伴って生ずる心身の変化に起因する疾病等により要介護状態となり、入浴、排せつ、食事等の介護、機能訓練並びに看護及び療養上の管理その他の医療を要する者等について、これらの者が尊厳を保持し、その有する能力に応じ自立した日常生活を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の【F】の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって国民の保健医療の向上及び福祉の増進を図ることを目的とする。",choices:["共同連帯", "社会連帯", "相互扶助", "共助"],answer:"共同連帯",exp:"正解は「共同連帯」。【完成文】【介護保険法】この法律は、加齢に伴って生ずる心身の変化に起因する疾病等により要介護状態となり、入浴、排せつ、食事等の介護、機能訓練並びに看護及び療養上の管理その他の医療を要する者等について、これらの者が尊厳を保持し、その有する能力に応じ自立した日常生活を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の共同連帯の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって国民の保健医療の向上及び福祉の増進を図ることを目的とする。",src:"介護保険法1条",cat:"目的条文（介護保険法）"},
+{type:"select",no:"介保-目的",opt:"空欄G",context:"【介護保険法】この法律は、加齢に伴って生ずる心身の変化に起因する疾病等により要介護状態となり、入浴、排せつ、食事等の介護、機能訓練並びに看護及び療養上の管理その他の医療を要する者等について、これらの者が尊厳を保持し、その有する能力に応じ自立した日常生活を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の共同連帯の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって【G】及び福祉の増進を図ることを目的とする。",choices:["国民の保健医療の向上", "国民保健の向上", "国民の健康の保持増進", "保健医療サービスの確保"],answer:"国民の保健医療の向上",exp:"正解は「国民の保健医療の向上」。【完成文】【介護保険法】この法律は、加齢に伴って生ずる心身の変化に起因する疾病等により要介護状態となり、入浴、排せつ、食事等の介護、機能訓練並びに看護及び療養上の管理その他の医療を要する者等について、これらの者が尊厳を保持し、その有する能力に応じ自立した日常生活を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の共同連帯の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって国民の保健医療の向上及び福祉の増進を図ることを目的とする。",src:"介護保険法1条",cat:"目的条文（介護保険法）"},
+{type:"select",no:"介保-目的",opt:"空欄H",context:"【介護保険法】この法律は、加齢に伴って生ずる心身の変化に起因する疾病等により要介護状態となり、入浴、排せつ、食事等の介護、機能訓練並びに看護及び療養上の管理その他の医療を要する者等について、これらの者が尊厳を保持し、その有する能力に応じ自立した日常生活を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の共同連帯の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって国民の保健医療の向上及び【H】を図ることを目的とする。",choices:["福祉の増進", "福祉の向上", "生活の安定", "保健の向上"],answer:"福祉の増進",exp:"正解は「福祉の増進」。【完成文】【介護保険法】この法律は、加齢に伴って生ずる心身の変化に起因する疾病等により要介護状態となり、入浴、排せつ、食事等の介護、機能訓練並びに看護及び療養上の管理その他の医療を要する者等について、これらの者が尊厳を保持し、その有する能力に応じ自立した日常生活を営むことができるよう、必要な保健医療サービス及び福祉サービスに係る給付を行うため、国民の共同連帯の理念に基づき介護保険制度を設け、その行う保険給付等に関して必要な事項を定め、もって国民の保健医療の向上及び福祉の増進を図ることを目的とする。",src:"介護保険法1条",cat:"目的条文（介護保険法）"},
+{type:"select",no:"国年-目的",opt:"空欄A",context:"【国民年金法】国民年金制度は、日本国憲法第25条第２項に規定する理念に基き、【A】によって国民生活の安定がそこなわれることを国民の共同連帯によって防止し、もって健全な国民生活の維持及び向上に寄与することを目的とする。",choices:["老齢、障害又は死亡", "老齢、障害又は傷病", "負傷、疾病、障害、死亡等", "老齢、障害又は退職"],answer:"老齢、障害又は死亡",exp:"正解は「老齢、障害又は死亡」。【完成文】【国民年金法】国民年金制度は、日本国憲法第25条第２項に規定する理念に基き、老齢、障害又は死亡によって国民生活の安定がそこなわれることを国民の共同連帯によって防止し、もって健全な国民生活の維持及び向上に寄与することを目的とする。",src:"国年法1条",cat:"目的条文（国民年金法）"},
+{type:"select",no:"国年-目的",opt:"空欄B",context:"【国民年金法】国民年金制度は、日本国憲法第25条第２項に規定する理念に基き、老齢、障害又は死亡によって【B】がそこなわれることを国民の共同連帯によって防止し、もって健全な国民生活の維持及び向上に寄与することを目的とする。",choices:["国民生活の安定", "国民生活の維持", "国民の生活水準", "健全な国民生活"],answer:"国民生活の安定",exp:"正解は「国民生活の安定」。【完成文】【国民年金法】国民年金制度は、日本国憲法第25条第２項に規定する理念に基き、老齢、障害又は死亡によって国民生活の安定がそこなわれることを国民の共同連帯によって防止し、もって健全な国民生活の維持及び向上に寄与することを目的とする。",src:"国年法1条",cat:"目的条文（国民年金法）"},
+{type:"select",no:"国年-目的",opt:"空欄C",context:"【国民年金法】国民年金制度は、日本国憲法第25条第２項に規定する理念に基き、老齢、障害又は死亡によって国民生活の安定がそこなわれることを国民の【C】によって防止し、もって健全な国民生活の維持及び向上に寄与することを目的とする。",choices:["共同連帯", "相互扶助", "社会連帯", "自主的な努力"],answer:"共同連帯",exp:"正解は「共同連帯」。【完成文】【国民年金法】国民年金制度は、日本国憲法第25条第２項に規定する理念に基き、老齢、障害又は死亡によって国民生活の安定がそこなわれることを国民の共同連帯によって防止し、もって健全な国民生活の維持及び向上に寄与することを目的とする。",src:"国年法1条",cat:"目的条文（国民年金法）"},
+{type:"select",no:"国年-目的",opt:"空欄D",context:"【国民年金法】国民年金制度は、日本国憲法第25条第２項に規定する理念に基き、老齢、障害又は死亡によって国民生活の安定がそこなわれることを国民の共同連帯によって防止し、もって健全な【D】に寄与することを目的とする。",choices:["国民生活の維持及び向上", "国民生活の安定及び向上", "国民の福祉の増進", "国民生活の維持及び安定"],answer:"国民生活の維持及び向上",exp:"正解は「国民生活の維持及び向上」。【完成文】【国民年金法】国民年金制度は、日本国憲法第25条第２項に規定する理念に基き、老齢、障害又は死亡によって国民生活の安定がそこなわれることを国民の共同連帯によって防止し、もって健全な国民生活の維持及び向上に寄与することを目的とする。",src:"国年法1条",cat:"目的条文（国民年金法）"},
+{type:"select",no:"国年-2条",opt:"空欄A",context:"【国民年金法 第2条】国民年金は、前条の目的を達成するため、国民の老齢、障害又は死亡に関して【A】を行うものとする。",choices:["必要な給付", "必要な保険給付", "保険給付", "基礎年金の給付"],answer:"必要な給付",exp:"正解は「必要な給付」。【完成文】【国民年金法 第2条】国民年金は、前条の目的を達成するため、国民の老齢、障害又は死亡に関して必要な給付を行うものとする。",src:"国年法2条",cat:"目的条文（国民年金法）"},
+{type:"select",no:"厚年-目的",opt:"空欄A",context:"【厚生年金保険法】この法律は、【A】の老齢、障害又は死亡について保険給付を行い、労働者及びその遺族の生活の安定と福祉の向上に寄与することを目的とする。",choices:["労働者", "国民", "被保険者", "勤労者"],answer:"労働者",exp:"正解は「労働者」。【完成文】【厚生年金保険法】この法律は、労働者の老齢、障害又は死亡について保険給付を行い、労働者及びその遺族の生活の安定と福祉の向上に寄与することを目的とする。",src:"厚年法1条",cat:"目的条文（厚生年金保険法）"},
+{type:"select",no:"厚年-目的",opt:"空欄B",context:"【厚生年金保険法】この法律は、労働者の【B】について保険給付を行い、労働者及びその遺族の生活の安定と福祉の向上に寄与することを目的とする。",choices:["老齢、障害又は死亡", "老齢、障害又は退職", "負傷、疾病、障害、死亡等", "老齢又は死亡"],answer:"老齢、障害又は死亡",exp:"正解は「老齢、障害又は死亡」。【完成文】【厚生年金保険法】この法律は、労働者の老齢、障害又は死亡について保険給付を行い、労働者及びその遺族の生活の安定と福祉の向上に寄与することを目的とする。",src:"厚年法1条",cat:"目的条文（厚生年金保険法）"},
+{type:"select",no:"厚年-目的",opt:"空欄C",context:"【厚生年金保険法】この法律は、労働者の老齢、障害又は死亡について【C】を行い、労働者及びその遺族の生活の安定と福祉の向上に寄与することを目的とする。",choices:["保険給付", "必要な給付", "年金給付", "必要な保険給付"],answer:"保険給付",exp:"正解は「保険給付」。【完成文】【厚生年金保険法】この法律は、労働者の老齢、障害又は死亡について保険給付を行い、労働者及びその遺族の生活の安定と福祉の向上に寄与することを目的とする。",src:"厚年法1条",cat:"目的条文（厚生年金保険法）"},
+{type:"select",no:"厚年-目的",opt:"空欄D",context:"【厚生年金保険法】この法律は、労働者の老齢、障害又は死亡について保険給付を行い、【D】の生活の安定と福祉の向上に寄与することを目的とする。",choices:["労働者及びその遺族", "労働者及びその家族", "被保険者及びその遺族", "国民及びその遺族"],answer:"労働者及びその遺族",exp:"正解は「労働者及びその遺族」。【完成文】【厚生年金保険法】この法律は、労働者の老齢、障害又は死亡について保険給付を行い、労働者及びその遺族の生活の安定と福祉の向上に寄与することを目的とする。",src:"厚年法1条",cat:"目的条文（厚生年金保険法）"},
+{type:"select",no:"厚年-目的",opt:"空欄E",context:"【厚生年金保険法】この法律は、労働者の老齢、障害又は死亡について保険給付を行い、労働者及びその遺族の【E】と福祉の向上に寄与することを目的とする。",choices:["生活の安定", "国民生活の安定", "生活の維持", "生活の保障"],answer:"生活の安定",exp:"正解は「生活の安定」。【完成文】【厚生年金保険法】この法律は、労働者の老齢、障害又は死亡について保険給付を行い、労働者及びその遺族の生活の安定と福祉の向上に寄与することを目的とする。",src:"厚年法1条",cat:"目的条文（厚生年金保険法）"},
+{type:"select",no:"厚年-目的",opt:"空欄F",context:"【厚生年金保険法】この法律は、労働者の老齢、障害又は死亡について保険給付を行い、労働者及びその遺族の生活の安定と【F】に寄与することを目的とする。",choices:["福祉の向上", "福祉の増進", "福祉の充実", "地位の向上"],answer:"福祉の向上",exp:"正解は「福祉の向上」。【完成文】【厚生年金保険法】この法律は、労働者の老齢、障害又は死亡について保険給付を行い、労働者及びその遺族の生活の安定と福祉の向上に寄与することを目的とする。",src:"厚年法1条",cat:"目的条文（厚生年金保険法）"},
+{type:"select",no:"児手-目的",opt:"空欄A",context:"【児童手当法】この法律は、子ども・子育て支援法第７条第１項に規定する子ども・子育て支援の適切な実施を図るため、【A】が子育てについての第一義的責任を有するという基本的認識の下に、児童を養育している者に児童手当を支給することにより、家庭等における生活の安定に寄与するとともに、次代の社会を担う児童の健やかな成長に資することを目的とする。",choices:["父母その他の保護者", "父母その他の養育者", "保護者その他の家族", "父母又は未成年後見人"],answer:"父母その他の保護者",exp:"正解は「父母その他の保護者」。【完成文】【児童手当法】この法律は、子ども・子育て支援法第７条第１項に規定する子ども・子育て支援の適切な実施を図るため、父母その他の保護者が子育てについての第一義的責任を有するという基本的認識の下に、児童を養育している者に児童手当を支給することにより、家庭等における生活の安定に寄与するとともに、次代の社会を担う児童の健やかな成長に資することを目的とする。",src:"児童手当法1条",cat:"目的条文（児童手当法）"},
+{type:"select",no:"児手-目的",opt:"空欄B",context:"【児童手当法】この法律は、子ども・子育て支援法第７条第１項に規定する子ども・子育て支援の適切な実施を図るため、父母その他の保護者が【B】という基本的認識の下に、児童を養育している者に児童手当を支給することにより、家庭等における生活の安定に寄与するとともに、次代の社会を担う児童の健やかな成長に資することを目的とする。",choices:["子育てについての第一義的責任を有する", "子育てについて第一の責任を負う", "児童の養育について責任を有する", "子育てについての基本的責任を有する"],answer:"子育てについての第一義的責任を有する",exp:"正解は「子育てについての第一義的責任を有する」。【完成文】【児童手当法】この法律は、子ども・子育て支援法第７条第１項に規定する子ども・子育て支援の適切な実施を図るため、父母その他の保護者が子育てについての第一義的責任を有するという基本的認識の下に、児童を養育している者に児童手当を支給することにより、家庭等における生活の安定に寄与するとともに、次代の社会を担う児童の健やかな成長に資することを目的とする。",src:"児童手当法1条",cat:"目的条文（児童手当法）"},
+{type:"select",no:"児手-目的",opt:"空欄C",context:"【児童手当法】この法律は、子ども・子育て支援法第７条第１項に規定する子ども・子育て支援の適切な実施を図るため、父母その他の保護者が子育てについての第一義的責任を有するという基本的認識の下に、児童を養育している者に【C】を支給することにより、家庭等における生活の安定に寄与するとともに、次代の社会を担う児童の健やかな成長に資することを目的とする。",choices:["児童手当", "児童扶養手当", "子ども手当", "育児手当"],answer:"児童手当",exp:"正解は「児童手当」。【完成文】【児童手当法】この法律は、子ども・子育て支援法第７条第１項に規定する子ども・子育て支援の適切な実施を図るため、父母その他の保護者が子育てについての第一義的責任を有するという基本的認識の下に、児童を養育している者に児童手当を支給することにより、家庭等における生活の安定に寄与するとともに、次代の社会を担う児童の健やかな成長に資することを目的とする。",src:"児童手当法1条",cat:"目的条文（児童手当法）"},
+{type:"select",no:"児手-目的",opt:"空欄D",context:"【児童手当法】この法律は、子ども・子育て支援法第７条第１項に規定する子ども・子育て支援の適切な実施を図るため、父母その他の保護者が子育てについての第一義的責任を有するという基本的認識の下に、児童を養育している者に児童手当を支給することにより、家庭等における【D】に寄与するとともに、次代の社会を担う児童の健やかな成長に資することを目的とする。",choices:["生活の安定", "生活の維持及び向上", "経済的負担の軽減", "福祉の増進"],answer:"生活の安定",exp:"正解は「生活の安定」。【完成文】【児童手当法】この法律は、子ども・子育て支援法第７条第１項に規定する子ども・子育て支援の適切な実施を図るため、父母その他の保護者が子育てについての第一義的責任を有するという基本的認識の下に、児童を養育している者に児童手当を支給することにより、家庭等における生活の安定に寄与するとともに、次代の社会を担う児童の健やかな成長に資することを目的とする。",src:"児童手当法1条",cat:"目的条文（児童手当法）"},
+{type:"select",no:"児手-目的",opt:"空欄E",context:"【児童手当法】この法律は、子ども・子育て支援法第７条第１項に規定する子ども・子育て支援の適切な実施を図るため、父母その他の保護者が子育てについての第一義的責任を有するという基本的認識の下に、児童を養育している者に児童手当を支給することにより、家庭等における生活の安定に寄与するとともに、次代の社会を担う【E】に資することを目的とする。",choices:["児童の健やかな成長", "児童の健全な育成", "次代の社会の担い手の育成", "児童の福祉の増進"],answer:"児童の健やかな成長",exp:"正解は「児童の健やかな成長」。【完成文】【児童手当法】この法律は、子ども・子育て支援法第７条第１項に規定する子ども・子育て支援の適切な実施を図るため、父母その他の保護者が子育てについての第一義的責任を有するという基本的認識の下に、児童を養育している者に児童手当を支給することにより、家庭等における生活の安定に寄与するとともに、次代の社会を担う児童の健やかな成長に資することを目的とする。",src:"児童手当法1条",cat:"目的条文（児童手当法）"},
+{type:"select",no:"社労士法-使命",opt:"空欄A",context:"【社会保険労務士法】社会保険労務士は、労働及び社会保険に関する【A】を通じて適切な労務管理の確立及び個人の尊厳が保持された適正な労働環境の形成に寄与することにより、事業の健全な発達と労働者等の福祉の向上並びに社会保障の向上及び増進に資し、もって豊かな国民生活及び活力ある経済社会の実現に資することを使命とする。",choices:["法令の円滑な実施", "法令の適正な運用", "法令の遵守", "法令に関する事務の適正な処理"],answer:"法令の円滑な実施",exp:"正解は「法令の円滑な実施」。【完成文】【社会保険労務士法】社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて適切な労務管理の確立及び個人の尊厳が保持された適正な労働環境の形成に寄与することにより、事業の健全な発達と労働者等の福祉の向上並びに社会保障の向上及び増進に資し、もって豊かな国民生活及び活力ある経済社会の実現に資することを使命とする。",src:"社会保険労務士法1条",cat:"目的条文（社会保険労務士法）"},
+{type:"select",no:"社労士法-使命",opt:"空欄B",context:"【社会保険労務士法】社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて【B】及び個人の尊厳が保持された適正な労働環境の形成に寄与することにより、事業の健全な発達と労働者等の福祉の向上並びに社会保障の向上及び増進に資し、もって豊かな国民生活及び活力ある経済社会の実現に資することを使命とする。",choices:["適切な労務管理の確立", "適正な労務管理の確保", "適切な雇用管理の改善", "健全な労使関係の確立"],answer:"適切な労務管理の確立",exp:"正解は「適切な労務管理の確立」。【完成文】【社会保険労務士法】社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて適切な労務管理の確立及び個人の尊厳が保持された適正な労働環境の形成に寄与することにより、事業の健全な発達と労働者等の福祉の向上並びに社会保障の向上及び増進に資し、もって豊かな国民生活及び活力ある経済社会の実現に資することを使命とする。",src:"社会保険労務士法1条",cat:"目的条文（社会保険労務士法）"},
+{type:"select",no:"社労士法-使命",opt:"空欄C",context:"【社会保険労務士法】社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて適切な労務管理の確立及び【C】に寄与することにより、事業の健全な発達と労働者等の福祉の向上並びに社会保障の向上及び増進に資し、もって豊かな国民生活及び活力ある経済社会の実現に資することを使命とする。",choices:["個人の尊厳が保持された適正な労働環境の形成", "個人の尊厳が保持された快適な職場環境の形成", "人格が尊重された適正な労働環境の整備", "個人の権利が保障された労働環境の形成"],answer:"個人の尊厳が保持された適正な労働環境の形成",exp:"正解は「個人の尊厳が保持された適正な労働環境の形成」。【完成文】【社会保険労務士法】社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて適切な労務管理の確立及び個人の尊厳が保持された適正な労働環境の形成に寄与することにより、事業の健全な発達と労働者等の福祉の向上並びに社会保障の向上及び増進に資し、もって豊かな国民生活及び活力ある経済社会の実現に資することを使命とする。",src:"社会保険労務士法1条",cat:"目的条文（社会保険労務士法）"},
+{type:"select",no:"社労士法-使命",opt:"空欄D",context:"【社会保険労務士法】社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて適切な労務管理の確立及び個人の尊厳が保持された適正な労働環境の形成に寄与することにより、【D】と労働者等の福祉の向上並びに社会保障の向上及び増進に資し、もって豊かな国民生活及び活力ある経済社会の実現に資することを使命とする。",choices:["事業の健全な発達", "事業の健全な運営", "企業の健全な発展", "事業の適正な運営"],answer:"事業の健全な発達",exp:"正解は「事業の健全な発達」。【完成文】【社会保険労務士法】社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて適切な労務管理の確立及び個人の尊厳が保持された適正な労働環境の形成に寄与することにより、事業の健全な発達と労働者等の福祉の向上並びに社会保障の向上及び増進に資し、もって豊かな国民生活及び活力ある経済社会の実現に資することを使命とする。",src:"社会保険労務士法1条",cat:"目的条文（社会保険労務士法）"},
+{type:"select",no:"社労士法-使命",opt:"空欄E",context:"【社会保険労務士法】社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて適切な労務管理の確立及び個人の尊厳が保持された適正な労働環境の形成に寄与することにより、事業の健全な発達と【E】並びに社会保障の向上及び増進に資し、もって豊かな国民生活及び活力ある経済社会の実現に資することを使命とする。",choices:["労働者等の福祉の向上", "労働者等の福祉の増進", "労働者の地位の向上", "労働者等の生活の安定"],answer:"労働者等の福祉の向上",exp:"正解は「労働者等の福祉の向上」。【完成文】【社会保険労務士法】社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて適切な労務管理の確立及び個人の尊厳が保持された適正な労働環境の形成に寄与することにより、事業の健全な発達と労働者等の福祉の向上並びに社会保障の向上及び増進に資し、もって豊かな国民生活及び活力ある経済社会の実現に資することを使命とする。",src:"社会保険労務士法1条",cat:"目的条文（社会保険労務士法）"},
+{type:"select",no:"社労士法-使命",opt:"空欄F",context:"【社会保険労務士法】社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて適切な労務管理の確立及び個人の尊厳が保持された適正な労働環境の形成に寄与することにより、事業の健全な発達と労働者等の福祉の向上並びに【F】に資し、もって豊かな国民生活及び活力ある経済社会の実現に資することを使命とする。",choices:["社会保障の向上及び増進", "社会保障の充実及び発展", "社会福祉の向上及び増進", "社会保障制度の健全な発展"],answer:"社会保障の向上及び増進",exp:"正解は「社会保障の向上及び増進」。【完成文】【社会保険労務士法】社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて適切な労務管理の確立及び個人の尊厳が保持された適正な労働環境の形成に寄与することにより、事業の健全な発達と労働者等の福祉の向上並びに社会保障の向上及び増進に資し、もって豊かな国民生活及び活力ある経済社会の実現に資することを使命とする。",src:"社会保険労務士法1条",cat:"目的条文（社会保険労務士法）"},
+{type:"select",no:"社労士法-使命",opt:"空欄G",context:"【社会保険労務士法】社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて適切な労務管理の確立及び個人の尊厳が保持された適正な労働環境の形成に寄与することにより、事業の健全な発達と労働者等の福祉の向上並びに社会保障の向上及び増進に資し、もって【G】及び活力ある経済社会の実現に資することを使命とする。",choices:["豊かな国民生活", "健全な国民生活", "安定した国民生活", "国民生活の維持及び向上"],answer:"豊かな国民生活",exp:"正解は「豊かな国民生活」。【完成文】【社会保険労務士法】社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて適切な労務管理の確立及び個人の尊厳が保持された適正な労働環境の形成に寄与することにより、事業の健全な発達と労働者等の福祉の向上並びに社会保障の向上及び増進に資し、もって豊かな国民生活及び活力ある経済社会の実現に資することを使命とする。",src:"社会保険労務士法1条",cat:"目的条文（社会保険労務士法）"},
+{type:"select",no:"社労士法-使命",opt:"空欄H",context:"【社会保険労務士法】社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて適切な労務管理の確立及び個人の尊厳が保持された適正な労働環境の形成に寄与することにより、事業の健全な発達と労働者等の福祉の向上並びに社会保障の向上及び増進に資し、もって豊かな国民生活及び【H】に資することを使命とする。",choices:["活力ある経済社会の実現", "活力ある経済社会の発展", "健全な経済社会の実現", "経済及び社会の発展"],answer:"活力ある経済社会の実現",exp:"正解は「活力ある経済社会の実現」。【完成文】【社会保険労務士法】社会保険労務士は、労働及び社会保険に関する法令の円滑な実施を通じて適切な労務管理の確立及び個人の尊厳が保持された適正な労働環境の形成に寄与することにより、事業の健全な発達と労働者等の福祉の向上並びに社会保障の向上及び増進に資し、もって豊かな国民生活及び活力ある経済社会の実現に資することを使命とする。",src:"社会保険労務士法1条",cat:"目的条文（社会保険労務士法）"},
+{type:"select",no:"確給-目的",opt:"空欄A",context:"【確定給付企業年金法】この法律は、【A】、産業構造の変化等の社会経済情勢の変化にかんがみ、事業主が従業員と給付の内容を約し、高齢期において従業員がその内容に基づいた給付を受けることができるようにするため、確定給付企業年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",choices:["少子高齢化の進展", "少子高齢化による人口構造の変化", "高齢期の生活の多様化", "就業構造の変化"],answer:"少子高齢化の進展",exp:"正解は「少子高齢化の進展」。【完成文】【確定給付企業年金法】この法律は、少子高齢化の進展、産業構造の変化等の社会経済情勢の変化にかんがみ、事業主が従業員と給付の内容を約し、高齢期において従業員がその内容に基づいた給付を受けることができるようにするため、確定給付企業年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",src:"確定給付企業年金法1条",cat:"目的条文（確定給付企業年金法）"},
+{type:"select",no:"確給-目的",opt:"空欄B",context:"【確定給付企業年金法】この法律は、少子高齢化の進展、【B】等の社会経済情勢の変化にかんがみ、事業主が従業員と給付の内容を約し、高齢期において従業員がその内容に基づいた給付を受けることができるようにするため、確定給付企業年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",choices:["産業構造の変化", "就業構造の変化", "経済社会情勢の変化", "高齢期の生活の多様化"],answer:"産業構造の変化",exp:"正解は「産業構造の変化」。【完成文】【確定給付企業年金法】この法律は、少子高齢化の進展、産業構造の変化等の社会経済情勢の変化にかんがみ、事業主が従業員と給付の内容を約し、高齢期において従業員がその内容に基づいた給付を受けることができるようにするため、確定給付企業年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",src:"確定給付企業年金法1条",cat:"目的条文（確定給付企業年金法）"},
+{type:"select",no:"確給-目的",opt:"空欄C",context:"【確定給付企業年金法】この法律は、少子高齢化の進展、産業構造の変化等の社会経済情勢の変化にかんがみ、事業主が従業員と【C】、高齢期において従業員がその内容に基づいた給付を受けることができるようにするため、確定給付企業年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",choices:["給付の内容を約し", "給付の額を保証し", "掛金の額を約し", "給付の水準を定め"],answer:"給付の内容を約し",exp:"正解は「給付の内容を約し」。【完成文】【確定給付企業年金法】この法律は、少子高齢化の進展、産業構造の変化等の社会経済情勢の変化にかんがみ、事業主が従業員と給付の内容を約し、高齢期において従業員がその内容に基づいた給付を受けることができるようにするため、確定給付企業年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",src:"確定給付企業年金法1条",cat:"目的条文（確定給付企業年金法）"},
+{type:"select",no:"確給-目的",opt:"空欄D",context:"【確定給付企業年金法】この法律は、少子高齢化の進展、産業構造の変化等の社会経済情勢の変化にかんがみ、事業主が従業員と給付の内容を約し、高齢期において従業員がその内容に基づいた給付を受けることができるようにするため、確定給付企業年金について必要な事項を定め、国民の高齢期における所得の確保に係る【D】を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",choices:["自主的な努力", "自助努力", "主体的な取組", "自主的な活動"],answer:"自主的な努力",exp:"正解は「自主的な努力」。【完成文】【確定給付企業年金法】この法律は、少子高齢化の進展、産業構造の変化等の社会経済情勢の変化にかんがみ、事業主が従業員と給付の内容を約し、高齢期において従業員がその内容に基づいた給付を受けることができるようにするため、確定給付企業年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",src:"確定給付企業年金法1条",cat:"目的条文（確定給付企業年金法）"},
+{type:"select",no:"確給-目的",opt:"空欄E",context:"【確定給付企業年金法】この法律は、少子高齢化の進展、産業構造の変化等の社会経済情勢の変化にかんがみ、事業主が従業員と給付の内容を約し、高齢期において従業員がその内容に基づいた給付を受けることができるようにするため、確定給付企業年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって【E】国民の生活の安定と福祉の向上に寄与することを目的とする。",choices:["公的年金の給付と相まって", "公的年金制度と相まって", "国民年金の給付と相まって", "私的年金の給付と相まって"],answer:"公的年金の給付と相まって",exp:"正解は「公的年金の給付と相まって」。【完成文】【確定給付企業年金法】この法律は、少子高齢化の進展、産業構造の変化等の社会経済情勢の変化にかんがみ、事業主が従業員と給付の内容を約し、高齢期において従業員がその内容に基づいた給付を受けることができるようにするため、確定給付企業年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",src:"確定給付企業年金法1条",cat:"目的条文（確定給付企業年金法）"},
+{type:"select",no:"確給-目的",opt:"空欄F",context:"【確定給付企業年金法】この法律は、少子高齢化の進展、産業構造の変化等の社会経済情勢の変化にかんがみ、事業主が従業員と給付の内容を約し、高齢期において従業員がその内容に基づいた給付を受けることができるようにするため、確定給付企業年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の【F】と福祉の向上に寄与することを目的とする。",choices:["生活の安定", "生活の維持及び向上", "国民生活の安定", "生活の保障"],answer:"生活の安定",exp:"正解は「生活の安定」。【完成文】【確定給付企業年金法】この法律は、少子高齢化の進展、産業構造の変化等の社会経済情勢の変化にかんがみ、事業主が従業員と給付の内容を約し、高齢期において従業員がその内容に基づいた給付を受けることができるようにするため、確定給付企業年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",src:"確定給付企業年金法1条",cat:"目的条文（確定給付企業年金法）"},
+{type:"select",no:"確給-目的",opt:"空欄G",context:"【確定給付企業年金法】この法律は、少子高齢化の進展、産業構造の変化等の社会経済情勢の変化にかんがみ、事業主が従業員と給付の内容を約し、高齢期において従業員がその内容に基づいた給付を受けることができるようにするため、確定給付企業年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と【G】に寄与することを目的とする。",choices:["福祉の向上", "福祉の増進", "保健の向上", "地位の向上"],answer:"福祉の向上",exp:"正解は「福祉の向上」。【完成文】【確定給付企業年金法】この法律は、少子高齢化の進展、産業構造の変化等の社会経済情勢の変化にかんがみ、事業主が従業員と給付の内容を約し、高齢期において従業員がその内容に基づいた給付を受けることができるようにするため、確定給付企業年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",src:"確定給付企業年金法1条",cat:"目的条文（確定給付企業年金法）"},
+{type:"select",no:"確拠-目的",opt:"空欄A",context:"【確定拠出年金法】この法律は、【A】、高齢期の生活の多様化等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",choices:["少子高齢化の進展", "少子高齢化による人口構造の変化", "産業構造の変化", "就業構造の変化"],answer:"少子高齢化の進展",exp:"正解は「少子高齢化の進展」。【完成文】【確定拠出年金法】この法律は、少子高齢化の進展、高齢期の生活の多様化等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",src:"確定拠出年金法1条",cat:"目的条文（確定拠出年金法）"},
+{type:"select",no:"確拠-目的",opt:"空欄B",context:"【確定拠出年金法】この法律は、少子高齢化の進展、【B】等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",choices:["高齢期の生活の多様化", "高齢期における所得の多様化", "産業構造の変化", "就業構造の変化"],answer:"高齢期の生活の多様化",exp:"正解は「高齢期の生活の多様化」。【完成文】【確定拠出年金法】この法律は、少子高齢化の進展、高齢期の生活の多様化等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",src:"確定拠出年金法1条",cat:"目的条文（確定拠出年金法）"},
+{type:"select",no:"確拠-目的",opt:"空欄C",context:"【確定拠出年金法】この法律は、少子高齢化の進展、高齢期の生活の多様化等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が【C】において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",choices:["自己の責任", "自らの判断", "自己の名義", "個人の裁量"],answer:"自己の責任",exp:"正解は「自己の責任」。【完成文】【確定拠出年金法】この法律は、少子高齢化の進展、高齢期の生活の多様化等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",src:"確定拠出年金法1条",cat:"目的条文（確定拠出年金法）"},
+{type:"select",no:"確拠-目的",opt:"空欄D",context:"【確定拠出年金法】この法律は、少子高齢化の進展、高齢期の生活の多様化等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において【D】を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",choices:["運用の指図", "運用の管理", "資産の運用", "運用の委託"],answer:"運用の指図",exp:"正解は「運用の指図」。【完成文】【確定拠出年金法】この法律は、少子高齢化の進展、高齢期の生活の多様化等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",src:"確定拠出年金法1条",cat:"目的条文（確定拠出年金法）"},
+{type:"select",no:"確拠-目的",opt:"空欄E",context:"【確定拠出年金法】この法律は、少子高齢化の進展、高齢期の生活の多様化等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る【E】を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",choices:["自主的な努力", "自助努力", "主体的な取組", "自主的な活動"],answer:"自主的な努力",exp:"正解は「自主的な努力」。【完成文】【確定拠出年金法】この法律は、少子高齢化の進展、高齢期の生活の多様化等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",src:"確定拠出年金法1条",cat:"目的条文（確定拠出年金法）"},
+{type:"select",no:"確拠-目的",opt:"空欄F",context:"【確定拠出年金法】この法律は、少子高齢化の進展、高齢期の生活の多様化等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって【F】国民の生活の安定と福祉の向上に寄与することを目的とする。",choices:["公的年金の給付と相まって", "確定給付企業年金の給付と相まって", "公的年金制度と相まって", "国民年金の給付と相まって"],answer:"公的年金の給付と相まって",exp:"正解は「公的年金の給付と相まって」。【完成文】【確定拠出年金法】この法律は、少子高齢化の進展、高齢期の生活の多様化等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",src:"確定拠出年金法1条",cat:"目的条文（確定拠出年金法）"},
+{type:"select",no:"確拠-目的",opt:"空欄G",context:"【確定拠出年金法】この法律は、少子高齢化の進展、高齢期の生活の多様化等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の【G】と福祉の向上に寄与することを目的とする。",choices:["生活の安定", "国民生活の安定", "生活の維持及び向上", "生活の保障"],answer:"生活の安定",exp:"正解は「生活の安定」。【完成文】【確定拠出年金法】この法律は、少子高齢化の進展、高齢期の生活の多様化等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",src:"確定拠出年金法1条",cat:"目的条文（確定拠出年金法）"},
+{type:"select",no:"確拠-目的",opt:"空欄H",context:"【確定拠出年金法】この法律は、少子高齢化の進展、高齢期の生活の多様化等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と【H】に寄与することを目的とする。",choices:["福祉の向上", "福祉の増進", "保健の向上", "福祉の充実"],answer:"福祉の向上",exp:"正解は「福祉の向上」。【完成文】【確定拠出年金法】この法律は、少子高齢化の進展、高齢期の生活の多様化等の社会経済情勢の変化にかんがみ、個人又は事業主が拠出した資金を個人が自己の責任において運用の指図を行い、高齢期においてその結果に基づいた給付を受けることができるようにするため、確定拠出年金について必要な事項を定め、国民の高齢期における所得の確保に係る自主的な努力を支援し、もって公的年金の給付と相まって国民の生活の安定と福祉の向上に寄与することを目的とする。",src:"確定拠出年金法1条",cat:"目的条文（確定拠出年金法）"}
+];
+
+// ============================================================
+//  GOOGLE DRIVE SYNC
+// ============================================================
+const CLIENT_ID    = APP_CONFIG.clientId;
+const SCOPES       = 'https://www.googleapis.com/auth/drive.appdata';
+const DRIVE_FILE_NAME = APP_CONFIG.driveFileName;
+let tokenClient = null, gapiInited = false, gisInited = false;
+let accessToken = null, driveFileId = null, isSyncing = false;
+let autoSaveTimer = null;
+let tokenRefreshTimer = null; // トークン自動更新タイマー
+
+window.addEventListener('load', () => {
+  // ログイン済みの場合は「再接続中」表示
+  if (getSavedAuth()) {
+    const dot = document.getElementById('syncDot');
+    const txt = document.getElementById('syncStatusText');
+    if (dot) dot.className = 'sync-dot syncing';
+    if (txt) txt.textContent = '再接続中…';
+  }
+  gapi.load('client', async () => {
+    await gapi.client.init({});
+    gapiInited = true;
+    maybeEnableSync();
+  });
+  const s = document.createElement('script');
+  s.src = 'https://accounts.google.com/gsi/client';
+  s.onload = () => {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID, scope: SCOPES,
+      callback: async (resp) => {
+        if (resp.error) {
+          if (getSavedAuth()) {
+            updateSyncUI(false);
+            showToast('再接続できませんでした。再度ログインしてください', 'warn');
+          }
+          return;
+        }
+        accessToken = resp.access_token;
+        gapi.client.setToken({ access_token: accessToken });
+        onSignedIn();
+        // 55分後にトークンを自動更新（アクセストークンは1時間で失効）
+        if (tokenRefreshTimer) clearTimeout(tokenRefreshTimer);
+        tokenRefreshTimer = setTimeout(() => {
+          if (getSavedAuth()) tokenClient.requestAccessToken({ prompt: '' });
+        }, 55 * 60 * 1000);
+      }
+    });
+    gisInited = true;
+    maybeEnableSync();
+  };
+  document.head.appendChild(s);
+});
+
+function maybeEnableSync() {
+  if (gapiInited && gisInited && getSavedAuth()) {
+    tokenClient.requestAccessToken({ prompt: '' });
+  }
+}
+function signIn() {
+  if (!gapiInited || !gisInited) { showToast('初期化中です、少々お待ちください', 'error'); return; }
+  tokenClient.requestAccessToken({ prompt: 'consent' });
+}
+function signOut() {
+  if (accessToken) google.accounts.oauth2.revoke(accessToken);
+  accessToken = null; driveFileId = null;
+  if (tokenRefreshTimer) { clearTimeout(tokenRefreshTimer); tokenRefreshTimer = null; }
+  clearSavedAuth(); updateSyncUI(false);
+  showToast('ログアウトしました');
+}
+function onSignedIn() {
+  updateSyncUI(true); saveAuthHint();
+  showToast('ログイン成功、データを読み込んでいます…', 'success');
+  loadFromDrive();
+}
+function updateSyncUI(loggedIn) {
+  document.getElementById('syncDot').className = 'sync-dot' + (loggedIn ? ' connected' : '');
+  document.getElementById('syncStatusText').textContent = loggedIn ? 'Googleドライブに同期中' : 'Googleアカウントで同期';
+  document.getElementById('syncUser').style.display = 'none';
+  document.getElementById('btnSignIn').style.display    = loggedIn ? 'none'  : 'flex';
+  document.getElementById('btnManualSync').style.display = loggedIn ? 'block' : 'none';
+  document.getElementById('btnManualSync').disabled = !loggedIn;
+  document.getElementById('btnSignOut').style.display   = loggedIn ? 'block' : 'none';
+}
+function setSyncing(v) {
+  isSyncing = v;
+  const dot = document.getElementById('syncDot');
+  const btn = document.getElementById('btnManualSync');
+  if (v) { dot.className = 'sync-dot syncing'; if (btn) { btn.disabled = true; btn.textContent = '同期中…'; } }
+  else   { dot.className = 'sync-dot connected'; if (btn) { btn.disabled = false; btn.textContent = '↑↓ 同期'; } }
+}
+async function loadFromDrive() {
+  if (!accessToken) return;
+  setSyncing(true);
+  try {
+    // トークン有効性チェック
+    const tokenInfo = await fetch(
+      'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=' + accessToken
+    );
+    if (!tokenInfo.ok) {
+      accessToken = null;
+      clearSavedAuth();
+      updateSyncUI(false);
+      showToast('セッション切れ：再度ログインしてください', 'warn');
+      setSyncing(false);
+      return;
+    }
+
+    // Drive ファイル一覧取得
+    const params = new URLSearchParams({
+      spaces: 'appDataFolder',
+      q: `name='${DRIVE_FILE_NAME}'`,
+      fields: 'files(id,name)'
+    });
+    const listRes = await fetch(
+      `https://www.googleapis.com/drive/v3/files?${params}`,
+      { headers: { 'Authorization': 'Bearer ' + accessToken } }
+    );
+    if (!listRes.ok) {
+      const errBody = await listRes.text();
+      throw new Error(`list:${listRes.status} ${errBody.substring(0, 100)}`);
+    }
+    const listData = await listRes.json();
+    const files = listData.files || [];
+    if (files.length > 0) {
+      driveFileId = files[0].id;
+      const fileRes = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`,
+        { headers: { 'Authorization': 'Bearer ' + accessToken } }
+      );
+      if (!fileRes.ok) {
+        const errBody = await fileRes.text();
+        throw new Error(`read:${fileRes.status} ${errBody.substring(0, 100)}`);
+      }
+      const data = await fileRes.json();
+      mergeCloudData(data);
+      showToast('クラウドから読み込みました', 'success');
+    } else {
+      showToast('クラウドにデータがありません（初回）');
+      await saveToDrive();
+    }
+  } catch (e) {
+    console.error('Drive load error:', e);
+    let msg = '通信エラー';
+    if (e instanceof Error && e.message) msg = e.message;
+    else if (e && typeof e === 'object') msg = JSON.stringify(e).substring(0, 100);
+    else if (e) msg = String(e);
+    showToast('読み込み失敗: ' + msg, 'error');
+  }
+  setSyncing(false);
+}
+async function saveToDrive() {
+  if (!accessToken) return;
+  setSyncing(true);
+  try {
+    const body = JSON.stringify(buildSavePayload());
+    if (driveFileId) {
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
+        method: 'PATCH',
+        headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+        body
+      });
+    } else {
+      const meta = JSON.stringify({ name: DRIVE_FILE_NAME, parents: ['appDataFolder'] });
+      const form = new FormData();
+      form.append('metadata', new Blob([meta], { type: 'application/json' }));
+      form.append('file', new Blob([body], { type: 'application/json' }));
+      const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&spaces=appDataFolder', {
+        method: 'POST', headers: { 'Authorization': 'Bearer ' + accessToken }, body: form
+      });
+      driveFileId = (await res.json()).id;
+    }
+    showToast('クラウドに保存しました', 'success');
+  } catch (e) {
+    console.error(e);
+    showToast('保存失敗: ' + (e?.message || '通信エラー'), 'error');
+  }
+  setSyncing(false);
+}
+async function manualSync() {
+  if (!accessToken) { showToast('先にログインしてください', 'error'); return; }
+  await loadFromDrive();
+}
+function scheduleAutoSave() {
+  if (!accessToken) return;
+  if (autoSaveTimer) clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => saveToDrive(), 3000);
+}
+// ページが非表示になる瞬間（タブ切替・閉じる直前）に即時保存
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && accessToken) {
+    if (autoSaveTimer) { clearTimeout(autoSaveTimer); autoSaveTimer = null; }
+    saveToDrive();
+  }
+});
+
+// ============================================================
+//  SAVE / LOAD PAYLOAD
+//  ★ v2: stats（正答率）と session（中断データ）を両方保存
+// ============================================================
+function buildSavePayload() {
+  // ★ 改修G：中断はフィルター条件別に pendingResumes へ保持する
+  const resumes = JSON.parse(JSON.stringify(pendingResumes));
+  // 中断が1件も無いときのみ、進行中セッションを保存（タブを閉じた際の自動復帰用）
+  if (Object.keys(resumes).length === 0 && currentSession && questions.length > 0) {
+    const cats = currentSession.cats || currentFilterKeys();
+    resumes[filterKey(cats)] = {
+      cats,
+      questionIndices: questions.map(q => getOrigIdx(q)),
+      current,
+      answers: [...answers],
+      noStats: !!currentSession.noStats,
+      savedAt: Date.now()
+    };
+  }
+  // 旧版アプリで開いた場合に備え、最新1件を従来の session フィールドにも書く（後方互換）
+  const legacyKeys = Object.keys(resumes)
+    .sort((a, b) => (resumes[b].savedAt || 0) - (resumes[a].savedAt || 0));
+  return {
+    version: 3,
+    bookmarks: [...bookmarks],          // ★ 栞 → Drive同期で他デバイスにも反映
+    stats: JSON.parse(JSON.stringify(questionStats)), // ★ 正答率データ
+    sessions: resumes,                  // ★ 中断セーブ（フィルター別・最大4件）
+    session: legacyKeys.length ? resumes[legacyKeys[0]] : null, // ★ 旧版互換
+    savedAt: new Date().toISOString()
+  };
+}
+function mergeCloudData(data) {
+  if (!data) return;
+  // 栞
+  if (data.bookmarks) bookmarks = new Set(data.bookmarks);
+  // ★ 正答率データを復元
+  if (data.stats) {
+    Object.entries(data.stats).forEach(([k, v]) => { questionStats[k] = v; });
+  }
+  // ★ 改修G：中断セッションを復元（1問以上回答済みのものだけ／sessions 優先・旧 session は移行）
+  if (data.sessions && typeof data.sessions === 'object') {
+    Object.values(data.sessions).forEach(s => {
+      if (s && s.questionIndices && s.answers &&
+          s.answers.filter(a => a !== null).length > 0) putResume({ ...s, cats: s.cats || ['all'] });
+    });
+  } else if (data.session && data.session.questionIndices && data.session.answers) {
+    if (data.session.answers.filter(a => a !== null).length > 0) migrateLegacyResume(data.session);
+  }
+  localSave();
+  updateBmBadge();
+  updateWeakBtn();
+  updateLeastTriedBtn();
+  updateRecentWrongBtn();
+  updateResumeBtn();
+  if (hasAnyResume()) offerResume();
+}
+
+// ============================================================
+//  LOCAL STORAGE
+// ============================================================
+const LS_KEY  = 'sharoushi_' + DRIVE_FILE_NAME;
+const LS_AUTH = 'sharoushi_auth_hint';
+
+function localSave() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      bookmarks: [...bookmarks], stats: questionStats, sessions: pendingResumes
+    }));
+  } catch {}
+}
+function localLoad() {
+  try {
+    const data = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
+    if (data.bookmarks) bookmarks = new Set(data.bookmarks);
+    if (data.stats) questionStats = data.stats;
+    if (data.sessions && typeof data.sessions === 'object') pendingResumes = data.sessions;
+    else if (data.session) migrateLegacyResume(data.session);   // ★ 改修G：旧形式からの移行
+  } catch {}
+}
+function saveAuthHint()  { try { localStorage.setItem(LS_AUTH, '1'); } catch {} }
+function getSavedAuth()  { try { return localStorage.getItem(LS_AUTH) === '1'; } catch { return false; } }
+function clearSavedAuth() { try { localStorage.removeItem(LS_AUTH); } catch {} }
+
+// ============================================================
+//  BOOKMARK
+// ============================================================
+let bookmarks = new Set();
+function toggleBookmark() {
+  const idx = getOrigIdx(questions[current]);
+  if (bookmarks.has(idx)) bookmarks.delete(idx);
+  else bookmarks.add(idx);
+  localSave(); updateQuestion(); updateBmBadge();
+  if (accessToken) saveToDrive(); else scheduleAutoSave();
+}
+function updateBmBadge() {
+  const badge = document.getElementById('bmBadge');
+  if (bookmarks.size > 0) {
+    badge.textContent = bookmarks.size;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+// ============================================================
+//  STATS
+// ============================================================
+let questionStats = {}; // { origIdx: {correct:N, total:N} }
+
+function recordStat(origIdx, isCorrect) {
+  if (!questionStats[origIdx]) questionStats[origIdx] = {correct:0, total:0};
+  const inReview = !!(currentSession && currentSession.noStats);
+  // ★ lw = last wrong（最後に間違えた時刻）。1問1個・上書き。
+  if (!isCorrect) {
+    // 誤答時は常に lw を更新（復習モードでも間違えた問題は日数窓に残す＝間隔リセット）
+    questionStats[origIdx].lw = Date.now();
+  } else if (inReview) {
+    // ★ 改修D-2: 復習モードで正解＝記憶定着とみなし、lw をクリアして復習プールから除外する
+    delete questionStats[origIdx].lw;
+  }
+  // ★ 復習モード（noStats）では correct/total を更新しない
+  //    ＝「正答率50%以下」「挑戦回数が少ない」モードの純度を保つ
+  if (!inReview) {
+    questionStats[origIdx].total++;
+    if (isCorrect) questionStats[origIdx].correct++;
+  }
+  localSave(); scheduleAutoSave(); updateWeakBtn(); updateLeastTriedBtn(); updateRecentWrongBtn();
+}
+
+// ============================================================
+//  RECENT WRONG（直近X日間に間違えた問題）
+// ============================================================
+function getRecentWrongDays() {
+  const el = document.getElementById('recentWrongInput');
+  const v = el ? parseInt(el.value) : 7;
+  return (!v || v < 1) ? 7 : Math.min(v, 90);
+}
+function getRecentWrongPool(days) {
+  const limit = Date.now() - days * 24 * 60 * 60 * 1000;
+  return ALL_QUESTIONS.map((q, i) => ({ q, i }))
+    .filter(x => {
+      if (!inFilter(x.i)) return false;          // ★ 改修G：フィルター適用
+      const s = questionStats[x.i];
+      return s && s.lw && s.lw >= limit;
+    })
+    .map(x => ({ ...x.q, _origIdx: x.i }));
+}
+function updateRecentWrongBtn() {
+  const wrap = document.getElementById('recentWrongMode');
+  const btn  = document.getElementById('btnRecentWrongStart');
+  if (!wrap || !btn) return;
+  // 過去90日以内に1問でも間違い記録があるときのみモード自体を表示
+  const anyLog = Object.keys(questionStats).some(k => {
+    const s = questionStats[k];
+    return s && s.lw && s.lw >= Date.now() - 90 * 24 * 60 * 60 * 1000;
+  });
+  wrap.style.display = anyLog ? 'block' : 'none';
+  if (!anyLog) return;
+  const d = getRecentWrongDays();
+  const n = getRecentWrongPool(d).length;
+  btn.textContent = `直近${d}日間で間違えた問題を出題（${n}問）`;
+  btn.disabled = (n === 0);
+  btn.style.opacity = n === 0 ? '.45' : '1';
+}
+function startRecentWrong() {
+  const d = getRecentWrongDays();
+  startSession({ useRecentWrong: true, days: d });
+}
+function getAccuracyInfo(origIdx) {
+  const s = questionStats[origIdx];
+  if (!s || s.total === 0) return null;
+  const pct = Math.round((s.correct / s.total) * 100);
+  return {
+    total: s.total, pct,
+    cls: pct >= 80 ? 'high' : (pct >= 50 ? 'mid' : 'low')
+  };
+}
+
+// ============================================================
+//  WEAK QUESTIONS
+// ============================================================
+function updateWeakBtn() {
+  const pool = ALL_QUESTIONS.filter((q,i) => {
+    if (!inFilter(i)) return false;              // ★ 改修G：フィルター適用
+    const s = questionStats[i];
+    return s && s.total > 0 && (s.correct / s.total) <= 0.5;
+  });
+  const btn = document.getElementById('btnWeakStart');
+  btn.style.display = pool.length > 0 ? 'block' : 'none';
+  if (pool.length === 0) btn.textContent = 'まだ回答データがありません';
+  else btn.textContent = `正答率50%以下の問題を出題（${pool.length}問）`;
+}
+function startWeak() {
+  const s = { useWeak: true };
+  startSession(s);
+}
+function updateLeastTriedBtn() {
+  const pool = ALL_QUESTIONS.filter((q,i) => {
+    if (!inFilter(i)) return false;              // ★ 改修G：フィルター適用
+    const s = questionStats[i];
+    return !s || s.total === 0 || s.total < 3; // 3回未満
+  });
+  const btn = document.getElementById('btnLeastTried');
+  if (!btn) return;
+  if (pool.length > 0) {
+    btn.style.display = 'block';
+    btn.textContent = `挑戦回数が少ない問題を出題（${pool.length}問）`;
+  } else {
+    btn.style.display = 'none';
+  }
+}
+function startLeastTried() {
+  // 挑戦回数でソート（少ない順）→上位20問を出題
+  const indexed = ALL_QUESTIONS.map((q,i) => ({q, i, tries: (questionStats[i]||{total:0}).total}))
+    .filter(x => inFilter(x.i));                 // ★ 改修G：フィルター適用
+  if (indexed.length === 0) { showToast('対象問題がありません', 'warn'); return; }
+  indexed.sort((a,b) => a.tries - b.tries);
+  const maxTries = indexed[Math.min(19, indexed.length-1)].tries;
+  const pool = indexed.filter(x => x.tries <= maxTries).map(x => ({...x.q, _origIdx: x.i}));
+  if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
+  const take = pool.slice(0, 20);
+  questions = take; answers = Array(take.length).fill(null); current = 0;
+  currentSession = { cats: currentFilterKeys(), questionIndices: take.map(q => q._origIdx), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`挑戦回数の少ない${take.length}問を出題`, 'success');
+}
+
+// ============================================================
+//  RESUME SESSION
+// ============================================================
+// ★ 改修G：中断セッションを「開始時のフィルター条件」ごとに保持する
+//   pendingResumes = { filterKey: {cats, questionIndices, current, answers, noStats, savedAt} }
+//   最大 MAX_RESUMES 件。超えたら savedAt が古いものから削除する。
+let pendingResumes = {};
+const MAX_RESUMES = 4;
+
+// 旧形式（単一 session）を新形式へ移行。既存の中断データを失わないための後方互換処理。
+function migrateLegacyResume(sess) {
+  if (!sess || !sess.questionIndices || !sess.answers) return;
+  const key = filterKey(sess.cats);
+  if (pendingResumes[key]) return;   // 新形式が既にあればそちらを優先
+  pendingResumes[key] = { ...sess, cats: sess.cats || ['all'], savedAt: sess.savedAt || 0 };
+}
+// 中断データを1件保存（上限超過分は古い順に破棄）
+function putResume(sess) {
+  pendingResumes[filterKey(sess.cats)] = sess;
+  const keys = Object.keys(pendingResumes);
+  if (keys.length > MAX_RESUMES) {
+    keys.sort((a, b) => (pendingResumes[a].savedAt || 0) - (pendingResumes[b].savedAt || 0));
+    keys.slice(0, keys.length - MAX_RESUMES).forEach(k => { delete pendingResumes[k]; });
+  }
+}
+function hasAnyResume() { return Object.keys(pendingResumes).length > 0; }
+
+function offerResume() {
+  // モーダル廃止：スタート画面の「続きから開始」ボタン群を表示
+  updateResumeBtn();
+}
+function updateResumeBtn() {
+  const wrap = document.getElementById('resumeBtns');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  // 新しい中断が上に来るよう savedAt 降順で並べる
+  Object.keys(pendingResumes)
+    .sort((a, b) => (pendingResumes[b].savedAt || 0) - (pendingResumes[a].savedAt || 0))
+    .forEach(key => {
+      const s = pendingResumes[key];
+      if (!s || !s.answers || !s.questionIndices) return;
+      const done  = s.answers.filter(a => a !== null).length;
+      const total = s.questionIndices.length;
+      const btn = document.createElement('button');
+      btn.className = 'btn-start';
+      btn.textContent = `▶ 続きから開始［${filterLabel(s.cats)}］（${done}/${total}問 回答済み）`;
+      btn.onclick = () => resumeSession(key);
+      wrap.appendChild(btn);
+    });
+}
+function resumeSession(key) {
+  // キー未指定なら最新の中断を再開
+  if (key === undefined) {
+    const keys = Object.keys(pendingResumes)
+      .sort((a, b) => (pendingResumes[b].savedAt || 0) - (pendingResumes[a].savedAt || 0));
+    if (keys.length === 0) return;
+    key = keys[0];
+  }
+  const sess = pendingResumes[key];
+  if (!sess) return;
+  const pool = sess.questionIndices.map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
+  if (pool.length === 0) { clearResume(key); return; }
+  applyFilterKeys(sess.cats);        // 中断時の出題範囲を復元（ボタンの点灯も同期）
+  questions = pool; answers = [...sess.answers]; current = sess.current || 0;
+  currentSession = { ...sess };
+  delete pendingResumes[key];        // 再開＝消費
+  localSave(); updateResumeBtn(); showQuestionScreen(); updateQuestion();
+  showToast(`［${filterLabel(sess.cats)}］の続きから再開しました`, 'success');
+}
+function clearResume(key) {
+  if (key === undefined) pendingResumes = {}; else delete pendingResumes[key];
+  localSave();
+  updateResumeBtn();
+  scheduleAutoSave();
+}
+
+// ============================================================
+//  MAIN LOGIC
+// ============================================================
+let questions = [], answers = [], current = 0, currentSession = null;
+
+// ★ 出題範囲フィルターは「法令別の複数選択（cat依存）」＝改修G 方式②。
+//   FILTERS の key は ALL_QUESTIONS の cat 値と完全一致させること
+//   （一致しない cat の問題はどのボタンにも属さず表示されなくなる）。
+const FILTERS = [
+  { key: '目的条文（労働安全衛生法）',             label: '安衛法',    g: '労働' },
+  { key: '目的条文（労働者災害補償保険法）',       label: '労災法',    g: '労働' },
+  { key: '目的条文（労働施策総合推進法）',         label: '労施策',    g: '労働' },
+  { key: '目的条文（労働者派遣法）',               label: '派遣法',    g: '労働' },
+  { key: '目的条文（高年齢者雇用安定法）',         label: '高年法',    g: '労働' },
+  { key: '目的条文（障害者雇用促進法）',           label: '障害者',    g: '労働' },
+  { key: '目的条文（労働契約法）',                 label: '労契法',    g: '労働' },
+  { key: '目的条文（労働組合法）',                 label: '労組法',    g: '労働' },
+  { key: '目的条文（育児・介護休業法）',           label: '育介法',    g: '労働' },
+  { key: '目的条文（パートタイム・有期雇用労働法）', label: 'パート有期', g: '労働' },
+  { key: '目的条文（高齢者医療確保法）',           label: '高確法',    g: '社保' },
+  { key: '目的条文（介護保険法）',                 label: '介保法',    g: '社保' },
+  { key: '目的条文（国民年金法）',                 label: '国年法',    g: '社保' },
+  { key: '目的条文（厚生年金保険法）',             label: '厚年法',    g: '社保' },
+  { key: '目的条文（児童手当法）',                 label: '児手法',    g: '社保' },
+  { key: '目的条文（社会保険労務士法）',           label: '社労士法',  g: '社保' },
+  { key: '目的条文（確定給付企業年金法）',         label: '確給',      g: '社保' },
+  { key: '目的条文（確定拠出年金法）',             label: '確拠',      g: '社保' },
+];
+const ALL_CATS  = FILTERS.map(f => f.key);
+const G_LABOR   = FILTERS.filter(f => f.g === '労働').map(f => f.key);
+const G_SOCIAL  = FILTERS.filter(f => f.g === '社保').map(f => f.key);
+const PRESETS = [
+  { key: 'all',  label: 'すべて',       cats: ALL_CATS },
+  { key: 'labor',label: '労働科目',     cats: G_LABOR  },
+  { key: 'soc',  label: '社会保険科目', cats: G_SOCIAL },
+];
+let selectedCats = new Set(ALL_CATS);   // 初期は全法令
+function sameSet(a, b) {
+  return a.length === b.size && a.every(k => b.has(k));
+}
+
+// ============================================================
+//  FILTER
+// ============================================================
+function initFilters() {
+  const btns = document.getElementById('filterBtns');
+  btns.innerHTML = '';
+  // セット選択（すべて／労働科目／社会保険科目）
+  PRESETS.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-filter preset'; btn.textContent = p.label; btn.dataset.preset = p.key;
+    btn.onclick = () => { selectedCats = new Set(p.cats); refreshFilterUI(); };
+    btns.appendChild(btn);
+  });
+  const sep = document.createElement('div');
+  sep.className = 'filter-sep'; btns.appendChild(sep);
+  // 法令別トグル（複数選択可）
+  FILTERS.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-filter'; btn.textContent = f.label; btn.dataset.cat = f.key;
+    btn.onclick = () => toggleFilter(f.key);
+    btns.appendChild(btn);
+  });
+  refreshFilterUI();
+}
+// 法令の選択をトグルする。最後の1つは残す（0件だと出題できないため）
+function toggleFilter(cat) {
+  if (selectedCats.has(cat)) { if (selectedCats.size > 1) selectedCats.delete(cat); }
+  else selectedCats.add(cat);
+  refreshFilterUI();
+}
+// ボタンの点灯・件数表示・各モードのボタン件数をまとめて同期する
+function refreshFilterUI() {
+  document.querySelectorAll('.btn-filter[data-cat]').forEach(b => {
+    b.classList.toggle('active', selectedCats.has(b.dataset.cat));
+  });
+  document.querySelectorAll('.btn-filter[data-preset]').forEach(b => {
+    const p = PRESETS.find(x => x.key === b.dataset.preset);
+    b.classList.toggle('active', !!p && sameSet(p.cats, selectedCats));
+  });
+  const p = getFilteredPool();
+  document.getElementById('startCount').textContent = p.length;
+  const input = document.getElementById('randomInput');
+  if (input) {
+    input.max = p.length;
+    if (parseInt(input.value) > p.length) input.value = p.length;
+  }
+  // ★ 改修G：フィルター切替時に他モードの件数・表示も同期
+  updateWeakBtn(); updateLeastTriedBtn(); updateRecentWrongBtn();
+  if (typeof checkBookmarkButton === 'function') checkBookmarkButton();
+  updateRandomBtn();
+}
+function getFilteredPool() {
+  return ALL_QUESTIONS.filter(q => selectedCats.has(q.cat));
+}
+// ★ 改修G：フィルター状態の抽象化。全出題モードの絞り込みと、中断データのキー化に使う。
+//   ・currentFilterKeys : 現在の出題範囲（選択中のcat配列）
+//   ・applyFilterKeys   : 出題範囲を復元（中断セッション再開時にボタンの点灯も戻す）
+//   ・inFilter          : origIdx が現在の出題範囲に含まれるか
+//   ・filterKey / filterLabel : 中断データのキー・表示ラベル
+function currentFilterKeys() { return [...selectedCats]; }
+function filterKey(keys) {
+  const ks = (keys || []).filter(k => ALL_CATS.includes(k));
+  return ks.length ? ks.slice().sort().join('|') : 'all';
+}
+function filterLabel(keys) {
+  const ks = (keys || []).filter(k => ALL_CATS.includes(k));
+  if (!ks.length) return 'すべて';
+  const s = new Set(ks);
+  const preset = PRESETS.find(p => sameSet(p.cats, s));
+  if (preset) return preset.label;
+  const labels = FILTERS.filter(f => s.has(f.key)).map(f => f.label);
+  return labels.length <= 3 ? labels.join('＋') : labels[0] + ' 他' + (labels.length - 1) + '件';
+}
+function applyFilterKeys(keys) {
+  const ks = (keys || []).filter(k => ALL_CATS.includes(k));
+  selectedCats = new Set(ks.length ? ks : ALL_CATS);   // 旧形式（'all'等）は全選択に復元
+  refreshFilterUI();
+}
+function inFilter(origIdx) {
+  const q = ALL_QUESTIONS[origIdx];
+  return !!q && selectedCats.has(q.cat);
+}
+
+// ============================================================
+//  RANDOM MODE
+// ============================================================
+function updateRandomBtn() {
+  const input = document.getElementById('randomInput');
+  const btn = document.getElementById('btnRandomStart');
+  btn.textContent = `${input.value}問ランダムで出題`;
+}
+function startRandom() {
+  const num = parseInt(document.getElementById('randomInput').value) || 10;
+  let pool = getFilteredPool().map(q => ({ ...q, _origIdx: ALL_QUESTIONS.indexOf(q) }));
+  if (num >= pool.length) pool = pool;
+  else {
+    pool = shuffleArray(pool).slice(0, num);
+  }
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { cats: currentFilterKeys(), questionIndices: pool.map(q => q._origIdx), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`${pool.length}問をランダム出題開始`, 'success');
+}
+
+// 栞ランダムモード
+function updateBookmarkRandomBtn() {
+  const input = document.getElementById('bookmarkRandomInput');
+  const btn = document.getElementById('btnBookmarkRandomStart');
+  btn.textContent = `栞から${input.value}問ランダムで出題`;
+}
+function startBookmarkRandom() {
+  if ([...bookmarks].filter(i => inFilter(i)).length === 0) { showToast('この出題範囲に栞がありません', 'warn'); return; }
+  const num = parseInt(document.getElementById('bookmarkRandomInput').value) || 10;
+  let pool = [...bookmarks].filter(i => inFilter(i))   // ★ 改修G：フィルター適用
+    .map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(q => q.no);
+  if (num < pool.length) {
+    pool = shuffleArray(pool).slice(0, num);
+  }
+  if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { cats: currentFilterKeys(), questionIndices: pool.map(q => q._origIdx), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`栞から${pool.length}問をランダム出題開始`, 'success');
+}
+
+// ============================================================
+//  SHUFFLE
+// ============================================================
+// Fisher–Yates（一様シャッフル）。sort(()=>Math.random()-0.5) は分布が偏るため使わない
+function shuffleArray(arr) {
+  const r = arr.slice();
+  for (let i = r.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [r[i], r[j]] = [r[j], r[i]];
+  }
+  return r;
+}
+
+// ============================================================
+//  START MODES
+// ============================================================
+function start() {
+  const s = {};
+  startSession(s);
+}
+function startBookmarks() {
+  if ([...bookmarks].filter(i => inFilter(i)).length === 0) { showToast('この出題範囲に栞がありません', 'warn'); return; }
+  const s = { useBookmarks: true };
+  startSession(s);
+}
+function startSession(s) {
+  let pool = [];
+  
+  if (s.useBookmarks) {
+    pool = [...bookmarks].filter(i => inFilter(i))   // ★ 改修G：フィルター適用
+      .map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
+  } else if (s.useRecentWrong) {
+    pool = getRecentWrongPool(s.days || 7);
+  } else if (s.useWeak) {
+    let p = ALL_QUESTIONS.map((q, i) => ({ ...q, _origIdx: i })).filter(q => inFilter(q._origIdx));
+    pool = p.filter(q => {                        // ★ 改修G：フィルター適用
+      const stat = questionStats[q._origIdx];
+      return stat && stat.total > 0 && (stat.correct / stat.total) <= 0.5;
+    });
+  } else {
+    pool = getFilteredPool().map(q => ({ ...q, _origIdx: ALL_QUESTIONS.indexOf(q) }));
+  }
+
+  if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
+  
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  // ★ noStats: 復習モードでは正答率・挑戦回数に反映しない
+  currentSession = { cats: currentFilterKeys(), questionIndices: pool.map(q => q._origIdx), current: 0, answers: [...answers], noStats: !!s.useRecentWrong };
+  showQuestionScreen(); updateQuestion();
+  if (s.useRecentWrong) showToast(`直近${s.days || 7}日間の誤答${pool.length}問を復習（記録に反映されません）`, 'success');
+}
+
+function getOrigIdx(q) { return q._origIdx !== undefined ? q._origIdx : ALL_QUESTIONS.indexOf(q); }
+
+// ============================================================
+//  SCREENS
+// ============================================================
+function showMain() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('show'));
+  document.getElementById('screenMain').classList.add('show');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tabMain').classList.add('active');
+  
+  // メイン画面表示時に進行中セッションがあれば questionScreen に、なければ startScreen に
+  if (questions.length > 0 && current < questions.length) {
+    showQuestionScreen(); updateQuestion();
+  } else {
+    document.getElementById('startScreen').style.display = 'block';
+    document.getElementById('questionScreen').style.display = 'none';
+    document.getElementById('resultScreen').style.display = 'none';
+    document.getElementById('progressWrap').style.display = 'none';
+    updateResumeBtn();   // ★ 中断セッションがあれば「続きから開始」を表示
+  }
+}
+function showBookmarks() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('show'));
+  document.getElementById('screenBookmarks').classList.add('show');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tabBookmarks').classList.add('active');
+  document.querySelector('.bookmark-list').classList.add('show');
+  renderBookmarks();
+}
+
+function showQuestionScreen() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('questionScreen').style.display = 'block';
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'block';
+}
+function showResultScreen() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('questionScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'block';
+  document.getElementById('progressWrap').style.display = 'none';
+  renderResults();
+}
+
+// ============================================================
+//  UPDATE QUESTION
+// ============================================================
+function updateQuestion() {
+  if (questions.length === 0 || current >= questions.length) return;
+  
+  const q = questions[current];
+  const currentQIndex = getOrigIdx(q);
+  
+  // プログレスバー
+  const progressInfo = `${current + 1} / ${questions.length}`;
+  const correctCount = answers.filter(a => a && a.correct).length;
+  document.getElementById('progressNum').textContent = progressInfo;
+  document.getElementById('progressScore').textContent = `正解: ${correctCount}問`;
+  document.getElementById('progressFill').style.width = `${((current + 1) / questions.length) * 100}%`;
+  
+  // 問題カード
+  document.getElementById('qTag').textContent = q.cat;
+  document.getElementById('qNum').textContent = q.no + (q.opt ? '-' + q.opt : '');
+  if (q.type === 'select') {
+    document.getElementById('qText').innerHTML = q.context;
+    // 空欄を強調
+    const regex = /【[A-Z]】/g;
+    document.getElementById('qText').innerHTML = document.getElementById('qText').innerHTML.replace(
+      regex, '<span class="q-blank">$&</span>'
+    );
+  } else {
+    document.getElementById('qText').textContent = q.q;
+  }
+  
+  // タイプバッジ
+  const typeBadge = document.getElementById('qTypeBadge');
+  if (q.type === 'select') {
+    typeBadge.textContent = '選択式';
+    typeBadge.className = 'q-type-badge sel';
+    typeBadge.style.display = 'inline-block';
+  } else {
+    typeBadge.textContent = '○×';
+    typeBadge.className = 'q-type-badge ox';
+    typeBadge.style.display = 'inline-block';
+  }
+
+  // ★ 正答率バッジ・挑戦回数バッジ・栞ボタン（回答後のみ表示）
+  const accEl  = document.getElementById('qAcc');
+  const triesEl = document.getElementById('qTries');
+  const bBtn = document.getElementById('btnBookmark');
+
+  // ★ 復習モード（記録非反映）バッジ
+  const revEl = document.getElementById('qReview');
+  if (revEl) revEl.style.display = (currentSession && currentSession.noStats) ? 'inline-block' : 'none';
+
+  const ans    = answers[current];
+  const panel  = document.getElementById('resultPanel');
+  const nextBtn = document.getElementById('btnNext');
+  const isSelect = (q.type === 'select');
+
+  if (ans) {
+    // 回答後：バッジ・栞を表示
+    const accInfo = getAccuracyInfo(currentQIndex);
+    if (accInfo) {
+      accEl.textContent = `過去${accInfo.total}回: ${accInfo.pct}%正解`;
+      accEl.className   = `q-acc ${accInfo.cls}`;
+      accEl.style.display = 'inline-block';
+    } else {
+      accEl.style.display = 'none';
+    }
+    const s = questionStats[currentQIndex];
+    const tries = s ? s.total : 0;
+    triesEl.textContent = `挑戦${tries}回`;
+    triesEl.style.display = 'inline-block';
+    bBtn.textContent = bookmarks.has(currentQIndex) ? '★' : '☆';
+    bBtn.classList.toggle('active', bookmarks.has(currentQIndex));
+    bBtn.style.visibility = 'visible';
+  } else {
+    // 回答前：バッジ・栞を非表示
+    accEl.style.display = 'none';
+    triesEl.style.display = 'none';
+    bBtn.textContent = '☆';
+    bBtn.classList.remove('active');
+    bBtn.style.visibility = 'hidden';
+  }
+
+  // ボタン群の表示切替
+  document.getElementById('oxRow').style.display       = isSelect ? 'none' : 'grid';
+  document.getElementById('choicesGrid').style.display = isSelect ? 'grid' : 'none';
+  if (ans) {
+    if (isSelect) renderChoices(q, ans.userChoice, true);
+    else          renderOxButtons(q, ans.userChoice, true);
+    showResultPanel(q, ans.correct);
+    nextBtn.style.display = 'block';
+  } else {
+    if (isSelect) renderChoices(q, null, false);
+    else          renderOxButtons(q, null, false);
+    panel.style.display = 'none'; panel.className = 'result-panel';
+    nextBtn.style.display = 'none';
+  }
+  document.getElementById('btnBack').disabled = (current === 0);
+  document.getElementById('btnSkip').style.display = ans ? 'none' : 'block';
+}
+
+function renderOxButtons(q, userChoice, isAnswered) {
+  const bm = document.getElementById('btnMaru');
+  const bb = document.getElementById('btnBatsu');
+  // ラベルをリセット
+  bm.innerHTML = '<div>○</div><div class="btn-label">正しい</div>';
+  bb.innerHTML = '<div>×</div><div class="btn-label">誤り</div>';
+  bm.className = 'btn-answer btn-maru'; bb.className = 'btn-answer btn-batsu';
+  bm.disabled = false; bb.disabled = false;
+  if (isAnswered) {
+    bm.disabled = true; bb.disabled = true;
+    if (userChoice === true) {
+      bm.className = q.a === true  ? 'btn-answer correct-chosen' : 'btn-answer wrong-chosen';
+      if (q.a !== true)  bb.className = 'btn-answer reveal-correct';
+      // あなたの選択ラベル
+      bm.innerHTML += '<div class="your-choice-label">▶ あなたの選択</div>';
+    } else {
+      bb.className = q.a === false ? 'btn-answer correct-chosen' : 'btn-answer wrong-chosen';
+      if (q.a !== false) bm.className = 'btn-answer reveal-correct';
+      // あなたの選択ラベル
+      bb.innerHTML += '<div class="your-choice-label">▶ あなたの選択</div>';
+    }
+  }
+}
+
+// 選択式問題の描画（選択式を含む科目でオーバーライドして使用）
+function renderChoices(q, userChoice, isAnswered) {
+  const grid = document.getElementById('choicesGrid');
+  grid.innerHTML = '';
+  // 選択肢を問題ごとに1回だけシャッフルしてキャッシュ（回答後の再描画でも順序を固定）
+  if (!q._shuffledChoices) {
+    const arr = [...q.choices];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const jj = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[jj]] = [arr[jj], arr[i]];
+    }
+    q._shuffledChoices = arr;
+  }
+  q._shuffledChoices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-choice'; btn.textContent = c;
+    if (isAnswered) {
+      btn.disabled = true;
+      if (c === q.answer)   btn.className = c === userChoice ? 'btn-choice correct-chosen' : 'btn-choice reveal-correct';
+      if (c === userChoice && c !== q.answer) btn.className = 'btn-choice wrong-chosen';
+      if (c === userChoice) btn.innerHTML += '<div class="your-choice-label">▶ あなたの選択</div>';
+    } else {
+      btn.onclick = () => answerSelect(c);
+    }
+    grid.appendChild(btn);
+  });
+}
+
+function showResultPanel(q, isCorrect) {
+  const panel = document.getElementById('resultPanel');
+  panel.style.display = 'block';
+  panel.className     = isCorrect ? 'result-panel correct' : 'result-panel wrong';
+  document.getElementById('resultHeader').textContent = isCorrect ? '✓ 正解！' : '✗ 不正解';
+  document.getElementById('resultExp').innerHTML = (q.exp || '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/「([^」]*)」/g, '「<b>$1</b>」');
+  document.getElementById('resultSource').textContent = '根拠：' + q.src;
+}
+
+// ============================================================
+//  ANSWER
+// ============================================================
+function answerOx(userAnswer) {
+  if (answers[current]) return;
+  const q         = questions[current];
+  const isCorrect = userAnswer === q.a;
+  answers[current] = { correct: isCorrect, userChoice: userAnswer };
+  recordStat(getOrigIdx(q), isCorrect);
+  localSave(); updateQuestion(); scheduleAutoSave();
+}
+function answerSelect(userChoice) {
+  if (answers[current]) return;
+  const q         = questions[current];
+  const isCorrect = userChoice === q.answer;
+  answers[current] = { correct: isCorrect, userChoice };
+  recordStat(getOrigIdx(q), isCorrect);
+  localSave(); updateQuestion(); scheduleAutoSave();
+}
+
+// ============================================================
+//  NAVIGATION
+// ============================================================
+function nextQuestion() {
+  if (current < questions.length - 1) { current++; updateQuestion(); }
+  else { finishSession(); }
+  currentSession.current = current; localSave();
+}
+function prevQuestion() {
+  if (current > 0) { current--; updateQuestion(); }
+  currentSession.current = current; localSave();
+}
+function skip() {
+  if (current < questions.length - 1) { current++; updateQuestion(); }
+  else { finishSession(); }
+  currentSession.current = current; localSave();
+}
+function suspend() {
+  // 中断時にセッションデータを pendingResumes（フィルター別）に移す
+  if (currentSession) {
+    // ★ 改修G：開始時のフィルター条件（cats）をキーに保存。範囲別に中断点を持てる
+    putResume({
+      cats: currentSession.cats || currentFilterKeys(),
+      questionIndices: questions.map(q => getOrigIdx(q)),
+      current,
+      answers: [...answers],
+      noStats: !!currentSession.noStats,
+      savedAt: Date.now()
+    });
+    currentSession = null;
+    localSave(); scheduleAutoSave();
+  }
+  
+  questions = []; answers = []; current = 0;
+  document.getElementById('startScreen').style.display = 'block';
+  document.getElementById('questionScreen').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  updateResumeBtn();
+  showToast('セッションを中断しました', 'warn');
+}
+
+// ============================================================
+//  FINISH & RESULTS
+// ============================================================
+function finishSession() {
+  // ★ 改修D-2補強: 復習セッション（noStats）だった場合、そのセッションで正解した問題の
+  //    lw をまとめてクリアする。1問ずつの recordStat に取りこぼしがあっても、
+  //    完了時に確実に「直近X日間に間違えた問題」プールから除外する。
+  if (currentSession && currentSession.noStats) {
+    questions.forEach((q, i) => {
+      const a = answers[i];
+      if (a && a.correct) {
+        const oi = getOrigIdx(q);
+        if (questionStats[oi]) delete questionStats[oi].lw;
+      }
+    });
+  }
+  // ★ 完了時は現在のセッションのみクリア。中断中の pendingResumes は消さない
+  //    （中断→別モード実行→そのモードを完了、で中断点が消える不具合の修正）
+  currentSession = null;
+  localSave(); scheduleAutoSave(); updateRecentWrongBtn();
+  showResultScreen();
+}
+function renderResults() {
+  const correct = answers.filter(a => a && a.correct).length;
+  const wrong   = answers.filter(a => a && !a.correct).length;
+  const skipped = answers.filter(a => !a).length;
+  const total   = questions.length;
+  const rate    = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+  document.getElementById('resultScoreText').textContent = `${correct} / ${total}`;
+  document.getElementById('correctCount').textContent   = correct;
+  document.getElementById('wrongCount').textContent     = wrong;
+  document.getElementById('skippedCount').textContent   = skipped;
+  
+  let msg = `正解率: ${rate}%\n`;
+  if (rate >= 80) msg += '素晴らしい結果です！';
+  else if (rate >= 60) msg += '良い成績です！';
+  else if (rate >= 40) msg += 'もう少し頑張りましょう。';
+  else msg += '復習をお勧めします。';
+  
+  document.getElementById('resultMessage').textContent = msg;
+  
+  // 再挑戦ボタンの表示制御
+  document.getElementById('btnRetryWrong').style.display = wrong > 0 ? 'inline-block' : 'none';
+  document.getElementById('btnRetrySkipped').style.display = skipped > 0 ? 'inline-block' : 'none';
+}
+
+// ============================================================
+//  RETRY
+// ============================================================
+function retryWrong() {
+  const wrongIndices = [];
+  answers.forEach((a, i) => { if (a && !a.correct) wrongIndices.push(i); });
+  if (wrongIndices.length === 0) return;
+  
+  const pool = wrongIndices.map(i => questions[i]);
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { cats: currentFilterKeys(), questionIndices: pool.map(q => getOrigIdx(q)), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`${pool.length}問の復習を開始`, 'success');
+}
+function retrySkipped() {
+  const skippedIndices = [];
+  answers.forEach((a, i) => { if (!a) skippedIndices.push(i); });
+  if (skippedIndices.length === 0) return;
+  
+  const pool = skippedIndices.map(i => questions[i]);
+  questions = pool; answers = Array(pool.length).fill(null); current = 0;
+  currentSession = { cats: currentFilterKeys(), questionIndices: pool.map(q => getOrigIdx(q)), current: 0, answers: [...answers] };
+  showQuestionScreen(); updateQuestion();
+  showToast(`${pool.length}問の復習を開始`, 'success');
+}
+function restart() {
+  questions = []; answers = []; current = 0;
+  currentSession = null;   // ★ pendingResumes（中断セッション）は保持する
+  localSave();
+  document.getElementById('startScreen').style.display = 'block';
+  document.getElementById('questionScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  updateResumeBtn();   // ★ 中断セッションがあれば「続きから開始」を再表示
+}
+
+// ============================================================
+//  BOOKMARKS
+// ============================================================
+function renderBookmarks() {
+  const container = document.getElementById('bookmarkItems');
+  const empty = document.getElementById('emptyBookmarks');
+  
+  if (bookmarks.size === 0) {
+    container.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  
+  empty.style.display = 'none';
+  container.innerHTML = '';
+  
+  [...bookmarks].sort((a, b) => a - b).forEach(idx => {
+    const q = ALL_QUESTIONS[idx];
+    if (!q) return;
+    
+    const item = document.createElement('div');
+    item.className = 'bm-item';
+    item.onclick = () => startFromBookmark(idx);
+    
+    const star = document.createElement('div');
+    star.className = 'bm-star'; star.textContent = '★';
+    
+    const tag = document.createElement('div');
+    tag.className = 'bm-tag'; tag.textContent = q.cat;
+    
+    const acc = document.createElement('div');
+    const accInfo = getAccuracyInfo(idx);
+    if (accInfo) {
+      acc.className = `bm-acc ${accInfo.cls}`;
+      acc.textContent = `${accInfo.pct}%`;
+    }
+    
+    const text = document.createElement('div');
+    text.className = 'bm-text';
+    if (q.type === 'select') {
+      text.textContent = `【${q.opt}】${q.context.slice(0, 80)}...`;
+    } else {
+      text.textContent = `${q.no}-${q.opt}: ${q.q.slice(0, 80)}...`;
+    }
+    
+    item.appendChild(star);
+    item.appendChild(tag);
+    if (accInfo) item.appendChild(acc);
+    item.appendChild(text);
+    container.appendChild(item);
+  });
+}
+
+function startFromBookmark(startIdx) {
+  const pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i }))
+    .filter(Boolean).sort((a, b) => a._origIdx - b._origIdx);
+  const startPos = pool.findIndex(q => q._origIdx === startIdx);
+  
+  questions = pool; answers = Array(pool.length).fill(null); 
+  current = Math.max(0, startPos);
+  currentSession = { cats: currentFilterKeys(), questionIndices: pool.map(q => q._origIdx), current, answers: [...answers] };
+  showMain(); showQuestionScreen(); updateQuestion();
+}
+
+// ============================================================
+//  TOAST
+// ============================================================
+function showToast(message, type = 'info') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = `toast${type ? ' ' + type : ''}`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  localLoad();
+  initFilters();
+  updateBmBadge();
+  updateWeakBtn();
+  updateLeastTriedBtn();
+  updateRecentWrongBtn();
+  updateResumeBtn();
+  if (hasAnyResume()) offerResume();
+});
+
+// アプリ情報の表示
+document.getElementById('appTitle').textContent    = APP_CONFIG.title;
+document.getElementById('appSubtitle').textContent = APP_CONFIG.subtitle;
+
+// 栞ボタンの表示制御
+function checkBookmarkButton() {
+  // ★ 改修G：フィルター適用後の栞件数で表示制御・max補正を行う
+  const n = [...bookmarks].filter(i => inFilter(i)).length;
+  const btn = document.getElementById('btnBookmarkStart');
+  btn.style.display = n > 0 ? 'block' : 'none';
+  if (n > 0) btn.textContent = `栞の問題のみ（${n}問）`;
+  // 栞ランダムモードの表示制御
+  const bmRandom = document.getElementById('bookmarkRandomMode');
+  if (bmRandom) {
+    bmRandom.style.display = n > 0 ? 'block' : 'none';
+    const input = document.getElementById('bookmarkRandomInput');
+    if (input && n > 0) {
+      input.max = n;
+      if (parseInt(input.value) > n) input.value = n;
+      updateBookmarkRandomBtn();
+    }
+  }
+}
+
+// 初期化時に栞ボタンをチェック
+document.addEventListener('DOMContentLoaded', () => {
+  checkBookmarkButton();
+});
+
+// 栞の更新時に栞ボタンもチェック
+function updateBmBadge() {
+  const badge = document.getElementById('bmBadge');
+  if (bookmarks.size > 0) {
+    badge.textContent = bookmarks.size;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+  checkBookmarkButton(); // 栞ボタンの表示も更新
+}
+</script>
+</body>
+</html>
