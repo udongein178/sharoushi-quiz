@@ -944,18 +944,46 @@ async function loadFromDrive() {
   if (!accessToken) return;
   setSyncing(true);
   try {
-    const res = await gapi.client.request({
-      path: 'https://www.googleapis.com/drive/v3/files',
-      params: { spaces: 'appDataFolder', q: `name='${DRIVE_FILE_NAME}'`, fields: 'files(id,name)' }
+    // トークン有効性チェック
+    const tokenInfo = await fetch(
+      'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=' + accessToken
+    );
+    if (!tokenInfo.ok) {
+      accessToken = null;
+      clearSavedAuth();
+      updateSyncUI(false);
+      showToast('セッション切れ：再度ログインしてください', 'warn');
+      setSyncing(false);
+      return;
+    }
+
+    // Drive ファイル一覧取得
+    const params = new URLSearchParams({
+      spaces: 'appDataFolder',
+      q: `name='${DRIVE_FILE_NAME}'`,
+      fields: 'files(id,name)'
     });
-    const files = res.result.files || [];
+    const listRes = await fetch(
+      `https://www.googleapis.com/drive/v3/files?${params}`,
+      { headers: { 'Authorization': 'Bearer ' + accessToken } }
+    );
+    if (!listRes.ok) {
+      const errBody = await listRes.text();
+      throw new Error(`list:${listRes.status} ${errBody.substring(0, 100)}`);
+    }
+    const listData = await listRes.json();
+    const files = listData.files || [];
     if (files.length > 0) {
       driveFileId = files[0].id;
-      const fileRes = await gapi.client.request({
-        path: `https://www.googleapis.com/drive/v3/files/${driveFileId}`,
-        params: { alt: 'media' }
-      });
-      const data = typeof fileRes.result === 'string' ? JSON.parse(fileRes.result) : fileRes.result;
+      const fileRes = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`,
+        { headers: { 'Authorization': 'Bearer ' + accessToken } }
+      );
+      if (!fileRes.ok) {
+        const errBody = await fileRes.text();
+        throw new Error(`read:${fileRes.status} ${errBody.substring(0, 100)}`);
+      }
+      const data = await fileRes.json();
       mergeCloudData(data);
       showToast('クラウドから読み込みました', 'success');
     } else {
@@ -963,8 +991,12 @@ async function loadFromDrive() {
       await saveToDrive();
     }
   } catch (e) {
-    console.error(e);
-    showToast('読み込み失敗: ' + (e?.message || '通信エラー'), 'error');
+    console.error('Drive load error:', e);
+    let msg = '通信エラー';
+    if (e instanceof Error && e.message) msg = e.message;
+    else if (e && typeof e === 'object') msg = JSON.stringify(e).substring(0, 100);
+    else if (e) msg = String(e);
+    showToast('読み込み失敗: ' + msg, 'error');
   }
   setSyncing(false);
 }
@@ -1005,6 +1037,15 @@ function scheduleAutoSave() {
   if (autoSaveTimer) clearTimeout(autoSaveTimer);
   autoSaveTimer = setTimeout(() => saveToDrive(), 3000);
 }
+// ページが非表示になる瞬間（タブ切替・閉じる直前）に即時保存
+// ★ scheduleAutoSave は3秒デバウンスのため、3秒未満の間隔で操作し続けると
+//    タイマーがリセットされ続けて一度も保存されない。その取りこぼしを塞ぐ保険。
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && accessToken) {
+    if (autoSaveTimer) { clearTimeout(autoSaveTimer); autoSaveTimer = null; }
+    saveToDrive();
+  }
+});
 
 // ============================================================
 //  SAVE / LOAD PAYLOAD
@@ -1097,7 +1138,8 @@ function toggleBookmark() {
   const idx = getOrigIdx(questions[current]);
   if (bookmarks.has(idx)) bookmarks.delete(idx);
   else bookmarks.add(idx);
-  localSave(); updateQuestion(); updateBmBadge(); scheduleAutoSave();
+  localSave(); updateQuestion(); updateBmBadge();
+  if (accessToken) saveToDrive(); else scheduleAutoSave();
 }
 function updateBmBadge() {
   const badge = document.getElementById('bmBadge');
