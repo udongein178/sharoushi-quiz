@@ -82,6 +82,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .your-choice-label{font-size:9px;letter-spacing:.08em;opacity:.85;margin-top:2px;font-weight:700}
 /* 挑戦回数バッジ */
 .q-tries{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;background:rgba(138,155,176,.12);border:1px solid #283848;color:#8a9bb0;display:none}
+/* ★ 機能④: 通し番号バッジ（origIdx+1＝追加順の固定番号） */
+.q-seq{font-size:11px;padding:2px 7px;border-radius:4px;font-weight:700;background:rgba(74,158,202,.14);border:1px solid rgba(74,158,202,.35);color:#5bb8e0;letter-spacing:.03em}
+/* ★ 機能③: 最終実施日バッジ */
+.q-last{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;background:rgba(138,155,176,.12);border:1px solid #283848;color:#8a9bb0;display:none}
 /* 復習モード（記録非反映）バッジ */
 .q-review{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;background:rgba(232,201,122,.12);border:1px solid rgba(232,201,122,.35);color:#e8c97a;display:none}
 
@@ -162,6 +166,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .bookmark-list{display:none}
 .bookmark-list.show{display:block}
 .section-title{font-size:12px;color:#556070;letter-spacing:.1em;margin-bottom:12px;text-align:center;text-transform:uppercase}
+.list-filter{display:flex;align-items:center;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.btn-listfilter{border:1.5px solid #283848;background:transparent;color:#8a9bb0;border-radius:18px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-listfilter.active{border-color:#c97a4a;background:rgba(201,122,74,.12);color:#c97a4a}
+.btn-listfilter:hover{border-color:#4a9eca;color:#4a9eca}
+.list-count{margin-left:auto;font-size:11px;color:#556070}
+.bm-seq{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;background:rgba(74,158,202,.14);border:1px solid rgba(74,158,202,.35);color:#5bb8e0;flex-shrink:0}
+.bm-last{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;background:rgba(138,155,176,.12);border:1px solid #283848;color:#8a9bb0;flex-shrink:0}
+.bm-untried{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;background:rgba(201,122,74,.10);border:1px solid rgba(201,122,74,.30);color:#c97a4a;flex-shrink:0}
+.bm-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}
 .bm-item{background:#1a2434;border:1px solid #283848;border-radius:10px;padding:12px 14px;margin-bottom:9px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:border-color .15s}
 .bm-item:hover{border-color:#c97a4a}
 .bm-star{font-size:14px;color:#e8c97a;flex-shrink:0}
@@ -228,7 +241,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 <!-- ===== NAV TABS ===== -->
 <div class="nav-tabs">
   <button id="tabMain"  class="nav-tab active" onclick="showMain()">学習</button>
-  <button id="tabBookmarks" class="nav-tab" onclick="showBookmarks()">栞<span id="bmBadge" class="bm-badge" style="display:none">0</span></button>
+  <button id="tabBookmarks" class="nav-tab" onclick="showBookmarks()">問題一覧<span id="bmBadge" class="bm-badge" style="display:none">0</span></button>
   <button id="tabExcluded" class="nav-tab" onclick="showExcluded()">除外<span id="exBadge" class="bm-badge" style="display:none">0</span></button>
 </div>
 
@@ -248,9 +261,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 
 <!-- ===== START SCREEN ===== -->
 <div id="startScreen" class="start-screen">
-  <span id="startCount" class="start-count">743</span>
+  <span id="startCount" class="start-count">770</span>
   <span class="start-unit">問</span>
-  <div class="start-desc">労働・社会保険一般常識（労一・社一）を一問一答で確認しよう。<br>労一368問・社一375問（択一式573問・選択式170問／計743問）を収録。</div>
+  <div class="start-desc">労働・社会保険一般常識（労一・社一）を一問一答で確認しよう。<br>労一368問・社一402問（択一式600問・選択式170問／計770問）を収録。</div>
   
   <!-- フィルター -->
   <div class="filters">
@@ -263,7 +276,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
   <!-- ランダム出題モード -->
   <div class="random-mode">
     <div class="random-input-wrap">
-      <input id="randomInput" class="random-input" type="number" value="10" min="1" max="743" oninput="updateRandomBtn()">
+      <input id="randomInput" class="random-input" type="number" value="10" min="1" max="770" oninput="updateRandomBtn()">
       <span class="random-label">問をランダムで出題</span>
     </div>
     <button id="btnRandomStart" class="btn-start" onclick="startRandom()">10問ランダムで出題</button>
@@ -301,11 +314,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 <div id="questionScreen" class="screen">
   <div class="card">
     <div class="q-meta">
+      <span id="qSeq" class="q-seq"></span>
       <span id="qTag" class="q-tag">択一式（雇用保険法）</span>
       <span id="qTypeBadge" class="q-type-badge"></span>
       <span id="qNum" class="q-num"></span>
       <span id="qAcc" class="q-acc"></span>
       <span id="qTries" class="q-tries"></span>
+      <span id="qLast" class="q-last"></span>
       <span id="qReview" class="q-review">🔁 記録に反映されません</span>
     </div>
     <div id="qText" class="q-text"></div>
@@ -377,10 +392,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 <!-- ===== BOOKMARK SCREEN ===== -->
 <div id="screenBookmarks" class="screen">
 <div class="bookmark-list">
-  <h3 class="section-title">栞をつけた問題</h3>
+  <h3 class="section-title">問題一覧</h3>
+  <!-- ★ 機能②: すべて／栞 の2択フィルター -->
+  <div class="list-filter">
+    <button id="lfAll" class="btn-listfilter active" onclick="setListFilter('all')">すべて</button>
+    <button id="lfBm"  class="btn-listfilter" onclick="setListFilter('bm')">★ 栞のみ</button>
+    <span id="listCount" class="list-count"></span>
+  </div>
   <div id="bookmarkItems"></div>
   <div id="emptyBookmarks" class="empty-bm" style="display:none">
-    まだ栞をつけた問題がありません。<br>学習中に ★ ボタンを押すと、<br>後で見返したい問題を保存できます。
+    表示できる問題がありません。<br>「★ 栞のみ」を選択中の場合は、<br>学習中に ★ ボタンを押すと保存できます。
   </div>
 </div>
 </div>
@@ -407,7 +428,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 // ============================================================
 const APP_CONFIG = {
   title:    '労働・社会保険一般常識 一問一答',
-  subtitle: '労一368問・社一375問　択一573＋選択170　計743問',
+  subtitle: '労一368問・社一402問　択一600＋選択170　計770問',
   driveFileName: 'sharoushi_progress_ippan.json',
   clientId: '194094449743-hoj6t28jfidlfhueiiv6iromc2lvssgf.apps.googleusercontent.com',
 };
@@ -1184,7 +1205,34 @@ const ALL_QUESTIONS = [
 {no:"テキスト追加-労一45",opt:"",q:"事業主は、その雇用する労働者の数が「常時37.5人（特殊法人の場合は33.5人）以上」であるときは、毎年、6月1日現在における対象障害者の雇用に関する状況を、翌月15日（7月15日）までに、その主たる事業所の所在地を管轄する公共職業安定所の長に報告しなければならない。",a:true,exp:"①37.5人以上（特殊法人33.5人以上）、②6月1日現在、③翌月15日まで、④主たる事業所を管轄する公共職業安定所の長。法定雇用率2.7％への引上げに伴い、対象範囲が40人以上から37.5人以上に変更された。",src:"障害者雇用促進法43条7項、則7条・8条、令5年則附則2条",cat:"択一式（労一）"},
 {no:"テキスト追加-労一46",opt:"",q:"機構は、法定雇用率を達成していない事業主については、その不足数1人につき月額29,000円の障害者雇用納付金を徴収し、法定雇用率を達成している事業主については、原則として、その超過数1人につき月額50,000円の障害者雇用調整金を支給する。",a:false,exp:"金額が逆である。納付金が「月額50,000円」、調整金が「月額29,000円」である。徴収・支給の主体が機構である点は正しい。",src:"障害者雇用促進法54条1項・2項、令17条／法50条1項・2項、令15条",cat:"択一式（労一）"},
 {no:"テキスト追加-労一47",opt:"",q:"その雇用する労働者の数が常時100人以下の事業主については、当分の間、障害者雇用納付金の徴収及び障害者雇用調整金の支給は行わない。",a:true,exp:"条文どおり。「100人以下」は納付金・調整金いずれも対象外（当分の間の措置）である。ただし雇用義務そのものは免除されず、一定数を超えて雇用する場合は報奨金の対象となる。（R4）",src:"障害者雇用促進法附則4条1項",cat:"択一式（労一）"},
-{no:"テキスト追加-労一48",opt:"",q:"障害者雇用納付金に係る申告書及び障害者雇用調整金に係る申請書は、各年度ごとに、翌年度の初日から30日以内（4月30日まで）に機構に提出しなければならない。",a:false,exp:"正しくは「翌年度の初日から45日以内（5月15日まで）」である。提出先が機構である点、申告書・申請書が同じ期限である点は正しい。",src:"障害者雇用促進法56条1項、則15条1項・3項",cat:"択一式（労一）"}
+{no:"テキスト追加-労一48",opt:"",q:"障害者雇用納付金に係る申告書及び障害者雇用調整金に係る申請書は、各年度ごとに、翌年度の初日から30日以内（4月30日まで）に機構に提出しなければならない。",a:false,exp:"正しくは「翌年度の初日から45日以内（5月15日まで）」である。提出先が機構である点、申告書・申請書が同じ期限である点は正しい。",src:"障害者雇用促進法56条1項、則15条1項・3項",cat:"択一式（労一）"},
+{no:"テキスト追加-社一1",opt:"",q:"連合会は、社会保険労務士の登録の申請者が社会保険労務士となる資格を有せず、又は法定の登録拒否事由のいずれかに該当する者であると認めたときは、その登録を拒否しなければならない。この場合において、登録を拒否しようとするときは、資格審査会の議決に基づいてしなければならない。",a:true,exp:"記述どおり。①資格あり＋拒否事由なし→遅滞なく登録しなければならない、②資格なし又は拒否事由あり→拒否しなければならない、③拒否するときは「資格審査会の議決」が必要、という三段構え。引っかけは「登録することができる」（要件を満たせば裁量なし）、「厚生労働大臣の承認を得て」（正しくは資格審査会の議決）。",src:"社会保険労務士法14条の6第1項",cat:"択一式（社一）"},
+{no:"テキスト追加-社一3",opt:"",q:"社会保険労務士又は社会保険労務士法人は、一定の事務を受任した場合には、受任後遅滞なく、依頼者に対し、報酬額の算定の方法その他の報酬の基準を示さなければならない。",a:false,exp:"タイミングが誤り。正しくは「あらかじめ」示す。条文は「事務を受任しようとする場合には、あらかじめ、依頼をしようとする者に対し」であり、①契約前に、②まだ依頼者になっていない相手に対して示す。「受任後」「依頼者に対し」の2点がずれている。法律ではなく省令（施行規則）の規定である点にも注意。\n【横断】この規定に違反する行為は法25条の36違反となる旨が通達で示されている。",src:"社会保険労務士法施行規則12条の10",cat:"択一式（社一）"},
+{no:"テキスト追加-社一4",opt:"",q:"社会保険労務士は、国又は地方公共団体の公務員として職務上取り扱った事件及び仲裁手続により仲裁人として取り扱った事件については、その業務を行ってはならない。",a:true,exp:"記述どおり。①公務員として職務上扱った事件、②仲裁人として扱った事件、この2類型は社労士としては扱えない。1項に「依頼者の同意があればこの限りでない」という例外はなく、主語も社労士全般である。\n【横断】22条1項＝主語は社労士全般・同意による例外なし。22条2項＝主語は特定社労士・紛争解決手続代理業務・第3号のみ依頼者の同意で可。社労士法人版は法25条の17。",src:"社会保険労務士法22条1項",cat:"択一式（社一）"},
+{no:"テキスト追加-社一5",opt:"",q:"社会保険労務士法人は、その主たる事務所の所在地において設立の登記をすることによって成立し、成立したときは、成立の日から2週間以内に、登記事項証明書及び定款の写しを添えて、その旨を、その主たる事務所の所在地の社会保険労務士会を経由して、厚生労働大臣に届け出なければならない。",a:false,exp:"届出先が誤り。正しくは「連合会」である。ルートは①社労士法人→②主たる事務所の所在地の社会保険労務士会（経由）→③連合会で、厚生労働大臣は登場しない。「設立の登記により成立」「2週間以内」「登記事項証明書及び定款の写しを添付」はいずれも正しい。\n【横断】法人の解散も解散の日から2週間以内に社労士会を経由して連合会へ届出。「生まれるときも消えるときも2週間・社労士会経由・連合会」。",src:"社会保険労務士法25条の12（成立）、25条の13（届出）",cat:"択一式（社一）"},
+{no:"テキスト追加-社一6",opt:"",q:"市町村が行う国民健康保険においては、生活保護法による医療扶助を受けている世帯に属する者に限り、被保険者としない。",a:false,exp:"「医療扶助を受けている」「〜に限り」が誤り。正しくは「生活保護法による保護を受けている世帯（その保護を停止されている世帯を除く）に属する者」である。①扶助の種類は問わない、②世帯単位で判定する、③保護が停止されている間は除外されず被保険者となる。\n【横断】「廃止」と「停止」の違いが狙われる。停止中は国保の被保険者となる。",src:"国民健康保険法6条9号",cat:"択一式（社一）"},
+{no:"テキスト追加-社一8",opt:"",q:"市町村及び国保組合は、保険料滞納世帯主等が、当該保険料の納期限から1年間が経過するまでの間に保険料納付の勧奨等を行ってもなお当該保険料を納付しない場合においては、当該保険料の滞納につき災害その他の政令で定める特別の事情があると認められる場合を除き、当該世帯に属する被保険者（18歳に達する日以後の最初の3月31日までの間にある者等を除く。）が保険医療機関等から療養を受けたときは、療養の給付等に代えて、当該保険料滞納世帯主等に対し、特別療養費を支給する。",a:true,exp:"記述どおり。①納期限から「1年」経過するまでに勧奨してもなお未納、②特別の事情（災害等）があれば対象外、③「18歳に達する日以後の最初の3月31日」までの者（高校生以下）は除かれる、④現物給付に「代えて」現金で後払い、⑤支給先は被保険者本人ではなく「保険料滞納世帯主等」。\n【横断】「災害その他の特別の事情があれば不利益扱いをしない」という発想は、国民年金の保険料免除や滞納処分の猶予にも共通。",src:"国民健康保険法54条の3第1項、則27条の4の3",cat:"択一式（社一）"},
+{no:"テキスト追加-社一9",opt:"",q:"市町村は、国民健康保険事業に要する費用に充てるため、被保険者の属する世帯の世帯主（当該市町村の区域内に住所を有する世帯主に限る。）から保険料を徴収しなければならない。ただし、地方税法の規定により国民健康保険税を課するときは、この限りでない。",a:true,exp:"記述どおり。①納付義務者は被保険者本人ではなく「世帯主」（その市町村内に住所を有する世帯主に限る）、②市町村は保険料と国民健康保険税のどちらかを選べる。世帯主自身が被保険者でなくても納付義務を負う（擬制世帯主）。\n【横断】国保＝世帯主が納付義務者・国保税の選択可。後期高齢者医療＝被保険者本人が納付義務者・保険料のみ。",src:"国民健康保険法76条1項",cat:"択一式（社一）"},
+{no:"テキスト追加-社一10",opt:"",q:"国民健康保険料の特別徴収は、1年間に受ける老齢等年金給付の額の総額が18万円以上である65歳以上75歳未満の者が対象となる。ただし、同一の月に徴収されると見込まれる国民健康保険料と介護保険料との合計額が、その月に支払われる老齢等年金給付の額の3分の1を超える者等一定のものについては、特別徴収の対象とはならない。",a:false,exp:"「3分の1」が誤り。正しくは「2分の1」である。年金額18万円以上・65歳以上75歳未満という部分は正しい。判定は国保料単独ではなく「国保料＋介護保険料の合計額」で行う。\n【横断】年額18万円・2分の1という基準は介護保険・後期高齢者医療の特別徴収でも用いられる。上限が75歳未満なのは75歳で後期高齢者医療に移るため。",src:"国民健康保険法76条の4、令29条の11〜29条の13",cat:"択一式（社一）"},
+{no:"テキスト追加-社一11",opt:"",q:"後期高齢者医療の被保険者であっても、船員として船舶所有者に使用される者は、船員保険の被保険者である。",a:true,exp:"記述どおり。健康保険では後期高齢者医療の被保険者等は適用除外とされるが、船員保険にはその除外規定がない。①75歳になって後期高齢者医療の被保険者となっても、②船員として使用され続けている限り、③船員保険の被保険者であり続ける。\n【横断】健康保険法3条1項の適用除外には「船員保険の被保険者（疾病任意継続被保険者を除く）」が挙げられている。強制被保険者は健保に入れないが、疾病任意継続被保険者は健保の被保険者になり得る。",src:"船員保険法（テキスト記述による・条番号は要確認）",cat:"択一式（社一）"},
+{no:"テキスト追加-社一12",opt:"",q:"資格喪失後の期間に係る傷病手当金、資格喪失後の出産育児一時金及び出産手当金の支給を受けるには、被保険者の資格を喪失した日の前日まで引き続き1年以上強制被保険者であったことが必要である。",a:false,exp:"期間の要件が誤り。正しい「支給要件期間」は、資格を喪失した日前における強制被保険者であった期間が、①その日前1年間において3月以上、または②その日前3年間において1年以上のいずれかを満たすことである。「引き続き1年以上」は健康保険の継続給付の要件。出産育児一時金・出産手当金についてはこのほか資格喪失後6月以内の出産であることが必要。\n【横断】健保＝喪失日の前日まで引き続き1年以上。船保＝喪失日前1年間で3月以上または3年間で1年以上。出産の「6月以内」だけは共通。",src:"船員保険法69条6項、73条2項、74条2項",cat:"択一式（社一）"},
+{no:"テキスト追加-社一13",opt:"",q:"健康保険と異なり、船員保険では、疾病任意継続被保険者にも傷病手当金の支給が行われるが、疾病任意継続被保険者の資格を取得した日から起算して3年以上経過したときに発した傷病については、支給は行われない。",a:false,exp:"「3年以上」が誤り。正しくは「1年以上」経過したときに発した傷病については支給されない。疾病任意継続被保険者にも傷病手当金が支給される点は正しい。起点は「資格取得日」であり、資格喪失日でも支給開始日でもない。\n【横断】健保の任意継続被保険者＝傷病手当金なし（原則）。船保の疾病任意継続被保険者＝あり（取得から1年の縛りつき）。",src:"船員保険法69条4項",cat:"択一式（社一）"},
+{no:"テキスト追加-社一14",opt:"",q:"後期高齢者医療広域連合の区域内に住所を有する65歳以上75歳未満の者であって、一定の障害の状態にある旨の当該後期高齢者医療広域連合の認定を受けたものは、後期高齢者医療の被保険者となる。",a:true,exp:"記述どおり。被保険者は2種類で、①75歳以上の者（認定不要）、②65歳以上75歳未満の者（一定の障害の状態にある旨の広域連合の認定が必要）である。いずれも広域連合の区域内に住所を有することが前提。\n【横断】後期高齢者医療（障害認定）＝65歳以上75歳未満。介護保険第1号＝65歳以上。介護保険第2号＝40歳以上65歳未満。「40歳以上65歳未満」が出てきたら介護保険の第2号。",src:"高齢者医療確保法（テキスト記述による・条番号は要確認）",cat:"択一式（社一）"},
+{no:"テキスト追加-社一15",opt:"",q:"後期高齢者医療の療養の給付に係る一部負担金の割合は、原則として、当該療養の給付を受ける者又はその属する世帯の他の世帯員である被保険者等について、課税所得の額が38万円以上である場合（現役並み所得者に該当する場合を除く。）は100分の20とされている。",a:false,exp:"「38万円以上」が誤り。正しくは「28万円以上」である。判定に使う所得の年（前年、ただし1月〜7月は前々年）や100分の20という割合の部分は正しい。一部負担金の割合は3段階で、一般（28万円未満）＝100分の10、一定以上の所得のある者（28万円以上、現役並みを除く）＝100分の20、現役並み所得者（145万円以上）＝100分の30。\n【横断】145万円は国民健康保険の「一定以上所得者」（70〜74歳が3割となる基準）でも使われる共通の数字。28万円は後期高齢者医療の固有。判定は本人だけでなく同じ世帯の他の被保険者等の所得も見る。",src:"高齢者医療確保法（テキスト記述による・条番号は要確認）",cat:"択一式（社一）"},
+{no:"テキスト追加-社一16",opt:"",q:"「要介護状態」とは、身体上又は精神上の障害があるために、入浴、排せつ、食事等の日常生活における基本的な動作の全部又は一部について、原則として6月間にわたり継続して常時介護を要すると見込まれる状態であって、その介護の必要の程度に応じて厚生労働省令で定める区分（「要介護状態区分」という。）のいずれかに該当するもの（要支援状態に該当するものを除く。）をいう。",a:true,exp:"記述どおり。①身体上「又は」精神上の障害があること、②入浴・排せつ・食事等の基本的な動作の全部又は一部について、③原則として「6月間」にわたり継続して常時介護を要すると見込まれること、④要介護状態区分のいずれかに該当すること（要支援状態は除く）。「見込まれる」とあるので、申請時点で既に6月経過している必要はない。\n【横断】要介護状態と要支援状態は排他関係（どちらか一方）。",src:"介護保険法7条1項、則2条",cat:"択一式（社一）"},
+{no:"テキスト追加-社一17",opt:"",q:"「要介護者」とは、要介護状態にある65歳以上の者、又は要介護状態にある40歳以上65歳未満の者をいう。",a:false,exp:"40歳以上65歳未満の者について要件が抜けている。正しくは、その要介護状態の原因である身体上又は精神上の障害が、加齢に伴って生ずる心身の変化に起因する疾病であって政令で定めるもの（「特定疾病」）によって生じたものであることが必要である。65歳以上は原因を問わない。\n【横断】特定疾病は介護保険法施行令2条に定められた16種類（がん末期、脳血管疾患、初老期における認知症、関節リウマチなど）。「加齢との関係が認められる」「3〜6か月以上継続して要介護状態等となる割合が高い」という2つの考え方で選定されている。",src:"介護保険法7条3項",cat:"択一式（社一）"},
+{no:"テキスト追加-社一18",opt:"",q:"厚生労働省令で定める実務の経験を有する者であって、都道府県知事が行う介護支援専門員実務研修受講試験に合格し、かつ、都道府県知事が行う介護支援専門員実務研修の課程を修了したものは、一定の者を除き、当該都道府県知事の登録を受けることができる。この登録を受けている者は、都道府県知事に対し介護支援専門員証の交付を申請することができ、介護支援専門員証の有効期間は3年とされる。",a:false,exp:"「3年」が誤り。正しくは「5年」である。試験・研修・登録・介護支援専門員証の交付、いずれも都道府県知事が主体である点は正しい。\n【横断】資格の「登録」の主体は法律ごとに異なる。社労士は連合会、介護支援専門員は都道府県知事。数字は「証は5年、事業の指定・許可は6年」とセットで押さえる。",src:"介護保険法69条の2第1項、69条の7第1項・3項",cat:"択一式（社一）"},
+{no:"テキスト追加-社一19",opt:"",q:"市町村の区域内に住所を有する65歳以上の者は、生活保護受給者のように医療保険加入者でない場合であっても、介護保険の第1号被保険者となる。",a:true,exp:"記述どおり。第1号被保険者の要件は「市町村の区域内に住所を有する」＋「65歳以上」の2つだけで、医療保険加入者であることは求められていない。第2号被保険者（40歳以上65歳未満）は医療保険加入者であることが必要である。\n【横断】生活保護受給者は国民健康保険の適用除外だが介護保険の第1号被保険者にはなる。40歳以上65歳未満の生活保護受給者は医療保険に入っていないため第2号被保険者にならず、介護扶助で対応する。",src:"介護保険法（テキスト記述による・条番号は要確認）",cat:"択一式（社一）"},
+{no:"テキスト追加-社一20",opt:"",q:"要介護認定の更新の申請は、原則として、有効期間の満了の日の30日前から当該有効期間の満了の日までの間に行うものとされ、更新の認定がされた場合の有効期間は、原則として、前回の有効期間の満了の日の翌日から12月間とされている。",a:false,exp:"「30日前」が誤り。正しくは「60日前」である。更新後の有効期間が「前回の満了の日の翌日から12月間」である点は正しい。\n【横断】認定の有効期間は「新規は原則6月、更新は原則12月」。要介護状態の定義における「6月間」とは別物。",src:"介護保険法施行規則39条、41条2項",cat:"択一式（社一）"},
+{no:"テキスト追加-社一21",opt:"",q:"指定居宅サービス事業者等の指定及び指定介護老人福祉施設の指定、並びに介護老人保健施設及び介護医療院の許可は、5年ごとにその更新を受けなければ、その期間の経過によって、その効力を失う。",a:false,exp:"「5年」が誤り。正しくは「6年」である。指定も許可も6年ごとの更新を受けなければ効力を失う。施設の別で年数が異なるとする引っかけにも注意（どれも6年で共通）。\n【横断】「介護老人保健施設・介護医療院は許可、その他の事業者・施設は指定」という言葉の使い分けも狙われる。更新の年数は共通で6年。個人の資格（介護支援専門員証）は5年。",src:"介護保険法70条の2第1項等、94条の2第1項等",cat:"択一式（社一）"},
+{no:"テキスト追加-社一22",opt:"",q:"常勤の公務員である一般受給資格者が児童手当の認定を受けようとするときは、その者の住所地の市町村長の認定を受けなければならない。",a:false,exp:"認定権者が誤り。公務員である一般受給資格者については、法7条1項の「住所地の市町村長」が読み替えられ、国家公務員（行政執行法人に勤務する者を除く）は当該国家公務員の所属する各省各庁の長（裁判所にあっては、最高裁判所長官）又はその委任を受けた者、地方公務員（特定地方独立行政法人に勤務する者を除く）は当該地方公務員の所属する都道府県若しくは市町村の長又はその委任を受けた者となる。市町村職員の場合も結果的に市町村長になるが、これは「住所地の市町村長」ではなく「所属する市町村の長」であり、両者が一致するとは限らない。\n【横断】退職して公務員でなくなったときは、①所属庁へ消滅届、②住所地の市町村へ認定請求、という二段の手続が必要。",src:"児童手当法17条1項",cat:"択一式（社一）"},
+{no:"テキスト追加-社一23",opt:"",q:"児童手当の支給は、原則として、受給資格者が認定の請求をした日の属する月から始め、児童手当を支給すべき事由が消滅した日の属する月で終わる。",a:false,exp:"支給の始期が誤り。正しくは「認定の請求をした日の属する月の翌月から」である。終期が「事由が消滅した日の属する月で終わる」点は正しい。\n【横断】請求が遅れた月の分は遡って支給されない。出生や転入の際は速やかな請求が必要。",src:"児童手当法8条2項",cat:"択一式（社一）"},
+{no:"テキスト追加-社一24",opt:"",q:"個人型年金加入者のうち国民年金の第1号被保険者に係る拠出限度額について、国民年金の付加保険料又は国民年金基金の掛金の納付に係る月にあっては、68,000円に当該保険料又は掛金の額を加算した額とされている。",a:false,exp:"方向が逆である。正しくは「68,000円から当該保険料又は掛金の額を控除した額」。①ベースは月額68,000円、②付加保険料・国民年金基金の掛金を納付した月はその額を差し引く、③その額が68,000円を上回るときは68,000円を控除（＝枠はゼロ）、④国民年金保険料を納付していない月は零円である。\n【横断】国民年金保険料を納めていない月は拠出できない（零円）。「まず1階を固めてから上乗せ」という公的年金全体の考え方の表れで、国民年金基金の加入資格とも共通する発想。",src:"確定拠出年金法（テキスト記述による・条番号は要確認）",cat:"択一式（社一）"},
+{no:"テキスト追加-社一25",opt:"",q:"確定拠出年金の加入者又は加入者であった者（個人別管理資産がある者に限る。）が、傷病に係る障害認定日から75歳に達する日の前日までの間において、その傷病により一定の障害の状態に該当するに至ったときは、その者は、その期間内に記録関連運営管理機関等に障害給付金の支給を請求することができる。",a:true,exp:"記述どおり。①個人別管理資産があること、②障害認定日から「75歳に達する日の前日」までの間に一定の障害の状態に該当するに至ること、③その期間内に請求することが必要である。請求先は資産管理機関ではなく記録関連運営管理機関等である。\n【横断】公的年金の障害給付は保険料による給付で保険料納付要件があるが、確定拠出年金の障害給付金は自分の個人別管理資産が財源で保険料納付要件なし。年齢の区切りも公的年金は原則65歳、確定拠出年金は75歳に達する日の前日。",src:"確定拠出年金法37条、73条、令37条",cat:"択一式（社一）"},
+{no:"テキスト追加-社一26",opt:"",q:"確定拠出年金の給付を受ける権利は、その権利を有する者の請求に基づいて記録関連運営管理機関等が裁定する。記録関連運営管理機関等は、その裁定をしたときは、遅滞なく、その内容を資産管理機関又は連合会に通知しなければならない。",a:true,exp:"記述どおり。①受給権者が請求する、②「記録関連運営管理機関等」が裁定する、③裁定内容を遅滞なく資産管理機関（企業型）又は連合会（個人型）に通知する、④通知を受けた側が実際に支払う、という流れである。\n【横断】公的年金では厚生労働大臣が裁定する。「裁定＝国が行う」という思い込みを持ち込ませるのが典型的な引っかけ。",src:"確定拠出年金法29条、73条",cat:"択一式（社一）"},
+{no:"テキスト追加-社一27",opt:"",q:"企業型年金加入者であった者について、当該企業型年金の加入者資格を喪失した月の翌月から起算して6月以内に所定の申出をせず、個人別管理資産の移換がされなかった場合には、自動的に個人別管理資産が企業年金連合会に移換される。",a:false,exp:"移換先が誤り。正しくは「連合会」＝国民年金基金連合会である。「資格を喪失した月の翌月から起算して6月以内」という期間は正しい。なお自動移換された資産は現金のまま運用されず、手数料だけ引かれ、その期間は加入者等期間に算入されない。\n【横断】確定拠出年金法で単に「連合会」と出てきたら国民年金基金連合会（個人型年金の実施主体でもある）。企業年金連合会は確定給付企業年金の側の団体で、移換の申出をした場合の選択肢の一つ。「自動」なら国基連。",src:"確定拠出年金法83条1項",cat:"択一式（社一）"},
+{no:"テキスト追加-社一28",opt:"",q:"老齢給付金及び障害給付金の受給権は、受給権者が死亡したとき又は個人別管理資産がなくなったときに消滅する。また、障害給付金の受給権については、これらに該当するに至った場合のほか、老齢給付金の受給権者となったときにも消滅する。",a:false,exp:"後段が逆である。正しくは、老齢給付金の受給権が、障害給付金の受給権者となったときに消滅する。共通の消滅事由は①受給権者の死亡、②個人別管理資産がなくなったときであり、老齢給付金のみ③障害給付金の受給権者となったときが加わる。\n【横断】公的年金の併給調整は「支給を停止する」形（権利自体は残る）だが、確定拠出年金は受給権そのものが消滅する。原資が1つの口座しかないため停止して後で復活させる余地がない。",src:"確定拠出年金法36条、39条、73条",cat:"択一式（社一）"},
+{no:"テキスト追加-社一29",opt:"",q:"社会保険審査会の委員長及び委員は、人格が高潔であって、社会保障に関する識見を有し、かつ、法律又は社会保険に関する学識経験を有する者のうちから、両議院の同意を得て、厚生労働大臣が任命する。",a:true,exp:"記述どおり。①両議院（衆議院・参議院）の同意を得る、②厚生労働大臣が任命する。「同意する人」と「任命する人」が別であることがポイントである。\n【横断】社会保険審査官＝厚生労働省の職員のうちから厚生労働大臣が命じる／各地方厚生局（地方厚生支局を含む）に置かれる／審査請求（第一審）／1人。社会保険審査会＝両議院の同意を得て厚生労働大臣が任命／厚生労働省に1か所／再審査請求等（第二審）／委員長及び委員5人（計6人）、任期3年。「両議院の同意」が必要なのは審査会の側だけ。",src:"社会保険審査官及び社会保険審査会法22条1項",cat:"択一式（社一）"}
 ];
 
 // ============================================================
@@ -1197,6 +1245,9 @@ let tokenClient = null, gapiInited = false, gisInited = false;
 let accessToken = null, driveFileId = null, isSyncing = false;
 let autoSaveTimer = null;
 let tokenRefreshTimer = null; // トークン自動更新タイマー
+let tokenAcquiredAt = 0;      // ★ 修正4: トークン取得時刻（失効の事前検知に使う）
+let pendingTokenResolve = null; // ★ 修正4: トークン再取得の完了を待つための解決関数
+let suppressLoadOnToken = false; // ★ 修正4: トークン更新時にDrive読み込みを抑止するフラグ
 
 window.addEventListener('load', () => {
   // ログイン済みの場合は「再接続中」表示
@@ -1218,6 +1269,8 @@ window.addEventListener('load', () => {
       client_id: CLIENT_ID, scope: SCOPES,
       callback: async (resp) => {
         if (resp.error) {
+          // ★ 修正4: 保存リトライ待ちなら失敗を返して抜ける
+          if (pendingTokenResolve) { const r = pendingTokenResolve; pendingTokenResolve = null; r(false); return; }
           if (getSavedAuth()) {
             updateSyncUI(false);
             showToast('再接続できませんでした。再度ログインしてください', 'warn');
@@ -1225,13 +1278,25 @@ window.addEventListener('load', () => {
           return;
         }
         accessToken = resp.access_token;
+        tokenAcquiredAt = Date.now();   // ★ 修正4: 失効判定用に取得時刻を記録
         gapi.client.setToken({ access_token: accessToken });
-        onSignedIn();
-        // 55分後にトークンを自動更新（アクセストークンは1時間で失効）
+        // ★ 修正4: トークンの「更新」時は loadFromDrive を走らせない。
+        //    走らせるとクラウドの古いデータで進行中の栞・正答率を上書きしてしまう。
+        //    初回ログイン（suppressLoadOnToken=false）のときだけ読み込む。
+        if (suppressLoadOnToken || pendingTokenResolve) {
+          suppressLoadOnToken = false;
+          updateSyncUI(true); saveAuthHint();
+          if (pendingTokenResolve) { const r = pendingTokenResolve; pendingTokenResolve = null; r(true); }
+        } else {
+          onSignedIn();
+        }
+        // 45分後にトークンを自動更新（アクセストークンは1時間で失効）
+        // ★ 修正4: 旧55分はタブのバックグラウンド化・PCスリープでタイマーが遅延すると
+        //    更新前に失効するため、猶予を15分に広げた
         if (tokenRefreshTimer) clearTimeout(tokenRefreshTimer);
         tokenRefreshTimer = setTimeout(() => {
-          if (getSavedAuth()) tokenClient.requestAccessToken({ prompt: '' });
-        }, 55 * 60 * 1000);
+          if (getSavedAuth()) { suppressLoadOnToken = true; tokenClient.requestAccessToken({ prompt: '' }); }
+        }, 45 * 60 * 1000);
       }
     });
     gisInited = true;
@@ -1252,6 +1317,7 @@ function signIn() {
 function signOut() {
   if (accessToken) google.accounts.oauth2.revoke(accessToken);
   accessToken = null; driveFileId = null;
+  tokenAcquiredAt = 0; pendingTokenResolve = null; suppressLoadOnToken = false; // ★ 修正4
   if (tokenRefreshTimer) { clearTimeout(tokenRefreshTimer); tokenRefreshTimer = null; }
   clearSavedAuth(); updateSyncUI(false);
   showToast('ログアウトしました');
@@ -1337,17 +1403,35 @@ async function loadFromDrive() {
   }
   setSyncing(false);
 }
-async function saveToDrive() {
-  if (!accessToken) return;
+// ★ 修正4: トークン失効時に再取得して1回だけリトライする
+//    （fetch は HTTP 401/403 では例外を投げないため、明示的に検出する必要がある）
+function refreshTokenAsync() {
+  return new Promise(resolve => {
+    if (!tokenClient || !getSavedAuth()) { resolve(false); return; }
+    pendingTokenResolve = resolve;
+    try { tokenClient.requestAccessToken({ prompt: '' }); }
+    catch { pendingTokenResolve = null; resolve(false); }
+    // 応答が来ない場合に備えたタイムアウト
+    setTimeout(() => { if (pendingTokenResolve === resolve) { pendingTokenResolve = null; resolve(false); } }, 15000);
+  });
+}
+async function saveToDrive(isRetry) {
+  if (!accessToken) return false;
   setSyncing(true);
+  let ok = false, authErr = false;
   try {
     const body = JSON.stringify(buildSavePayload());
     if (driveFileId) {
-      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
+      const res = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
         method: 'PATCH',
         headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
         body
       });
+      // ★ 修正4: ステータスを必ず確認する（旧版は無条件に「保存しました」と表示していた）
+      if (res.ok) ok = true;
+      else if (res.status === 401 || res.status === 403) authErr = true;
+      else if (res.status === 404) { driveFileId = null; throw new Error(`保存先が見つかりません(404)`); }
+      else throw new Error(`save:${res.status}`);
     } else {
       const meta = JSON.stringify({ name: DRIVE_FILE_NAME, parents: ['appDataFolder'] });
       const form = new FormData();
@@ -1356,14 +1440,34 @@ async function saveToDrive() {
       const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&spaces=appDataFolder', {
         method: 'POST', headers: { 'Authorization': 'Bearer ' + accessToken }, body: form
       });
-      driveFileId = (await res.json()).id;
+      if (res.ok) {
+        const j = await res.json();
+        // ★ 修正4: id が取れたときだけ driveFileId を更新（undefined を入れると
+        //    次回も新規作成枝に入り、appDataFolder に同名ファイルが増殖する）
+        if (j && j.id) { driveFileId = j.id; ok = true; }
+        else throw new Error('create:idなし');
+      }
+      else if (res.status === 401 || res.status === 403) authErr = true;
+      else throw new Error(`create:${res.status}`);
     }
-    showToast('クラウドに保存しました', 'success');
   } catch (e) {
-    console.error(e);
+    console.error('Drive save error:', e);
+    setSyncing(false);
     showToast('保存失敗: ' + (e?.message || '通信エラー'), 'error');
+    return false;
+  }
+  // ★ 修正4: 認証エラーならトークンを取り直して1回だけ再試行
+  if (authErr && !isRetry) {
+    setSyncing(false);
+    const refreshed = await refreshTokenAsync();
+    if (refreshed) return await saveToDrive(true);
+    showToast('セッション切れ：保存できません。再度ログインしてください', 'error');
+    return false;
   }
   setSyncing(false);
+  if (ok) showToast('クラウドに保存しました', 'success');
+  else showToast('保存失敗：再度ログインしてください', 'error');
+  return ok;
 }
 async function manualSync() {
   if (!accessToken) { showToast('先にログインしてください', 'error'); return; }
@@ -1379,6 +1483,15 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden' && accessToken) {
     if (autoSaveTimer) { clearTimeout(autoSaveTimer); autoSaveTimer = null; }
     saveToDrive();
+  }
+  // ★ 修正4: 復帰時にトークンの残り時間を確認する。タブのバックグラウンド化や
+  //    PCスリープで45分タイマーが遅延しても、ここで失効を先回りして防ぐ。
+  if (document.visibilityState === 'visible' && accessToken && getSavedAuth()) {
+    const age = Date.now() - tokenAcquiredAt;
+    if (age > 45 * 60 * 1000) {
+      suppressLoadOnToken = true;
+      try { tokenClient.requestAccessToken({ prompt: '' }); } catch {}
+    }
   }
 });
 
@@ -1514,6 +1627,10 @@ let questionStats = {}; // { origIdx: {correct:N, total:N} }
 function recordStat(origIdx, isCorrect) {
   if (!questionStats[origIdx]) questionStats[origIdx] = {correct:0, total:0};
   const inReview = !!(currentSession && currentSession.noStats);
+  // ★ 機能①: lt = last tried（最後にその問題を解いた時刻）。1問1個・毎回上書き。
+  //    復習モード（noStats）でも更新する。「最後に見た日」を示す情報であり、
+  //    correct/total の純度とは無関係のため。
+  questionStats[origIdx].lt = Date.now();
   // ★ lw = last wrong（最後に間違えた時刻）。1問1個・上書き。
   if (!isCorrect) {
     // 誤答時は常に lw を更新（復習モードでも間違えた問題は日数窓に残す＝間隔リセット）
@@ -1568,6 +1685,20 @@ function updateRecentWrongBtn() {
 function startRecentWrong() {
   const d = getRecentWrongDays();
   startSession({ useRecentWrong: true, days: d });
+}
+// ★ 機能①③: 最終実施日（lt）の表示用フォーマット。今日/昨日/M月D日 で短く出す
+function getLastTried(origIdx) {
+  const s = questionStats[origIdx];
+  if (!s || !s.lt) return null;
+  const d = new Date(s.lt), now = new Date();
+  const day = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const diff = Math.round((day(now) - day(d)) / 86400000);
+  let label;
+  if (diff === 0) label = '今日';
+  else if (diff === 1) label = '昨日';
+  else if (d.getFullYear() === now.getFullYear()) label = `${d.getMonth() + 1}/${d.getDate()}`;
+  else label = `${String(d.getFullYear()).slice(2)}/${d.getMonth() + 1}/${d.getDate()}`;
+  return { label, days: diff, ts: s.lt };
 }
 function getAccuracyInfo(origIdx) {
   const s = questionStats[origIdx];
@@ -1970,6 +2101,9 @@ function updateQuestion() {
   document.getElementById('progressFill').style.width = `${((current + 1) / questions.length) * 100}%`;
   
   // 問題カード
+  // ★ 機能④: 通し番号＝origIdx+1。ALL_QUESTIONS は末尾追記専用のため
+  //    配列位置がそのまま「古い順の固定番号」になる（データに番号を持たせる必要がない）
+  document.getElementById('qSeq').textContent = `#${currentQIndex + 1}`;
   document.getElementById('qTag').textContent = q.cat;
   document.getElementById('qNum').textContent = q.no + (q.opt ? '-' + q.opt : '');
   if (q.type === 'select') {
@@ -1998,6 +2132,7 @@ function updateQuestion() {
   // ★ 正答率バッジ・挑戦回数バッジ・栞ボタン（回答後のみ表示）
   const accEl  = document.getElementById('qAcc');
   const triesEl = document.getElementById('qTries');
+  const lastEl = document.getElementById('qLast');   // ★ 機能③: 最終実施日
   const bBtn = document.getElementById('btnBookmark');
   const exBtn = document.getElementById('btnExclude');
 
@@ -2024,6 +2159,12 @@ function updateQuestion() {
     const tries = s ? s.total : 0;
     triesEl.textContent = `挑戦${tries}回`;
     triesEl.style.display = 'inline-block';
+    // ★ 機能③: 最終実施日（今回の回答で更新済みなので通常は「今日」になる）
+    const lt = getLastTried(currentQIndex);
+    if (lastEl) {
+      if (lt) { lastEl.textContent = `前回 ${lt.label}`; lastEl.style.display = 'inline-block'; }
+      else lastEl.style.display = 'none';
+    }
     bBtn.textContent = bookmarks.has(currentQIndex) ? '★' : '☆';
     bBtn.classList.toggle('active', bookmarks.has(currentQIndex));
     bBtn.style.visibility = 'visible';
@@ -2034,6 +2175,7 @@ function updateQuestion() {
     // 回答前：バッジ・栞を非表示
     accEl.style.display = 'none';
     triesEl.style.display = 'none';
+    if (lastEl) lastEl.style.display = 'none';   // ★ 機能③
     bBtn.textContent = '☆';
     bBtn.classList.remove('active');
     bBtn.style.visibility = 'hidden';
@@ -2268,59 +2410,103 @@ function restart() {
 // ============================================================
 //  BOOKMARKS
 // ============================================================
+// ★ 機能②: 問題一覧の表示フィルター（'all'＝全問／'bm'＝栞のみ）
+let listFilter = 'all';
+function setListFilter(mode) {
+  listFilter = mode;
+  const a = document.getElementById('lfAll'), b = document.getElementById('lfBm');
+  if (a) a.classList.toggle('active', mode === 'all');
+  if (b) b.classList.toggle('active', mode === 'bm');
+  renderBookmarks();
+}
+// 表示中の一覧に含まれる origIdx の配列（昇順）
+function getListIndices() {
+  if (listFilter === 'bm') return [...bookmarks].sort((x, y) => x - y);
+  return ALL_QUESTIONS.map((q, i) => i);
+}
 function renderBookmarks() {
   const container = document.getElementById('bookmarkItems');
   const empty = document.getElementById('emptyBookmarks');
-  
-  if (bookmarks.size === 0) {
+  const countEl = document.getElementById('listCount');
+  const idxs = getListIndices();
+
+  if (countEl) countEl.textContent = `${idxs.length}問`;
+
+  if (idxs.length === 0) {
     container.innerHTML = '';
-    empty.style.display = 'block';
+    if (empty) empty.style.display = 'block';
     return;
   }
-  
-  empty.style.display = 'none';
+  if (empty) empty.style.display = 'none';
   container.innerHTML = '';
-  
-  [...bookmarks].sort((a, b) => a - b).forEach(idx => {
+
+  // ★ 全件を一度に描画するため DocumentFragment にまとめて1回だけDOM挿入する
+  //    （1行ずつ appendChild すると全問数ぶんリフローが発生して重い）
+  const frag = document.createDocumentFragment();
+
+  idxs.forEach(idx => {
     const q = ALL_QUESTIONS[idx];
     if (!q) return;
-    
+
     const item = document.createElement('div');
     item.className = 'bm-item';
+    item.style.flexDirection = 'column';
+    item.style.alignItems = 'stretch';
     item.onclick = () => startFromBookmark(idx);
-    
+
+    const row = document.createElement('div');
+    row.className = 'bm-row';
+
     const star = document.createElement('div');
-    star.className = 'bm-star'; star.textContent = '★';
-    
+    star.className = 'bm-star';
+    if (bookmarks.has(idx)) { star.textContent = '★'; }
+    else { star.textContent = '☆'; star.style.color = '#556070'; }
+
+    const seq = document.createElement('div');
+    seq.className = 'bm-seq'; seq.textContent = `#${idx + 1}`;
+
     const tag = document.createElement('div');
     tag.className = 'bm-tag'; tag.textContent = q.cat;
-    
-    const acc = document.createElement('div');
+
+    row.appendChild(star);
+    row.appendChild(seq);
+    row.appendChild(tag);
+
     const accInfo = getAccuracyInfo(idx);
     if (accInfo) {
+      const acc = document.createElement('div');
       acc.className = `bm-acc ${accInfo.cls}`;
-      acc.textContent = `${accInfo.pct}%`;
+      acc.textContent = `${accInfo.pct}% (${accInfo.total}回)`;
+      row.appendChild(acc);
     }
-    
+
+    const lt = getLastTried(idx);
+    const last = document.createElement('div');
+    if (lt) { last.className = 'bm-last'; last.textContent = `前回 ${lt.label}`; }
+    else    { last.className = 'bm-untried'; last.textContent = '未挑戦'; }
+    row.appendChild(last);
+
     const text = document.createElement('div');
     text.className = 'bm-text';
     if (q.type === 'select') {
       text.textContent = `【${q.opt}】${q.context.slice(0, 80)}...`;
     } else {
-      text.textContent = `${q.no}-${q.opt}: ${q.q.slice(0, 80)}...`;
+      text.textContent = `${q.no}${q.opt ? '-' + q.opt : ''}: ${q.q.slice(0, 80)}...`;
     }
-    
-    item.appendChild(star);
-    item.appendChild(tag);
-    if (accInfo) item.appendChild(acc);
+
+    item.appendChild(row);
     item.appendChild(text);
-    container.appendChild(item);
+    frag.appendChild(item);
   });
+
+  container.appendChild(frag);
 }
 
 function startFromBookmark(startIdx) {
-  const pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i }))
-    .filter(q => !excluded.has(q._origIdx)).sort((a, b) => a._origIdx - b._origIdx);
+  // ★ 機能②: 「表示中の一覧」をプールにする（改修Gの方針どおり出題範囲フィルターは適用しない）
+  const pool = getListIndices().map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i }))
+    .filter(q => q.no && !excluded.has(q._origIdx)).sort((a, b) => a._origIdx - b._origIdx);
+  if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
   const startPos = pool.findIndex(q => q._origIdx === startIdx);
   
   questions = pool; answers = Array(pool.length).fill(null); 
