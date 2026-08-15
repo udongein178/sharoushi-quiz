@@ -78,6 +78,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .your-choice-label{font-size:9px;letter-spacing:.08em;opacity:.85;margin-top:2px;font-weight:700}
 /* 挑戦回数バッジ */
 .q-tries{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;background:rgba(138,155,176,.12);border:1px solid #283848;color:#8a9bb0;display:none}
+/* ★ 機能④: 通し番号バッジ（origIdx+1＝追加順の固定番号） */
+.q-seq{font-size:11px;padding:2px 7px;border-radius:4px;font-weight:700;background:rgba(74,158,202,.14);border:1px solid rgba(74,158,202,.35);color:#5bb8e0;letter-spacing:.03em}
+/* ★ 機能③: 最終実施日バッジ */
+.q-last{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;background:rgba(138,155,176,.12);border:1px solid #283848;color:#8a9bb0;display:none}
 /* 復習モード（記録非反映）バッジ */
 .q-review{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;background:rgba(232,201,122,.12);border:1px solid rgba(232,201,122,.35);color:#e8c97a;display:none}
 
@@ -158,6 +162,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .bookmark-list{display:none}
 .bookmark-list.show{display:block}
 .section-title{font-size:12px;color:#556070;letter-spacing:.1em;margin-bottom:12px;text-align:center;text-transform:uppercase}
+/* ★ 機能②: 問題一覧のフィルター・行要素 */
+.list-filter{display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.btn-listfilter{border:1.5px solid #283848;background:transparent;color:#8a9bb0;border-radius:16px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-listfilter.active{border-color:#c97a4a;background:rgba(201,122,74,.12);color:#c97a4a}
+.btn-listfilter:hover{border-color:#4a9eca;color:#4a9eca}
+.list-count{font-size:11px;color:#556070;margin-left:auto}
+.bm-seq{font-size:10px;font-weight:700;color:#5bb8e0;background:rgba(74,158,202,.14);border:1px solid rgba(74,158,202,.35);border-radius:4px;padding:1px 5px;white-space:nowrap;flex-shrink:0}
+.bm-last{font-size:10px;color:#8a9bb0;background:rgba(138,155,176,.12);border:1px solid #283848;border-radius:4px;padding:1px 5px;white-space:nowrap;flex-shrink:0}
+.bm-untried{font-size:10px;color:#c9a84c;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);border-radius:4px;padding:1px 5px;white-space:nowrap;flex-shrink:0}
+.bm-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px}
 .bm-item{background:#1a2434;border:1px solid #283848;border-radius:10px;padding:12px 14px;margin-bottom:9px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:border-color .15s}
 .bm-item:hover{border-color:#c97a4a}
 .bm-star{font-size:14px;color:#e8c97a;flex-shrink:0}
@@ -224,7 +238,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 <!-- ===== NAV TABS ===== -->
 <div class="nav-tabs">
   <button id="tabMain"  class="nav-tab active" onclick="showMain()">学習</button>
-  <button id="tabBookmarks" class="nav-tab" onclick="showBookmarks()">栞<span id="bmBadge" class="bm-badge" style="display:none">0</span></button>
+  <button id="tabBookmarks" class="nav-tab" onclick="showBookmarks()">問題一覧<span id="bmBadge" class="bm-badge" style="display:none">0</span></button>
 </div>
 
 <!-- ===== MAIN SCREEN ===== -->
@@ -296,11 +310,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 <div id="questionScreen" class="screen">
   <div class="card">
     <div class="q-meta">
+      <span id="qSeq" class="q-seq"></span>
       <span id="qTag" class="q-tag">択一式（雇用保険法）</span>
       <span id="qTypeBadge" class="q-type-badge"></span>
       <span id="qNum" class="q-num"></span>
       <span id="qAcc" class="q-acc"></span>
       <span id="qTries" class="q-tries"></span>
+      <span id="qLast" class="q-last"></span>
       <span id="qReview" class="q-review">🔁 記録に反映されません</span>
     </div>
     <div id="qText" class="q-text"></div>
@@ -371,7 +387,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 <!-- ===== BOOKMARK SCREEN ===== -->
 <div id="screenBookmarks" class="screen">
 <div class="bookmark-list">
-  <h3 class="section-title">栞をつけた問題</h3>
+  <h3 class="section-title">問題一覧</h3>
+  <!-- ★ 機能②: すべて／栞 の2択フィルター -->
+  <div class="list-filter">
+    <button id="lfAll" class="btn-listfilter active" onclick="setListFilter('all')">すべて</button>
+    <button id="lfBm"  class="btn-listfilter" onclick="setListFilter('bm')">★ 栞のみ</button>
+    <span id="listCount" class="list-count"></span>
+  </div>
   <div id="bookmarkItems"></div>
   <div id="emptyBookmarks" class="empty-bm" style="display:none">
     まだ栞をつけた問題がありません。<br>学習中に ★ ボタンを押すと、<br>後で見返したい問題を保存できます。
@@ -975,6 +997,9 @@ let tokenClient = null, gapiInited = false, gisInited = false;
 let accessToken = null, driveFileId = null, isSyncing = false;
 let autoSaveTimer = null;
 let tokenRefreshTimer = null; // トークン自動更新タイマー
+let tokenAcquiredAt = 0;      // ★ 修正4: トークン取得時刻（失効の事前検知に使う）
+let pendingTokenResolve = null; // ★ 修正4: トークン再取得の完了を待つための解決関数
+let suppressLoadOnToken = false; // ★ 修正4: トークン更新時にDrive読み込みを抑止するフラグ
 
 window.addEventListener('load', () => {
   // ログイン済みの場合は「再接続中」表示
@@ -996,6 +1021,8 @@ window.addEventListener('load', () => {
       client_id: CLIENT_ID, scope: SCOPES,
       callback: async (resp) => {
         if (resp.error) {
+          // ★ 修正4: 保存リトライ待ちなら失敗を返して抜ける
+          if (pendingTokenResolve) { const r = pendingTokenResolve; pendingTokenResolve = null; r(false); return; }
           if (getSavedAuth()) {
             updateSyncUI(false);
             showToast('再接続できませんでした。再度ログインしてください', 'warn');
@@ -1003,13 +1030,25 @@ window.addEventListener('load', () => {
           return;
         }
         accessToken = resp.access_token;
+        tokenAcquiredAt = Date.now();   // ★ 修正4: 失効判定用に取得時刻を記録
         gapi.client.setToken({ access_token: accessToken });
-        onSignedIn();
-        // 55分後にトークンを自動更新（アクセストークンは1時間で失効）
+        // ★ 修正4: トークンの「更新」時は loadFromDrive を走らせない。
+        //    走らせるとクラウドの古いデータで進行中の栞・正答率を上書きしてしまう。
+        //    初回ログイン（suppressLoadOnToken=false）のときだけ読み込む。
+        if (suppressLoadOnToken || pendingTokenResolve) {
+          suppressLoadOnToken = false;
+          updateSyncUI(true); saveAuthHint();
+          if (pendingTokenResolve) { const r = pendingTokenResolve; pendingTokenResolve = null; r(true); }
+        } else {
+          onSignedIn();
+        }
+        // 45分後にトークンを自動更新（アクセストークンは1時間で失効）
+        // ★ 修正4: 旧55分はタブのバックグラウンド化・PCスリープでタイマーが遅延すると
+        //    更新前に失効するため、猶予を15分に広げた
         if (tokenRefreshTimer) clearTimeout(tokenRefreshTimer);
         tokenRefreshTimer = setTimeout(() => {
-          if (getSavedAuth()) tokenClient.requestAccessToken({ prompt: '' });
-        }, 55 * 60 * 1000);
+          if (getSavedAuth()) { suppressLoadOnToken = true; tokenClient.requestAccessToken({ prompt: '' }); }
+        }, 45 * 60 * 1000);
       }
     });
     gisInited = true;
@@ -1030,6 +1069,7 @@ function signIn() {
 function signOut() {
   if (accessToken) google.accounts.oauth2.revoke(accessToken);
   accessToken = null; driveFileId = null;
+  tokenAcquiredAt = 0; pendingTokenResolve = null; suppressLoadOnToken = false; // ★ 修正4
   if (tokenRefreshTimer) { clearTimeout(tokenRefreshTimer); tokenRefreshTimer = null; }
   clearSavedAuth(); updateSyncUI(false);
   showToast('ログアウトしました');
@@ -1115,17 +1155,35 @@ async function loadFromDrive() {
   }
   setSyncing(false);
 }
-async function saveToDrive() {
-  if (!accessToken) return;
+// ★ 修正4: トークン失効時に再取得して1回だけリトライする
+//    （fetch は HTTP 401/403 では例外を投げないため、明示的に検出する必要がある）
+function refreshTokenAsync() {
+  return new Promise(resolve => {
+    if (!tokenClient || !getSavedAuth()) { resolve(false); return; }
+    pendingTokenResolve = resolve;
+    try { tokenClient.requestAccessToken({ prompt: '' }); }
+    catch { pendingTokenResolve = null; resolve(false); }
+    // 応答が来ない場合に備えたタイムアウト
+    setTimeout(() => { if (pendingTokenResolve === resolve) { pendingTokenResolve = null; resolve(false); } }, 15000);
+  });
+}
+async function saveToDrive(isRetry) {
+  if (!accessToken) return false;
   setSyncing(true);
+  let ok = false, authErr = false;
   try {
     const body = JSON.stringify(buildSavePayload());
     if (driveFileId) {
-      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
+      const res = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
         method: 'PATCH',
         headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
         body
       });
+      // ★ 修正4: ステータスを必ず確認する（旧版は無条件に「保存しました」と表示していた）
+      if (res.ok) ok = true;
+      else if (res.status === 401 || res.status === 403) authErr = true;
+      else if (res.status === 404) { driveFileId = null; throw new Error(`保存先が見つかりません(404)`); }
+      else throw new Error(`save:${res.status}`);
     } else {
       const meta = JSON.stringify({ name: DRIVE_FILE_NAME, parents: ['appDataFolder'] });
       const form = new FormData();
@@ -1134,14 +1192,34 @@ async function saveToDrive() {
       const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&spaces=appDataFolder', {
         method: 'POST', headers: { 'Authorization': 'Bearer ' + accessToken }, body: form
       });
-      driveFileId = (await res.json()).id;
+      if (res.ok) {
+        const j = await res.json();
+        // ★ 修正4: id が取れたときだけ driveFileId を更新（undefined を入れると
+        //    次回も新規作成枝に入り、appDataFolder に同名ファイルが増殖する）
+        if (j && j.id) { driveFileId = j.id; ok = true; }
+        else throw new Error('create:idなし');
+      }
+      else if (res.status === 401 || res.status === 403) authErr = true;
+      else throw new Error(`create:${res.status}`);
     }
-    showToast('クラウドに保存しました', 'success');
   } catch (e) {
-    console.error(e);
+    console.error('Drive save error:', e);
+    setSyncing(false);
     showToast('保存失敗: ' + (e?.message || '通信エラー'), 'error');
+    return false;
+  }
+  // ★ 修正4: 認証エラーならトークンを取り直して1回だけ再試行
+  if (authErr && !isRetry) {
+    setSyncing(false);
+    const refreshed = await refreshTokenAsync();
+    if (refreshed) return await saveToDrive(true);
+    showToast('セッション切れ：保存できません。再度ログインしてください', 'error');
+    return false;
   }
   setSyncing(false);
+  if (ok) showToast('クラウドに保存しました', 'success');
+  else showToast('保存失敗：再度ログインしてください', 'error');
+  return ok;
 }
 async function manualSync() {
   if (!accessToken) { showToast('先にログインしてください', 'error'); return; }
@@ -1157,6 +1235,15 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden' && accessToken) {
     if (autoSaveTimer) { clearTimeout(autoSaveTimer); autoSaveTimer = null; }
     saveToDrive();
+  }
+  // ★ 修正4: 復帰時にトークンの残り時間を確認する。タブのバックグラウンド化や
+  //    PCスリープで45分タイマーが遅延しても、ここで失効を先回りして防ぐ。
+  if (document.visibilityState === 'visible' && accessToken && getSavedAuth()) {
+    const age = Date.now() - tokenAcquiredAt;
+    if (age > 45 * 60 * 1000) {
+      suppressLoadOnToken = true;
+      try { tokenClient.requestAccessToken({ prompt: '' }); } catch {}
+    }
   }
 });
 
@@ -1272,6 +1359,10 @@ let questionStats = {}; // { origIdx: {correct:N, total:N} }
 function recordStat(origIdx, isCorrect) {
   if (!questionStats[origIdx]) questionStats[origIdx] = {correct:0, total:0};
   const inReview = !!(currentSession && currentSession.noStats);
+  // ★ 機能①: lt = last tried（最後にその問題を解いた時刻）。1問1個・毎回上書き。
+  //    復習モード（noStats）でも更新する。「最後に見た日」を示す情報であり、
+  //    correct/total の純度とは無関係のため。
+  questionStats[origIdx].lt = Date.now();
   // ★ lw = last wrong（最後に間違えた時刻）。1問1個・上書き。
   if (!isCorrect) {
     // 誤答時は常に lw を更新（復習モードでも間違えた問題は日数窓に残す＝間隔リセット）
@@ -1328,6 +1419,20 @@ function updateRecentWrongBtn() {
 function startRecentWrong() {
   const d = getRecentWrongDays();
   startSession({ useRecentWrong: true, days: d });
+}
+// ★ 機能①③: 最終実施日（lt）の表示用フォーマット。今日/昨日/M月D日 で短く出す
+function getLastTried(origIdx) {
+  const s = questionStats[origIdx];
+  if (!s || !s.lt) return null;
+  const d = new Date(s.lt), now = new Date();
+  const day = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const diff = Math.round((day(now) - day(d)) / 86400000);
+  let label;
+  if (diff === 0) label = '今日';
+  else if (diff === 1) label = '昨日';
+  else if (d.getFullYear() === now.getFullYear()) label = `${d.getMonth() + 1}/${d.getDate()}`;
+  else label = `${String(d.getFullYear()).slice(2)}/${d.getMonth() + 1}/${d.getDate()}`;
+  return { label, days: diff, ts: s.lt };
 }
 function getAccuracyInfo(origIdx) {
   const s = questionStats[origIdx];
@@ -1706,6 +1811,9 @@ function updateQuestion() {
   document.getElementById('progressFill').style.width = `${((current + 1) / questions.length) * 100}%`;
   
   // 問題カード
+  // ★ 機能④: 通し番号＝origIdx+1。ALL_QUESTIONS は末尾追記専用のため
+  //    配列位置がそのまま「古い順の固定番号」になる（データに番号を持たせる必要がない）
+  document.getElementById('qSeq').textContent = `#${currentQIndex + 1}`;
   document.getElementById('qTag').textContent = q.cat;
   document.getElementById('qNum').textContent = q.no + (q.opt ? '-' + q.opt : '');
   if (q.type === 'select') {
@@ -1735,6 +1843,7 @@ function updateQuestion() {
   const accEl  = document.getElementById('qAcc');
   const triesEl = document.getElementById('qTries');
   const bBtn = document.getElementById('btnBookmark');
+  const lastEl = document.getElementById('qLast');   // ★ 機能③: 最終実施日
 
   // ★ 復習モード（記録非反映）バッジ
   const revEl = document.getElementById('qReview');
@@ -1759,6 +1868,12 @@ function updateQuestion() {
     const tries = s ? s.total : 0;
     triesEl.textContent = `挑戦${tries}回`;
     triesEl.style.display = 'inline-block';
+    // ★ 機能③: 最終実施日（今回の回答で更新済みなので通常は「今日」になる）
+    const lt = getLastTried(currentQIndex);
+    if (lastEl) {
+      if (lt) { lastEl.textContent = `前回 ${lt.label}`; lastEl.style.display = 'inline-block'; }
+      else lastEl.style.display = 'none';
+    }
     bBtn.textContent = bookmarks.has(currentQIndex) ? '★' : '☆';
     bBtn.classList.toggle('active', bookmarks.has(currentQIndex));
     bBtn.style.visibility = 'visible';
@@ -1766,6 +1881,7 @@ function updateQuestion() {
     // 回答前：バッジ・栞を非表示
     accEl.style.display = 'none';
     triesEl.style.display = 'none';
+    if (lastEl) lastEl.style.display = 'none';   // ★ 機能③
     bBtn.textContent = '☆';
     bBtn.classList.remove('active');
     bBtn.style.visibility = 'hidden';
@@ -1999,40 +2115,83 @@ function restart() {
 // ============================================================
 //  BOOKMARKS
 // ============================================================
+// ★ 機能②: 問題一覧タブ。'all'（全問）／'bm'（栞のみ）の2択で切り替える
+let listFilter = 'all';
+function setListFilter(mode) {
+  listFilter = mode;
+  const a = document.getElementById('lfAll'), b = document.getElementById('lfBm');
+  if (a) a.classList.toggle('active', mode === 'all');
+  if (b) b.classList.toggle('active', mode === 'bm');
+  renderBookmarks();
+}
+// 表示中の一覧に含まれる origIdx を返す（行タップ時の出題プールにも使う）
+function getListIndices() {
+  if (listFilter === 'bm') return [...bookmarks].sort((a, b) => a - b);
+  return ALL_QUESTIONS.map((q, i) => i);
+}
 function renderBookmarks() {
   const container = document.getElementById('bookmarkItems');
   const empty = document.getElementById('emptyBookmarks');
-  
-  if (bookmarks.size === 0) {
+  const countEl = document.getElementById('listCount');
+  const idxs = getListIndices();
+
+  if (countEl) countEl.textContent = `${idxs.length}問`;
+
+  if (idxs.length === 0) {
     container.innerHTML = '';
     empty.style.display = 'block';
     return;
   }
-  
   empty.style.display = 'none';
   container.innerHTML = '';
-  
-  [...bookmarks].sort((a, b) => a - b).forEach(idx => {
+
+  // ★ 全件を一度に描画するため DocumentFragment にまとめて1回でDOM挿入する
+  //   （1行ずつ appendChild すると問題数ぶんリフローが発生して重い）
+  const frag = document.createDocumentFragment();
+  idxs.forEach(idx => {
     const q = ALL_QUESTIONS[idx];
     if (!q) return;
-    
+    const marked = bookmarks.has(idx);
+
     const item = document.createElement('div');
     item.className = 'bm-item';
     item.onclick = () => startFromBookmark(idx);
-    
+
     const star = document.createElement('div');
-    star.className = 'bm-star'; star.textContent = '★';
-    
-    const tag = document.createElement('div');
+    star.className = 'bm-star';
+    star.textContent = marked ? '★' : '☆';
+    if (!marked) star.style.color = '#3a4a5a';
+
+    const body = document.createElement('div');
+    body.style.flex = '1'; body.style.minWidth = '0';
+
+    // 1行目：#通し番号 / cat / 正答率(N回) / 前回M/D
+    const row = document.createElement('div');
+    row.className = 'bm-row';
+
+    const seq = document.createElement('span');
+    seq.className = 'bm-seq'; seq.textContent = `#${idx + 1}`;
+    row.appendChild(seq);
+
+    const tag = document.createElement('span');
     tag.className = 'bm-tag'; tag.textContent = q.cat;
-    
-    const acc = document.createElement('div');
+    row.appendChild(tag);
+
     const accInfo = getAccuracyInfo(idx);
     if (accInfo) {
+      const acc = document.createElement('span');
       acc.className = `bm-acc ${accInfo.cls}`;
-      acc.textContent = `${accInfo.pct}%`;
+      acc.textContent = `${accInfo.pct}% (${accInfo.total}回)`;
+      row.appendChild(acc);
     }
-    
+
+    const lt = getLastTried(idx);
+    const last = document.createElement('span');
+    if (lt) { last.className = 'bm-last'; last.textContent = `前回 ${lt.label}`; }
+    else    { last.className = 'bm-untried'; last.textContent = '未挑戦'; }
+    row.appendChild(last);
+
+    // 2行目：問題文冒頭
     const text = document.createElement('div');
     text.className = 'bm-text';
     if (q.type === 'select') {
@@ -2040,18 +2199,23 @@ function renderBookmarks() {
     } else {
       text.textContent = `${q.no}-${q.opt}: ${q.q.slice(0, 80)}...`;
     }
-    
+
+    body.appendChild(row);
+    body.appendChild(text);
     item.appendChild(star);
-    item.appendChild(tag);
-    if (accInfo) item.appendChild(acc);
-    item.appendChild(text);
-    container.appendChild(item);
+    item.appendChild(body);
+    frag.appendChild(item);
   });
+  container.appendChild(frag);
 }
 
 function startFromBookmark(startIdx) {
-  const pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i }))
+  // ★ 機能②: 表示中の一覧（すべて／栞のみ）をそのまま出題プールにする。
+  //    改修Gの方針どおり、ここには出題範囲フィルターを適用しない
+  //    （指定した問題そのものを開く動作のため）。
+  const pool = getListIndices().map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i }))
     .filter(Boolean).sort((a, b) => a._origIdx - b._origIdx);
+  if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
   const startPos = pool.findIndex(q => q._origIdx === startIdx);
   
   questions = pool; answers = Array(pool.length).fill(null); 
