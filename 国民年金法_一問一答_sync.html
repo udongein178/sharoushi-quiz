@@ -1152,8 +1152,35 @@ function refreshTokenAsync() {
     }, 15000);
   });
 }
+// ★ 修正4-c: Drive のエラー応答から理由（reason）を取り出す。
+//    403 は「認証不足」「レート制限」「容量不足」など原因が全く異なるため、
+//    状態コードだけで判断すると誤った対処（無用な再ログイン等）になる。
+async function readDriveError(res) {
+  try {
+    const t = await res.text();
+    try {
+      const j = JSON.parse(t), e = j && j.error;
+      const r = (e && e.errors && e.errors[0] && e.errors[0].reason) || (e && e.status) || '';
+      return { reason: String(r), message: (e && e.message) || t.slice(0, 120) };
+    } catch { return { reason: '', message: t.slice(0, 120) }; }
+  } catch { return { reason: '', message: '' }; }
+}
+// 403 のうち「トークンを取り直せば回復するもの」
+const DRIVE_AUTH_REASONS = ['authError', 'insufficientPermissions', 'insufficientFilePermissions',
+                            'appNotAuthorizedToFile', 'forbidden', 'PERMISSION_DENIED'];
+// 403 のうち「時間をおけば回復するもの」
+const DRIVE_RATE_REASONS = ['rateLimitExceeded', 'userRateLimitExceeded', 'dailyLimitExceeded',
+                            'sharingRateLimitExceeded', 'RESOURCE_EXHAUSTED'];
+
+let saveInFlight = false;   // ★ 修正4-c: 保存の同時実行を防ぐ（無駄な要求でレート制限を踏まない）
 async function saveToDrive(isRetry) {
   if (!accessToken) return false;
+  if (saveInFlight && !isRetry) return false;
+  saveInFlight = true;
+  try { return await saveToDriveOnce(isRetry); }
+  finally { saveInFlight = false; }
+}
+async function saveToDriveOnce(isRetry) {
   setSyncing(true);
   let ok = false, authErr = false;
   try {
@@ -1166,12 +1193,25 @@ async function saveToDrive(isRetry) {
       });
       // ★ 修正4: ステータスを必ず確認する（旧版は無条件に「保存しました」と表示していた）
       if (res.ok) ok = true;
-      // ★ 修正4-b: Drive は「レート制限」でも403を返すため、403だけでトークンを取り直すと
-      //    無用なログイン要求が出る。認証切れの検出は401に絞る。
       else if (res.status === 401) authErr = true;
-      else if (res.status === 403) throw new Error(`save:403（アクセス制限の可能性）`);
-      else if (res.status === 404) { driveFileId = null; throw new Error(`保存先が見つかりません(404)`); }
-      else throw new Error(`save:${res.status}`);
+      else if (res.status === 403) {
+        // ★ 修正4-c: 403 は理由で分岐する
+        const { reason, message } = await readDriveError(res);
+        if (DRIVE_AUTH_REASONS.includes(reason)) authErr = true;            // 再ログインで回復
+        else if (DRIVE_RATE_REASONS.includes(reason)) throw new Error(`混み合っています（${reason}）。少し待って再試行してください`);
+        else if (reason === 'storageQuotaExceeded') throw new Error('Googleドライブの空き容量が不足しています');
+        else throw new Error(`save:403 ${reason || message || '理由不明'}`);
+      }
+      else if (res.status === 404) {
+        // ★ 修正4-c: 保存先が消えている。ファイルIDを捨てて1回だけ作り直す
+        driveFileId = null;
+        if (!isRetry) { setSyncing(false); return await saveToDrive(true); }
+        throw new Error('保存先が見つかりません(404)');
+      }
+      else {
+        const { reason, message } = await readDriveError(res);
+        throw new Error(`save:${res.status} ${reason || message || ''}`.trim());
+      }
     } else {
       const meta = JSON.stringify({ name: DRIVE_FILE_NAME, parents: ['appDataFolder'] });
       const form = new FormData();
@@ -1188,7 +1228,17 @@ async function saveToDrive(isRetry) {
         else throw new Error('create:idなし');
       }
       else if (res.status === 401) authErr = true;
-      else throw new Error(`create:${res.status}`);
+      else if (res.status === 403) {
+        const { reason, message } = await readDriveError(res);
+        if (DRIVE_AUTH_REASONS.includes(reason)) authErr = true;
+        else if (DRIVE_RATE_REASONS.includes(reason)) throw new Error(`混み合っています（${reason}）。少し待って再試行してください`);
+        else if (reason === 'storageQuotaExceeded') throw new Error('Googleドライブの空き容量が不足しています');
+        else throw new Error(`create:403 ${reason || message || '理由不明'}`);
+      }
+      else {
+        const { reason, message } = await readDriveError(res);
+        throw new Error(`create:${res.status} ${reason || message || ''}`.trim());
+      }
     }
   } catch (e) {
     console.error('Drive save error:', e);
