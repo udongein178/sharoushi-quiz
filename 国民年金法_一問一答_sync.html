@@ -985,6 +985,25 @@ let tokenRefreshTimer = null; // トークン自動更新タイマー
 let tokenAcquiredAt = 0;      // ★ 修正4: トークン取得時刻（失効の事前検知に使う）
 let pendingTokenResolve = null; // ★ 修正4: トークン再取得の完了を待つための解決関数
 let suppressLoadOnToken = false; // ★ 修正4: トークン更新時にDrive読み込みを抑止するフラグ
+// ★ 修正4-b: ログイン要求の連打防止。修正4で requestAccessToken の呼び出し箇所が増えたため、
+//    ①同時に複数の要求を出さない（in-flight）②失敗しても一定時間は再要求しない（クールダウン）
+//    の2重ガードを入れる。これが無いと、ユーザーがポップアップを閉じた場合や保存が連続失敗した
+//    場合に、タブを切り替えるたび・回答するたびにログイン画面が出続ける。
+let tokenRequestInFlight = false; // 要求中フラグ
+let lastTokenRequestAt = 0;       // 直近に要求した時刻
+const TOKEN_REQUEST_COOLDOWN = 10 * 60 * 1000; // 再要求までの最短間隔（10分）
+
+// トークンの再取得要求を1本化する。実際に要求を出したときだけ true を返す。
+function requestTokenSilently() {
+  if (!tokenClient || !getSavedAuth()) return false;
+  if (tokenRequestInFlight) return false;                                   // 同時多重を防ぐ
+  if (Date.now() - lastTokenRequestAt < TOKEN_REQUEST_COOLDOWN) return false; // 連打を防ぐ
+  lastTokenRequestAt = Date.now();   // ★ 成否に関わらず先に記録する（失敗時の無限ループ防止）
+  tokenRequestInFlight = true;
+  suppressLoadOnToken = true;
+  try { tokenClient.requestAccessToken({ prompt: '' }); return true; }
+  catch { tokenRequestInFlight = false; return false; }
+}
 
 window.addEventListener('load', () => {
   // ログイン済みの場合は「再接続中」表示
@@ -1005,6 +1024,7 @@ window.addEventListener('load', () => {
     tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: CLIENT_ID, scope: SCOPES,
       callback: async (resp) => {
+        tokenRequestInFlight = false;   // ★ 修正4-b: 応答が来たので要求中フラグを解除
         if (resp.error) {
           // ★ 修正4: 保存リトライ待ちなら失敗を返して抜ける
           if (pendingTokenResolve) { const r = pendingTokenResolve; pendingTokenResolve = null; r(false); return; }
@@ -1032,7 +1052,7 @@ window.addEventListener('load', () => {
         //    更新前に失効するため、猶予を15分に広げた
         if (tokenRefreshTimer) clearTimeout(tokenRefreshTimer);
         tokenRefreshTimer = setTimeout(() => {
-          if (getSavedAuth()) { suppressLoadOnToken = true; tokenClient.requestAccessToken({ prompt: '' }); }
+          requestTokenSilently();   // ★ 修正4-b: 連打防止ガードを通す
         }, 45 * 60 * 1000);
       }
     });
@@ -1049,12 +1069,15 @@ function maybeEnableSync() {
 }
 function signIn() {
   if (!gapiInited || !gisInited) { showToast('初期化中です、少々お待ちください', 'error'); return; }
+  // ★ 修正4-b: 明示的なログイン操作はガードの対象外（必ず要求を出す）
+  tokenRequestInFlight = false; lastTokenRequestAt = 0;
   tokenClient.requestAccessToken({ prompt: 'consent' });
 }
 function signOut() {
   if (accessToken) google.accounts.oauth2.revoke(accessToken);
   accessToken = null; driveFileId = null;
   tokenAcquiredAt = 0; pendingTokenResolve = null; suppressLoadOnToken = false; // ★ 修正4
+  tokenRequestInFlight = false; lastTokenRequestAt = 0;                          // ★ 修正4-b
   if (tokenRefreshTimer) { clearTimeout(tokenRefreshTimer); tokenRefreshTimer = null; }
   clearSavedAuth(); updateSyncUI(false);
   showToast('ログアウトしました');
@@ -1118,11 +1141,15 @@ async function loadFromDrive() {
 function refreshTokenAsync() {
   return new Promise(resolve => {
     if (!tokenClient || !getSavedAuth()) { resolve(false); return; }
+    // ★ 修正4-b: 既に要求中／クールダウン中なら新たな要求を出さずに諦める。
+    //    保存が連続失敗しても、そのたびにログイン画面が出ることはない。
+    if (tokenRequestInFlight || Date.now() - lastTokenRequestAt < TOKEN_REQUEST_COOLDOWN) { resolve(false); return; }
     pendingTokenResolve = resolve;
-    try { tokenClient.requestAccessToken({ prompt: '' }); }
-    catch { pendingTokenResolve = null; resolve(false); }
+    if (!requestTokenSilently()) { pendingTokenResolve = null; resolve(false); return; }
     // 応答が来ない場合に備えたタイムアウト
-    setTimeout(() => { if (pendingTokenResolve === resolve) { pendingTokenResolve = null; resolve(false); } }, 15000);
+    setTimeout(() => {
+      if (pendingTokenResolve === resolve) { pendingTokenResolve = null; tokenRequestInFlight = false; resolve(false); }
+    }, 15000);
   });
 }
 async function saveToDrive(isRetry) {
@@ -1139,7 +1166,10 @@ async function saveToDrive(isRetry) {
       });
       // ★ 修正4: ステータスを必ず確認する（旧版は無条件に「保存しました」と表示していた）
       if (res.ok) ok = true;
-      else if (res.status === 401 || res.status === 403) authErr = true;
+      // ★ 修正4-b: Drive は「レート制限」でも403を返すため、403だけでトークンを取り直すと
+      //    無用なログイン要求が出る。認証切れの検出は401に絞る。
+      else if (res.status === 401) authErr = true;
+      else if (res.status === 403) throw new Error(`save:403（アクセス制限の可能性）`);
       else if (res.status === 404) { driveFileId = null; throw new Error(`保存先が見つかりません(404)`); }
       else throw new Error(`save:${res.status}`);
     } else {
@@ -1157,7 +1187,7 @@ async function saveToDrive(isRetry) {
         if (j && j.id) { driveFileId = j.id; ok = true; }
         else throw new Error('create:idなし');
       }
-      else if (res.status === 401 || res.status === 403) authErr = true;
+      else if (res.status === 401) authErr = true;
       else throw new Error(`create:${res.status}`);
     }
   } catch (e) {
@@ -1201,8 +1231,7 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && accessToken && getSavedAuth()) {
     const age = Date.now() - tokenAcquiredAt;
     if (age > 45 * 60 * 1000) {
-      suppressLoadOnToken = true;
-      try { tokenClient.requestAccessToken({ prompt: '' }); } catch {}
+      requestTokenSilently();   // ★ 修正4-b: 連打防止ガードを通す（旧版はタブを切り替えるたびに発火していた）
     }
   }
 });
