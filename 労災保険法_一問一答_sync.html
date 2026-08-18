@@ -166,6 +166,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .list-filter{display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
 .btn-listfilter{border:1.5px solid #283848;background:transparent;color:#8a9bb0;border-radius:18px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
 .btn-listfilter.active{border-color:#c97a4a;background:rgba(201,122,74,.12);color:#c97a4a}
+.btn-listsort{border:1.5px solid #283848;background:transparent;color:#8a9bb0;border-radius:18px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-listsort.active{border-color:#4a9eca;background:rgba(74,158,202,.12);color:#5bb8e0}
+.btn-listsort:hover{border-color:#4a9eca;color:#4a9eca}
+.list-sep{width:1px;height:18px;background:#283848;margin:0 2px}
 .btn-listfilter:hover{border-color:#4a9eca;color:#4a9eca}
 .list-count{font-size:11px;color:#556070;margin-left:auto}
 /* ★ 機能③④: 一覧行の通し番号・最終実施日 */
@@ -393,6 +397,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
   <div class="list-filter">
     <button id="lfAll" class="btn-listfilter active" onclick="setListFilter('all')">すべて</button>
     <button id="lfBm"  class="btn-listfilter" onclick="setListFilter('bm')">★ 栞のみ</button>
+    <span class="list-sep"></span>
+    <button id="lsNum"  class="btn-listsort active" onclick="setListSort('num')">番号順</button>
+    <button id="lsDate" class="btn-listsort" onclick="setListSort('date')">実施日順</button>
     <span id="listCount" class="list-count"></span>
   </div>
   <div id="bookmarkItems"></div>
@@ -2016,9 +2023,34 @@ function setListFilter(mode) {
 function validBookmarkIndices() {
   return [...bookmarks].filter(i => ALL_QUESTIONS[i]).sort((x, y) => x - y);
 }
+// ★ 一覧の並び順（'num' = 通し番号順 / 'date' = 実施日順）
+let listSort = 'num';
+function setListSort(mode) {
+  listSort = mode;
+  const a = document.getElementById('lsNum'), b = document.getElementById('lsDate');
+  if (a) a.classList.toggle('active', mode === 'num');
+  if (b) b.classList.toggle('active', mode === 'date');
+  renderBookmarks();
+}
+// 実施日順に並べる：①未実施（lt なし）を先頭 ②以降は古く実施したものから順（放置が長い順）
+// 同条件のときは通し番号順で安定させる
+function sortByLastTried(indices) {
+  return indices.slice().sort((x, y) => {
+    const sx = questionStats[x], sy = questionStats[y];
+    const tx = (sx && sx.lt) ? sx.lt : null;   // null = 未実施
+    const ty = (sy && sy.lt) ? sy.lt : null;
+    if (tx === null && ty === null) return x - y;   // どちらも未実施 → 番号順
+    if (tx === null) return -1;                     // 未実施を上に
+    if (ty === null) return 1;
+    if (tx !== ty) return tx - ty;                  // 古い日付が上（放置が長い順）
+    return x - y;
+  });
+}
 function getListIndices() {
-  if (listFilter === 'bm') return validBookmarkIndices();
-  return ALL_QUESTIONS.map((q, i) => i).filter(i => ALL_QUESTIONS[i]);   // ★ 修正: 空要素を除く
+  const base = (listFilter === 'bm')
+    ? validBookmarkIndices()
+    : ALL_QUESTIONS.map((q, i) => i).filter(i => ALL_QUESTIONS[i]);   // ★ 修正: 空要素を除く
+  return (listSort === 'date') ? sortByLastTried(base) : base;
 }
 function renderBookmarks() {
   const container = document.getElementById('bookmarkItems');
@@ -2108,8 +2140,9 @@ function renderBookmarks() {
 function startFromBookmark(startIdx) {
   // ★ 機能②: 表示中の一覧（すべて／栞のみ）をそのままプールにして、
   //    タップした問題から開始する。栞プール固定だった旧実装を一般化。
+  // ★ 表示中の並び順（番号順／実施日順）をそのまま出題順にする
   const pool = getListIndices().map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i }))
-    .filter(q => q.no).sort((a, b) => a._origIdx - b._origIdx);   // ★ 修正: 空要素を除去
+    .filter(q => q.no);
   if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
   const startPos = pool.findIndex(q => q._origIdx === startIdx);
 
