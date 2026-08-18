@@ -1315,8 +1315,9 @@ function toggleBookmark() {
 }
 function updateBmBadge() {
   const badge = document.getElementById('bmBadge');
-  if (bookmarks.size > 0) {
-    badge.textContent = bookmarks.size;
+  const n = validBookmarkIndices().length;   // ★ 修正: 実在する栞だけを数える
+  if (n > 0) {
+    badge.textContent = n;
     badge.style.display = 'inline-block';
   } else {
     badge.style.display = 'none';
@@ -1481,7 +1482,7 @@ function updateResumeBtn() {
 }
 function resumeSession() {
   if (!pendingResume) return;
-  const pool = pendingResume.questionIndices.map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
+  const pool = pendingResume.questionIndices.map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(q => q.no)  // ★ 修正: 空要素を除去;
   if (pool.length === 0) { clearResume(); return; }
   questions = pool; answers = [...pendingResume.answers]; current = pendingResume.current || 0;
   currentSession = { ...pendingResume }; pendingResume = null;
@@ -1572,9 +1573,9 @@ function updateBookmarkRandomBtn() {
   btn.textContent = `栞から${input.value}問ランダムで出題`;
 }
 function startBookmarkRandom() {
-  if (bookmarks.size === 0) { showToast('栞がありません', 'warn'); return; }
+  if (validBookmarkIndices().length === 0) { showToast('栞がありません', 'warn'); return; }
   const num = parseInt(document.getElementById('bookmarkRandomInput').value) || 10;
-  let pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(q => q.no);
+  let pool = validBookmarkIndices().map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i }));
   if (num < pool.length) {
     pool = shuffleArray(pool).slice(0, num);
   }
@@ -1606,7 +1607,7 @@ function start() {
   startSession(s);
 }
 function startBookmarks() {
-  if (bookmarks.size === 0) { showToast('栞がありません', 'warn'); return; }
+  if (validBookmarkIndices().length === 0) { showToast('栞がありません', 'warn'); return; }
   const s = { useBookmarks: true };
   startSession(s);
 }
@@ -1614,7 +1615,10 @@ function startSession(s) {
   let pool = [];
   
   if (s.useBookmarks) {
-    pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(Boolean);
+    // ★ 修正: ALL_QUESTIONS に空要素（配列リテラルの二重カンマ由来の穴）があるため、
+    //    穴の添字が栞に含まれていると {...undefined} = {} となり filter(Boolean) では除去できない。
+    //    実体のあるものだけを残す（q.no の有無で判定）。
+    pool = [...bookmarks].map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i })).filter(q => q.no);
   } else if (s.useRecentWrong) {
     pool = getRecentWrongPool(s.days || 7);
   } else if (s.useWeak) {
@@ -2008,9 +2012,13 @@ function setListFilter(mode) {
   renderBookmarks();
 }
 // 現在の一覧に含まれる origIdx の配列（昇順＝通し番号順）
+// ★ 修正: 実体のある問題を指している栞だけを返す（存在しない添字を弾く）
+function validBookmarkIndices() {
+  return [...bookmarks].filter(i => ALL_QUESTIONS[i]).sort((x, y) => x - y);
+}
 function getListIndices() {
-  if (listFilter === 'bm') return [...bookmarks].sort((x, y) => x - y);
-  return ALL_QUESTIONS.map((q, i) => i);
+  if (listFilter === 'bm') return validBookmarkIndices();
+  return ALL_QUESTIONS.map((q, i) => i).filter(i => ALL_QUESTIONS[i]);   // ★ 修正: 空要素を除く
 }
 function renderBookmarks() {
   const container = document.getElementById('bookmarkItems');
@@ -2101,7 +2109,7 @@ function startFromBookmark(startIdx) {
   // ★ 機能②: 表示中の一覧（すべて／栞のみ）をそのままプールにして、
   //    タップした問題から開始する。栞プール固定だった旧実装を一般化。
   const pool = getListIndices().map(i => ({ ...ALL_QUESTIONS[i], _origIdx: i }))
-    .filter(Boolean).sort((a, b) => a._origIdx - b._origIdx);
+    .filter(q => q.no).sort((a, b) => a._origIdx - b._origIdx);   // ★ 修正: 空要素を除去
   if (pool.length === 0) { showToast('対象問題がありません', 'warn'); return; }
   const startPos = pool.findIndex(q => q._origIdx === startIdx);
 
@@ -2143,15 +2151,16 @@ document.getElementById('appSubtitle').textContent = APP_CONFIG.subtitle;
 // 栞ボタンの表示制御
 function checkBookmarkButton() {
   const btn = document.getElementById('btnBookmarkStart');
-  btn.style.display = bookmarks.size > 0 ? 'block' : 'none';
+  const n = validBookmarkIndices().length;   // ★ 修正: 実在する栞だけを数える
+  btn.style.display = n > 0 ? 'block' : 'none';
   // 栞ランダムモードの表示制御
   const bmRandom = document.getElementById('bookmarkRandomMode');
   if (bmRandom) {
-    bmRandom.style.display = bookmarks.size > 0 ? 'block' : 'none';
+    bmRandom.style.display = n > 0 ? 'block' : 'none';
     const input = document.getElementById('bookmarkRandomInput');
     if (input) {
-      input.max = bookmarks.size;
-      if (parseInt(input.value) > bookmarks.size) input.value = bookmarks.size;
+      input.max = n;
+      if (parseInt(input.value) > n) input.value = n;
       updateBookmarkRandomBtn();
     }
   }
@@ -2165,8 +2174,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // 栞の更新時に栞ボタンもチェック
 function updateBmBadge() {
   const badge = document.getElementById('bmBadge');
-  if (bookmarks.size > 0) {
-    badge.textContent = bookmarks.size;
+  const n = validBookmarkIndices().length;   // ★ 修正: 実在する栞だけを数える
+  if (n > 0) {
+    badge.textContent = n;
     badge.style.display = 'inline-block';
   } else {
     badge.style.display = 'none';
